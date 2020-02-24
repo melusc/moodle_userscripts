@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean moodle
 // @grant       none
-// @version     3.3.1
+// @version     3.3.2
 // @include     *://moodle.ksasz.ch/*
 // @downloadURL https://github.com/melusc/lusc/raw/master/clean%20moodle.user.js
 // @updateURL   https://github.com/melusc/lusc/raw/master/clean%20moodle.user.js
@@ -20,7 +20,6 @@
 /*Herbstwoche*/         var hw = true;//removes content
 /*Studienwahlparcours*/ var sw = true;//removes content
 /*Umfrage S2d*/         var uf = true;//removes content
-/*Febwoche Werbung*/    var fw = true;//removes content
 /*Weihnachtslauf*/      var wl = true;//removes content
 /*Febstudienwoche*/     var fs = true;//removes content
 /*Schneesportlager*/    var sl = true;//removes content
@@ -135,13 +134,6 @@ window.onload = function fun() {
     if (uf === true) {
         var elem45 = document.getElementById(id4);
         elem45.parentNode.removeChild(elem45);
-    }
-
-    //Febwoche Werbung
-    var id5 = 'label_3_11';
-    if (fw === true) {
-        var elem5 = document.getElementById(id5);
-        elem5.parentNode.removeChild(elem5);
     }
 
     //Weihnachtslauf
