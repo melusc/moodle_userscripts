@@ -25,8 +25,7 @@ run('label_3_6', 'replace', 'Wahl des Schwerpunktfaches für 1. Gymi-Klassen 202
 run('label_3_7', 'remove');
 */
 
-
-run('label_3_10', 'remove');
+run('...');
 //Code
 
 function run(customId, custom, customReplace, customReplaceWith){
