@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean moodle customisable
 // @grant       none
-// @version     1.1
+// @version     1.2
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of moodle
@@ -449,305 +449,302 @@ var customReplaceWith30 = 'placeholder';
 
 //Code
 
-window.onload = function fun() {
-
-    //Custom1
-    if (customActive1 === true){
-        if (custom1 === 'remove'){
-            var elem1 = document.getElementById(customId1);
-            elem1.parentNode.removeChild(elem1);
-        } else {
-            document.getElementById(customId1).innerHTML = document.getElementById(customId1).innerHTML.replace(customReplace1, customReplaceWith1);
-        }
+//Custom1
+if (customActive1 === true){
+    if (custom1 === 'remove'){
+        var elem1 = document.getElementById(customId1);
+        elem1.parentNode.removeChild(elem1);
+    } else {
+        document.getElementById(customId1).innerHTML = document.getElementById(customId1).innerHTML.replace(customReplace1, customReplaceWith1);
     }
+}
 
-    //Custom2
-    if (customActive2 === true){
-        if (custom2 === 'remove'){
-            var elem2 = document.getElementById(customId2);
-            elem2.parentNode.removeChild(elem2);
-        } else {
-            document.getElementById(customId2).innerHTML = document.getElementById(customId2).innerHTML.replace(customReplace2, customReplaceWith2);
-        }
+//Custom2
+if (customActive2 === true) {
+    if (custom2 === 'remove') {
+        var elem2 = document.getElementById(customId2);
+        elem2.parentNode.removeChild(elem2);
+    } else {
+        document.getElementById(customId2).innerHTML = document.getElementById(customId2).innerHTML.replace(customReplace2, customReplaceWith2);
     }
+}
 
-    //Custom3
-    if (customActive3 === true){
-        if (custom3 === 'remove'){
-            var elem3 = document.getElementById(customId3);
-            elem3.parentNode.removeChild(elem3);
-        } else {
-            document.getElementById(customId3).innerHTML = document.getElementById(customId3).innerHTML.replace(customReplace3, customReplaceWith3);
-        }
+//Custom3
+if (customActive3 === true) {
+    if (custom3 === 'remove') {
+        var elem3 = document.getElementById(customId3);
+        elem3.parentNode.removeChild(elem3);
+    } else {
+        document.getElementById(customId3).innerHTML = document.getElementById(customId3).innerHTML.replace(customReplace3, customReplaceWith3);
     }
+}
 
-    //Custom4
-    if (customActive4 === true){
-        if (custom4 === 'remove'){
-            var elem4 = document.getElementById(customId4);
-            elem4.parentNode.removeChild(elem4);
-        } else {
-            document.getElementById(customId4).innerHTML = document.getElementById(customId4).innerHTML.replace(customReplace4, customReplaceWith4);
-        }
+//Custom4
+if (customActive4 === true) {
+    if (custom4 === 'remove') {
+        var elem4 = document.getElementById(customId4);
+        elem4.parentNode.removeChild(elem4);
+    } else {
+        document.getElementById(customId4).innerHTML = document.getElementById(customId4).innerHTML.replace(customReplace4, customReplaceWith4);
     }
+}
 
-    //Custom5
-    if (customActive5 === true){
-        if (custom5 === 'remove'){
-            var elem5 = document.getElementById(customId5);
-            elem5.parentNode.removeChild(elem5);
-        } else {
-            document.getElementById(customId5).innerHTML = document.getElementById(customId5).innerHTML.replace(customReplace5, customReplaceWith5);
-        }
+//Custom5
+if (customActive5 === true) {
+    if (custom5 === 'remove') {
+        var elem5 = document.getElementById(customId5);
+        elem5.parentNode.removeChild(elem5);
+    } else {
+        document.getElementById(customId5).innerHTML = document.getElementById(customId5).innerHTML.replace(customReplace5, customReplaceWith5);
     }
+}
 
-    //Custom6
-    if (customActive6 === true){
-        if (custom6 === 'remove'){
-            var elem6 = document.getElementById(customId6);
-            elem6.parentNode.removeChild(elem6);
-        } else {
-            document.getElementById(customId6).innerHTML = document.getElementById(customId6).innerHTML.replace(customReplace6, customReplaceWith6);
-        }
+//Custom6
+if (customActive6 === true) {
+    if (custom6 === 'remove') {
+        var elem6 = document.getElementById(customId6);
+        elem6.parentNode.removeChild(elem6);
+    } else {
+        document.getElementById(customId6).innerHTML = document.getElementById(customId6).innerHTML.replace(customReplace6, customReplaceWith6);
     }
+}
 
-    //Custom7
-    if (customActive7 === true){
-        if (custom7 === 'remove'){
-            var elem7 = document.getElementById(customId7);
-            elem7.parentNode.removeChild(elem7);
-        } else {
-            document.getElementById(customId7).innerHTML = document.getElementById(customId7).innerHTML.replace(customReplace7, customReplaceWith7);
-        }
+//Custom7
+if (customActive7 === true) {
+    if (custom7 === 'remove') {
+        var elem7 = document.getElementById(customId7);
+        elem7.parentNode.removeChild(elem7);
+    } else {
+        document.getElementById(customId7).innerHTML = document.getElementById(customId7).innerHTML.replace(customReplace7, customReplaceWith7);
     }
+}
 
-    //Custom8
-    if (customActive8 === true){
-        if (custom8 === 'remove'){
-            var elem8 = document.getElementById(customId8);
-            elem8.parentNode.removeChild(elem8);
-        } else {
-            document.getElementById(customId8).innerHTML = document.getElementById(customId8).innerHTML.replace(customReplace8, customReplaceWith8);
-        }
+//Custom8
+if (customActive8 === true) {
+    if (custom8 === 'remove') {
+        var elem8 = document.getElementById(customId8);
+        elem8.parentNode.removeChild(elem8);
+    } else {
+        document.getElementById(customId8).innerHTML = document.getElementById(customId8).innerHTML.replace(customReplace8, customReplaceWith8);
     }
+}
 
-    //Custom9
-    if (customActive9 === true){
-        if (custom9 === 'remove'){
-            var elem9 = document.getElementById(customId9);
-            elem9.parentNode.removeChild(elem9);
-        } else {
-            document.getElementById(customId9).innerHTML = document.getElementById(customId9).innerHTML.replace(customReplace9, customReplaceWith9);
-        }
+//Custom9
+if (customActive9 === true) {
+    if (custom9 === 'remove') {
+        var elem9 = document.getElementById(customId9);
+        elem9.parentNode.removeChild(elem9);
+    } else {
+        document.getElementById(customId9).innerHTML = document.getElementById(customId9).innerHTML.replace(customReplace9, customReplaceWith9);
     }
+}
 
-    //Custom10
-    if (customActive10 === true){
-        if (custom10 === 'remove'){
-            var elem10 = document.getElementById(customId10);
-            elem10.parentNode.removeChild(elem10);
-        } else {
-            document.getElementById(customId10).innerHTML = document.getElementById(customId10).innerHTML.replace(customReplace10, customReplaceWith10);
-        }
+//Custom10
+if (customActive10 === true) {
+    if (custom10 === 'remove') {
+        var elem10 = document.getElementById(customId10);
+        elem10.parentNode.removeChild(elem10);
+    } else {
+        document.getElementById(customId10).innerHTML = document.getElementById(customId10).innerHTML.replace(customReplace10, customReplaceWith10);
     }
+}
 
-    //Custom11
-    if (customActive11 === true){
-        if (custom11 === 'remove'){
-            var elem11 = document.getElementById(customId11);
-            elem11.parentNode.removeChild(elem11);
-        } else {
-            document.getElementById(customId11).innerHTML = document.getElementById(customId11).innerHTML.replace(customReplace11, customReplaceWith11);
-        }
+//Custom11
+if (customActive11 === true) {
+    if (custom11 === 'remove') {
+        var elem11 = document.getElementById(customId11);
+        elem11.parentNode.removeChild(elem11);
+    } else {
+        document.getElementById(customId11).innerHTML = document.getElementById(customId11).innerHTML.replace(customReplace11, customReplaceWith11);
     }
+}
 
-    //Custom12
-    if (customActive12 === true){
-        if (custom12 === 'remove'){
-            var elem12 = document.getElementById(customId12);
-            elem12.parentNode.removeChild(elem12);
-        } else {
-            document.getElementById(customId12).innerHTML = document.getElementById(customId12).innerHTML.replace(customReplace12, customReplaceWith12);
-        }
+//Custom12
+if (customActive12 === true) {
+    if (custom12 === 'remove') {
+        var elem12 = document.getElementById(customId12);
+        elem12.parentNode.removeChild(elem12);
+    } else {
+        document.getElementById(customId12).innerHTML = document.getElementById(customId12).innerHTML.replace(customReplace12, customReplaceWith12);
     }
+}
 
-    //Custom13
-    if (customActive13 === true){
-        if (custom13 === 'remove'){
-            var elem13 = document.getElementById(customId13);
-            elem13.parentNode.removeChild(elem13);
-        } else {
-            document.getElementById(customId13).innerHTML = document.getElementById(customId13).innerHTML.replace(customReplace13, customReplaceWith13);
-        }
+//Custom13
+if (customActive13 === true) {
+    if (custom13 === 'remove') {
+        var elem13 = document.getElementById(customId13);
+        elem13.parentNode.removeChild(elem13);
+    } else {
+        document.getElementById(customId13).innerHTML = document.getElementById(customId13).innerHTML.replace(customReplace13, customReplaceWith13);
     }
+}
 
-    //Custom14
-    if (customActive14 === true){
-        if (custom14 === 'remove'){
-            var elem14 = document.getElementById(customId14);
-            elem14.parentNode.removeChild(elem14);
-        } else {
-            document.getElementById(customId14).innerHTML = document.getElementById(customId14).innerHTML.replace(customReplace14, customReplaceWith14);
-        }
+//Custom14
+if (customActive14 === true) {
+    if (custom14 === 'remove') {
+        var elem14 = document.getElementById(customId14);
+        elem14.parentNode.removeChild(elem14);
+    } else {
+        document.getElementById(customId14).innerHTML = document.getElementById(customId14).innerHTML.replace(customReplace14, customReplaceWith14);
     }
+}
 
-  	//Custom15
-    if (customActive15 === true){
-        if (custom15 === 'remove'){
-            var elem15 = document.getElementById(customId15);
-            elem15.parentNode.removeChild(elem15);
-        } else {
-            document.getElementById(customId15).innerHTML = document.getElementById(customId15).innerHTML.replace(customReplace15, customReplaceWith15);
-        }
+//Custom15
+if (customActive15 === true) {
+    if (custom15 === 'remove') {
+        var elem15 = document.getElementById(customId15);
+        elem15.parentNode.removeChild(elem15);
+    } else {
+        document.getElementById(customId15).innerHTML = document.getElementById(customId15).innerHTML.replace(customReplace15, customReplaceWith15);
     }
+}
 
-    //Custom16
-    if (customActive16 === true){
-        if (custom16 === 'remove'){
-            var elem16 = document.getElementById(customId16);
-            elem16.parentNode.removeChild(elem16);
-        } else {
-            document.getElementById(customId16).innerHTML = document.getElementById(customId16).innerHTML.replace(customReplace16, customReplaceWith16);
-        }
+//Custom16
+if (customActive16 === true) {
+    if (custom16 === 'remove') {
+        var elem16 = document.getElementById(customId16);
+        elem16.parentNode.removeChild(elem16);
+    } else {
+        document.getElementById(customId16).innerHTML = document.getElementById(customId16).innerHTML.replace(customReplace16, customReplaceWith16);
     }
+}
 
-    //Custom17
-    if (customActive17 === true){
-        if (custom17 === 'remove'){
-            var elem17 = document.getElementById(customId17);
-            elem17.parentNode.removeChild(elem17);
-        } else {
-            document.getElementById(customId17).innerHTML = document.getElementById(customId17).innerHTML.replace(customReplace17, customReplaceWith17);
-        }
+//Custom17
+if (customActive17 === true) {
+    if (custom17 === 'remove') {
+        var elem17 = document.getElementById(customId17);
+        elem17.parentNode.removeChild(elem17);
+    } else {
+        document.getElementById(customId17).innerHTML = document.getElementById(customId17).innerHTML.replace(customReplace17, customReplaceWith17);
     }
+}
 
-    //Custom18
-    if (customActive18 === true){
-        if (custom18 === 'remove'){
-            var elem18 = document.getElementById(customId18);
-            elem18.parentNode.removeChild(elem18);
-        } else {
-            document.getElementById(customId18).innerHTML = document.getElementById(customId18).innerHTML.replace(customReplace18, customReplaceWith18);
-        }
+//Custom18
+if (customActive18 === true) {
+    if (custom18 === 'remove') {
+        var elem18 = document.getElementById(customId18);
+        elem18.parentNode.removeChild(elem18);
+    } else {
+        document.getElementById(customId18).innerHTML = document.getElementById(customId18).innerHTML.replace(customReplace18, customReplaceWith18);
     }
+}
 
-    //Custom19
-    if (customActive19 === true){
-        if (custom19 === 'remove'){
-            var elem19 = document.getElementById(customId19);
-            elem19.parentNode.removeChild(elem19);
-        } else {
-            document.getElementById(customId19).innerHTML = document.getElementById(customId19).innerHTML.replace(customReplace19, customReplaceWith19);
-        }
+//Custom19
+if (customActive19 === true) {
+    if (custom19 === 'remove') {
+        var elem19 = document.getElementById(customId19);
+        elem19.parentNode.removeChild(elem19);
+    } else {
+        document.getElementById(customId19).innerHTML = document.getElementById(customId19).innerHTML.replace(customReplace19, customReplaceWith19);
     }
+}
 
-    //Custom20
-    if (customActive20 === true){
-        if (custom20 === 'remove'){
-            var elem20 = document.getElementById(customId20);
-            elem20.parentNode.removeChild(elem20);
-        } else {
-            document.getElementById(customId20).innerHTML = document.getElementById(customId20).innerHTML.replace(customReplace20, customReplaceWith20);
-        }
+//Custom20
+if (customActive20 === true) {
+    if (custom20 === 'remove') {
+        var elem20 = document.getElementById(customId20);
+        elem20.parentNode.removeChild(elem20);
+    } else {
+        document.getElementById(customId20).innerHTML = document.getElementById(customId20).innerHTML.replace(customReplace20, customReplaceWith20);
     }
+}
 
-    //Custom21
-    if (customActive21 === true){
-        if (custom21 === 'remove'){
-            var elem21 = document.getElementById(customId21);
-            elem21.parentNode.removeChild(elem21);
-        } else {
-            document.getElementById(customId21).innerHTML = document.getElementById(customId21).innerHTML.replace(customReplace21, customReplaceWith21);
-        }
+//Custom21
+if (customActive21 === true) {
+    if (custom21 === 'remove') {
+        var elem21 = document.getElementById(customId21);
+        elem21.parentNode.removeChild(elem21);
+    } else {
+        document.getElementById(customId21).innerHTML = document.getElementById(customId21).innerHTML.replace(customReplace21, customReplaceWith21);
     }
+}
 
-    //Custom22
-    if (customActive22 === true){
-        if (custom22 === 'remove'){
-            var elem22 = document.getElementById(customId22);
-            elem22.parentNode.removeChild(elem22);
-        } else {
-            document.getElementById(customId22).innerHTML = document.getElementById(customId21).innerHTML.replace(customReplace22, customReplaceWith22);
-        }
+//Custom22
+if (customActive22 === true) {
+    if (custom22 === 'remove') {
+        var elem22 = document.getElementById(customId22);
+        elem22.parentNode.removeChild(elem22);
+    } else {
+        document.getElementById(customId22).innerHTML = document.getElementById(customId21).innerHTML.replace(customReplace22, customReplaceWith22);
     }
+}
 
-    //Custom23
-    if (customActive23 === true){
-        if (custom23 === 'remove'){
-            var elem23 = document.getElementById(customId23);
-            elem23.parentNode.removeChild(elem23);
-        } else {
-            document.getElementById(customId23).innerHTML = document.getElementById(customId23).innerHTML.replace(customReplace23, customReplaceWith23);
-        }
+//Custom23
+if (customActive23 === true) {
+    if (custom23 === 'remove') {
+        var elem23 = document.getElementById(customId23);
+        elem23.parentNode.removeChild(elem23);
+    } else {
+        document.getElementById(customId23).innerHTML = document.getElementById(customId23).innerHTML.replace(customReplace23, customReplaceWith23);
     }
+}
 
-    //Custom24
-    if (customActive24 === true){
-        if (custom24 === 'remove'){
-            var elem24 = document.getElementById(customId24);
-            elem24.parentNode.removeChild(elem24);
-        } else {
-            document.getElementById(customId24).innerHTML = document.getElementById(customId24).innerHTML.replace(customReplace24, customReplaceWith24);
-        }
+//Custom24
+if (customActive24 === true) {
+    if (custom24 === 'remove') {
+        var elem24 = document.getElementById(customId24);
+        elem24.parentNode.removeChild(elem24);
+    } else {
+        document.getElementById(customId24).innerHTML = document.getElementById(customId24).innerHTML.replace(customReplace24, customReplaceWith24);
     }
+}
 
-    //Custom25
-    if (customActive25 === true){
-        if (custom25 === 'remove'){
-            var elem25 = document.getElementById(customId25);
-            elem25.parentNode.removeChild(elem25);
-        } else {
-            document.getElementById(customId25).innerHTML = document.getElementById(customId25).innerHTML.replace(customReplace25, customReplaceWith25);
-        }
+//Custom25
+if (customActive25 === true) {
+    if (custom25 === 'remove') {
+        var elem25 = document.getElementById(customId25);
+        elem25.parentNode.removeChild(elem25);
+    } else {
+        document.getElementById(customId25).innerHTML = document.getElementById(customId25).innerHTML.replace(customReplace25, customReplaceWith25);
     }
+}
 
-    //Custom26
-    if (customActive26 === true){
-        if (custom26 === 'remove'){
-            var elem26 = document.getElementById(customId26);
-            elem26.parentNode.removeChild(elem26);
-        } else {
-            document.getElementById(customId26).innerHTML = document.getElementById(customId26).innerHTML.replace(customReplace26, customReplaceWith26);
-        }
+//Custom26
+if (customActive26 === true) {
+    if (custom26 === 'remove') {
+        var elem26 = document.getElementById(customId26);
+        elem26.parentNode.removeChild(elem26);
+    } else {
+        document.getElementById(customId26).innerHTML = document.getElementById(customId26).innerHTML.replace(customReplace26, customReplaceWith26);
     }
+}
 
-    //Custom27
-    if (customActive27 === true){
-        if (custom27 === 'remove'){
-            var elem27 = document.getElementById(customId27);
-            elem27.parentNode.removeChild(elem27);
-        } else {
-            document.getElementById(customId27).innerHTML = document.getElementById(customId27).innerHTML.replace(customReplace27, customReplaceWith27);
-        }
+//Custom27
+if (customActive27 === true) {
+    if (custom27 === 'remove') {
+        var elem27 = document.getElementById(customId27);
+        elem27.parentNode.removeChild(elem27);
+    } else {
+        document.getElementById(customId27).innerHTML = document.getElementById(customId27).innerHTML.replace(customReplace27, customReplaceWith27);
     }
+}
 
-    //Custom28
-    if (customActive28 === true){
-        if (custom28 === 'remove'){
-            var elem28 = document.getElementById(customId28);
-            elem28.parentNode.removeChild(elem28);
-        } else {
-            document.getElementById(customId28).innerHTML = document.getElementById(customId28).innerHTML.replace(customReplace28, customReplaceWith28);
-        }
+//Custom28
+if (customActive28 === true) {
+    if (custom28 === 'remove') {
+        var elem28 = document.getElementById(customId28);
+        elem28.parentNode.removeChild(elem28);
+    } else {
+        document.getElementById(customId28).innerHTML = document.getElementById(customId28).innerHTML.replace(customReplace28, customReplaceWith28);
     }
+}
 
-    //Custom29
-    if (customActive29 === true){
-        if (custom29 === 'remove'){
-            var elem29 = document.getElementById(customId29);
-            elem29.parentNode.removeChild(elem29);
-        } else {
-            document.getElementById(customId29).innerHTML = document.getElementById(customId29).innerHTML.replace(customReplace29, customReplaceWith29);
-        }
+//Custom29
+if (customActive29 === true) {
+    if (custom29 === 'remove') {
+        var elem29 = document.getElementById(customId29);
+        elem29.parentNode.removeChild(elem29);
+    } else {
+        document.getElementById(customId29).innerHTML = document.getElementById(customId29).innerHTML.replace(customReplace29, customReplaceWith29);
     }
+}
 
-    //Custom30
-    if (customActive30 === true){
-        if (custom30 === 'remove'){
-            var elem30 = document.getElementById(customId30);
-            elem30.parentNode.removeChild(elem30);
-        } else {
-            document.getElementById(customId30).innerHTML = document.getElementById(customId30).innerHTML.replace(customReplace30, customReplaceWith30);
-        }
+//Custom30
+if (customActive30 === true) {
+    if (custom30 === 'remove') {
+        var elem30 = document.getElementById(customId30);
+        elem30.parentNode.removeChild(elem30);
+    } else {
+        document.getElementById(customId30).innerHTML = document.getElementById(customId30).innerHTML.replace(customReplace30, customReplaceWith30);
     }
-};
+}
