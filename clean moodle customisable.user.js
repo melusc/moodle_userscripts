@@ -1,6 +1,6 @@
 // ===UserScript===
 // @name        Clean moodle customisable
-// @version     2.1
+// @version     3.0
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of moodle
@@ -8,31 +8,39 @@
 // @updateURL   https://github.com/melusc/lusc/raw/master/clean%20moodle%20customisable.user.js
 // ===/UserScript===
 
-//Instructions
+//Instructions, read closely
 /*
-customId: format "label_3_*"
-   the Id can be found by pressing f12 and selecting the to be edited text
+run(custom, customReplace, customReplaceWith)
 custom ('replace'/'remove') either replaces the text with your custom text or removes the whole text
 
-//Leave empty if 'remove' is selected
 customReplace is the text you want to edit
+
+//Leave empty if 'remove' is selected
 customReplaceWith is the text you want to replace the text with
 
-//Just add more to edit more
+//Just add more if needed
+
+//Please note that all 'selectors' must have either '' or "" around them
 *//*
 Example:
-run('label_3_6', 'replace', 'Wahl des Schwerpunktfaches für 1. Gymi-Klassen 2020', 'SPFWahl');
-run('label_3_7', 'remove');
+run('replace', 'Musik AlC Grundlagenfach', 'Musik');
+run('remove', 'Musik AlC Grundlagenfach');
 */
 
 run('...');
 //Code
 
-function run(customId, custom, customReplace, customReplaceWith){
-    if (custom === 'remove'){
-        var elem = document.getElementById(customId);
-        elem.parentNode.removeChild(elem);
+function run(custom, customReplace, customReplaceWith) {
+    if (custom === 'remove') {
+        var id = `//span[contains(., '${customReplace}')]`
+        var headings = document.evaluate(id, document, null, XPathResult.ANY_TYPE, null);
+        var thisHeading = headings.iterateNext();
+        thisHeading = thisHeading.parentElement.parentElement.parentElement;
+        thisHeading.parentNode.removeChild(thisHeading);
     } else {
-        document.getElementById(customId).innerHTML = document.getElementById(customId).innerHTML.replace(customReplace, customReplaceWith);
+        var id = `//span[contains(., '${customReplace}')]`
+        var headings = document.evaluate(id, document, null, XPathResult.ANY_TYPE, null);
+        var thisHeading = headings.iterateNext();
+        thisHeading.innerHTML = customReplaceWith;
     }
 }
