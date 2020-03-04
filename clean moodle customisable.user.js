@@ -1,6 +1,6 @@
 // ===UserScript===
-// @name        Clean moodle customisable
-// @version     3.0
+// @name        Clean moodle customisable1
+// @version     3.1
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of moodle
@@ -11,36 +11,35 @@
 //Instructions, read closely
 /*
 run(custom, customReplace, customReplaceWith)
-custom ('replace'/'remove') either replaces the text with your custom text or removes the whole text
+custom ['replace'/'remove'] either replaces the text with your custom text or removes the whole text
 
 customReplace is the text you want to edit
 
 //Leave empty if 'remove' is selected
+
 customReplaceWith is the text you want to replace the text with
+//Note that the text may have a whitespace at the end, this whitespace is necessary and it won't work without
 
 //Just add more if needed
 
-//Please note that all 'selectors' must have either '' or "" around them
+//Note that all 'selectors' must have either '' or "" around them
 *//*
 Example:
 run('replace', 'Musik AlC Grundlagenfach', 'Musik');
 run('remove', 'Musik AlC Grundlagenfach');
 */
-
-run('...');
+run(..);
 //Code
 
 function run(custom, customReplace, customReplaceWith) {
     if (custom === 'remove') {
-        var id = `//span[contains(., '${customReplace}')]`
-        var headings = document.evaluate(id, document, null, XPathResult.ANY_TYPE, null);
-        var thisHeading = headings.iterateNext();
-        thisHeading = thisHeading.parentElement.parentElement.parentElement;
-        thisHeading.parentNode.removeChild(thisHeading);
-    } else {
-        var id = `//span[contains(., '${customReplace}')]`
-        var headings = document.evaluate(id, document, null, XPathResult.ANY_TYPE, null);
-        var thisHeading = headings.iterateNext();
-        thisHeading.innerHTML = customReplaceWith;
+        let thisHeading = document.querySelector(`[title="${customReplace}"]`);
+        thisHeading
+            .parentNode
+            .removeChild(thisHeading)
+    } else if (custom === 'replace') {
+        let thisHeading = document.querySelector(`[title="${customReplace}"]`);
+        thisHeading.childNodes[1].innerHTML = customReplaceWith
     }
 }
+document.title = `${document.title}d`;
