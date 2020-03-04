@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   Clean Moodle customisable
-// @version     3.2.5
+// @version     3.2.6
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of moodle
@@ -35,14 +35,21 @@ run('...');
 //Code
 
 function run(custom, customReplace, customReplaceWith) {
+    let thisHeading = document.querySelector(`[title="${customReplace}"]`);
     if (custom === 'remove') {
-        let thisHeading = document.querySelector(`[title="${customReplace}"]`);
-        thisHeading
-            .parentNode
-            .removeChild(thisHeading)
+        if (thisHeading){
+            thisHeading
+                .parentNode
+                .removeChild(thisHeading)
+        } else {
+            alert(`Error finding ${customReplace}! Check if it's written correctly or if you might be missing a whitespace at the end.`);
+        }
     } else if (custom === 'replace') {
-        let thisHeading = document.querySelector(`[title="${customReplace}"]`);
-        thisHeading.childNodes[1].innerHTML = customReplaceWith
+        if (thisHeading){
+            thisHeading.childNodes[1].innerHTML = customReplaceWith
+        } else {
+            alert(`Error finding ${customReplace}! Check if it's written correctly or if you might be missing a whitespace at the end.`);
+        }
     }
 }
 document.title = document.title.replace('Moodle','Moodled');
