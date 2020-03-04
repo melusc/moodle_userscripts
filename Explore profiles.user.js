@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name         Explore profiles
-// @version      1.4.3
+// @namespace    Explore profiles
+// @version      1.4.4
 // @author       lusc
 // @match        *://moodle.ksasz.ch/user/profile.php?*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
