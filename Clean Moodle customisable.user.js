@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   Clean Moodle customisable
-// @version     3.2.6
+// @version     3.2.7
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of moodle
@@ -26,30 +26,30 @@ customReplaceWith is the text you want to replace the text with
 //Note that all 'selectors' must have either '' or "" around them
 *//*
 Example:
-run('replace', 'Musik AlC Grundlagenfach', 'Musik');
-run('remove', 'Musik AlC Grundlagenfach');
+run('replace','Musik AlC Grundlagenfach','Musik');
+run('remove','Musik AlC Grundlagenfach');
 */
 
-run('...');
+run('...'); 
 
 //Code
 
 function run(custom, customReplace, customReplaceWith) {
     let thisHeading = document.querySelector(`[title="${customReplace}"]`);
     if (custom === 'remove') {
-        if (thisHeading){
+        if (thisHeading) {
             thisHeading
                 .parentNode
                 .removeChild(thisHeading)
-        } else {
+        } else if (document.querySelector('.block_navigation  block')) {
             alert(`Error finding ${customReplace}! Check if it's written correctly or if you might be missing a whitespace at the end.`);
         }
     } else if (custom === 'replace') {
-        if (thisHeading){
+        if (thisHeading) {
             thisHeading.childNodes[1].innerHTML = customReplaceWith
-        } else {
+        } else if (document.querySelector('.block_navigation  block')) {
             alert(`Error finding ${customReplace}! Check if it's written correctly or if you might be missing a whitespace at the end.`);
         }
     }
 }
-document.title = document.title.replace('Moodle','Moodled');
+document.title = document.title.replace('Moodle', 'Moodled');
