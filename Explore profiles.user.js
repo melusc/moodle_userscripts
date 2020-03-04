@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Explore profiles
-// @version      1.4.2
+// @version      1.4.3
 // @author       lusc
 // @match        *://moodle.ksasz.ch/user/profile.php?*
-// @downloadURL  https://github.com/melusc/lusc/raw/master/explore%20profiles.user.js
-// @updateURL    https://github.com/melusc/lusc/raw/master/explore%20profiles.user.js
+// @downloadURL  https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
+// @updateURL    https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
 // @grant        window.close
 // ==/UserScript==
 var style=document.createElement("style");
