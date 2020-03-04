@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   Clean Moodle customisable
-// @version     3.2.4
+// @version     3.2.5
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of moodle
@@ -30,9 +30,7 @@ run('replace', 'Musik AlC Grundlagenfach', 'Musik');
 run('remove', 'Musik AlC Grundlagenfach');
 */
 
-<!--Settings-->
 run('...');
-<!--/Settings-->
 
 //Code
 
