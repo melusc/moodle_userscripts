@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Explore profiles
 // @namespace    Explore profiles
-// @version      1.4.6
+// @version      1.4.7
 // @author       lusc
 // @match        *://moodle.ksasz.ch/user/profile.php?*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
@@ -13,7 +13,7 @@ style.innerHTML += 'input.buttons{border:1px solid #1a2027!important;border-radi
 document.head.appendChild(style);
 
 
-var url = window.location.href.replace('moodle.ksasz.ch/user/profile.php?id=','').replace('https://','').replace('&action=-10','').replace('&action=+10','').replace('&action=+1','').replace('&action=-1','').replace('&action=rand',''),
+var url = window.location.href.replace('moodle.ksasz.ch/user/profile.php?id=','').replace('https://','').replace('&action=-10','').replace('&action=+10','').replace('&action=+1','').replace('&action=-1','').replace('&action=rand','').replace('&action=',''),
     prevUrl = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) - 1) + '&action=-1',
     nextUrl = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) + 1) + '&action=+1',
     prevUrl10 = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) - 10) + '&action=-10',
