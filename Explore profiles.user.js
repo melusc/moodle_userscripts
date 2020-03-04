@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Explore profiles
 // @namespace    Explore profiles
-// @version      1.4.4
+// @version      1.4.5
 // @author       lusc
 // @match        *://moodle.ksasz.ch/user/profile.php?*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
 // @updateURL    https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
 // @grant        window.close
 // ==/UserScript==
-var style=document.createElement("style");
+var style = document.createElement("style");
 style.innerHTML += 'input.buttons{border:1px solid #1a2027!important;border-radius:2px;background-color:#fff;background-image:linear-gradient(to bottom,#fff,#fff);color:#1a2027;text-shadow:0 1px 1px rgba(255,255,255,0)!important;box-shadow:inset 0 1px 0 transparent, 0 1px 2px transparent}input.buttons:hover{background-color:#e5e5e5;color:#30363c;background-image:linear-gradient(to bottom,#e5e5e5,#e5e5e5)}';
 document.head.appendChild(style);
 
