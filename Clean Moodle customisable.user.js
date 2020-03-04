@@ -1,5 +1,5 @@
 // ===UserScript===
-// @name        Clean moodle customisable
+// @name        Clean Moodle customisable
 // @version     3.2
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
