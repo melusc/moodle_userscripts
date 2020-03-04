@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         Alberto Müller
-// @version      1.5.1
+// @version      1.5.2
 // @author       lusc
 // @match        https://moodle.ksasz.ch/user/profile.php?*
 // @grant        none
+// @updateURL    https://github.com/melusc/lusc/raw/master/Change%20name.user.js
+// @downloadURL  https://github.com/melusc/lusc/raw/master/Change%20name.user.js
 // ==/UserScript==
 
 let script = document.createElement('script');
