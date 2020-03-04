@@ -4,7 +4,8 @@
 
 #### 2. Pick the right userscript<br>
 [Install `Clean Moodle customisable.user.js`](https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20customisable.user.js)<br>
-- Modifies the text in the sidebar of moodle<br><br>
+- Modifies the text in the sidebar of moodle
+- Will not work until you set it up correctly<br><br>
 
 [Install ```Explore profiles.user.js```](https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js)<br>
 * Let's you explore the profiles of moodle more easily by adding buttons to skip through them<br><br>
