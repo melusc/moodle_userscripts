@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   Clean Moodle customisable
-// @version     3.2.2
+// @version     3.2.3
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of moodle
@@ -29,7 +29,9 @@ Example:
 run('replace', 'Musik AlC Grundlagenfach', 'Musik');
 run('remove', 'Musik AlC Grundlagenfach');
 */
-run(..);
+
+run('...')
+
 //Code
 
 function run(custom, customReplace, customReplaceWith) {
@@ -43,4 +45,4 @@ function run(custom, customReplace, customReplaceWith) {
         thisHeading.childNodes[1].innerHTML = customReplaceWith
     }
 }
-document.title = `${document.title}d`;
+document.title = document.title.replace('Moodle','Moodled');
