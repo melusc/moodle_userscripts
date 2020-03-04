@@ -1,11 +1,11 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
-// @version     3.2
+// @version     3.2.1
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of moodle
-// @downloadURL https://github.com/melusc/lusc/raw/master/clean%20moodle%20customisable.user.js
-// @updateURL   https://github.com/melusc/lusc/raw/master/clean%20moodle%20customisable.user.js
+// @downloadURL https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20customisable.user.js
+// @updateURL   https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20customisable.user.js
 // ===/UserScript===
 
 //Instructions, read closely
