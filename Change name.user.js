@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name         .
-// @version      1.4
+// @namespace    .
+// @version      1.4.1
 // @author       lusc
 // @match        moodle.ksasz.ch/*
 // @grant        none
