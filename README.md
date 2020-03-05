@@ -1,6 +1,7 @@
 ## How to install?
 
-#### 1. Make sure you have greasyfork, tampermonkey or similar installed for this to work<br><br>
+#### 1. Make sure you have [greasymonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/), tampermonkey ([c](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)/[f](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)) or similar installed for this to work
+* I prefer tampermonkey<br><br>
 
 #### 2. Pick the right userscript<br>
 [Install ```Clean Moodle customisable.user.js```](https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20customisable.user.js)
