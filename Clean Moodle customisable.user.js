@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   https://github.com/melusc/lusc
-// @version     3.3
+// @version     3.3.1
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of moodle
@@ -69,11 +69,10 @@ if (sortAlphabetically) {
         i++;
     }
     let arrayS = arrayUS.slice().sort(),
-        arrayDoc = []
-    let j;
+        arrayDoc = [],
+        j;
     for (j = 0; arrayUS.length > j; j++) {
-        let findIndex = (element) => element == arrayS[j];
-        arrayDoc.push(document.querySelector('.type_system.depth_2.contains_branch').children[1].children[arrayUS.findIndex(findIndex)])
+        arrayDoc.push(document.querySelector('.type_system.depth_2.contains_branch').children[1].children[arrayUS.findIndex((element) => element == arrayS[j])])
     }
     let k;
     for (k = 0; arrayUS.length > k; k++) {
