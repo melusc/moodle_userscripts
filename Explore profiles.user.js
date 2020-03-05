@@ -1,34 +1,31 @@
 // ==UserScript==
 // @name         Explore profiles
 // @namespace    Explore profiles
-// @version      1.4.8
+// @version      1.4.9
 // @author       lusc
 // @match        *://moodle.ksasz.ch/user/profile.php*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
 // @updateURL    https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
-// @grant        window.close
 // ==/UserScript==
 
 let style = document.createElement("style");
-style.innerHTML += 'input.buttons{border:1px solid #1a2027!important;border-radius:2px;background-' +
-        'color:#fff;background-image:linear-gradient(to bottom,#fff,#fff);color:#1a2027;text-' +
-        'shadow:0 1px 1px rgba(255,255,255,0)!important;box-shadow:inset 0 1px 0 transp' +
-        'arent, 0 1px 2px transparent}input.buttons:hover{background-color:#e5e5e5;color:' +
+style.innerHTML += 'input.buttons{border:1px solid #1a2027!important;border-radius:2px;background-color:' +
+        '#fff;background-image:linear-gradient(to bottom,#fff,#fff);color:#1a2027;text-' +
+        'shadow:0 1px 1px rgba(255,255,255,0)!important;box-shadow:inset 0 1px 0 transparent,' +
+        '0 1px 2px transparent}input.buttons:hover{background-color:#e5e5e5;color:' +
         '#30363c;background-image:linear-gradient(to bottom,#e5e5e5,#e5e5e5)}';
 document.head.appendChild(style);
 
-let url_string = window.location.href,
-    url1 = new URL(url_string),
-    url = url1.searchParams.get('id');
-if (!url){
+let url = Number(new URLSearchParams(window.location.search).get('id'));
+if (!url) {
     url = 1612;
 }
-let prevUrl = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) - 1) + '&action=-1',
-    nextUrl = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) + 1) + '&action=+1',
-    prevUrl10 = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) - 10) + '&action=-10',
-    nextUrl10 = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) + 10) + '&action=+10',
-    randUrl = 'https://moodle.ksasz.ch/user/profile.php?id=' + Math.floor((Math.random() * 1744) + 2) + '&action=rand',
-    action = url1.searchParams.get('action'),
+let prevUrl = `https://moodle.ksasz.ch/user/profile.php?id=${url - 1}&action=-1`,
+    nextUrl = `https://moodle.ksasz.ch/user/profile.php?id=${url + 1}&action=+1`,
+    prevUrl10 = `https://moodle.ksasz.ch/user/profile.php?id=${url - 10}&action=-10`,
+    nextUrl10 = `https://moodle.ksasz.ch/user/profile.php?id=${url + 10}&action=+10`,
+    randUrl = `https://moodle.ksasz.ch/user/profile.php?id=${Math.floor((Math.random() * 1744) + 2)}&action=rand`,
+    action = new URLSearchParams(window.location.search).get('action'),
     form = document.createElement('form'),
     prev = document.createElement('input'),
     next = document.createElement('input'),
@@ -39,31 +36,31 @@ let prevUrl = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) - 1)
 prev.setAttribute('type','button');
 prev.setAttribute('value','Previous profile');
 prev.setAttribute('class','buttons');
-prev.setAttribute('onclick', `window.location.href='${prevUrl}'`);
+prev.setAttribute('onclick',`window.location.href='${prevUrl}'`);
 form.appendChild(prev);
 
 next.setAttribute('type','button');
 next.setAttribute('value','Next profile');
 next.setAttribute('class','buttons');
-next.setAttribute('onclick', (`window.location.href='${nextUrl}'`));
+next.setAttribute('onclick',`window.location.href='${nextUrl}'`);
 form.appendChild(next);
 
 prev10.setAttribute('type','button');
 prev10.setAttribute('value','-10 profiles');
 prev10.setAttribute('class','buttons');
-prev10.setAttribute('onclick', (`window.location.href='${prevUrl10}'`));
+prev10.setAttribute('onclick',`window.location.href='${prevUrl10}'`);
 form.appendChild(prev10);
 
 next10.setAttribute('type','button');
 next10.setAttribute('value','+10 profiles');
 next10.setAttribute('class','buttons');
-next10.setAttribute('onclick', (`window.location.href='${nextUrl10}'`));
+next10.setAttribute('onclick',`window.location.href='${nextUrl10}'`);
 form.appendChild(next10);
 
 rand.setAttribute('type','button');
 rand.setAttribute('value','Random profile');
 rand.setAttribute('class','buttons');
-rand.setAttribute('onclick', (`window.location.href='${randUrl}'`));
+rand.setAttribute('onclick',`window.location.href='${randUrl}'`);
 form.appendChild(rand);
 form.setAttribute('style','display:inline');
 form.id = 'exploreProfiles';
