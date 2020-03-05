@@ -1,14 +1,14 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   https://github.com/melusc/lusc
-// @version     3.2.8
+// @version     3.2.9
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of moodle
 // @downloadURL https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20customisable.user.js
 // @updateURL   https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20customisable.user.js
 // ===/UserScript===
-
+'use strict';
 //Instructions, read closely
 /*
 run(custom, customReplace, customReplaceWith)
@@ -34,21 +34,22 @@ run('replace','...','...');
 run('remove','...');
 
 //Code
-
 function run(custom, customReplace, customReplaceWith) {
     let thisHeading = document.querySelector(`[title="${customReplace}"]`);
     if (custom === 'remove') {
         if (thisHeading) {
             thisHeading.parentNode.removeChild(thisHeading);
-        } else if (document.querySelector('.block_navigation')) {
-            alert(`Error removing ${customReplace}! Check if it's written correctly or if you might be missing a whitespace at the end.`);
+        } else if (document.querySelector('.block_navigation.block')) {
+            alert(`Error removing "${customReplace}"! Check if it's written correctly or if you might be missing a whitespace at the end.`);
         }
     } else if (custom === 'replace') {
         if (thisHeading) {
             thisHeading.childNodes[1].innerHTML = customReplaceWith;
-        } else if (document.querySelector('.block_navigation')) {
-            alert(`Error replacing ${customReplace}! Check if it's written correctly or if you might be missing a whitespace at the end.`);
+        } else if (document.querySelector('.block_navigation.block')) {
+            alert(`Error replacing "${customReplace}"! Check if it's written correctly or if you might be missing a whitespace at the end.`);
         }
+    } else if (document.querySelector('.block_navigation.block')) {
+        alert(`Unable to "${custom}" "${customReplace}"`);
     }
 }
 document.title = document.title.replace('Moodle','Moodled');
