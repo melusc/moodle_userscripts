@@ -1,17 +1,31 @@
 // ==UserScript==
 // @name         More sidebar links
-// @version      1.3
+// @version      1.3.1
 // @author       lusc
 // @match        https://moodle.ksasz.ch/*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js
 // @updateURL    https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js
 // ==/UserScript==
+let lang = 'de'; //de-utsch or en-glish
 
 //Currently adds schulNetz, current lunch menu, printing website
+
+
+//Code
 var doc = document.querySelector('[class="type_system depth_2 contains_branch"]');
 doc = doc.children[1];
-
-
+let mensa,
+    schulNetz,
+    printer;
+if (lang == 'de') {
+    mensa = 'Mensa Menü';
+    schulNetz = 'Schulnetz';
+    printer = 'Drucker';
+} else if (lang == 'en') {
+    mensa = 'Cantine menu';
+    schulNetz = 'Schoolnet';
+    printer = 'printer';
+}
 //Mensa Menü
 
 function getWeekNumber(d) {
@@ -59,7 +73,7 @@ p.setAttribute('role','treeitem');
 p.id = 'expandable_branch_mensa_menü';
 
 span.setAttribute('class','item-content-wrap');
-span.appendChild(document.createTextNode('Mensa Menü'));
+span.appendChild(document.createTextNode(mensa));
 
 a.appendChild(img);
 a.appendChild(span);
@@ -98,7 +112,7 @@ p2.setAttribute('role','treeitem');
 p2.id = 'expandable_branch_schulnetz';
 
 span2.setAttribute('class','item-content-wrap');
-span2.appendChild(document.createTextNode('Schulnetz'));
+span2.appendChild(document.createTextNode(schulNetz));
 
 a2.appendChild(img2);
 a2.appendChild(span2);
@@ -137,7 +151,7 @@ p1.setAttribute('role','treeitem');
 p1.id = 'expandable_branch_drucker';
 
 span1.setAttribute('class','item-content-wrap');
-span1.appendChild(document.createTextNode('Drucker'));
+span1.appendChild(document.createTextNode(printer));
 
 a1.appendChild(img1);
 a1.appendChild(span1);
