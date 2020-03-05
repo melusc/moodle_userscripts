@@ -1,25 +1,34 @@
 // ==UserScript==
 // @name         Explore profiles
 // @namespace    Explore profiles
-// @version      1.4.7
+// @version      1.4.8
 // @author       lusc
-// @match        *://moodle.ksasz.ch/user/profile.php?*
+// @match        *://moodle.ksasz.ch/user/profile.php*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
 // @updateURL    https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
 // @grant        window.close
 // ==/UserScript==
-var style = document.createElement("style");
-style.innerHTML += 'input.buttons{border:1px solid #1a2027!important;border-radius:2px;background-color:#fff;background-image:linear-gradient(to bottom,#fff,#fff);color:#1a2027;text-shadow:0 1px 1px rgba(255,255,255,0)!important;box-shadow:inset 0 1px 0 transparent, 0 1px 2px transparent}input.buttons:hover{background-color:#e5e5e5;color:#30363c;background-image:linear-gradient(to bottom,#e5e5e5,#e5e5e5)}';
+
+let style = document.createElement("style");
+style.innerHTML += 'input.buttons{border:1px solid #1a2027!important;border-radius:2px;background-' +
+        'color:#fff;background-image:linear-gradient(to bottom,#fff,#fff);color:#1a2027;text-' +
+        'shadow:0 1px 1px rgba(255,255,255,0)!important;box-shadow:inset 0 1px 0 transp' +
+        'arent, 0 1px 2px transparent}input.buttons:hover{background-color:#e5e5e5;color:' +
+        '#30363c;background-image:linear-gradient(to bottom,#e5e5e5,#e5e5e5)}';
 document.head.appendChild(style);
 
-
-var url = window.location.href.replace('moodle.ksasz.ch/user/profile.php?id=','').replace('https://','').replace('&action=-10','').replace('&action=+10','').replace('&action=+1','').replace('&action=-1','').replace('&action=rand','').replace('&action=',''),
-    prevUrl = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) - 1) + '&action=-1',
+let url_string = window.location.href,
+    url1 = new URL(url_string),
+    url = url1.searchParams.get('id');
+if (!url){
+    url = 1612;
+}
+let prevUrl = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) - 1) + '&action=-1',
     nextUrl = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) + 1) + '&action=+1',
     prevUrl10 = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) - 10) + '&action=-10',
     nextUrl10 = 'https://moodle.ksasz.ch/user/profile.php?id=' + (Number(url) + 10) + '&action=+10',
     randUrl = 'https://moodle.ksasz.ch/user/profile.php?id=' + Math.floor((Math.random() * 1744) + 2) + '&action=rand',
-    action = window.location.href.replace(`moodle.ksasz.ch/user/profile.php?id=${url}`,'').replace('https://','').replace('&action=',''),
+    action = url1.searchParams.get('action'),
     form = document.createElement('form'),
     prev = document.createElement('input'),
     next = document.createElement('input'),
@@ -64,29 +73,31 @@ whitespace.innerHTML = '&nbsp;&nbsp;&nbsp;';
 
 document.querySelector('.page-header-headings').appendChild(whitespace);
 document.querySelector('.page-header-headings').appendChild(form);
-document.querySelector('.page-header-headings').childNodes[0].setAttribute('style','display:inline');
-
-
+document.querySelector('.page-header-headings').children[0].setAttribute('style','display:inline');
 
 var doc = document.querySelector('.alert').innerHTML;
-if (doc){
-    if (url <= 1745){
-        if (url >= 2){
-            if (action == +1) {
+if (doc) {
+    if (url <= 1745) {
+        if (url >= 2) {
+            if (action == + 1) {
                 window.open(nextUrl,'_self');
             } else if (action == -1) {
                 window.open(prevUrl,'_self');
-            } else if (action == +10) {
+            } else if (action == + 10) {
                 window.open(nextUrl10,'_self');
             } else if (action == -10) {
                 window.open(prevUrl10,'_self');
             } else if (action == 'rand') {
                 window.open(randUrl,'_self');
             }
+        } else if (action) {
+            window.open(`https://moodle.ksasz.ch/user/profile.php?id=1745&action=${action}`,'_self');
         } else {
-            window.open(`https://moodle.ksasz.ch/user/profile.php?id=1745&action=${action}`, '_self');
+            window.open(`https://moodle.ksasz.ch/user/profile.php?id=1745&action=-1`,'_self');
         }
+    } else if (action) {
+        window.open(`https://moodle.ksasz.ch/user/profile.php?id=2&action=${action}`,'_self');
     } else {
-        window.open(`https://moodle.ksasz.ch/user/profile.php?id=2&action=${action}`, '_self');
+        window.open(`https://moodle.ksasz.ch/user/profile.php?id=2&action=+1`,'_self');
     }
 }
