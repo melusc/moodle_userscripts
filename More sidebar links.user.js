@@ -1,12 +1,13 @@
 // ==UserScript==
-// @name         Mensa Menü, Printer & Schulnetz
-// @version      1.2
+// @name         More sidebar links
+// @version      1.3
 // @author       lusc
 // @match        https://moodle.ksasz.ch/*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js
 // @updateURL    https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js
 // ==/UserScript==
 
+//Currently adds schulNetz, current lunch menu, printing website
 var doc = document.querySelector('[class="type_system depth_2 contains_branch"]');
 doc = doc.children[1];
 
