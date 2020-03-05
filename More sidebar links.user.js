@@ -3,7 +3,8 @@
 // @version      1.2
 // @author       lusc
 // @match        https://moodle.ksasz.ch/*
-// @grant        none
+// @downloadURL  https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js
+// @updateURL    https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js
 // ==/UserScript==
 
 var doc = document.querySelector('[class="type_system depth_2 contains_branch"]');
