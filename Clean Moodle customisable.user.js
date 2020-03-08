@@ -1,10 +1,10 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   https://github.com/melusc/lusc
-// @version     3.3.1
+// @version     3.3.2
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
-// @description Improving the looks of moodle
+// @description Improving the looks of Moodle
 // @downloadURL https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20customisable.user.js
 // @updateURL   https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20customisable.user.js
 // ===/UserScript===
@@ -50,10 +50,10 @@ function run(custom, customReplace, customReplaceWith) {
             alert(`Error removing "${customReplace}"! Check if it's written correctly or if you might be missing a whitespace at the end.`);
         }
     } else if (custom === 'replace') {
-        if (thisHeading) {
-            thisHeading.childNodes[1].innerHTML = customReplaceWith;
-        } else if (document.querySelector('.block_navigation.block')) {
+        if (document.querySelector('.block_navigation.block') && !thisHeading) {
             alert(`Error replacing "${customReplace}"! Check if it's written correctly or if you might be missing a whitespace at the end.`);
+        } else if (thisHeading.parentNode.parentNode.className === 'type_course depth_3 item_with_icon') {
+            thisHeading.childNodes[1].innerHTML = customReplaceWith;
         }
     } else if (document.querySelector('.block_navigation.block')) {
         alert(`Unable to "${custom}" "${customReplace}"`);
@@ -72,7 +72,7 @@ if (sortAlphabetically) {
         arrayDoc = [],
         j;
     for (j = 0; arrayUS.length > j; j++) {
-        arrayDoc.push(document.querySelector('.type_system.depth_2.contains_branch').children[1].children[arrayUS.findIndex((element) => element == arrayS[j])])
+        arrayDoc.push(document.querySelector('.type_system.depth_2.contains_branch').children[1].children[arrayUS.findIndex((element) => element == arrayS[j])]);
     }
     let k;
     for (k = 0; arrayUS.length > k; k++) {
