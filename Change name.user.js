@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Alberto Müller
+// @name         Alberto Caprilotti
 // @namespace    https://github.com/melusc/lusc
-// @version      1.5.4
+// @version      1.5.5
 // @author       lusc
 // @match        https://moodle.ksasz.ch/user/profile.php?*
 // @grant        none
