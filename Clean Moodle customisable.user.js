@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   https://github.com/melusc/lusc
-// @version     3.4
+// @version     3.4.1
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of Moodle
@@ -56,10 +56,8 @@ function run(custom, customReplace, customReplaceWith) {
         } else if (thisHeading.parentNode.parentNode.className.startsWith('type_course depth_3 i')) {
             thisHeading.children[1].innerHTML = customReplaceWith;
         } else if (thisHeading.parentNode.parentNode.className.startsWith('type_course depth_3 c')) {
-            console.log(1);
             thisHeading.innerHTML = customReplaceWith;
         }
-        return;
     } else if (document.querySelector('.block_navigation.block')) {
         alert(`Unable to "${custom}" "${customReplace}"`);
     }
