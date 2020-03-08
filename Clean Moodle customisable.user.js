@@ -15,23 +15,34 @@ let sortAlphabetically = true;
 
 //Read instructions thoroughly and see example below
 /*
-Format:
-run('custom', 'customReplace', 'customReplaceWith');
+1) Format:
 
-custom ['replace'/'remove'] either replaces the text with your custom text or removes the whole text
+   run('custom', 'customReplace', 'customReplaceWith');
 
-customReplace selects the text to be either removed or replaced
-e.g. 'Allgemeine Informationen'
 
-customReplaceWith is the text you want to replace the text with //Leave empty if 'remove' is selected
-e.g. 'Allgemeine Infos'
+2) Explanation of variables
 
-//Note that all variables must have either '' or "" around them
-*//*
-Example:
+   2.1) custom ['replace'/'remove'] either replaces the text with your custom text or removes the whole text
+
+
+   2.2) customReplace selects the text to be either removed or replaced
+
+      - e.g. 'Allgemeine Informationen'
+
+
+   2.3) customReplaceWith is the text you want to replace the text with //Leave empty if 'remove' is selected
+
+      - e.g. 'Allgemeine Infos'
+
+---Note that all variables must have either '' or "" around them
+
+
+3) Example:
+
 run('replace','Allgemeine Informationen','Allgemeine Infos'); //Replaces the text 'Allgemeine Informationen' with Allgemeine Infos
 run('remove','Allgemeine Informationen'); //Removes the link entirely
-//these are not limited, just add more if necessary
+
+//The number of is not limited, just add more if necessary
 */
 
 run('replace','...','---'); //Modify this
