@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name         Alberto Müller
-// @version      1.5.3
+// @namespace    https://github.com/melusc/lusc
+// @version      1.5.4
 // @author       lusc
 // @match        https://moodle.ksasz.ch/user/profile.php?*
 // @grant        none
@@ -46,15 +47,15 @@ script.innerHTML = `if (document.querySelector('.page-header-headings').children
 }
 
 function beautify() {
-    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/Caprioni/g, 'Müller');
-    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/caprioni/g, 'müller');
+    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/Caprioni/g, 'Caprilotti');
+    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/caprioni/g, 'caprilotti');
 
     document.querySelector('#profileChanger').value = 'Uglify Profile';
     document.querySelector('#profileChanger').setAttribute('onclick','uglify()');
 }
 function uglify() {
-    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/Müller/g, 'Caprioni');
-    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/müller/g, 'caprioni');
+    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/Caprilotti/g, 'Caprioni');
+    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/caprilotti/g, 'caprioni');
 
     document.querySelector('#profileChanger').value = 'Beautify Profile';
     document.querySelector('#profileChanger').setAttribute('onclick','beautify()');
