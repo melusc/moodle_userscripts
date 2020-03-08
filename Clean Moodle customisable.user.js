@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   https://github.com/melusc/lusc
-// @version     3.3.2
+// @version     3.4
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of Moodle
@@ -9,39 +9,40 @@
 // @updateURL   https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20customisable.user.js
 // ===/UserScript===
 'use strict';
-let arrayUS = [];
 
 //Sort sidebar alphabetically?
 let sortAlphabetically = true;
 
-
-//Instructions, read closely
+//Read instructions thoroughly and see example below
 /*
-run(custom, customReplace, customReplaceWith)
+Format:
+run('custom', 'customReplace', 'customReplaceWith');
+
 custom ['replace'/'remove'] either replaces the text with your custom text or removes the whole text
 
-customReplace is the text you want to edit
+customReplace selects the text to be either removed or replaced
+e.g. 'Allgemeine Informationen'
 
-//Leave empty if 'remove' is selected
+customReplaceWith is the text you want to replace the text with //Leave empty if 'remove' is selected
+e.g. 'Allgemeine Infos'
 
-customReplaceWith is the text you want to replace the text with
-//Note that the text may have a whitespace at the end, this whitespace is necessary and it won't work without
-
-//Just add more if needed
-
-//Note that all 'selectors' must have either '' or "" around them
+//Note that all variables must have either '' or "" around them
 *//*
 Example:
-run('replace','Musik AlC Grundlagenfach','Musik');
-run('remove','Musik AlC Grundlagenfach');
+run('replace','Allgemeine Informationen','Allgemeine Infos'); //Replaces the text 'Allgemeine Informationen' with Allgemeine Infos
+run('remove','Allgemeine Informationen'); //Removes the link entirely
+//these are not limited, just add more if necessary
 */
 
-run('replace','...','...');
-run('remove','...');
+run('replace','...','---'); //Modify this
+run('remove','...'); //And this, and add more below
 
 //Code
 function run(custom, customReplace, customReplaceWith) {
-    let thisHeading = document.querySelector(`[title="${customReplace}"]`);
+    let thisHeading = document.querySelector('.type_system.depth_2.contains_branch').querySelector(`[title="${customReplace}"]`);
+    if (!thisHeading) {
+        thisHeading = document.querySelector('.type_system.depth_2.contains_branch').querySelector(`[title="${customReplace} "]`);
+    }
     if (custom === 'remove') {
         if (thisHeading) {
             thisHeading = thisHeading.parentNode.parentNode;
@@ -52,19 +53,26 @@ function run(custom, customReplace, customReplaceWith) {
     } else if (custom === 'replace') {
         if (document.querySelector('.block_navigation.block') && !thisHeading) {
             alert(`Error replacing "${customReplace}"! Check if it's written correctly or if you might be missing a whitespace at the end.`);
-        } else if (thisHeading.parentNode.parentNode.className === 'type_course depth_3 item_with_icon') {
-            thisHeading.childNodes[1].innerHTML = customReplaceWith;
+        } else if (thisHeading.parentNode.parentNode.className.startsWith('type_course depth_3 i')) {
+            thisHeading.children[1].innerHTML = customReplaceWith;
+        } else if (thisHeading.parentNode.parentNode.className.startsWith('type_course depth_3 c')) {
+            console.log(1);
+            thisHeading.innerHTML = customReplaceWith;
         }
+        return;
     } else if (document.querySelector('.block_navigation.block')) {
         alert(`Unable to "${custom}" "${customReplace}"`);
     }
 }
 document.title = document.title.replace('Moodle', 'Moodled');
+let arrayUS = [];
 if (sortAlphabetically) {
     let i = 0;
     while (document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i]) {
         if (document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i].className == 'type_course depth_3 item_with_icon') {
             arrayUS.push(document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i].children[0].children[0].children[1].innerHTML);
+        } else if (document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i].className == 'type_course depth_3 contains_branch current_branch') {
+            arrayUS.push(document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i].children[0].children[0].innerHTML);
         }
         i++;
     }
