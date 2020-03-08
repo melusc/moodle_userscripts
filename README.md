@@ -1,6 +1,6 @@
 ## How to install?
 
-#### 1. Make sure you have [greasymonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/), tampermonkey ([c](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)/[f](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)) or similar installed for this to work
+#### 1. Make sure you have [greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/), tampermonkey ([c](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)/[f](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)) or similar installed for this to work
 * I prefer tampermonkey<br><br>
 
 #### 2. Pick the right userscript<br>
