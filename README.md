@@ -12,7 +12,7 @@
 [Install ```Explore profiles.user.js```](https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js)
 * Let's you explore the profiles of moodle more easily by adding buttons to skip through them<br><br>
 
-[Install ```More sidebar links```](https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js)
+[Install ```More sidebar links.user.js```](https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js)
 * Adds more links to the moodle-sidebar<br>
 * Currently adds links to schulNetz, week's lunch menu, printer website<br>
 * Supports adding more custom links<br><br>
