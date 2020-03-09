@@ -14,7 +14,7 @@
 
 [Install ```More sidebar links```](https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js)
 * Adds more links to the moodle-sidebar<br>
-* Currently adds links to schulNetz, week's lunch menu, printer website
+* Currently adds links to schulNetz, week's lunch menu, printer website<br><br>
 
 [Install ```Change name.user.js```](https://github.com/melusc/lusc/raw/master/Change%20name.user.js)
 * Joke script, not very useful to most people
