@@ -1,15 +1,23 @@
 // ==UserScript==
-// @name         Alberto Caprilotti
+// @name         Lolberto Capriolotti
 // @namespace    https://github.com/melusc/lusc
-// @version      1.5.5
+// @version      1.5.6
 // @author       lusc
 // @match        https://moodle.ksasz.ch/user/profile.php?*
 // @grant        none
 // @updateURL    https://github.com/melusc/lusc/raw/master/Change%20name.user.js
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Change%20name.user.js
 // ==/UserScript==
-
-let script = document.createElement('script');
+let r1 = 'Alberto Caprioni',
+    rW1 = 'Lolberto Capriolotti',
+    r = `/${r1}/g`,
+    rW = `/${rW1}/g`,
+    rL = `/${r1.toLowerCase().replace(' ','.')}/g`,
+    rWL = `/${rW1.toLowerCase().replace(' ','.')}/g`,
+    rL1 = r1.toLowerCase().replace(' ','.'),
+    rWL1 = rW1.toLowerCase().replace(' ','.'),
+    profile = true,
+    script = document.createElement('script');
 script.innerHTML = `if (document.querySelector('.page-header-headings').children[0].innerHTML == 'Alberto Caprioni') {
     let whitespace = document.createElement('span'),
         input = document.createElement('input');
@@ -47,15 +55,22 @@ script.innerHTML = `if (document.querySelector('.page-header-headings').children
 }
 
 function beautify() {
-    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/Caprioni/g, 'Caprilotti');
-    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/caprioni/g, 'caprilotti');
-
+    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(${r}, '${rW1}');
+    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(${rL}, '${rWL1}');
+    document.title = document.title.replace(${r}, '${rW1}');
+    if (${profile}){
+        document.title = document.title.replace('pro','noob');
+}
     document.querySelector('#profileChanger').value = 'Uglify Profile';
-    document.querySelector('#profileChanger').setAttribute('onclick','uglify()');
+    document.querySelector('#profileChanger').setAttribute('onclick','uglify()')
 }
 function uglify() {
-    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/Caprilotti/g, 'Caprioni');
-    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(/caprilotti/g, 'caprioni');
+    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(${rW},'${r1}');
+    document.querySelector('body').innerHTML = document.querySelector('body').innerHTML.replace(${rWL}, '${rL1}');
+    document.title = document.title.replace(${rW},'${r1}');
+    if (${profile}){
+        document.title = document.title.replace('noob','pro');
+}
 
     document.querySelector('#profileChanger').value = 'Beautify Profile';
     document.querySelector('#profileChanger').setAttribute('onclick','beautify()');
