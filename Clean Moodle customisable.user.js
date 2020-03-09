@@ -80,7 +80,7 @@ if (sortAlphabetically) {
     while (document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i]) {
         if (document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i].className == 'type_course depth_3 item_with_icon') {
             arrayUS.push(document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i].children[0].children[0].children[1].innerHTML);
-        } else if (document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i].className == 'type_course depth_3 contains_branch current_branch') {
+        } else if (document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i].className.startsWith('type_course depth_3 contains_branch')) {
             arrayUS.push(document.querySelector('.type_system.depth_2.contains_branch').children[1].children[i].children[0].children[0].innerHTML);
         }
         i++;
