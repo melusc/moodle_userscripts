@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   https://github.com/melusc/lusc
-// @version     3.4.1
+// @version     3.4.2
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of Moodle
