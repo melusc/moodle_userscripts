@@ -14,18 +14,9 @@ let lang = 'de'; //de-utsch or en-glish
 //Code
 var doc = document.querySelector('[class="type_system depth_2 contains_branch"]');
 doc = doc.children[1];
-let mensa,
-    schulNetz,
-    printer;
-if (lang == 'de') {
-    mensa = 'Mensa Menü';
-    schulNetz = 'Schulnetz';
+let mensa = 'Mensa Menü',
+    schulNetz = 'Schulnetz',
     printer = 'Drucker';
-} else if (lang == 'en') {
-    mensa = 'Cantine menu';
-    schulNetz = 'Schoolnet';
-    printer = 'printer';
-}
 //Mensa Menü
 
 function getWeekNumber(d) {
