@@ -9,6 +9,7 @@ let boom = 'Boom!',
 
 if (!record) {
 	record = 1;
+	alert(`How to play: If the number shown is divisible by 3 or 7 click 'boom'`)
 }
 window.onload = function recordSetter() {
 	if (record > 1) {
