@@ -11,7 +11,7 @@ if (!record){
 	record = 1;
 }
 if (record > 1) {
-	document.querySelector('h2.record').innerHTML = `Current record: ${record}`;
+	document.querySelector('.record').innerHTML = `Current record: ${record}`;
 }
 console.log(record);
 function run(boom) {
