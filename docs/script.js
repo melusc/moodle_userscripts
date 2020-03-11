@@ -7,7 +7,7 @@ let boom = 'Boom!',
 	num = 1,
 	record = getCookie('record');
 if (!(getCookie('readInstructions'))) {
-	alert(`How to play: If the number shown is divisible by 3 or 7 click 'boom'`);
+	alert(`How to play: If the number shown is divisible by 3 or 7 click 'boom', otherwise click 'safe'.`);
 	document.cookie = 'readInstructions=true';
 }
 if (!record) {
