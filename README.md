@@ -19,3 +19,5 @@
 
 [Install ```Change name.user.js```](https://github.com/melusc/lusc/raw/master/Change%20name.user.js)
 * Joke script, not very useful to most people
+
+## Also make sure to check out the [game](melusc.github.io/lusc) I made
