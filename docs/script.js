@@ -6,16 +6,18 @@ function getCookie(name) {
 let boom = 'Boom!',
 	num = 1,
 	record = getCookie('record');
-
+if (!(getCookie('readInstructions'))) {
+	alert(`How to play: If the number shown is divisible by 3 or 7 click 'boom'`);
+	document.cookie = 'readInstructions=true';
+}
 if (!record) {
 	record = 1;
-	alert(`How to play: If the number shown is divisible by 3 or 7 click 'boom'`)
 }
 window.onload = function recordSetter() {
 	if (record > 1) {
 		document.querySelector('.record').innerHTML = `Current record: ${record}`;
 	}
-}
+};
 
 function run(boom) {
 	num++;
@@ -43,7 +45,7 @@ function failed() {
 	if (record < num - 1) {
 		record = num - 1;
 		document.querySelector('h2.record').innerHTML = `Current record: ${record}`;
-		document.cookie = `record=${record}`
+		document.cookie = `record=${record}`;
 	}
 }
 
@@ -53,6 +55,6 @@ function reset() {
 	document.querySelector('button.boom').style.display = '';
 	document.body.style.backgroundColor = '';
 	document.querySelector('h3.text').style.color = '';
-	num = 1
+	num = 1;
 	document.querySelector('h1.number').innerHTML = num;
 }
