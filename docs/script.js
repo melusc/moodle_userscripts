@@ -1,15 +1,16 @@
 function getCookie(name) {
-  let value = "; " + document.cookie;
-  let parts = value.split("; " + name + "=");
-  if (parts.length == 2) return parts.pop().split(";").shift();
+	let value = "; " + document.cookie;
+	let parts = value.split("; " + name + "=");
+	if (parts.length == 2) return parts.pop().split(";").shift();
 }
 let boom = 'Boom!',
 	num = 1,
 	record = getCookie('record');
-	
-if (!record){
+
+if (!record) {
 	record = 1;
 }
+
 function run(boom) {
 	num++;
 	if (boom) {
@@ -49,6 +50,8 @@ function reset() {
 	num = 1
 	document.querySelector('h1.number').innerHTML = num;
 }
-if (record > 1) {
-	document.querySelector('.record').innerHTML = `Current record: ${record}`;
+window.onload() = function record() {
+	if (record > 1) {
+		document.querySelector('.record').innerHTML = `Current record: ${record}`;
+	}
 }
