@@ -10,6 +10,12 @@ let boom = 'Boom!',
 if (!record) {
 	record = 1;
 }
+function record() {
+	if (record > 1) {
+		document.querySelector('.record').innerHTML = `Current record: ${record}`;
+	}
+}
+window.addEventListener('DOMContentLoaded', record());
 
 function run(boom) {
 	num++;
@@ -49,9 +55,4 @@ function reset() {
 	document.querySelector('h3.text').style.color = '';
 	num = 1
 	document.querySelector('h1.number').innerHTML = num;
-}
-window.onload() = function record() {
-	if (record > 1) {
-		document.querySelector('.record').innerHTML = `Current record: ${record}`;
-	}
 }
