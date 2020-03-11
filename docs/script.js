@@ -1,6 +1,6 @@
 let boom = 'Boom!',
     num = 1;
-
+document.querySelector('h1').innerHTML = num;
 function run() {
     num++;
     if (Math.floor(num / 7) == num / 7) {
