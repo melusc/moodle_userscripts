@@ -10,12 +10,12 @@ let boom = 'Boom!',
 if (!record) {
 	record = 1;
 }
-function record() {
+function recordSetter() {
 	if (record > 1) {
 		document.querySelector('.record').innerHTML = `Current record: ${record}`;
 	}
 }
-window.addEventListener('DOMContentLoaded', record());
+window.addEventListener('DOMContentLoaded', recordSetter());
 
 function run(boom) {
 	num++;
