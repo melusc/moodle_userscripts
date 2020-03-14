@@ -27,8 +27,8 @@ h1.number {
 	font-size: 30px;
 	font-family: montserrat;
 	color: white;
-	position: fixed;
-	text-align: right;
+	position: relative;
+	text-align: left;
 }
 h3.text {
 	top: 50%;
