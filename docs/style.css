@@ -1,51 +1,48 @@
 * {
-    user-select: none;
-	/* background-color: #14232c; */
-	/* background-color: #fff; */
+	user-select: none;
 }
 div {
-    position: relative;
-	height:100%;
-	width:100%;	
-    text-align: center;
+	position: relative;
+	height: 100%;
+	width: 100%;
+	text-align: center;
 }
 body {
 	background-color: #708090;
 }
 .number,
 .text {
-    font-family: montserrat;
-    position: relative;
+	font-family: montserrat;
+	position: relative;
 }
 h1.number {
 	line-height: 50px;
-    font-size: 100px;
-    color: white; 
+	font-size: 100px;
+	color: white;
 	font-weight: 500;
 }
-.record{
+.record {
 	font-size: 30px;
 	font-family: montserrat;
 	color: white;
-	position: relative;
-	text-align: left;
+	position: fixed;
 }
 h3.text {
 	top: 50%;
 	font-size: 30px;
-	color: #708090; 
+	color: #708090;
 	/* color: #000; */
-	text-align:center;
-	display:inline;
+	text-align: center;
+	display: inline;
 }
 button {
 	font-size: 400%;
-	width:45%;
+	width: 45%;
 	line-height: 400%;
-	border:3px solid white;
+	border: 3px solid white;
 	color: white;
 	border-radius: 5px;
-	background-color:transparent;
+	background-color: transparent;
 	margin: 10px;
 	font-family: 'Montserrat';
 }
