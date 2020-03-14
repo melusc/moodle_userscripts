@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle customisable
 // @namespace   https://github.com/melusc/lusc
-// @version     3.4.2
+// @version     3.4.3
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of Moodle
@@ -73,7 +73,6 @@ function run(custom, customReplace, customReplaceWith) {
         alert(`Unable to "${custom}" "${customReplace}"`);
     }
 }
-document.title = document.title.replace('Moodle', 'Moodled');
 let arrayUS = [];
 if (sortAlphabetically) {
     let i = 0;
