@@ -4,7 +4,7 @@
 * I prefer tampermonkey<br><br>
 
 #### 2. Pick the right userscript<br>
-[Install ```Clean Moodle customisable.user.js```](https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20customisable.user.js)
+[Install ```Clean Moodle.user.js```](https://github.com/melusc/lusc/raw/master/Clean%20Moodle.user.js)
 * Modifies the text in the sidebar of moodle
 * Will not work until you set it up correctly
 * Sorts sidebar links alphabetically by default<br><br>
@@ -17,4 +17,4 @@
 * Currently adds links to schulNetz, week's lunch menu, printer website<br>
 * Supports adding more custom links
 
-## Also make sure to check out the [game](https://melusc.github.io/lusc) I made
+### Also make sure to check out the [game](https://melusc.github.io/lusc) I made
