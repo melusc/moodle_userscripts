@@ -7,6 +7,7 @@
 // @description Improving the looks of Moodle
 // @downloadURL https://github.com/melusc/lusc/raw/master/Clean%20Moodle.user.js
 // @updateURL   https://github.com/melusc/lusc/raw/master/Clean%20Moodle.user.js
+// @run-at      document-end
 // ===/UserScript===
 'use strict';
 
