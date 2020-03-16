@@ -13,10 +13,10 @@
 //Sort sidebar alphabetically?
 let sortAlphabetically = true;
 
-run('replace','...','---')
-run('remove','...')
+run('replace','...','---');
+run('remove','...');
 
-cleanLinks('...')
+cleanLinks('...');
 
 //Code
 function run(custom, customReplace, customReplaceWith) {
