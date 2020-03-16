@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     3.5
+// @version     3.5.1
 // @include     *://moodle.ksasz.ch/*
 // @Author      lusc
 // @description Improving the looks of Moodle
@@ -13,10 +13,12 @@
 //Sort sidebar alphabetically?
 let sortAlphabetically = true;
 
-run('replace','...','---');
-run('remove','...');
+run('replace', '...', '---'); //Replaces the name of the course "..." with "---"
+run('remove', '...'); //Removes the course "..."
 
-cleanLinks('...');
+if (window.location.href == 'https://moodle.ksasz.ch/') {
+	cleanLinks('https://example.com/egg-sample'); //Removes the link to https://example.com/egg-sample from the sidebar
+}
 
 //Code
 function run(custom, customReplace, customReplaceWith) {
@@ -67,17 +69,15 @@ if (sortAlphabetically) {
 		document.querySelector('.type_system.depth_2.contains_branch').children[1].insertBefore(doc, docOther);
 	}
 }
+
 function cleanLinks(el) {
 	let nodes = document.querySelector('#inst161').querySelector(`[href="${el}"]`),
-		elementArray = Array.prototype.indexOf.call(nodes.parentElement.children, nodes);
+	elementArray = Array.prototype.indexOf.call(nodes.parentElement.children, nodes);
 	if (elementArray >= 0) {
-		if (nodes.parentElement.childElementCount > elementArray + 1) {
-			nodes.parentElement.removeChild(nodes.parentElement.children[elementArray + 1]);
-			nodes.parentElement.removeChild(nodes.parentElement.children[elementArray]);
-		} else if (nodes.parentElement.childElementCount <= 1) {
-			nodes.parentElement.parentElement.removeChild(nodes.parentElement);
-		} else {
-			nodes.parentElement.removeChild(nodes.parentElement.children[elementArray]);
-		}
+	if (nodes.parentElement.childElementCount > elementArray + 1) {
+		nodes.parentElement.removeChild(nodes.parentElement.children[elementArray + 1]);
+		nodes.parentElement.removeChild(nodes.parentElement.children[elementArray]);
+	} else if (nodes.parentElement.childElementCount <= 1) nodes.parentElement.parentElement.removeChild(nodes.parentElement);
+	else nodes.parentElement.removeChild(nodes.parentElement.children[elementArray]);
 	}
 }
