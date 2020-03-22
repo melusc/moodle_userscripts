@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         More sidebar links
 // @description  Adds more links to the sidebar in moodle and is fully customisable
-// @version      2020.03.22a
+// @version      2020.03.22b
 // @author       lusc
 // @match        https://moodle.ksasz.ch/*
 // @exclude      *://moodle.ksasz.ch/online*
