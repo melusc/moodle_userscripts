@@ -122,10 +122,10 @@ function lcm() {
                 }
                 value = value.replace(/[^0-9,]/g, ',').replace(/,{2,}/g, ',').replace(/,$/, '').replace(/^,/, '');
                 value = value.split(',');
-                value.sort((a,b) => a - b);
+                value.sort((a, b) => a - b);
                 var uniqueNumbers = [];
-                $.each(value, function(i, el){
-                    if($.inArray(el, uniqueNumbers) === -1) uniqueNumbers.push(el);
+                $.each(value, function(i, el) {
+                    if ($.inArray(el, uniqueNumbers) === -1) uniqueNumbers.push(el);
                 });
                 value = uniqueNumbers;
                 value = value.join(',');
