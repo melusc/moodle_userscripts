@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         More sidebar links
 // @description  Adds more links to the sidebar in moodle and is fully customisable
-// @version      2020.03.23a
+// @version      2020.03.23b
 // @author       lusc
 // @match        https://moodle.ksasz.ch/*
 // @exclude      *://moodle.ksasz.ch/online*
@@ -63,63 +63,80 @@ function add(name, link) {
 }
 
 function search(url, name) {
-    let input = document.createElement('input'),
-        sanitisedName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-    name = name.replace(/[^a-zA-Z0-9:\/.&;]/g, '');
-    input.placeholder = `Suche auf ${ name }`;
-    input.type = 'text';
-    input.id = `${ sanitisedName }Suche`;
-    let doc = document.querySelector('[class="type_system depth_2 contains_branch"] > ul');
-    doc.appendChild(input);
-    $(`#${ sanitisedName }Suche`).on('keydown keyup', function(e) {
-        if (e.which === 13) {
-            window.open(url.replace('%s', e.target.value), '_blank');
-            e.target.value = '';
-        }
-    });
+    if (window.location.href == 'https://moodle.ksasz.ch/') {
+        let input = document.createElement('input'),
+            sanitisedName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        name = name.replace(/[^a-zA-Z0-9:\/.&;]/g, '');
+        input.placeholder = `Suche auf ${ name }`;
+        input.type = 'text';
+        input.id = `${ sanitisedName }Suche`;
+        let doc = document.querySelector('[class="type_system depth_2 contains_branch"] > ul');
+        doc.appendChild(input);
+        $(`#${ sanitisedName }Suche`).on('keydown keyup', function(e) {
+            if (e.which === 13) {
+                window.open(url.replace('%s', e.target.value), '_blank');
+                e.target.value = '';
+            }
+        });
+    }
 }
 
 function lcm() {
-    let input = document.createElement('input'),
-        url = 'https://www.calculatorsoup.com/calculators/math/lcm.php?input=%s&data=none&action=solve';
-    input.placeholder = 'Get LCM of numbers';
-    input.type = 'text';
-    input.id = 'calculatorSoupSuche';
-    let doc = document.querySelector('[class="type_system depth_2 contains_branch"] > ul');
-    doc.appendChild(input);
-    $('#calculatorSoupSuche').on('keydown keyup', function(e) {
-        if (e.which === 13) {
-            let value = e.target.value;
-            value = value.replace(/[^0-9,-.\s]+/g, ',');
-            value = value.replace(/[.\s]+/g, ',');
-            value = value.replace(/,{2,}/g, ',');
-            value = value.replace(/-{2,}/g, '-');
-            value = value.replace(/,$/, '');
-            value = value.replace(/^,/, '');
-            let occurences = value.split('-').length - 1,
-                splitted = value.match(/[0-9]+-[0-9]+/g),
-                occurencesArray = splitted.length;
-            for (let j = 0; j < splitted.length; j++) {
-                let first = Number(splitted[j].replace(/-[0-9]+/g).replace(/.+,/g, '').replace(/[^0-9]/g, '')),
-                    last = Number(splitted[j].replace(/[0-9]+-/g).replace(/,.+/g, '').replace(/[^0-9]/g, ''));
-                value = value.replace(first + '-' + last, '');
-                value = value.replace(/[^0-9,-]+/g, '');
-                for (let i = first + 1; i <= last; i++) {
-                    first += `,${ i }`;
-                }
-                value = first + ',' + value;
+    if (window.location.href == 'https://moodle.ksasz.ch/') {
+        let input = document.createElement('input'),
+            url = 'https://www.calculatorsoup.com/calculators/math/lcm.php?input=%s&data=none&action=solve';
+        input.placeholder = 'Get LCM of numbers';
+        input.type = 'text';
+        input.id = 'calculatorSoupSuche';
+        let doc = document.querySelector('[class="type_system depth_2 contains_branch"] > ul');
+        doc.appendChild(input);
+        $('#calculatorSoupSuche').on('keydown keyup', function(e) {
+            if (e.which === 13) {
+                let value = e.target.value;
+                value = value.replace(/[^0-9,-.\s]+/g, ',');
+                value = value.replace(/[.\s]+/g, ',');
                 value = value.replace(/,{2,}/g, ',');
+                value = value.replace(/-{2,}/g, '-');
                 value = value.replace(/,$/, '');
                 value = value.replace(/^,/, '');
+                let occurences = value.split('-').length - 1,
+                    splitted = value.match(/[0-9]+-[0-9]+/g),
+                    occurencesArray = splitted.length;
+                for (let j = 0; j < splitted.length; j++) {
+                    let first = Number(splitted[j].replace(/-[0-9]+/g).replace(/.+,/g, '').replace(/[^0-9]/g, '')),
+                        last = Number(splitted[j].replace(/[0-9]+-/g).replace(/,.+/g, '').replace(/[^0-9]/g, ''));
+                    value = value.replace(first + '-' + last, '');
+                    value = value.replace(/[^0-9,-]+/g, '');
+                    if (first > last) {
+                        let temp = first;
+                        first = last;
+                        last = temp;
+                    }
+                    for (let i = first + 1; i <= last; i++) {
+                        first += `,${ i }`;
+                    }
+                    value = first + ',' + value;
+                    value = value.replace(/,{2,}/g, ',');
+                    value = value.replace(/,$/, '');
+                    value = value.replace(/^,/, '');
+                }
+                value = value.replace(/[^0-9,]/g, ',').replace(/,{2,}/g, ',').replace(/,$/, '').replace(/^,/, '');
+                value = value.split(',');
+                value.sort((a,b) => a - b);
+                var uniqueNumbers = [];
+                $.each(value, function(i, el){
+                    if($.inArray(el, uniqueNumbers) === -1) uniqueNumbers.push(el);
+                });
+                value = uniqueNumbers;
+                value = value.join(',');
+                value = String(value);
+                if (occurences == occurencesArray && value.length > 1 && value.includes(',')) {
+                    window.open(url.replace('%s', value.replace(/,/g, '%2C')), '_blank');
+                    e.target.value = '';
+                } else {
+                    alert('Error, falsy input');
+                }
             }
-            value = value.replace(/[^0-9,]/g, ',').replace(/,{2,}/g, ',').replace(/,$/, '').replace(/^,/, '');
-            value = String(value);
-            if (occurences == occurencesArray && value.length > 1 && value.includes(',')) {
-                window.open(url.replace('%s', value.replace(/,/g, '%2C')), '_blank');
-                e.target.value = '';
-            } else {
-                alert('Error, falsy input');
-            }
-        }
-    });
+        });
+    }
 }
