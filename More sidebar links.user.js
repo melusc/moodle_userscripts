@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         More sidebar links
 // @description  Adds more links to the sidebar in moodle and is fully customisable
-// @version      2020.03.23b
+// @version      2020.03.23c
 // @author       lusc
 // @match        https://moodle.ksasz.ch/*
 // @exclude      *://moodle.ksasz.ch/online*
@@ -29,8 +29,8 @@ const linkMensa = `https://www.ksasz.ch/images/PDF-Dokumente/Mensa/MeWo${ result
 add('Drucker', 'http://printer.ksasz.ch:9191/'); //Adds link to ksa printer
 add('Mensa Menü', linkMensa); //Adds link to ksa menu
 add('schulNetz', 'https://www.schul-netz.com/ausserschwyz/'); //Adds link to ksa schulNetz
-search('https://www.duden.de/suchen/dudenonline/%s', 'duden.de'); //Adds search bar for duden
-search('https://en.wikipedia.org/w/index.php?search=%s', 'en.wikipedia.org'); //Adds search bar for wikipedia
+// search('https://www.duden.de/suchen/dudenonline/%s', 'duden.de'); //Adds search bar for duden
+// search('https://en.wikipedia.org/w/index.php?search=%s', 'en.wikipedia.org'); //Adds search bar for wikipedia
 lcm(); //Adds input to find lowest common multiple
 
 function add(name, link) {
@@ -100,27 +100,30 @@ function lcm() {
                 value = value.replace(/,$/, '');
                 value = value.replace(/^,/, '');
                 let occurences = value.split('-').length - 1,
-                    splitted = value.match(/[0-9]+-[0-9]+/g),
+                    splitted = value.match(/[0-9]+-[0-9]+/g) || false,
+                    occurencesArray;
+                if (splitted) {
                     occurencesArray = splitted.length;
-                for (let j = 0; j < splitted.length; j++) {
-                    let first = Number(splitted[j].replace(/-[0-9]+/g).replace(/.+,/g, '').replace(/[^0-9]/g, '')),
-                        last = Number(splitted[j].replace(/[0-9]+-/g).replace(/,.+/g, '').replace(/[^0-9]/g, ''));
-                    value = value.replace(first + '-' + last, '');
-                    value = value.replace(/[^0-9,-]+/g, '');
-                    if (first > last) {
-                        let temp = first;
-                        first = last;
-                        last = temp;
+                    for (let j = 0; j < splitted.length; j++) {
+                        let first = Number(splitted[j].replace(/-[0-9]+/g).replace(/.+,/g, '').replace(/[^0-9]/g, '')),
+                            last = Number(splitted[j].replace(/[0-9]+-/g).replace(/,.+/g, '').replace(/[^0-9]/g, ''));
+                        value = value.replace(first + '-' + last, '');
+                        value = value.replace(/[^0-9,-]+/g, '');
+                        if (first > last) {
+                            let temp = first;
+                            first = last;
+                            last = temp;
+                        }
+                        for (let i = first + 1; i <= last; i++) {
+                            first += `,${ i }`;
+                        }
+                        value = first + ',' + value;
+                        value = value.replace(/,{2,}/g, ',');
+                        value = value.replace(/,$/, '');
+                        value = value.replace(/^,/, '');
                     }
-                    for (let i = first + 1; i <= last; i++) {
-                        first += `,${ i }`;
-                    }
-                    value = first + ',' + value;
-                    value = value.replace(/,{2,}/g, ',');
-                    value = value.replace(/,$/, '');
-                    value = value.replace(/^,/, '');
+                    value = value.replace(/[^0-9,]/g, ',').replace(/,{2,}/g, ',').replace(/,$/, '').replace(/^,/, '');
                 }
-                value = value.replace(/[^0-9,]/g, ',').replace(/,{2,}/g, ',').replace(/,$/, '').replace(/^,/, '');
                 value = value.split(',');
                 value.sort((a, b) => a - b);
                 var uniqueNumbers = [];
@@ -130,7 +133,14 @@ function lcm() {
                 value = uniqueNumbers;
                 value = value.join(',');
                 value = String(value);
-                if (occurences == occurencesArray && value.length > 1 && value.includes(',')) {
+                value = value.replace(/[^0-9,]/g, ',').replace(/,{2,}/g, ',').replace(/,$/, '').replace(/^,/, '');
+                let test;
+                if (!splitted) {
+                    test = true;
+                } else {
+                    test = occurences == occurencesArray;
+                }
+                if (test && value.length > 1 && value.includes(',')) {
                     window.open(url.replace('%s', value.replace(/,/g, '%2C')), '_blank');
                     e.target.value = '';
                 } else {
