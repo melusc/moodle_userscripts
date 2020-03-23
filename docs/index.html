@@ -1,85 +1,18 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <title>A lusc creation</title>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
-    <style>
-        label,
-        button,
-        input {
-        	font-family: 'montserrat';
-        	display:inline;
-        }
-        body {
-        	background-color: #14232c;
-        }
-        input {
-        	padding-left:5px;
-        	color: #FAB94B;
-        	background-color: transparent;
-        	border: 1px solid #fff;
-        	border-radius: 2px;
-        	font-family: 'montserrat';
-        	display:inline;
-        }
-        label {
-        	color: #FAB94B;
-        	font-family: 'montserrat';
-        	display:inline;
-        }
-        button {
-        	margin-top:6px;
-        	color: #fff;
-        	background-color: transparent;
-        	border: 1px solid #fff;
-        	border-radius: 2px;
-        	font-family: 'montserrat';
-        	display:inline;
-        }
-        ::placeholder {
-        	color:#fff;
-        }
-        ::-ms-input-placeholder {
-        	color:#fff;
-        }
-        button:hover {
-        	color: #FAB94B;
-        	border: 1px solid #FAB94B;
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script>
-        window.onload = function() {
-            $('#name').on('keyup', function(e) {
-                if (e.which === 13) {
-        			name(e.target.value);
-                }
-            });
-        }
-        function run(){
-        	name(document.querySelector('#name').value);
-        }
-        function name(value){
-        	document.querySelector('#name').value = '';
-        	if (value.toLowerCase() == 'alberto' || value.toLowerCase() == 'lolberto') {
-        		alert('Hoi Lolberto Capriolotti!\nDu kommst von Tessin.');
-        	} else if (value.toLowerCase() == 'bran') {
-        		alert('Hoi Bran!\nDu kommst aus S\u00FCdtirol.');
-        	} else if (value.toLowerCase() == 'luca') {
-        		alert('Hoi Luca de Schachprofi!\nDu kommst aus der Schweiz, nat\u00FCrlich');
-        	} else {
-        		let url = 'https://lmgtfy.com/?q=Woher+kommt+%s%3F'.replace('%s',value);
-        		window.open(url,'_self');
-        	}
-        }
-    </script>
-</head>
-
-<body>
-    <label for="fname">First name:</label> &nbsp;
-    <input value type="text" id="name" placeholder="Enter your name"></input><br>
-    <button type="button" onclick="run()">Submit</button>
-</body>
-
+	<head>
+	<title>1, 2, Boom!</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+		<script src="script.js"></script>
+	</head>
+	<body>
+		<div class="div">
+			<h2 class="record">Current record: 1</h2>
+			<h3 class="text">Boom! You exploded</h3>
+			<h1 class="number">1</h1>
+			<button class="boom" onclick="run(true)">Boom</button>
+			<button class="nothing" onclick="run(false)">Safe</button>
+		</div>
+	</body>
 </html>
