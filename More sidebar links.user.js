@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         More sidebar links
 // @description  Adds more links to the sidebar in moodle and is fully customisable
-// @version      2020.03.22c
+// @version      2020.03.23a
 // @author       lusc
 // @match        https://moodle.ksasz.ch/*
 // @exclude      *://moodle.ksasz.ch/online*
@@ -90,18 +90,20 @@ function lcm() {
     $('#calculatorSoupSuche').on('keydown keyup', function(e) {
         if (e.which === 13) {
             let value = e.target.value;
-            value = value.replace(/[^0-9,-.\s]+/g,',');
+            value = value.replace(/[^0-9,-.\s]+/g, ',');
             value = value.replace(/[.\s]+/g, ',');
             value = value.replace(/,{2,}/g, ',');
+            value = value.replace(/-{2,}/g, '-');
             value = value.replace(/,$/, '');
             value = value.replace(/^,/, '');
             let occurences = value.split('-').length - 1,
-                splitted = value.split('-');
-            if (occurences == 1) {
-                let first = Number(splitted[0].replace(/.+,/g,'').replace(/[^0-9]/g, '')),
-                    last = Number(splitted[1].replace(/,.+/g,'').replace(/[^0-9]/g, ''));
-                value = value.replace(first + '-' + last,'')
-                value = value.replace(/[^0-9,]+/g,'');
+                splitted = value.match(/[0-9]+-[0-9]+/g),
+                occurencesArray = splitted.length;
+            for (let j = 0; j < splitted.length; j++) {
+                let first = Number(splitted[j].replace(/-[0-9]+/g).replace(/.+,/g, '').replace(/[^0-9]/g, '')),
+                    last = Number(splitted[j].replace(/[0-9]+-/g).replace(/,.+/g, '').replace(/[^0-9]/g, ''));
+                value = value.replace(first + '-' + last, '');
+                value = value.replace(/[^0-9,-]+/g, '');
                 for (let i = first + 1; i <= last; i++) {
                     first += `,${ i }`;
                 }
@@ -110,8 +112,9 @@ function lcm() {
                 value = value.replace(/,$/, '');
                 value = value.replace(/^,/, '');
             }
+            value = value.replace(/[^0-9,]/g, ',').replace(/,{2,}/g, ',').replace(/,$/, '').replace(/^,/, '');
             value = String(value);
-            if (occurences <= 1 && value.length > 1 && value.includes(',')) {
+            if (occurences == occurencesArray && value.length > 1 && value.includes(',')) {
                 window.open(url.replace('%s', value.replace(/,/g, '%2C')), '_blank');
                 e.target.value = '';
             } else {
