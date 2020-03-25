@@ -126,12 +126,12 @@ function timeTable() {
 <table>
     <tbody style="font-size: large;">
         <tr>
-            <th style="color: var(--links);padding-right: 10px;">${text.now}:</th>
-            <td>${currentLesson}</td>
+            <th style="color: var(--links);">${text.now}:</th>
+            <td style="padding-right: 10px;">${currentLesson}</td>
         </tr>
         <tr>
-            <th style="color: var(--links);padding-right: 10px;">${text.after}:</th>
-            <td>${nextLesson}</td>
+            <th style="color: var(--links);>${text.after}:</th>
+            <td style="padding-right: 10px;">${nextLesson}</td>
         </tr>
     </tbody>
 </table>`;
