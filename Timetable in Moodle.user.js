@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Timetable in Moodle
-// @version      2020.03.25a
+// @version      2020.03.25b
 // @description  try to take over the world!
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
@@ -10,6 +10,11 @@
 // @grant        none
 // ==/UserScript==
 'use strict';
+
+//Replace lessons with object that you can get from melusc.github.io/lusc/Stundenplan
+let lessons = {
+	"1-1":"Example"
+}
 
 setTimeout(refresh, 300000);
 function refresh() {
@@ -24,49 +29,6 @@ let text = {
     now: 'Jetzt',
     after: 'Nachher',
     break: 'Pause, dann'
-}
-let lessons = {
-    "1-1": "Biologie",
-    "1-2": "Biologie",
-    "1-3": "Turnen",
-    "1-4": "Physik",
-    "1-5": "Physik",
-    "1-6": "Mittag",
-    "1-7": "Mathe",
-    "1-8": "Mathe",
-    "2-1": "Musik",
-    "2-2": "Musik",
-    "2-3": "Deutsch",
-    "2-4": "Englisch",
-    "2-5": "Englisch",
-    "2-6": "Mittag",
-    "2-7": "BG",
-    "2-8": "BG",
-    "3-1": "Französisch",
-    "3-2": "Französisch",
-    "3-3": "Klassenlehrerstunde",
-    "3-4": "Englisch",
-    "3-5": "Mittag",
-    "3-6": "Mittag",
-    "3-7": "Deutsch",
-    "3-8": "Deutsch",
-    "4-1": "Chemie",
-    "4-2": "Chemie",
-    "4-3": "Arbeitstechnik",
-    "4-4": "Geografie",
-    "4-5": "Geografie",
-    "4-6": "Mittag",
-    "4-7": "Wirtschaft und Recht",
-    "4-8": "Wirtschaft und Recht",
-    "4-9": "Wirtschaft und Recht",
-    "5-1": "Mathematik",
-    "5-2": "Mathematik",
-    "5-3": "Turnen",
-    "5-4": "Turnen",
-    "5-5": "Französisch",
-    "5-6": "Mittag",
-    "5-7": "Geschichte",
-    "5-8": "Geschichte"
 }
 let span = document.createElement('span'),
     strong = document.createElement('strong'),
