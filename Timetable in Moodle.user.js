@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Timetable in Moodle
-// @version      2020.03.25c
+// @version      2020.03.25d
 // @description  try to take over the world!
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
@@ -16,6 +16,14 @@ let lessons = {
 	"1-1":"Example"
 }
 
+let text = {
+    tt: 'Stundenplan',
+    nL: 'Kein Unterricht',
+    now: 'Jetzt',
+    after: 'Nachher',
+    break: 'Pause, dann'
+}
+
 function refresh() {
     timeTable();
     setTimeout(refresh, 300000);
@@ -25,7 +33,7 @@ let date = new Date(),
     minutes = date.getMinutes() + date.getSeconds() / 60 + date.getMilliseconds() / 60000,
     hours = date.getHours();
 minutes = Math.ceil(minutes / 5) * 5;
-refreshAt(hours,minutes,0)
+refreshAt(hours,minutes,3)
 function refreshAt(hours, minutes, seconds) {
     let now = new Date();
     let then = new Date();
@@ -41,13 +49,6 @@ function refreshAt(hours, minutes, seconds) {
     setTimeout(refresh, timeout);
 }
 
-let text = {
-    tt: 'Stundenplan',
-    nL: 'Kein Unterricht',
-    now: 'Jetzt',
-    after: 'Nachher',
-    break: 'Pause, dann'
-}
 let span = document.createElement('span'),
     strong = document.createElement('strong'),
     p = document.createElement('p'),
