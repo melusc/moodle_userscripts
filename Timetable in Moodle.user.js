@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Timetable in Moodle
-// @version      2020.03.25b
+// @version      2020.03.25c
 // @description  try to take over the world!
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
