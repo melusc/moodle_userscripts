@@ -2,31 +2,8 @@
 <html>
 
 <head>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-	<title>Stundenplan generator</title>
-    <script>
-		$('#1-1').on('keydown keyup', function(e) {
-			console.log(e.which);
-			run();
-		});
-        function run() {
-                let doc = {};
-                for (let j = 1; j <= 5; j++) {
-                    for (let i = 1; i <= 9; i++) {
-                        if (document.querySelector(`[id="${j}-${i}"]`).value) {
-                            doc[`${j}-${i}`] = document.querySelector(`[id="${j}-${i}"]`).value;
-                        }
-                    }
-                }
-                doc = JSON.stringify(doc);
-                if (!(doc == '{}')) {
-                    doc = doc.replace('{', '{\n    ');
-                    doc = doc.replace(/,/g, ',\n    ');
-                    doc = doc.replace('}', '\n}');
-                }
-                document.querySelector('#result').value = doc;
-            }
-    </script>
+    <title>Stundenplan generator</title>
+    <script src="Stundenplan.js"></script>
     <style>
         table, th, td{
             border: 2px solid black;
@@ -43,20 +20,20 @@
             background-color:transparent;
         }
         textarea {
-			width: 300px;
-			height: 150px;
+            width: 300px;
+            height: 150px;
         }
         table {
-			border-collapse: collapse;
+            border-collapse: collapse;
         }
-		input {
-			border: transparent;
-			margin-left: 3px;
-			text-align: center; 
-		}
-			input:focus, input:active {
-			outline: none;
-		}
+        input {
+            border: transparent;
+            margin-left: 3px;
+            text-align: center; 
+        }
+            input:focus, input:active {
+            outline: none;
+        }
     </style>
 </head>
 
