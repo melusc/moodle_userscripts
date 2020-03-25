@@ -11,7 +11,7 @@
 // ==/UserScript==
 'use strict';
 
-//Replace lessons with object that you can get from melusc.github.io/lusc/Stundenplan
+//Replace lessons with object that you can get from https://melusc.github.io/lusc/Stundenplan
 let lessons = {
 	"1-1":"Example"
 }
