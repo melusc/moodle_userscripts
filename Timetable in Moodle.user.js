@@ -5,6 +5,8 @@
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
 // @match        *://moodle.ksasz.ch/?
+// @updateUrl    https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
+// @downloadUrl  https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
 // @grant        none
 // ==/UserScript==
 'use strict';
