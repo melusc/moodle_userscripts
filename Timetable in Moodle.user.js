@@ -13,16 +13,17 @@
 
 //Replace the {object} below with the object that you can get from https://melusc.github.io/lusc/Stundenplan
 let lessons = {
-	"1-1":"Example"
-}
+    "1-1": "Example"
+};
 
 let text = {
     tt: 'Stundenplan',
     nL: 'Kein Unterricht',
     now: 'Jetzt',
     after: 'Nachher',
-    break: 'Pause, dann'
-}
+    break: 'Grosse Pause, dann',
+    wE: 'Wochenende!'
+};
 
 function refresh() {
     timeTable();
@@ -33,12 +34,13 @@ let date = new Date(),
     minutes = date.getMinutes() + date.getSeconds() / 60 + date.getMilliseconds() / 60000,
     hours = date.getHours();
 minutes = Math.ceil(minutes / 5) * 5;
-refreshAt(hours,minutes,3)
+refreshAt(hours, minutes, 3);
+
 function refreshAt(hours, minutes, seconds) {
     let now = new Date();
     let then = new Date();
 
-    if(now.getHours() > hours || (now.getHours() == hours && now.getMinutes() > minutes) || now.getHours() == hours && now.getMinutes() == minutes && now.getSeconds() >= seconds) {
+    if (now.getHours() > hours || (now.getHours() == hours && now.getMinutes() > minutes) || now.getHours() == hours && now.getMinutes() == minutes && now.getSeconds() >= seconds) {
         then.setDate(now.getDate() + 1);
     }
     then.setHours(hours);
@@ -84,6 +86,7 @@ div6.appendChild(div5);
 li.appendChild(div6);
 document.querySelector('.section.img-text').insertBefore(li, document.querySelector('.section.img-text').children[0]);
 timeTable();
+
 function timeTable() {
     let day = date.getDay(),
         hour = date.getHours(),
@@ -107,9 +110,11 @@ function timeTable() {
     nextLesson = lessons[`${day}-${timeSlot + 1}`];
     if (!nextLesson) nextLesson = text.nL;
     if (!currentLesson) currentLesson = text.nL;
-    if (timeSlot == 2) {
+    if (timeSlot == 2 && day < 6) {
         document.querySelector('#currentLesson').children[1].children[0].innerHTML = `<strong style="color:var(--links)">${text.now}:</strong> ${currentLesson}<br><strong style="color:var(--links)">${text.after}:</strong> ${text.break} ${nextLesson}`;
-    } else {
+    } else if (day < 6) {
         document.querySelector('#currentLesson').children[1].children[0].innerHTML = `<strong style="color:var(--links)">${text.now}:</strong> ${currentLesson}<br><strong style="color:var(--links)">${text.after}:</strong> ${nextLesson}`;
+    } else {
+        document.querySelector('#currentLesson').children[1].children[0].innerHTML = `<strong style="color:var(--links)">${text.wE}</strong>`;
     }
 }
