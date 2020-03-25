@@ -2,8 +2,13 @@
 <html>
 
 <head>
-<title>Stundenplan generator</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<title>Stundenplan generator</title>
     <script>
+		$('#1-1').on('keydown keyup', function(e) {
+			console.log(e.which);
+			run();
+		});
         function run() {
                 let doc = {};
                 for (let j = 1; j <= 5; j++) {
