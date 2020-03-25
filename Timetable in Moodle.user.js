@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Timetable in Moodle
-// @version      2020.03.25e
+// @version      2020.03.25f
 // @description  try to take over the world!
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
@@ -61,8 +61,7 @@ let span = document.createElement('span'),
     div5 = document.createElement('div'),
     div6 = document.createElement('div'),
     li = document.createElement('li'),
-    p2 = document.createElement('p'),
-    span2 = document.createElement('span');
+    p2 = document.createElement('p');
 span.innerHTML = text.tt;
 span.style = "font-size: medium;";
 div1.className = "no-overflow";
@@ -72,11 +71,9 @@ div3.className = "contentwithoutlink ";
 div5.className = "mod-indent-outer";
 li.className = "activity label modtype_label ";
 li.id = "module-currentClass";
-span2.style.fontSize = 'Large';
 strong.appendChild(span);
 p.appendChild(strong);
 div1.appendChild(p);
-p2.appendChild(span2);
 div1.appendChild(p2);
 div2.appendChild(div1);
 div3.appendChild(div2);
@@ -111,10 +108,34 @@ function timeTable() {
     if (!nextLesson) nextLesson = text.nL;
     if (!currentLesson) currentLesson = text.nL;
     if (timeSlot == 2 && day < 6) {
-        document.querySelector('#currentLesson').children[1].children[0].innerHTML = `<strong style="color:var(--links)">${text.now}:</strong> ${currentLesson}<br><strong style="color:var(--links)">${text.after}:</strong> ${text.break} ${nextLesson}`;
+        document.querySelector('#currentLesson').children[1].innerHTML = `
+<table>
+    <tbody style="font-size: large;">
+        <tr>
+            <th style="color: var(--links);padding-right: 10px;">${text.now}:</th>
+            <td>${currentLesson}</td>
+        </tr>
+        <tr>
+            <th style="color: var(--links);padding-right: 10px;">${text.after}:</th>
+            <td>${text.break} ${nextLesson}</td>
+        </tr>
+    </tbody>
+</table>`;
     } else if (day < 6) {
-        document.querySelector('#currentLesson').children[1].children[0].innerHTML = `<strong style="color:var(--links)">${text.now}:</strong> ${currentLesson}<br><strong style="color:var(--links)">${text.after}:</strong> ${nextLesson}`;
+        document.querySelector('#currentLesson').children[1].innerHTML = `
+<table>
+    <tbody style="font-size: large;">
+        <tr>
+            <th style="color: var(--links);padding-right: 10px;">${text.now}:</th>
+            <td>${currentLesson}</td>
+        </tr>
+        <tr>
+            <th style="color: var(--links);padding-right: 10px;">${text.after}:</th>
+            <td>${nextLesson}</td>
+        </tr>
+    </tbody>
+</table>`;
     } else {
-        document.querySelector('#currentLesson').children[1].children[0].innerHTML = `<strong style="color:var(--links)">${text.wE}</strong>`;
+        document.querySelector('#currentLesson').children[1].innerHTML = `<strong style="color:var(--links); font-size:large;">${text.wE}</strong>`;
     }
 }
