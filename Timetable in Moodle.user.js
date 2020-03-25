@@ -11,16 +11,34 @@
 // ==/UserScript==
 'use strict';
 
-//Replace lessons with object that you can get from https://melusc.github.io/lusc/Stundenplan
+//Replace the {object} below with the object that you can get from https://melusc.github.io/lusc/Stundenplan
 let lessons = {
 	"1-1":"Example"
 }
 
-setTimeout(refresh, 300000);
 function refresh() {
     timeTable();
     setTimeout(refresh, 300000);
     console.log(new Date());
+}
+let date = new Date(),
+    minutes = date.getMinutes() + date.getSeconds() / 60 + date.getMilliseconds() / 60000,
+    hours = date.getHours();
+minutes = Math.ceil(minutes / 5) * 5;
+refreshAt(hours,minutes,0)
+function refreshAt(hours, minutes, seconds) {
+    let now = new Date();
+    let then = new Date();
+
+    if(now.getHours() > hours || (now.getHours() == hours && now.getMinutes() > minutes) || now.getHours() == hours && now.getMinutes() == minutes && now.getSeconds() >= seconds) {
+        then.setDate(now.getDate() + 1);
+    }
+    then.setHours(hours);
+    then.setMinutes(minutes);
+    then.setSeconds(seconds);
+
+    let timeout = (then.getTime() - now.getTime());
+    setTimeout(refresh, timeout);
 }
 
 let text = {
@@ -66,8 +84,7 @@ li.appendChild(div6);
 document.querySelector('.section.img-text').insertBefore(li, document.querySelector('.section.img-text').children[0]);
 timeTable();
 function timeTable() {
-    let date = new Date(),
-        day = date.getDay(),
+    let day = date.getDay(),
         hour = date.getHours(),
         minute = date.getMinutes() + hour * 60;
     let timeSlot;
