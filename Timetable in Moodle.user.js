@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Timetable in Moodle
-// @version      2020.03.26c
+// @version      2020.03.26d
 // @description  try to take over the world!
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
@@ -14,9 +14,19 @@
 //Replace the {object} below with the object that you can get from https://melusc.github.io/lusc/Stundenplan
 let lessons = {
     "1-1": "Example"
-};
-
-let text = {
+},
+    times = {
+    1:['8:00','8:45'],
+    2:['8:45','9:30'],
+    3:['9:50','10:35'],
+    4:['10:40','11:25'],
+    5:['11:30','12:15'],
+    6:['12:15','13:10'],
+    7:['13:10','13:55'],
+    8:['13:55','14:40'],
+    9:['14:50','15:35']
+},
+    text = {
     tt: 'Stundenplan',
     nL: 'Kein Unterricht',
     now: 'Jetzt',
@@ -93,51 +103,55 @@ function timeTable() {
     let date2 = new Date();
     let day = date2.getDay(),
         hour = date2.getHours(),
-        minute = date2.getMinutes() + hour * 60;
-    let timeSlot;
-    if (minute >= 480 && minute <= 525) timeSlot = 1;
-    else if (minute >= 525 && minute <= 570) timeSlot = 2;
-    else if (minute >= 570 && minute <= 635) timeSlot = 3;
-    else if (minute >= 635 && minute <= 685) timeSlot = 4;
-    else if (minute >= 685 && minute <= 735) timeSlot = 5;
-    else if (minute >= 735 && minute <= 790) timeSlot = 6;
-    else if (minute >= 790 && minute <= 835) timeSlot = 7;
-    else if (minute >= 835 && minute <= 880) timeSlot = 8;
-    else if (minute >= 880 && minute <= 935) timeSlot = 9;
-    else if (minute < 480) timeSlot = 0;
-    else timeSlot = -1;
+        minute = date2.getMinutes() + hour * 60,
+        timesArr = {
+            1: times['1'][0].split(':')
+        },
+        timeSlot;
+    for (let j = 1; j <= Object.keys(times).length; j++) {
+        timesArr[j + 1] = times[j][1].split(':');
+    }
+    let timesMin = {};
+    for (let k = 1; k <= Object.keys(timesArr).length; k++) {
+        timesMin[k] = timesArr[k][0] * 60 + Number(timesArr[k][1]);
+    }
+    for (let i = 1; i <= Object.keys(times).length; i++){
+        if (minute >= timesMin[i] && minute <= timesMin[i + 1]) timeSlot = i;
+    }
+    if (minute < timesMin['1']) timeSlot = 0;
+    else if (minute > timesMin[Object.keys(times).length] + 1) timeSlot = -1;
 
     let currentLesson,
         nextLesson,
-        colour = window.getComputedStyle( document.querySelector('#label_1_1') ,null).getPropertyValue('color');
+        colour = window.getComputedStyle( document.querySelector('#label_1_1') ,null).getPropertyValue('color'),
+        time1,
+        time2;
     currentLesson = lessons[`${day}-${timeSlot}`];
     nextLesson = lessons[`${day}-${timeSlot + 1}`];
-    if (!nextLesson) nextLesson = text.nL;
-    if (!currentLesson) currentLesson = text.nL;
-    if (timeSlot == 2 && day < 6) {
+    if (!nextLesson) {
+        nextLesson = text.nL;
+        time2 = `<div style="color:${colour};font-weight:400;display:inline">:</div>`;
+    }
+    else {
+        time2 = '<div style="color:white;display:inline;font-weight:400;"> (' + times[timeSlot + 1][0] + "-" + times[timeSlot + 1][1] + "):</div>";
+    }
+    if (!currentLesson) {
+        currentLesson = text.nL;
+        time1 = `<div style="color:${colour};font-weight:400;display:inline">:</div>`;
+    }
+    else {
+        time1 = '<div style="color:white;display:inline;font-weight:400;"> (' + times[timeSlot][0] + "-" + times[timeSlot][1] + "):";
+    }
+    if (day < 6) {
         document.querySelector('#currentLesson').children[1].innerHTML = `
 <table>
     <tbody style="font-size: large;">
         <tr>
-            <th style="color: ${colour};">${text.now}:</th>
+            <th style="color: ${colour};">${text.now}${time1}</th>
             <td style="padding-left: 10px;">${currentLesson}</td>
         </tr>
         <tr>
-            <th style="color: ${colour};">${text.after}:</th>
-            <td style="padding-left: 10px;">${text.break} ${nextLesson}</td>
-        </tr>
-    </tbody>
-</table>`;
-    } else if (day < 6) {
-        document.querySelector('#currentLesson').children[1].innerHTML = `
-<table>
-    <tbody style="font-size: large;">
-        <tr>
-            <th style="color: ${colour};">${text.now}:</th>
-            <td style="padding-left: 10px;">${currentLesson}</td>
-        </tr>
-        <tr>
-            <th style="color: ${colour};">${text.after}:</th>
+            <th style="color: ${colour};">${text.after}${time2}</th>
             <td style="padding-left: 10px;">${nextLesson}</td>
         </tr>
     </tbody>
