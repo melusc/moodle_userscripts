@@ -27,7 +27,7 @@
         table {
             border-collapse: collapse;
         }
-        input {
+        input:not(#amount) {
             border: transparent;
             margin-left: 3px;
             text-align: center; 
@@ -39,8 +39,9 @@
 </head>
 
 <body>
-
+	<input id="amount" type="number" placeholder="Amount of rows" value="9"></input><br><br>
     <table>
+	<tbody>
         <tr>
             <th></th>
             <th>Montag</th>
@@ -166,6 +167,7 @@
             <td><input id="5-9" tabindex="45"></input>
             </td>
         </tr>
+		</tbody>
     </table><br>
 	<textarea tabindex="-1" onClick="this.focus();this.select()" readonly id="result" style="border:1px solid black;border-radius:2px"></textarea>
 </body>
