@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Timetable in Moodle
-// @version      2020.03.26b
+// @version      2020.03.26c
 // @description  try to take over the world!
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
@@ -90,9 +90,10 @@ document.querySelector('.section.img-text').insertBefore(li, document.querySelec
 timeTable();
 
 function timeTable() {
-    let day = date.getDay(),
-        hour = date.getHours(),
-        minute = date.getMinutes() + hour * 60;
+    let date2 = new Date();
+    let day = date2.getDay(),
+        hour = date2.getHours(),
+        minute = date2.getMinutes() + hour * 60;
     let timeSlot;
     if (minute >= 480 && minute <= 525) timeSlot = 1;
     else if (minute >= 525 && minute <= 570) timeSlot = 2;
