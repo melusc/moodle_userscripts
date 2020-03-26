@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Timetable in Moodle
-// @version      2020.03.25f
+// @version      2020.03.26a
 // @description  try to take over the world!
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
@@ -102,7 +102,8 @@ function timeTable() {
     else timeSlot = -1;
 
     let currentLesson,
-        nextLesson;
+        nextLesson,
+        colour = window.getComputedStyle( document.querySelector('#label_1_1') ,null).getPropertyValue('color');
     currentLesson = lessons[`${day}-${timeSlot}`];
     nextLesson = lessons[`${day}-${timeSlot + 1}`];
     if (!nextLesson) nextLesson = text.nL;
@@ -112,11 +113,11 @@ function timeTable() {
 <table>
     <tbody style="font-size: large;">
         <tr>
-            <th style="color: var(--links);">${text.now}:</th>
+            <th style="color: ${colour};">${text.now}:</th>
             <td style="padding-left: 10px;">${currentLesson}</td>
         </tr>
         <tr>
-            <th style="color: var(--links);">${text.after}:</th>
+            <th style="color: ${colour};">${text.after}:</th>
             <td style="padding-left: 10px;">${text.break} ${nextLesson}</td>
         </tr>
     </tbody>
@@ -126,16 +127,16 @@ function timeTable() {
 <table>
     <tbody style="font-size: large;">
         <tr>
-            <th style="color: var(--links);">${text.now}:</th>
+            <th style="color: ${colour};">${text.now}:</th>
             <td style="padding-left: 10px;">${currentLesson}</td>
         </tr>
         <tr>
-            <th style="color: var(--links);">${text.after}:</th>
+            <th style="color: ${colour};">${text.after}:</th>
             <td style="padding-left: 10px;">${nextLesson}</td>
         </tr>
     </tbody>
 </table>`;
     } else {
-        document.querySelector('#currentLesson').children[1].innerHTML = `<strong style="color:var(--links); font-size:large;">${text.wE}</strong>`;
+        document.querySelector('#currentLesson').children[1].innerHTML = `<strong style="${colour}; font-size:large;">${text.wE}</strong>`;
     }
 }
