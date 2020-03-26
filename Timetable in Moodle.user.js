@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Timetable in Moodle
-// @version      2020.03.25f
+// @version      2020.03.26b
 // @description  try to take over the world!
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
@@ -27,7 +27,11 @@ let text = {
 
 function refresh() {
     timeTable();
-    setTimeout(refresh, 300000);
+    let date1 = new Date(),
+        minutes1 = date1.getMinutes() + date1.getSeconds() / 60 + date1.getMilliseconds() / 60000,
+        hours1 = date1.getHours();
+    minutes1 = Math.ceil(minutes1 / 5) * 5;
+    refreshAt(hours1, minutes1, 3);
     console.log(new Date());
 }
 let date = new Date(),
@@ -48,6 +52,7 @@ function refreshAt(hours, minutes, seconds) {
     then.setSeconds(seconds);
 
     let timeout = (then.getTime() - now.getTime());
+    console.log(timeout);
     setTimeout(refresh, timeout);
 }
 
@@ -102,7 +107,8 @@ function timeTable() {
     else timeSlot = -1;
 
     let currentLesson,
-        nextLesson;
+        nextLesson,
+        colour = window.getComputedStyle( document.querySelector('#label_1_1') ,null).getPropertyValue('color');
     currentLesson = lessons[`${day}-${timeSlot}`];
     nextLesson = lessons[`${day}-${timeSlot + 1}`];
     if (!nextLesson) nextLesson = text.nL;
@@ -112,11 +118,11 @@ function timeTable() {
 <table>
     <tbody style="font-size: large;">
         <tr>
-            <th style="color: var(--links);">${text.now}:</th>
+            <th style="color: ${colour};">${text.now}:</th>
             <td style="padding-left: 10px;">${currentLesson}</td>
         </tr>
         <tr>
-            <th style="color: var(--links);">${text.after}:</th>
+            <th style="color: ${colour};">${text.after}:</th>
             <td style="padding-left: 10px;">${text.break} ${nextLesson}</td>
         </tr>
     </tbody>
@@ -126,16 +132,16 @@ function timeTable() {
 <table>
     <tbody style="font-size: large;">
         <tr>
-            <th style="color: var(--links);">${text.now}:</th>
+            <th style="color: ${colour};">${text.now}:</th>
             <td style="padding-left: 10px;">${currentLesson}</td>
         </tr>
         <tr>
-            <th style="color: var(--links);">${text.after}:</th>
+            <th style="color: ${colour};">${text.after}:</th>
             <td style="padding-left: 10px;">${nextLesson}</td>
         </tr>
     </tbody>
 </table>`;
     } else {
-        document.querySelector('#currentLesson').children[1].innerHTML = `<strong style="color:var(--links); font-size:large;">${text.wE}</strong>`;
+        document.querySelector('#currentLesson').children[1].innerHTML = `<strong style="${colour}; font-size:large;">${text.wE}</strong>`;
     }
 }
