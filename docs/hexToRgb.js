@@ -33,8 +33,9 @@ function hexToRgb(num) {
     num = String(num);
     let first = translate(num[0]),
         second = translate(num[1]);
-    function translate(elem){
-      return String(elem).replace(/a/g, '10').replace(/b/g, '11').replace(/c/g, '12').replace(/d/g, '13').replace(/e/g, '14').replace(/f/g, '15');
+
+    function translate(elem) {
+        return String(elem).replace(/a/g, '10').replace(/b/g, '11').replace(/c/g, '12').replace(/d/g, '13').replace(/e/g, '14').replace(/f/g, '15');
     }
     return (Number(first) * 16 + Number(second));
 }
@@ -75,13 +76,14 @@ function RgbToHex(num) {
     second = translate(second);
     if (!isNaN(num)) return first + second;
 }
-function height(){
-  let divWidth = document.querySelector('#everything').clientWidth,
-  divHeight = document.querySelector('#everything').clientHeight,
-  bodyWidth = document.body.clientWidth,
-  bodyHeight = document.body.clientHeight,
-  left = (bodyWidth - divWidth) / 2,
-  top = (bodyHeight - divHeight) / 2;
-  document.querySelector('#everything').style.top = top + "px";
-  document.querySelector('#everything').style.left = left + "px";
+
+function height() {
+    let divWidth = document.querySelector('#everything').clientWidth,
+        divHeight = document.querySelector('#everything').clientHeight,
+        bodyWidth = document.body.clientWidth,
+        bodyHeight = document.body.clientHeight,
+        left = (bodyWidth - divWidth) / 2,
+        top = (bodyHeight - divHeight) / 2;
+    document.querySelector('#everything').style.top = top + "px";
+    document.querySelector('#everything').style.left = left + "px";
 }
