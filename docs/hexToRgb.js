@@ -6,6 +6,7 @@ window.onload = function() {
     document.querySelector('#rgb').addEventListener('keyup', function() {
         rgb(this);
     });
+    height();
 };
 
 function hex(e) {
@@ -24,7 +25,7 @@ function hex(e) {
         b = hexToRgb(b);
         rgb = `rgb(${ r },${ g },${ b })`;
         document.querySelector('#rgb').value = rgb;
-        document.querySelector('div').style.backgroundColor = e.value;
+        document.querySelector('#background').style.backgroundColor = e.value;
     }
 }
 
@@ -73,4 +74,14 @@ function RgbToHex(num) {
     first = translate(first);
     second = translate(second);
     if (!isNaN(num)) return first + second;
+}
+function height(){
+  let divWidth = document.querySelector('#everything').clientWidth,
+  divHeight = document.querySelector('#everything').clientHeight,
+  bodyWidth = document.body.clientWidth,
+  bodyHeight = document.body.clientHeight,
+  left = (bodyWidth - divWidth) / 2,
+  top = (bodyHeight - divHeight) / 2;
+  document.querySelector('#everything').style.top = top + "px";
+  document.querySelector('#everything').style.left = left + "px";
 }
