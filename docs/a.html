@@ -7,7 +7,7 @@
             if (document.querySelector('#a').value && document.querySelector('#b').value) {
               document.body.innerHTML = '';
               let video = document.createElement('video');
-              video.setAttribute('autoplay', '');
+              //video.setAttribute('autoplay', '');
               video.setAttribute('controls', '');
               video.setAttribute('name', 'media');
               video.style.position = 'absolute';
@@ -24,7 +24,7 @@
               document.body.appendChild(video);
               document.body.style.backgroundColor = 'black';
               video.requestFullscreen();
-              video.play();
+              //video.play();
             }
         }
     </script>
