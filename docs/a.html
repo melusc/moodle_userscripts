@@ -3,6 +3,7 @@
 <head>
 <script>
 function run(){
+  if(document.querySelector('#a').value && document.querySelector('#b').value){
 document.body.innerHTML = '';
 let video = document.createElement('video'),
 source = document.createElement('source');
@@ -14,6 +15,7 @@ source.src = 'https://r4---sn-1gieen7e.googlevideo.com/videoplayback?expire=1585
 source.type = 'video/mp4';
 video.appendChild(source);
 document.body.appendChild(video);
+}
 }
 </script>
 </head>
