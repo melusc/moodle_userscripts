@@ -1,18 +1,32 @@
 <html>
+
 <head>
-<script>
-window.onload = ()=>{
-document.body.onclick = function(){
-document.querySelector('h1').innerHTML = Number(document.querySelector('h1').innerHTML) + 1;
-}};
-</script>
+    <style>
+        h1{
+            padding-top:180px;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select:none;
+            user-select:none;
+            -o-user-select:none;
+            text-align:center;
+            font-family:Roboto;
+            font-size:100px;
+            color:#fab94b
+          }
+    </style>
+    <script>
+        window.onload = ()=>{
+        document.body.onclick = function(){
+        document.querySelector('h1').innerHTML = Number(document.querySelector('h1').innerHTML) + 1;
+        }};
+    </script>
 </head>
+
 <body style="background-color:#14232c">
-<h1 style="padding-top:180px;-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;text-align:center;font-family:Roboto;font-size:100px;color:#fab94b"
- unselectable="on"
- onselectstart="return false;" 
- onmousedown="return false;">
-0
-</h1>
+    <h1 unselectable="on" onselectstart="return false;" onmousedown="return false;">
+        0
+    </h1>
 </body>
+
 </html>
