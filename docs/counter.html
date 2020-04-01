@@ -1,9 +1,10 @@
 <html>
 
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
   <style>
   h1{
-    padding-top:180px;
+    padding-top:150px;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select:none;
@@ -17,13 +18,28 @@
   body {
     background-color:#14232c;
   }
+  button {
+    outline:none;
+    border:1px solid white;
+    background-color: transparent;
+    color:white;
+    border-radius:2px;
+    width:10%;
+    height:5%;
+    font-family:Roboto
+  }
   </style>
+  <meta
+     name='viewport'
+     content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+/>
   <script>
-  window.onload=()=>{document.body.onclick=()=>{document.querySelector("h1").innerHTML=+document.querySelector("h1").innerHTML+1}};
+  const reset=()=>{document.querySelector("h1").innerHTML="0"};window.onload=()=>{document.body.onclick=a=>{"BUTTON"!=a.target.nodeName&&(document.querySelector("h1").innerHTML=+document.querySelector("h1").innerHTML+1)}};
   </script>
 </head>
 
-<body >
+<body>
+  <button onclick="reset()" tabindex="-1">Reset</button>
   <h1 unselectable="on" onselectstart="return false;" onmousedown="return false;">
     0
   </h1>
