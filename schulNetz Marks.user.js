@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         schulNetz Marks copy pasteable
-// @version      2020.04.02b
+// @version      2020.04.02c
 // @author       lusc
 // @match        https://www.schul-netz.com/ausserschwyz/index.php?pageid=21311*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
@@ -8,8 +8,13 @@
 // @grant        none
 // ==/UserScript==
 'use strict';
+let text = {
+    "grab": "Grab Marks",
+    "info": "Copy and paste into Excel",
+    "remove": "Remove textarea"
+}
 let button = document.createElement('button');
-button.innerHTML = 'Grab Marks';
+button.innerHTML = text.grab;
 button.setAttribute('onclick', 'grabMarks()');
 button.style.background = 'transparent';
 button.style.border = '1px solid #a9a9a9';
@@ -38,7 +43,7 @@ page.insertBefore(button, pageChildren[indexH3 + 1]);
 window.grabMarks = () => {
     let button = page.getElementsByTagName('button');
     Array.from(button).forEach(a => {
-        if (a.innerHTML == 'Grab Marks') button = a;
+        if (a.innerHTML == text.grab) button = a;
     });
     page.removeChild(button);
     let marksTbody = document.getElementsByClassName('mdl-data-table mdl-js-data-table mdl-table--listtable');
@@ -89,8 +94,8 @@ window.grabMarks = () => {
         removeButton = document.createElement('button'),
         br = document.createElement('br'),
         br2 = document.createElement('br');
-    h2.innerHTML = 'Copy and paste into Excel';
-    removeButton.innerHTML = 'Remove textarea';
+    h2.innerHTML = text.info;
+    removeButton.innerHTML = text.remove;
     removeButton.setAttribute('onclick', 'removeBut()');
     removeButton.style.background = 'transparent';
     removeButton.style.border = '1px solid #a9a9a9';
@@ -108,10 +113,10 @@ window.removeBut = () => {
         if (a.nodeName == 'BR') a.parentElement.removeChild(a);
     });
     Array.from(removeElem).forEach(a => {
-        if (a.nodeName == 'BUTTON' && a.innerHTML == 'Remove textarea') a.parentElement.removeChild(a);
+        if (a.nodeName == 'BUTTON' && a.innerHTML == text.remove) a.parentElement.removeChild(a);
     });
     Array.from(removeElem).forEach(a => {
-        if (a.nodeName == 'H2' && a.innerHTML == 'Copy and paste into Excel') a.parentElement.removeChild(a);
+        if (a.nodeName == 'H2' && a.innerHTML == text.info) a.parentElement.removeChild(a);
     });
     Array.from(removeElem).forEach(a => {
         if (a.nodeName == 'TEXTAREA' && String(a.onclick).indexOf('this.focus();this.select()') != -1) a.parentElement.removeChild(a);
