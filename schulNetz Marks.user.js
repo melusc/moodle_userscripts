@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         schulNetz Marks copy pasteable
-// @version      2020.04.02c
+// @version      2020.04.02d
 // @author       lusc
 // @match        https://www.schul-netz.com/ausserschwyz/index.php?pageid=21311*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
@@ -16,9 +16,11 @@ let text = {
     button = document.createElement('button');
 button.innerHTML = text.grab;
 button.setAttribute('onclick', 'grabMarks()');
-button.style.background = 'transparent';
+button.style.backgroundColor = 'transparent';
 button.style.border = '1px solid #a9a9a9';
 button.style.borderRadius = '2px';
+button.style.outline = 'none';
+button.className = 'userScriptGenerated';
 
 let page = document.getElementsByClassName('mdl-card mdl-shadow--2dp cls-page--content-card');
 Array.from(page).forEach(a => {
@@ -40,6 +42,12 @@ for (let h = 0; h < pageChildren.length; h++) {
 }
 page.insertBefore(button, pageChildren[indexH3 + 1]);
 
+let style = document.createElement('style');
+style.innerHTML = `
+.userScriptGenerated:hover{
+ filter: brightness(85%);
+}`;
+document.head.appendChild(style);
 window.grabMarks = () => {
     let button = page.getElementsByTagName('button');
     Array.from(button).forEach(a => {
@@ -83,13 +91,7 @@ window.grabMarks = () => {
     textArea.style.height = '150px';
     textArea.style.outline = 'none';
     marksObj = JSON.stringify(marksObj);
-    if (marksObj != '{}') {
-        marksObj = marksObj.replace('{', '');
-        marksObj = marksObj.replace(/,/g, '\n');
-        marksObj = marksObj.replace('}', '\n');
-        marksObj = marksObj.replace(/"/g, '');
-        marksObj = marksObj.replace(/:/g, '&#09;');
-    }
+    marksObj != '{}' && (marksObj = marksObj.replace(/[{}"]/g, '').replace(/,/g, '\n').replace(/:/g, '&#09;'));
     let h2 = document.createElement('h2'),
         removeButton = document.createElement('button'),
         br = document.createElement('br'),
@@ -97,9 +99,11 @@ window.grabMarks = () => {
     h2.innerHTML = text.info;
     removeButton.innerHTML = text.remove;
     removeButton.setAttribute('onclick', 'removeBut()');
-    removeButton.style.background = 'transparent';
+    removeButton.style.backgroundColor = 'transparent';
     removeButton.style.border = '1px solid #a9a9a9';
     removeButton.style.borderRadius = '2px';
+    removeButton.style.outline = 'none';
+    removeButton.className = 'userScriptGenerated';
     textArea.innerHTML = marksObj;
     page.insertBefore(removeButton, pageChildren[indexH3 + 1]);
     page.insertBefore(br, removeButton);
