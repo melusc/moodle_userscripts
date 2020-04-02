@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<meta charset="utf-8"/>
 <html>
 
 <head>
@@ -27,10 +28,10 @@
         table {
             border-collapse: collapse;
         }
-        input:not(#amount) {
+        input:not(#amount):not(#lunch) {
             border: transparent;
             margin-left: 3px;
-            text-align: center; 
+            text-align: center;
         }
             input:focus, input:active {
             outline: none;
@@ -39,133 +40,19 @@
 </head>
 
 <body>
-	<input id="amount" type="number" placeholder="Amount of rows" value="9"></input><br><br>
-    <table>
+	<label for="amount">Wie viele Spalten:</label>
+	<input id="amount" tabindex="-1" type="number" placeholder="Anzahl Reihen" min="1"></input><br><br>
+	<label for="lunch">Wann Mittagessen ist:</label>
+	<input id="lunch" tabindex="-1" type="number" placeholder="Wann ist Mittag" min="0"></input><br><br>
+  <table>
 	<tbody>
-        <tr>
-            <th></th>
+        <tr id="permanent">
+            <th>Zeit:</th>
             <th>Montag</th>
             <th>Dienstag</th>
             <th>Mittwoch</th>
             <th>Donnerstag</th>
             <th>Freitag</th>
-        </tr>
-        <tr>
-            <th>8:00-8:45</th>
-            <td><input id="1-1" tabindex="1"></input>
-            </td>
-            <td><input id="2-1" tabindex="10"></input>
-            </td>
-            <td><input id="3-1" tabindex="19"></input>
-            </td>
-            <td><input id="4-1" tabindex="28"></input>
-            </td>
-            <td><input id="5-1" tabindex="37"></input>
-            </td>
-        </tr>
-        <tr>
-            <th>8:45-9:30</th>
-            <td><input id="1-2" tabindex="2"></input>
-            </td>
-            <td><input id="2-2" tabindex="11"></input>
-            </td>
-            <td><input id="3-2" tabindex="20"></input>
-            </td>
-            <td><input id="4-2" tabindex="29"></input>
-            </td>
-            <td><input id="5-2" tabindex="38"></input>
-            </td>
-        </tr>
-        <tr>
-            <th>9:50-10:35</th>
-            <td><input id="1-3" tabindex="3"></input>
-            </td>
-            <td><input id="2-3" tabindex="12"></input>
-            </td>
-            <td><input id="3-3" tabindex="21"></input>
-            </td>
-            <td><input id="4-3" tabindex="30"></input>
-            </td>
-            <td><input id="5-3" tabindex="39"></input>
-            </td>
-        </tr>
-        <tr>
-            <th>10:40-11:25</th>
-            <td><input id="1-4" tabindex="4"></input>
-            </td>
-            <td><input id="2-4" tabindex="13"></input>
-            </td>
-            <td><input id="3-4" tabindex="22"></input>
-            </td>
-            <td><input id="4-4" tabindex="31"></input>
-            </td>
-            <td><input id="5-4" tabindex="40"></input>
-            </td>
-        </tr>
-        <tr>
-            <th>11:30-12:15</th>
-            <td><input id="1-5" tabindex="5"></input>
-            </td>
-            <td><input id="2-5" tabindex="14"></input>
-            </td>
-            <td><input id="3-5" tabindex="23"></input>
-            </td>
-            <td><input id="4-5" tabindex="32"></input>
-            </td>
-            <td><input id="5-5" tabindex="41"></input>
-            </td>
-        </tr>
-        <tr>
-            <th>12:15-13:05</th>
-            <td><input id="1-6" tabindex="6" value="Mittag"></input>
-            </td>
-            <td><input id="2-6" tabindex="15" value="Mittag"></input>
-            </td>
-            <td><input id="3-6" tabindex="24" value="Mittag"></input>
-            </td>
-            <td><input id="4-6" tabindex="33" value="Mittag"></input>
-            </td>
-            <td><input id="5-6" tabindex="42" value="Mittag"></input>
-            </td>
-        </tr>
-        <tr>
-            <th>13:10-13:55</th>
-            <td><input id="1-7" tabindex="7"></input>
-            </td>
-            <td><input id="2-7" tabindex="16"></input>
-            </td>
-            <td><input id="3-7" tabindex="25"></input>
-            </td>
-            <td><input id="4-7" tabindex="34"></input>
-            </td>
-            <td><input id="5-7" tabindex="43"></input>
-            </td>
-        </tr>
-        <tr>
-            <th>13:55-14:40</th>
-            <td><input id="1-8" tabindex="8"></input>
-            </td>
-            <td><input id="2-8" tabindex="17"></input>
-            </td>
-            <td><input id="3-8" tabindex="26"></input>
-            </td>
-            <td><input id="4-8" tabindex="35"></input>
-            </td>
-            <td><input id="5-8" tabindex="44"></input>
-            </td>
-        </tr>
-        <tr>
-            <th>14:50-15:35</th>
-            <td><input id="1-9" tabindex="9"></input>
-            </td>
-            <td><input id="2-9" tabindex="18"></input>
-            </td>
-            <td><input id="3-9" tabindex="27"></input>
-            </td>
-            <td><input id="4-9" tabindex="36"></input>
-            </td>
-            <td><input id="5-9" tabindex="45"></input>
-            </td>
         </tr>
 		</tbody>
     </table><br>
