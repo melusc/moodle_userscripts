@@ -10,7 +10,6 @@
 'use strict';
 let text = {
         grab: "Grab Marks",
-        info: "Copy and paste into Excel",
         remove: "Remove textarea"
     },
     button = document.createElement('button');
