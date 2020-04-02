@@ -8,7 +8,7 @@
 
 - [Another proof of concept](../lusc/a)
 
-- [Page for one of my userscripts](../lusc/Stundenplan)
+- [Stundeplan creator for one of my userscripts](../lusc/Stundenplan)
 
 - [Find out from where you are](../lusc/name)
 
