@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         schulNetz Marks copy pasteable
-// @version      2020.04.02a
+// @version      2020.04.02b
 // @author       lusc
 // @match        https://www.schul-netz.com/ausserschwyz/index.php?pageid=21311*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
 // @updateURL    https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
+// @grant        none
 // ==/UserScript==
 'use strict';
 let button = document.createElement('button');
