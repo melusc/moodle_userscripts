@@ -7,13 +7,22 @@
 // @updateURL    https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
 // @grant        none
 // ==/UserScript==
+// ==UserScript==
+// @name         schulNetz Marks copy pasteable
+// @version      2020.04.02c
+// @author       lusc
+// @match        https://www.schul-netz.com/ausserschwyz/index.php?pageid=21311*
+// @downloadURL  https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
+// @updateURL    https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
+// @grant        none
+// ==/UserScript==
 'use strict';
 let text = {
     "grab": "Grab Marks",
     "info": "Copy and paste into Excel",
     "remove": "Remove textarea"
-}
-let button = document.createElement('button');
+},
+    button = document.createElement('button');
 button.innerHTML = text.grab;
 button.setAttribute('onclick', 'grabMarks()');
 button.style.background = 'transparent';
@@ -64,10 +73,10 @@ window.grabMarks = () => {
         if (+(a.children[1].innerHTML)) marksArr.push(a);
     });
     marksArr.forEach(a => {
-        marksArrNum.push(+a.children[1].innerHTML)
+        marksArrNum.push(+a.children[1].innerHTML);
     });
     marksArr.forEach(a => {
-        marksArrName.push(a.children[0].innerHTML)
+        marksArrName.push(a.children[0].innerHTML);
     });
     for (let j = 0; j < marksArrName.length; j++) {
         marksArrName[j] = marksArrName[j].replace(/<b>.{1,}<\/b>/g, '').replace('<br>', '');
@@ -106,20 +115,20 @@ window.grabMarks = () => {
     page.insertBefore(br2, br);
     page.insertBefore(textArea, br2);
     page.insertBefore(h2, textArea);
-}
+};
 window.removeBut = () => {
     let removeElem = page.children;
     Array.from(removeElem).forEach(a => {
-        if (a.nodeName == 'BR') a.parentElement.removeChild(a);
+        a.nodeName == 'BR' && a.parentElement.removeChild(a);
     });
     Array.from(removeElem).forEach(a => {
-        if (a.nodeName == 'BUTTON' && a.innerHTML == text.remove) a.parentElement.removeChild(a);
+        a.nodeName == 'BUTTON' && a.innerHTML == text.remove && a.parentElement.removeChild(a);
     });
     Array.from(removeElem).forEach(a => {
-        if (a.nodeName == 'H2' && a.innerHTML == text.info) a.parentElement.removeChild(a);
+        a.nodeName == 'H2' && a.innerHTML == text.info && a.parentElement.removeChild(a);
     });
     Array.from(removeElem).forEach(a => {
-        if (a.nodeName == 'TEXTAREA' && String(a.onclick).indexOf('this.focus();this.select()') != -1) a.parentElement.removeChild(a);
+        a.nodeName == 'TEXTAREA' && String(a.onclick).indexOf('this.focus();this.select()') != -1 && a.parentElement.removeChild(a);
     });
     page.insertBefore(button, pageChildren[indexH3 + 1]);
-}
+};
