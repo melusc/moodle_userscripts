@@ -88,9 +88,7 @@ const run = e=>{
     }
     doc = JSON.stringify(doc);
     if (doc != '{}') {
-        doc = doc.replace('{', '{\n    ');
-        doc = doc.replace(/,/g, ',\n    ');
-        doc = doc.replace('}', '\n}');
+        doc = doc.replace('{', '{\n    ').replace(/,/g, ',\n    ').replace('}', '\n}');
     }
     document.querySelector('#result').value = doc;
 };
