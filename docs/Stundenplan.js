@@ -1,27 +1,7 @@
 let amount,
 lunch;
-window.onload = () => {
-    amount = document.getElementById('amount');
-    lunch = document.getElementById('lunch');
-    amount.value = 9;
-    lunch.value = 5;
-    add(amount);
-    run();
-    amount.addEventListener('change', () => {
-        add(amount);
-    });
-    amount.addEventListener('keyup', () => {
-        add(amount);
-    });
-    lunch.addEventListener('change', () => {
-        add(amount);
-    });
-    lunch.addEventListener('keyup', () => {
-        add(amount);
-    });
-};
 
-function add(e) {
+const add = e=>{
   lunch.max=e.value;
   e.value < lunch.value && (lunch.value = e.value);
     let permanent = document.getElementsByTagName('tbody')[0].querySelector('#permanent');
@@ -97,7 +77,7 @@ function add(e) {
     run();
 }
 
-function run(e) {
+const run = e=>{
     let doc = {};
     for (let j = 1; j <= 5; j++) {
         for (let i = 1; i <= amount.value; i++) {
@@ -114,3 +94,24 @@ function run(e) {
     }
     document.querySelector('#result').value = doc;
 }
+
+window.onload = () => {
+  amount = document.getElementById('amount');
+  lunch = document.getElementById('lunch');
+  amount.value = 9;
+  lunch.value = 5;
+  add(amount);
+  run();
+  amount.addEventListener('change', () => {
+    add(amount);
+  });
+  amount.addEventListener('keyup', () => {
+    add(amount);
+  });
+  lunch.addEventListener('change', () => {
+    add(amount);
+  });
+  lunch.addEventListener('keyup', () => {
+    add(amount);
+  });
+};
