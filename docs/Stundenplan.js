@@ -75,7 +75,7 @@ const add = e=>{
         document.getElementsByTagName('tbody')[0].appendChild(tr);
     }
     run();
-}
+};
 
 const run = e=>{
     let doc = {};
@@ -93,7 +93,7 @@ const run = e=>{
         doc = doc.replace('}', '\n}');
     }
     document.querySelector('#result').value = doc;
-}
+};
 
 window.onload = () => {
   amount = document.getElementById('amount');
