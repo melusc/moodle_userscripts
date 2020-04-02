@@ -7,21 +7,12 @@
 // @updateURL    https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
 // @grant        none
 // ==/UserScript==
-// ==UserScript==
-// @name         schulNetz Marks copy pasteable
-// @version      2020.04.02c
-// @author       lusc
-// @match        https://www.schul-netz.com/ausserschwyz/index.php?pageid=21311*
-// @downloadURL  https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
-// @updateURL    https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
-// @grant        none
-// ==/UserScript==
 'use strict';
 let text = {
-    "grab": "Grab Marks",
-    "info": "Copy and paste into Excel",
-    "remove": "Remove textarea"
-},
+        grab: "Grab Marks",
+        info: "Copy and paste into Excel",
+        remove: "Remove textarea"
+    },
     button = document.createElement('button');
 button.innerHTML = text.grab;
 button.setAttribute('onclick', 'grabMarks()');
