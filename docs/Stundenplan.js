@@ -23,16 +23,16 @@ window.onload = () => {
 
 function add(e) {
   lunch.max=e.value;
-  e.value < lunch.value && (lunch.value = e.value)
+  e.value < lunch.value && (lunch.value = e.value);
     let permanent = document.getElementsByTagName('tbody')[0].querySelector('#permanent');
     document.getElementsByTagName('tbody')[0].innerHTML = '';
     document.getElementsByTagName('tbody')[0].appendChild(permanent);
-    for (i = 1; i <= e.value; i++) {
+    for (let i = 1; i <= e.value; i++) {
         const cI = () => {
-                return document.createElement('input')
+                return document.createElement('input');
             },
             cTd = () => {
-                return document.createElement('td')
+                return document.createElement('td');
             };
         let tr = document.createElement('tr'),
             th = document.createElement('th'),
@@ -53,7 +53,7 @@ function add(e) {
         input4.id = `4-${i}`;
         input5.id = `5-${i}`;
         const addEl = a => {
-            a.addEventListener('keyup', a => run(a))
+            a.addEventListener('keyup', a => run(a));
         };
         addEl(input1);
         addEl(input2);
@@ -62,14 +62,14 @@ function add(e) {
         addEl(input5);
 
         const tI = (a, num) => {
-            a.setAttribute('tabindex', num * e.value)
-        }
+            a.setAttribute('tabindex', num * e.value);
+        };
         tI(input1, 1);
         tI(input2, 2);
         tI(input3, 3);
         tI(input4, 4);
         tI(input5, 5);
-        const l5 = a=>{a.value = 'Mittag'}
+        const l5 = a=>{a.value = 'Mittag';};
          lunch.value && i == lunch.value && (l5(input1),l5(input2),l5(input3),l5(input4),l5(input5));
 
         td1.appendChild(input1);
@@ -85,8 +85,8 @@ function add(e) {
         th.appendChild(inputTh);
         tr.appendChild(th);
         const ac = a => {
-            tr.appendChild(a)
-        }
+            tr.appendChild(a);
+        };
         ac(td1);
         ac(td2);
         ac(td3);
