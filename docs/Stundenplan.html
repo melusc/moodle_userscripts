@@ -42,8 +42,8 @@
 <body>
 	<label for="amount">Stunden pro Tag:</label>
 	<input id="amount" tabindex="-1" type="number" placeholder="Anzahl Reihen" min="1"></input><br><br>
-	<label for="lunch">Stunde Mittagessen</label>
-	<input id="lunch" tabindex="-1" type="number" placeholder="Wann ist Mittag" min="0"></input><br><br>
+	<label for="lunch">Stunde Mittagessen:</label>
+	<input id="lunch" tabindex="-1" type="number" placeholder="Wann ist Mittag" min="1"></input><br><div style="margin-left:2.5%"><label for="checkbox">&#09;Aktiviert?</label><input id="checkbox" type="checkbox" checked></input></div><br>
   <table>
 	<tbody>
         <tr id="permanent">
@@ -56,7 +56,7 @@
         </tr>
 		</tbody>
     </table>
-		<small>* Zwei aufeinanderfolgende Stunden müssen beide eingetragen um optimal mit meinem Userscript zu funktionieren</small><br><br>
+		<small>* Zwei aufeinanderfolgende Stunden sollten beide eingetragen um optimal mit meinem Userscript zu funktionieren</small><br><br>
 	<textarea tabindex="-1" onClick="this.focus();this.select()" readonly id="result" style="border:1px solid black;border-radius:2px"></textarea>
 </body>
 
