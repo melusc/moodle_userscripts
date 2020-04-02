@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         schulNetz Marks copy pasteable
-// @version      2020.04.02e
+// @version      2020.04.02f
 // @author       lusc
 // @match        https://www.schul-netz.com/ausserschwyz/index.php?pageid=21311*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
@@ -77,13 +77,16 @@ window.grabMarks = () => {
     marksArr.forEach(a => {
         marksArrName.push(a.children[0].innerHTML);
     });
-    for (let j = 0; j < marksArrName.length; j++) {
-        marksArrName[j] = marksArrName[j].replace(/<b>.{1,}<\/b>/g, '').replace('<br>', '');
-    }
+    marksArrName.forEach((a,index)=>{
+        let temp = new DOMParser().parseFromString(a, "text/html").body
+        temp.removeChild(temp.getElementsByTagName('b')[0]);
+        temp.removeChild(temp.getElementsByTagName('br')[0]);
+        marksArrName[index] = temp.innerHTML;
+    });
     let marksObj = {};
-    for (let i = 0; i < marksArrName.length; i++) {
-        marksObj[marksArrName[i]] = marksArrNum[i];
-    }
+    marksArrName.forEach((a,index)=>{
+        marksObj[marksArrName[index]] = marksArrNum[index];
+    });
     let textArea = document.createElement('textarea');
     textArea.setAttribute('readonly', '');
     textArea.setAttribute('onClick', 'this.focus();this.select()');
@@ -92,11 +95,9 @@ window.grabMarks = () => {
     textArea.style.outline = 'none';
     marksObj = JSON.stringify(marksObj);
     marksObj != '{}' && (marksObj = marksObj.replace(/[{}"]/g, '').replace(/,/g, '\n').replace(/:/g, '&#09;'));
-    let h2 = document.createElement('h2'),
-        removeButton = document.createElement('button'),
+    let removeButton = document.createElement('button'),
         br = document.createElement('br'),
         br2 = document.createElement('br');
-    h2.innerHTML = text.info;
     removeButton.innerHTML = text.remove;
     removeButton.setAttribute('onclick', 'removeBut()');
     removeButton.style.backgroundColor = 'transparent';
@@ -109,7 +110,6 @@ window.grabMarks = () => {
     page.insertBefore(br, removeButton);
     page.insertBefore(br2, br);
     page.insertBefore(textArea, br2);
-    page.insertBefore(h2, textArea);
 };
 window.removeBut = () => {
     let removeElem = page.children;
@@ -118,9 +118,6 @@ window.removeBut = () => {
     });
     Array.from(removeElem).forEach(a => {
         a.nodeName == 'BUTTON' && a.innerHTML == text.remove && a.parentElement.removeChild(a);
-    });
-    Array.from(removeElem).forEach(a => {
-        a.nodeName == 'H2' && a.innerHTML == text.info && a.parentElement.removeChild(a);
     });
     Array.from(removeElem).forEach(a => {
         a.nodeName == 'TEXTAREA' && String(a.onclick).indexOf('this.focus();this.select()') != -1 && a.parentElement.removeChild(a);
