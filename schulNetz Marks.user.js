@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         schulNetz Marks copy pasteable
-// @version      2020.04.02d
+// @version      2020.04.02e
 // @author       lusc
 // @match        https://www.schul-netz.com/ausserschwyz/index.php?pageid=21311*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
@@ -69,10 +69,10 @@ window.grabMarks = () => {
         if (!(a.style.display)) trArr.push(a);
     });
     trArr.forEach(a => {
-        if (+(a.children[1].innerHTML)) marksArr.push(a);
+        if (+(a.children[1].innerHTML.replace(/[^0-9.]/g,''))) marksArr.push(a);
     });
     marksArr.forEach(a => {
-        marksArrNum.push(+a.children[1].innerHTML);
+        marksArrNum.push(+a.children[1].innerHTML.replace(/[^0-9.]/g,''));
     });
     marksArr.forEach(a => {
         marksArrName.push(a.children[0].innerHTML);
