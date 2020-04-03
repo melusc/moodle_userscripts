@@ -1,13 +1,12 @@
 // ==UserScript==
 // @name         More sidebar links
 // @description  Adds more links to the sidebar in moodle and is fully customisable
-// @version      2020.03.23c
+// @version      2020.04.03a
 // @author       lusc
 // @match        https://moodle.ksasz.ch/*
 // @exclude      *://moodle.ksasz.ch/online*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js
 // @updateURL    https://github.com/melusc/lusc/raw/master/More%20sidebar%20links.user.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js#sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=
 // ==/UserScript==
 'use strict';
 
@@ -72,7 +71,7 @@ function search(url, name) {
         input.id = `${ sanitisedName }Suche`;
         let doc = document.querySelector('[class="type_system depth_2 contains_branch"] > ul');
         doc.appendChild(input);
-        $(`#${ sanitisedName }Suche`).on('keydown keyup', function(e) {
+        document.querySelector(`#${ sanitisedName }Suche`).addEventListener('keyup',e=> {
             if (e.which === 13) {
                 window.open(url.replace('%s', e.target.value), '_blank');
                 e.target.value = '';
@@ -90,7 +89,7 @@ function lcm() {
         input.id = 'calculatorSoupSuche';
         let doc = document.querySelector('[class="type_system depth_2 contains_branch"] > ul');
         doc.appendChild(input);
-        $('#calculatorSoupSuche').on('keydown keyup', function(e) {
+        document.querySelector('#calculatorSoupSuche').addEventListener('keyup',e=>{
             if (e.which === 13) {
                 let value = e.target.value;
                 value = value.replace(/[^0-9,-.\s]+/g, ',');
@@ -127,8 +126,8 @@ function lcm() {
                 value = value.split(',');
                 value.sort((a, b) => a - b);
                 var uniqueNumbers = [];
-                $.each(value, function(i, el) {
-                    if ($.inArray(el, uniqueNumbers) === -1) uniqueNumbers.push(el);
+                value.forEach((el,index)=>{
+                    if (uniqueNumbers.indexOf(el) == -1) uniqueNumbers.push(el);
                 });
                 value = uniqueNumbers;
                 value = value.join(',');
