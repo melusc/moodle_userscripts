@@ -23,16 +23,16 @@ button.className = 'userScriptGenerated';
 
 let page = document.getElementsByTagName('page');
 Array.from(page).forEach(a => {
-    a.innerHTML.indexOf('Aktuelle Noten') != -1&&(page = a);
+    a.innerHTML.indexOf('Aktuelle Noten') != -1 && (page = a);
 });
 let h3 = page.getElementsByTagName('h3');
 Array.from(h3).forEach(a => {
-    a.innerHTML.indexOf('Aktuelle Noten') != -1&&(h3 = a);
+    a.innerHTML.indexOf('Aktuelle Noten') != -1 && (h3 = a);
 });
 let pageChildren = Array.from(page.children),
     indexH3 = -1;
 for (let h = 0; h < pageChildren.length; h++) {
-    pageChildren[h]==h3&&(indexH3 = h);
+    pageChildren[h] == h3 && (indexH3 = h);
 }
 page.insertBefore(button, pageChildren[indexH3 + 1]);
 
@@ -51,22 +51,22 @@ window.grabMarks = () => {
         marksArrNum = [],
         marksArrName = [];
     tr.forEach(a => {
-        !a.style.display&&trArr.push(a);
+        !a.style.display && trArr.push(a);
     });
     trArr.forEach(a => {
-       +a.children[1].innerHTML.replace(/[^0-9.]/g,'')&&marksArrNum.push(+a.children[1].innerHTML.replace(/[^0-9.]/g,''))&&marksArrName.push(a.children[0].innerHTML);
+        +a.children[1].innerHTML.replace(/[^0-9.]/g, '') && marksArrNum.push(+a.children[1].innerHTML.replace(/[^0-9.]/g, '')) && marksArrName.push(a.children[0].innerHTML);
     });
-    marksArrName.forEach((a,index)=>{
+    marksArrName.forEach((a, index) => {
         let temp = new DOMParser().parseFromString(a, "text/html").body;
         temp.removeChild(temp.getElementsByTagName('b')[0]);
         temp.removeChild(temp.getElementsByTagName('br')[0]);
         marksArrName[index] = temp.innerHTML;
     });
     let marksObj = '';
-    marksArrName.forEach((a,index)=>{
+    marksArrName.forEach((a, index) => {
         marksObj += marksArrName[index] + '&#09;' + marksArrNum[index] + '\n';
     });
-    marksObj = marksObj.replace(/\n$/,'');
+    marksObj = marksObj.replace(/\n$/, '');
     let textArea = document.createElement('textarea');
     textArea.setAttribute('readonly', '');
     textArea.setAttribute('onClick', 'this.focus();this.select()');
@@ -80,7 +80,7 @@ window.grabMarks = () => {
     page.insertBefore(br, textArea);
     page.insertBefore(br2, br);
     button.innerHTML = text.remove;
-    button.setAttribute('onclick','removeBut()');
+    button.setAttribute('onclick', 'removeBut()');
 };
 window.removeBut = () => {
     let removeElem = Array.from(page.children);
@@ -90,6 +90,6 @@ window.removeBut = () => {
     removeElem.forEach(a => {
         a.nodeName == 'TEXTAREA' && String(a.onclick).indexOf('this.focus();this.select()') != -1 && a.parentElement.removeChild(a);
     });
-    button.setAttribute('onclick','grabMarks()');
+    button.setAttribute('onclick', 'grabMarks()');
     button.innerHTML = text.grab;
 };
