@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name          schulNetz Marks copy pasteable
-// @version       2020.04.04b
+// @version       2020.04.04c
 // @author        lusc
 // @match         https://www.schul-netz.com/ausserschwyz/index.php?pageid=21311*
 // @downloadURL   https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
 // @updateURL     https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
 // @grant         none
+// @grant         unsafeWindow
 // ==/UserScript==
 'use strict';
 let text = {
@@ -94,7 +95,32 @@ const roundNum = (num, power) => {
 
 
 
-window.grabMarks = () => {
+window.grabMarks = (checked) => {
+    window.removeBut();
+
+
+    let checkBox = document.createElement('input'),
+        label = document.createElement('label');
+    checkBox.type = 'checkbox';
+    if (checked) {
+        label.addEventListener('click', () => {
+            window.grabMarks(false)
+        });
+        checkBox.setAttribute('checked', '');
+    } else {
+        label.addEventListener('click', () => {
+            window.grabMarks(true)
+        });
+    }
+
+    label.appendChild(checkBox);
+    label.innerHTML += '&nbsp;Sport';
+    console.log(new Date().getMinutes());
+
+
+
+
+
     let marksTbody = document.getElementsByClassName('mdl-data-table mdl-js-data-table mdl-table--listtable');
     Array.from(marksTbody).forEach(a => {
         if (a.innerHTML.indexOf('Kurs') != -1) marksTbody = a.getElementsByTagName('tbody')[0];
@@ -124,6 +150,13 @@ window.grabMarks = () => {
         temp.removeChild(temp.getElementsByTagName('b')[0]);
         temp.removeChild(temp.getElementsByTagName('br')[0]);
         marksArrName[i] = temp.innerHTML;
+    });
+    marksArrName.forEach((e, i) => {
+        if (e == 'Sport' && !checked) {
+            marksString += marksArrName[i] + '&#09;' + marksArrNum[i] + '\n\n\n';
+            marksArrName.splice(i, 1);
+            marksArrNum.splice(i, 1);
+        }
     });
     marksArrName.forEach((a, index) => {
         marksString += marksArrName[index] + '&#09;' + marksArrNum[index] + '\n';
@@ -228,8 +261,9 @@ window.grabMarks = () => {
     summary.appendChild(sumDiv);
 
     insert([
-        //button,
         br(),
+        br(),
+        label,
         br(),
         summary,
         all,
@@ -254,11 +288,13 @@ window.grabMarks = () => {
 };
 
 
-
 window.removeBut = () => {
-    window.elRemove.forEach(e => {
-        e.parentElement.removeChild(e);
-    });
+    if (window.elRemove) {
+        window.elRemove.forEach((e, i) => {
+            e.parentElement.removeChild(e);
+        });
+        window.elRemove = [];
+    }
     button.setAttribute('onclick', 'grabMarks()');
     button.innerHTML = text.grab;
 };
