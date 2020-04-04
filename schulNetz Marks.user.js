@@ -227,7 +227,25 @@ window.grabMarks = () => {
     summary.innerHTML = text.sum + '&nbsp;';
     summary.appendChild(sumDiv);
 
-    insert([br(), br(), summary, all, textArea, br(), br(), fail, small, br(), br(), failedText, br(), br(), avgH3, compDubH3]);
+    insert([
+        //button,
+        br(),
+        br(),
+        summary,
+        all,
+        textArea,
+        br(),
+        br(),
+        fail,
+        small,
+        br(),
+        br(),
+        failedText,
+        br(),
+        br(),
+        avgH3,
+        compDubH3
+    ]);
 
     textStyler(textArea);
     textStyler(failedText);
