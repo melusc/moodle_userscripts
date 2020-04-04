@@ -6,7 +6,6 @@
 // @downloadURL   https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
 // @updateURL     https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
 // @grant         none
-// @grant         unsafeWindow
 // ==/UserScript==
 'use strict';
 let text = {
