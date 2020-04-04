@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name          schulNetz Marks copy pasteable
-// @version       2020.04.04c
+// @version       2020.04.04d
 // @author        lusc
 // @match         https://www.schul-netz.com/ausserschwyz/index.php?pageid=21311*
 // @downloadURL   https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
@@ -152,13 +152,12 @@ window.grabMarks = (checked) => {
     });
     marksArrName.forEach((e, i) => {
         if (e == 'Sport' && !checked) {
-            marksString += marksArrName[i] + '&#09;' + marksArrNum[i] + '\n\n\n';
             marksArrName.splice(i, 1);
             marksArrNum.splice(i, 1);
         }
     });
-    marksArrName.forEach((a, index) => {
-        marksString += marksArrName[index] + '&#09;' + marksArrNum[index] + '\n';
+    marksArrName.forEach((a, i) => {
+        marksString += marksArrName[i] + '&#09;' + marksArrNum[i] + '\n';
     });
     marksString = marksString.replace(/\n$/, '');
     textArea.innerHTML = marksString;
