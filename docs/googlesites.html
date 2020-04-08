@@ -2,35 +2,58 @@
 
 <head>
   <link rel="stylesheet" type="text/css" href="googlesites.css" />
-    <script>
-    let answers = {
-      kaeser: 'Richtig',
-      kaeser1: 'Gelb'
-    },
-    text = {
-      true:'<div style="color:green;display:inline">richtig</div>',
-      false:'<div style="color:red;display:inline">falsch</div>'
+  <script>
+  let answers = {
+    kaeser: 'Richtig',
+    kaeser1: 'Gelb'
+  },
+  text = {
+    true:'<div style="color:green;display:inline">richtig</div>',
+    false:'<div style="color:red;display:inline">falsch</div>'
+  },
+  correct = 0,
+  total = 2;
+  function changer(e,id) {
+    let answer;
+    if(answers[id] == e.innerHTML){
+      answer=text['true']+'<br>';
+      correct++;
     }
-        function changer(e,id) {
-          let answer;
-          answers[id] == e.innerHTML?(answer=text['true']):(answer=text['false'] + '. Richtig wäre: <div style="color:teal;display:inline">' + answers[id] + '</div>')
-            e.parentElement.style.display = 'none';
-            document.getElementById(id).style.display = '';
-            setTimeout(()=>{document.getElementById(id).className += ' show';},10);
-            document.getElementById(id + 'Antwort').innerHTML = answer;
-        }
-    </script>
+    else{
+      answer=text['false'] + '. Richtig wäre: <div style="color:teal;display:inline">' + answers[id] + '</div><br>'
+    }
+    e.parentElement.style.display = 'none';
+    document.getElementById(id).style.display = '';
+    document.getElementById(id).className += ' show';
+    document.getElementById(id + 'Antwort').innerHTML += answer;
+    setTimeout(()=>{
+      document.getElementById(id + 'Antwort').className+="hide";
+      setTimeout(()=>{
+        document.getElementById(id + 'Antwort').style.display = "none";
+      },1000);
+    },3000);
+    document.getElementById('richtige').innerHTML = `Du hast ${correct} / ${total} richtig`;
+  }
+  </script>
 </head>
 
 <body>
-<div id="contentFirst" class="fader show">Der kubaner ist Käser<br>
+
+  <div id="contentFirst" class="main show">Der kubaner ist Käser<br>
     <button onclick="changer(this,'kaeser')">Richtig</button>
     <button onclick="changer(this,'kaeser')">Falsch</button>
-</div>
-<div id="kaeser" class="fader" style="display:none ">Das ist <div style="display:inline" id="kaeserAntwort"></div>
-<br>Der Mensch ist was?<br>
-<button onclick="changer(this,'kaeser1')">Blau</button>
-<button onclick="changer(this,'kaeser1')">Gelb</button></div>
-<div id="kaeser1" class="fader" style="display:none ">Das ist <div style="display:inline" id="kaeser1Antwort"></div></div>
+  </div>
+
+  <div id="kaeser" class="main" style="display:none ">
+    <div style="display:inline" id="kaeserAntwort">Das ist </div>
+    Der Mensch ist was?<br>
+    <button onclick="changer(this,'kaeser1')">Blau</button>
+    <button onclick="changer(this,'kaeser1')">Gelb</button>
+  </div>
+
+  <div id="kaeser1" class="main" style="display:none ">
+    <div style="display:inline" id="kaeser1Antwort">Das ist </div>
+    <div id="richtige"></div>
+  </div>
 </body>
 </html>
