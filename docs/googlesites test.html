@@ -1,0 +1,38 @@
+<html>
+
+<head>
+  <style rel="stylesheet" type="text/css" href="googlesites.css">
+  </style>
+  <style></style>
+    <script>
+    let answers = {
+      kaeser: 'Richtig',
+      kaeser1: 'Gelb'
+    },
+    text = {
+      true:'<div style="color:green;display:inline">Richtig</div>',
+      false:'<div style="color:red;display:inline">Falsch</div>'
+    }
+        function changer(e,id) {
+          let answer;
+          answers[id] == e.innerHTML?(answer=text['true']):(answer=text['false'])
+            e.parentElement.style.display = 'none';
+            document.getElementById(id).style.display = '';
+            setTimeout(()=>{document.getElementById(id).className += ' show';},10);
+            document.getElementById(id + 'Antwort').innerHTML = answer.toLowerCase();
+        }
+    </script>
+</head>
+
+<body>
+<div id="contentFirst" class="fader show">Der kubaner ist Käser<br>
+    <button onclick="changer(this,'kaeser')">Richtig</button>
+    <button onclick="changer(this,'kaeser')">Falsch</button>
+</div>
+<div id="kaeser" class="fader" style="display:none ">Das ist <div style="display:inline" id="kaeserAntwort"></div>
+<br>Der Mensch ist was?<br>
+<button onclick="changer(this,'kaeser1')">Blau</button>
+<button onclick="changer(this,'kaeser1')">Gelb</button></div>
+<div id="kaeser1" class="fader" style="display:none ">Das ist <div style="display:inline" id="kaeser1Antwort"></div></div>
+</body>
+</html>
