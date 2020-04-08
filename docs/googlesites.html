@@ -8,16 +8,16 @@
       kaeser1: 'Gelb'
     },
     text = {
-      true:'<div style="color:green;display:inline">Richtig</div>',
-      false:'<div style="color:red;display:inline">Falsch</div>'
+      true:'<div style="color:green;display:inline">richtig</div>',
+      false:'<div style="color:red;display:inline">falsch</div>'
     }
         function changer(e,id) {
           let answer;
-          answers[id] == e.innerHTML?(answer=text['true']):(answer=text['false'])
+          answers[id] == e.innerHTML?(answer=text['true']):(answer=text['false'] + '. Richtig wäre: <div style="color:teal;display:inline">' + answers[id] + '</div>')
             e.parentElement.style.display = 'none';
             document.getElementById(id).style.display = '';
             setTimeout(()=>{document.getElementById(id).className += ' show';},10);
-            document.getElementById(id + 'Antwort').innerHTML = answer.toLowerCase();
+            document.getElementById(id + 'Antwort').innerHTML = answer;
         }
     </script>
 </head>
