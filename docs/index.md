@@ -15,3 +15,5 @@
 - [Convert hex to rgb and vice versa](../lusc/hexToRgb)
 
 - [Css trickery](../lusc/Brille)
+
+- [Change Url](../lusc/changeurl)
