@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         Explore profiles
-// @namespace    https://github.com/melusc/lusc
-// @version      2020.04.12a
+// @version      2020.04.12b
 // @author       lusc
 // @match        *://moodle.ksasz.ch/user/profile.php*
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
 // @updateURL    https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js
 // @grant        GM_addStyle
+// @grant        GM_getValue
+// @grant        GM_setValue
 // ==/UserScript==
 
 
@@ -14,7 +15,7 @@
  *     Tried and tested with Tampermonkey on Chrome
  */
 
-
+console.log(GM_getValue('test'));
 
 GM_addStyle(`
 button{
@@ -31,15 +32,19 @@ button:hover{
    color:white;
    filter: brightness(0.75);
 }`);
-let params;
-if(document.getElementsByClassName('alert alert-error alert-block fade in ')[0]){
-    if(localStorage.getItem('action')){
+let url = window.location,
+    params = new URLSearchParams(url.search.slice(1));
+
+if (document.getElementsByClassName('alert alert-error alert-block fade in ')[0]) {
+    if (localStorage.getItem('action')) {
         console.log('Del');
         console.log(localStorage.getItem('action'));
-        explorer(false,localStorage.getItem('action'));
+        GM_setValue(params.get('id'),true);
+        explorer(false, localStorage.getItem('action'));
     }
 }
-function c(e){
+
+function c(e) {
     return document.createElement(e);
 }
 let button1 = c('button'),
@@ -64,36 +69,37 @@ div.appendChild(button3);
 div.appendChild(button5);
 div.appendChild(button4);
 let buttons = div.getElementsByTagName('button');
-for (let i = 0, length = buttons.length; i < length; i++){
-    buttons[i].onclick = e=>{
+for (let i = 0, length = buttons.length; i < length; i++) {
+    buttons[i].onclick = e => {
         explorer(e.target);
     };
 }
 let header = document.getElementsByClassName('page-header-headings')[0];
 header.appendChild(div);
-function explorer(e,action){
-    if (!action){
+
+function explorer(e, action) {
+    if (!action) {
         action = +e.id;
     }
     action = +action;
     console.log(action);
-    let url = window.location;
-        params = new URLSearchParams(url.search.slice(1));
-    if(isNaN(action)){
+    if (isNaN(action)) {
         randNum();
     } else {
-        let id = +params.get('id');
-        params.set('id',id + action);
+        let id = +params.get('id') + action;
+//         params.set('id', id);
+        numCheck(action,id);
     }
-    if(e){
-        localStorage.setItem('action',e.id);
+    if (e) {
+        localStorage.setItem('action', e.id);
     }
     window.location.search = '?' + params.toString();
 }
-function randNum(){
-    let num = Math.floor(Math.random()*1745 + 2);
+
+function randNum() {
+    let num = Math.floor(Math.random() * 1745 + 2);
     console.log(num);
-    if /***/(num > 76 && 101 > num) randNum();
+    if /**/ (num > 76 && 101 > num) randNum();
     else if (num > 112 && 630 > num) randNum();
     else if (num > 630 && 636 > num) randNum();
     else if (num > 644 && 649 > num) randNum();
@@ -122,7 +128,45 @@ function randNum(){
     else if (num > 1185 && 1190 > num) randNum();
     else if (num > 1191 && 1203 > num) randNum();
     else if (num > 1367 && 1375 > num) randNum();
+    else if (GM_getValue(num) == true) randNum();
     else {
-        params.set('id',num);
+        params.set('id', num);
+    }
+}
+function numCheck(action,num,re){
+    if(re) num += +action;
+    console.log(num);
+    if /**/ (num > 76 && 101 > num) numCheck(action, num, !0);
+    else if (num > 112 && 630 > num) numCheck(action, num, !0);
+    else if (num > 630 && 636 > num) numCheck(action, num, !0);
+    else if (num > 644 && 649 > num) numCheck(action, num, !0);
+    else if (num > 651 && 659 > num) numCheck(action, num, !0);
+    else if (num > 659 && 779 > num) numCheck(action, num, !0);
+    else if (num > 779 && 784 > num) numCheck(action, num, !0);
+    else if (num > 784 && 800 > num) numCheck(action, num, !0);
+    else if (num > 800 && 817 > num) numCheck(action, num, !0);
+    else if (num > 828 && 885 > num) numCheck(action, num, !0);
+    else if (num > 885 && 894 > num) numCheck(action, num, !0);
+    else if (num > 894 && 903 > num) numCheck(action, num, !0);
+    else if (num > 905 && 911 > num) numCheck(action, num, !0);
+    else if (num > 911 && 927 > num) numCheck(action, num, !0);
+    else if (num > 927 && 935 > num) numCheck(action, num, !0);
+    else if (num > 935 && 945 > num) numCheck(action, num, !0);
+    else if (num > 945 && 954 > num) numCheck(action, num, !0);
+    else if (num > 954 && 959 > num) numCheck(action, num, !0);
+    else if (num > 959 && 967 > num) numCheck(action, num, !0);
+    else if (num > 967 && 978 > num) numCheck(action, num, !0);
+    else if (num > 978 && 987 > num) numCheck(action, num, !0);
+    else if (num > 988 && 994 > num) numCheck(action, num, !0);
+    else if (num > 994 && 999 > num) numCheck(action, num, !0);
+    else if (num > 1004 && 1038 > num) numCheck(action, num, !0);
+    else if (num > 1038 && 1045 > num) numCheck(action, num, !0);
+    else if (num > 1045 && 1050 > num) numCheck(action, num, !0);
+    else if (num > 1185 && 1190 > num) numCheck(action, num, !0);
+    else if (num > 1191 && 1203 > num) numCheck(action, num, !0);
+    else if (num > 1367 && 1375 > num) numCheck(action, num, !0);
+    else if (GM_getValue(num) == true) numCheck(action, num, !0);
+    else {
+        params.set('id', num);
     }
 }

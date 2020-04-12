@@ -3,26 +3,41 @@
 // @namespace   https://github.com/melusc/lusc
 // @version     2020.04.04a
 // @include     *://moodle.ksasz.ch/*
-// @exclude     *://moodle.ksasz.ch/online*
 // @Author      lusc
 // @description Improving the looks of Moodle
 // @downloadURL https://github.com/melusc/lusc/raw/master/Clean%20Moodle.user.js
 // @updateURL   https://github.com/melusc/lusc/raw/master/Clean%20Moodle.user.js
 // @run-at      document-end
+// @grant       GM_setValue
+// @grant       GM_getValue
 // ===/UserScript===
 'use strict';
 
-//Sort Courses-sidebar alphabetically?
-let sortAlphabetically = true;
+/*
+ *    Sort Courses-sidebar alphabetically?
+ */
+      let sortAlphabetically = true;
 
-run('replace', '...', '---'); //Replaces the name of the course "..." with "---"
-run('remove', '...'); //Removes the course "..."
 
-if (window.location.href == 'https://moodle.ksasz.ch/') {
-    cleanLinks('https://example.com/egg-sample'); //Removes the link https://example.com/egg-sample from the right sidebar
-}
 
 //Code
+if(!GM_getValue('replace')){
+   GM_setValue('replace',[]);
+}
+
+for(let i = 0, length = GM_getValue('remove').length; i < length; i++){
+    run('remove',GM_getValue('remove')[i]);
+}
+for(let j = 0, length = GM_getValue('replace').length; j < length; j++){
+    run('replace',GM_getValue('replace')[j][0],GM_getValue('replace')[j][1]);
+}
+
+if (window.location.href == 'https://moodle.ksasz.ch/') {
+    for (let k = 0, length = GM_getValue('cleanlinks').length; k < length; k++){
+        cleanLinks(GM_getValue('cleanlinks')[k])
+    }
+}
+
 function run(what, selector, replace) {
     let thisHeading = document.querySelector('.type_system.depth_2.contains_branch').querySelector(`[title="${selector}"]`);
     if (!thisHeading) {
