@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.04.16a
+// @version     2020.04.16b
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
 // @Author      lusc
@@ -26,16 +26,19 @@ let sideBar = document.getElementsByClassName('type_system depth_2 contains_bran
      sort(true);
 
 function runner() {
-    for (let i = 0, length = GM_getValue('remove').length; i < length; i++) {
-        remove(GM_getValue('remove')[i]);
+    let removeArr = GM_getValue('remove'),
+        replaceArr = GM_getValue('replace'),
+        cleanLinksArr = GM_getValue('cleanLinks');
+    for (let i = 0, length = removeArr.length; i < length; i++) {
+        remove(removeArr[i]);
     }
-    for (let i = 0, length = GM_getValue('replace').length; i < length; i++) {
-        replace(GM_getValue('replace')[i][0], GM_getValue('replace')[i][1]);
+    for (let i = 0, length = replaceArr.length; i < length; i++) {
+        replace(replaceArr[i][0], GM_getValue('replace')[i][1]);
     }
 
     if (window.location.href == 'https://moodle.ksasz.ch/') {
-        for (let i = 0, length = GM_getValue('cleanlinks').length; i < length; i++) {
-            cleanLinks(GM_getValue('cleanlinks')[i]);
+        for (let i = 0, length = cleanLinksArr.length; i < length; i++) {
+            cleanLinks(cleanLinksArr[i]);
         }
     }
 }
