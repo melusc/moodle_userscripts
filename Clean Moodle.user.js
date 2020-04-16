@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.04.16b
+// @version     2020.04.16c
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
 // @Author      lusc
@@ -33,7 +33,7 @@ function runner() {
         remove(removeArr[i]);
     }
     for (let i = 0, length = replaceArr.length; i < length; i++) {
-        replace(replaceArr[i][0], GM_getValue('replace')[i][1]);
+        replace(replaceArr[i][0], replaceArr[i][1]);
     }
 
     if (window.location.href == 'https://moodle.ksasz.ch/') {
