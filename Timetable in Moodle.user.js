@@ -13,8 +13,8 @@
 let customTimeSlot = '';
 //Replace the {object} below with the object that you can get from https://melusc.github.io/lusc/Stundenplan
 let lessons = {
-  
-},
+        
+    },
     times = {
         1: ['8:00', '8:45'],
         2: ['8:45', '9:30'],
@@ -178,7 +178,7 @@ function timeTable() {
     </tbody>
 </table>`;
             document.querySelector('#currentLesson').children[1].innerHTML = x;
-            console.log(new Date());
+            console.log(new Date(), 'refreshed');
         } else if (window.location.href === 'https://moodle.ksasz.ch/') {
             document.querySelector('#currentLesson').children[1].innerHTML = `<strong style="color:${colour}; font-size:large;">${text.wE}</strong>`;
         }
