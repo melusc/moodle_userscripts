@@ -1,31 +1,17 @@
 // ==UserScript==
 // @name         Moodle Timetable
-// @version      2020.04.17b
+// @version      2020.04.17c
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
 // @match        *://moodle.ksasz.ch/?
 // @match        *://moodle.ksasz.ch/?lang=*
 // @updateURL    https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
 // ==/UserScript==
 'use strict';
-let customTimeSlot = '';
-//Replace the {object} below with the object that you can get from https://melusc.github.io/lusc/Stundenplan
-let lessons = {
-
-    },
-    times = {
-        1: ['8:00', '8:45'],
-        2: ['8:45', '9:30'],
-        3: ['9:50', '10:35'],
-        4: ['10:40', '11:25'],
-        5: ['11:30', '12:15'],
-        6: ['12:15', '13:10'],
-        7: ['13:10', '13:55'],
-        8: ['13:55', '14:40'],
-        9: ['14:50', '15:35']
-    },
+let customTimeSlot = '',
     text = {
         tt: 'Stundenplan',
         nL: 'Kein Unterricht',
@@ -37,7 +23,8 @@ let lessons = {
         next: 'Nächste Stunde',
         cTS: 'customTimeSlot activated\nUse only for testing'
     };
-
+if (!GM_getValue('times')) GM_setValue('times',{1:[]});
+if (!GM_getValue('lessons')) GM_setValue('lessons',{});
 setInterval(timeTable, 10000);
 let span = document.createElement('span'),
     strong = document.createElement('strong'),
@@ -70,10 +57,10 @@ li.appendChild(div4);
 document.querySelector('.section.img-text').insertBefore(li, document.querySelector('.section.img-text').children[0]);
 
 let timesArr = {
-    1: times['1'][0].split(':')
+    1: GM_getValue('times')['1'][0].split(':')
 };
-for (let j = 1; j <= Object.keys(times).length; j++) {
-    timesArr[j + 1] = times[j][1].split(':');
+for (let j = 1; j <= Object.keys(GM_getValue('times')).length; j++) {
+    timesArr[j + 1] = GM_getValue('times')[j][1].split(':');
 }
 let timesMin = {};
 for (let k = 1; k <= Object.keys(timesArr).length; k++) {
@@ -87,11 +74,11 @@ function timeTable() {
     let hour = date2.getHours(),
         minute = date2.getMinutes() + hour * 60;
 
-    for (let i = 1; i <= Object.keys(times).length; i++) {
+    for (let i = 1; i <= Object.keys(GM_getValue('times')).length; i++) {
         if (minute >= timesMin[i] && minute <= timesMin[i + 1]) timeSlot = i;
     }
     if (minute < timesMin['1']) timeSlot = 0;
-    else if (minute > timesMin[Object.keys(times).length + 1]) timeSlot = -1;
+    else if (minute > timesMin[Object.keys(GM_getValue('times')).length + 1]) timeSlot = -1;
 
     if (timeSlot != oldTimeSlot) {
         let day = date2.getDay();
@@ -105,14 +92,14 @@ function timeTable() {
             time1,
             time2,
             both;
-        currentLesson = lessons[`${day}-${timeSlot}`];
-        nextLesson = lessons[`${day}-${timeSlot + 1}`];
+        currentLesson = GM_getValue('lessons')[`${day}-${timeSlot}`];
+        nextLesson = GM_getValue('lessons')[`${day}-${timeSlot + 1}`];
         if (!nextLesson && !currentLesson) both = true;
         if (!nextLesson) {
             nextLesson = text.nL;
             time2 = `<div style="color:${colour};font-weight:400;display:inline">:</div>`;
         } else {
-            time2 = '<div style="color:white;display:inline;font-weight:400;"> (' + times[timeSlot + 1][0] + '-' + times[timeSlot + 1][1] + '):</div>';
+            time2 = '<div style="color:white;display:inline;font-weight:400;"> (' + GM_getValue('times')[timeSlot + 1][0] + '-' + GM_getValue('times')[timeSlot + 1][1] + '):</div>';
         }
         let links = Array.from(document.getElementsByClassName('type_system depth_2 contains_branch')[0].getElementsByClassName('type_course depth_3 item_with_icon')),
             currentLink,
@@ -128,7 +115,7 @@ function timeTable() {
             else currentLesson = text.nLA;
             time1 = `<div style="color:${colour};font-weight:400;display:inline">:</div>`;
         } else {
-            time1 = '<div style="color:white;display:inline;font-weight:400;"> (' + times[timeSlot][0] + '-' + times[timeSlot][1] + '):';
+            time1 = '<div style="color:white;display:inline;font-weight:400;"> (' + GM_getValue('times')[timeSlot][0] + '-' + GM_getValue('times')[timeSlot][1] + '):';
         }
         if (day != 6 && day != 0) {
             let x = `
