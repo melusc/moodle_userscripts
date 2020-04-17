@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable
-// @version      2020.04.17a
+// @version      2020.04.17b
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
 // @match        *://moodle.ksasz.ch/?
@@ -13,7 +13,7 @@
 let customTimeSlot = '';
 //Replace the {object} below with the object that you can get from https://melusc.github.io/lusc/Stundenplan
 let lessons = {
-        
+
     },
     times = {
         1: ['8:00', '8:45'],
