@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.04.16c
+// @version     2020.04.17a
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
 // @Author      lusc
@@ -14,10 +14,40 @@
 // ===/UserScript===
 'use strict';
 
-//Code
-if (!GM_getValue('replace')) {
-    GM_setValue('replace', []);
-}
+/*
+ * Tampermonkey instructions:
+ * Go to storage at the top, if it isn't there run the script once.
+ *
+ * Formatting:
+ *
+ * "replace":[
+ *       "First name",            --> has a comma
+ *       "Second name"            --> is the last of the Array ( [] ) so it doesn't
+ *           ],                   --> has a comma because the array is finished there
+ *
+ * "remove":[                        --> [] around all of it
+ *       [
+ *           "Allgemeine Informationen",         identifier and the new name have [] around them
+ *           "Allgemeine Infos"
+ *       ],                                       --> comma
+ *       [
+ *           "Other course",
+ *           "New name"
+ *       ]
+ *   ],                              --> [] around all of it
+ *
+ * "cleanLinks":[
+ *       "https://www.schul-netz.com/ausserschwyz/"
+ *         ]                                             --> No comma since it's last
+ *
+ * The exact layout isn't really important but what is important is that you
+ * make sure that everything is seperated by commas and that there is no trailing
+ * comma (example: 1,2,3,4, is wrong; 1,2,3,4  is correct)
+ */
+
+
+
+
 let sideBar = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
 
 /*
@@ -112,4 +142,11 @@ function replace(selector, replace) {
     } else if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 c')) {
         thisHeading.innerHTML = replace;
     }
+}
+
+if (!GM_getValue('replace')) {
+    GM_setValue('replace', [[],[]]);
+}
+if (!GM_getValue('remove')) {
+    GM_setValue('remove', []);
 }
