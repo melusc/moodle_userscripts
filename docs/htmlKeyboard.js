@@ -1,7 +1,7 @@
 var shift = false,
     capslock = false,
     style = document.createElement('style');
-style.innerHTML = 'button{text-transform:uppercase}';
+style.innerHTML = 'button:not(.not){text-transform:uppercase}';
 
 function upperCase() {
     if (shift ^ capslock) {
@@ -32,7 +32,7 @@ function addTextNode(text) {
             shift = false;
             upperCase()
         }
-        if (text == '[space]') {
+        if (text.toLowerCase() == '[space]') {
             text = ' '
         }
         let newtext = document.createTextNode(text);
