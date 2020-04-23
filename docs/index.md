@@ -16,4 +16,6 @@
 
 - [Css trickery](../lusc/Brille)
 
-- [Change Url](../lusc/changeurl)
+- [Url trickery](../lusc/changeurl)
+
+- [Keyboard from html buttons](../lusc/htmlKeyboard)
