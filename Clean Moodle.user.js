@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.04.29a
+// @version     2020.04.29b
 // @include     *://moodle.ksasz.ch/*
 // @inclue      *://moodle.ksasz.ch/cleanMoodle*
 // @exclude     *://moodle.ksasz.ch/info*
@@ -96,7 +96,33 @@ if (!GM_getValue('remove')) {
 
 
 if (window.location.pathname == '/user/preferences.php') {
-    document.querySelectorAll('.span12.preferences-groups > .row-fluid')[0].innerHTML += '<div class="span4 preferences-group"><h3>Clean moodle</h3><ul><li><a href="https://moodle.ksasz.ch/cleanMoodle" target="_blank"><img class="icon navicon" alt="" aria-hidden="true" src="https://moodle.ksasz.ch/theme/image.php/clean/core/1587679874/i/navigationitem">Settings</a></li></ul></div>';
+    let div = document.createElement('div');
+    div.className = 'span4 preferences-group';
+
+    let h3 = document.createElement('h3');
+    h3.innerHTML = 'Clean Moodle';
+    div.appendChild(h3);
+
+    let ul = document.createElement('ul'),
+        li = document.createElement('li');
+    div.appendChild(ul);
+    ul.appendChild(li);
+
+    let a = document.createElement('a');
+    a.href = 'https://moodle.ksasz.ch/cleanMoodle';
+    a.setAttribute('target', '_blank');
+    li.appendChild(a);
+
+    let img = document.createElement('img');
+    img.className = 'icon navicon';
+    img.setAttribute('aria-hidden', true);
+    img.setAttribute('alt', '');
+    img.src = 'https://moodle.ksasz.ch/theme/image.php/clean/core/1587679874/i/navigationitem';
+    a.appendChild(img);
+
+    a.innerHTML += 'Settings';
+
+    document.querySelectorAll('.span12.preferences-groups > .row-fluid')[0].appendChild(div);
 }
 
 if (window.location.pathname == '/cleanMoodle') {
@@ -143,14 +169,12 @@ async function setup() {
 
                     removeLi = document.createElement('li'),
                     removeButton = document.createElement('button'),
-                    removeLastButton = document.createElement('button'),
                     clearRemoveButton = document.createElement('button'),
 
                     li2 = document.createElement('li'),
                     hr2 = document.createElement('hr'),
 
                     replaceLi = document.createElement('li'),
-                    replaceLastButton = document.createElement('button'),
                     replaceButton = document.createElement('button'),
                     clearReplaceButton = document.createElement('button');
 
@@ -160,9 +184,7 @@ async function setup() {
 
                 removeButton.innerHTML = 'Add remover';
                 clearRemoveButton.innerHTML = 'Clear removers';
-                replaceLastButton.innerHTML = 'Undo last';
                 removeLi.appendChild(removeButton);
-                removeLi.appendChild(removeLastButton);
                 removeLi.appendChild(clearRemoveButton);
                 content.getElementsByClassName('section img-text')[0].appendChild(removeLi);
                 removeButton.addEventListener('click', () => {
@@ -171,19 +193,13 @@ async function setup() {
                 clearRemoveButton.addEventListener('click', () => {
                     clearRemove(sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
                 });
-                replaceLastButton.addEventListener('click', () => {
-                    undoReplace(sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
-                });
-
 
                 li.appendChild(hr);
                 content.getElementsByClassName('section img-text')[0].appendChild(li);
 
                 replaceButton.innerHTML = 'Add replacer';
                 clearReplaceButton.innerHTML = 'Clear replacers';
-                removeLastButton.innerHTML = 'Undo last';
                 replaceLi.appendChild(replaceButton);
-                replaceLi.appendChild(replaceLastButton);
                 replaceLi.appendChild(clearReplaceButton);
                 content.getElementsByClassName('section img-text')[0].appendChild(replaceLi);
                 replaceButton.addEventListener('click', () => {
@@ -191,9 +207,6 @@ async function setup() {
                 });
                 clearReplaceButton.addEventListener('click', () => {
                     clearReplace(sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
-                });
-                removeLastButton.addEventListener('click', () => {
-                    undoRemove(sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
                 });
 
                 content.getElementsByClassName('section img-text')[0].style.listStyleType = 'none';
@@ -276,7 +289,7 @@ function addRemover() {
         GM_setValue('remove', removeArr);
         redo();
     } else if (!(remove == null || remove == '')) {
-        alert('Unable to find ' + remove);
+        alert('Unable to find ' + remove + '\nIt might be written wrong or missing a whitespace at the end');
         addRemover();
     }
 }
@@ -287,7 +300,7 @@ function addReplacer() {
     if ((!(replace == null || replace == '')) && document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + replace + '"]')) {
         replaceWith = prompt('Name to be replaced with', 'Allgemeine Infos');
     } else if (!(replace == null || replace == '')) {
-        alert('Unable to find ' + replace);
+        alert('Unable to find ' + replace + '\nIt might be written wrong or missing a whitespace at the end');
         addReplacer();
     }
 
@@ -320,24 +333,6 @@ function clearRemove() {
 function clearReplace() {
     if (window.confirm('Are you sure?\nThis action is irreversible')) {
         GM_setValue('replace', []);
-        redo();
-    }
-}
-
-function undoRemove() {
-    if (window.confirm('Are you sure?')) {
-        let removeArr = GM_getValue('remove');
-        removeArr.pop();
-        GM_setValue('remove', removeArr);
-        redo();
-    }
-}
-
-function undoReplace() {
-    if (window.confirm('Are you sure?')) {
-        let replaceArr = GM_getValue('replace');
-        replaceArr.pop();
-        GM_setValue('replace', replaceArr);
         redo();
     }
 }
