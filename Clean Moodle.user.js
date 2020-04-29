@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.04.29c
+// @version     2020.04.29d
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
 // @Author      lusc
@@ -145,8 +145,9 @@ function setup() {
             let response = new DOMParser().parseFromString(e, 'text/html'),
                 login = response.getElementById('login');
             if (login) {
-                window.confirm('You are logged out\nLogin, return and reload page');
+                confirm('You are logged out\nLogin, return and reload page');
                 window.open('https://moodle.ksasz.ch/login/index.php', '_blank');
+                return false;
             } else {
 
                 let sidebar = response.getElementById('block-region-side-pre'),
@@ -159,21 +160,29 @@ function setup() {
                 let removeLi = document.createElement('li'),
                     removeButton = document.createElement('button'),
                     clearRemoveButton = document.createElement('button'),
+                    removeH3 = document.createElement('h3'),
 
                     replaceLi = document.createElement('li'),
                     replaceButton = document.createElement('button'),
-                    clearReplaceButton = document.createElement('button');
+                    clearReplaceButton = document.createElement('button'),
+                    replaceH3 = document.createElement('h3');
 
 
                 removeLi.appendChild(hr());
 
+                removeH3.innerHTML = 'Removers';
+                removeLi.appendChild(removeH3);
+
                 removeButton.innerHTML = 'Add remover';
+                removeButton.style.display = 'block';
                 removeButton.addEventListener('click', () => {
                     addRemover();
                 });
                 removeLi.appendChild(removeButton);
 
-                clearRemoveButton.innerHTML = 'Clear removers';
+                clearRemoveButton.innerHTML = 'Clear all';
+                clearRemoveButton.style.display = 'block';
+                clearRemoveButton.style.color = 'red';
                 clearRemoveButton.addEventListener('click', () => {
                     clearRemove();
                 });
@@ -184,13 +193,19 @@ function setup() {
 
                 replaceLi.appendChild(hr());
 
+                replaceH3.innerHTML = 'Replacers';
+                replaceLi.appendChild(replaceH3);
+
                 replaceButton.innerHTML = 'Add replacer';
+                replaceButton.style.display = 'block';
                 replaceButton.addEventListener('click', () => {
                     addReplacer();
                 });
                 replaceLi.appendChild(replaceButton);
 
-                clearReplaceButton.innerHTML = 'Clear replacers';
+                clearReplaceButton.innerHTML = 'Clear all';
+                clearReplaceButton.style.display = 'block';
+                clearReplaceButton.style.color = 'red';
                 clearReplaceButton.addEventListener('click', () => {
                     clearReplace();
                 });
@@ -210,38 +225,40 @@ function setup() {
             }
         })
         .then(a => {
-            let removeArr = GM_getValue('remove'),
-                removeButtonsLi = document.createElement('li');
-            removeButtonsLi.appendChild(hr());
-            for (let i = 0; i < removeArr.length; i++) {
-                let removeButton = document.createElement('button');
-                removeButton.innerHTML = 'Stop removing "' + removeArr[i] + '"';
-                removeButton.addEventListener('click', e => {
-                    removeRemover(e);
-                });
-                removeButton.id = encodeURI(removeArr[i]);
-                removeButton.style.display = 'block';
-                removeButtonsLi.appendChild(removeButton);
+            if (a) {
+                let removeArr = GM_getValue('remove'),
+                    removeButtonsLi = document.createElement('li');
+                removeButtonsLi.appendChild(hr());
+                for (let i = 0; i < removeArr.length; i++) {
+                    let removeButton = document.createElement('button');
+                    removeButton.innerHTML = 'Stop removing "' + removeArr[i] + '"';
+                    removeButton.addEventListener('click', e => {
+                        removeRemover(e);
+                    });
+                    removeButton.id = encodeURI(removeArr[i]);
+                    removeButton.style.display = 'block';
+                    removeButtonsLi.appendChild(removeButton);
+                }
+
+                let replaceArr = GM_getValue('replace'),
+                    replaceButtonsLi = document.createElement('li');
+                replaceButtonsLi.appendChild(hr());
+                for (let i = 0; i < replaceArr.length; i++) {
+                    let replaceButton = document.createElement('button');
+                    replaceButton.innerHTML = 'Stop renaming "' + replaceArr[i][0] + '" to "' + replaceArr[i][1] + '"';
+                    replaceButton.addEventListener('click', e => {
+                        removeReplacer(e);
+                    });
+                    replaceButton.id = encodeURI(replaceArr[i][0]);
+                    replaceButton.style.display = 'block';
+                    replaceButtonsLi.appendChild(replaceButton);
+                }
+
+
+
+                a.getElementsByClassName('section img-text')[0].appendChild(removeButtonsLi);
+                a.getElementsByClassName('section img-text')[0].appendChild(replaceButtonsLi);
             }
-
-            let replaceArr = GM_getValue('replace'),
-                replaceButtonsLi = document.createElement('li');
-            replaceButtonsLi.appendChild(hr());
-            for (let i = 0; i < replaceArr.length; i++) {
-                let replaceButton = document.createElement('button');
-                replaceButton.innerHTML = 'Stop renaming "' + replaceArr[i][0] + '" to "' + replaceArr[i][1] + '"';
-                replaceButton.addEventListener('click', e => {
-                    removeReplacer(e);
-                });
-                replaceButton.id = encodeURI(replaceArr[i][0]);
-                replaceButton.style.display = 'block';
-                replaceButtonsLi.appendChild(replaceButton);
-            }
-
-
-
-            a.getElementsByClassName('section img-text')[0].appendChild(removeButtonsLi);
-            a.getElementsByClassName('section img-text')[0].appendChild(replaceButtonsLi);
         });
 }
 
@@ -311,14 +328,14 @@ function addReplacer() {
 }
 
 function clearRemove() {
-    if (window.confirm('Are you sure?\nThis action is irreversible')) {
+    if (prompt('Are you sure?\nThis action is irreversible\nTo confirm type clear') == 'clear') {
         GM_setValue('remove', []);
         redo();
     }
 }
 
 function clearReplace() {
-    if (window.confirm('Are you sure?\nThis action is irreversible')) {
+    if (prompt('Are you sure?\nThis action is irreversible\nTo confirm type clear') == 'clear') {
         GM_setValue('replace', []);
         redo();
     }
