@@ -3,7 +3,6 @@
 // @namespace   https://github.com/melusc/lusc
 // @version     2020.04.29b
 // @include     *://moodle.ksasz.ch/*
-// @inclue      *://moodle.ksasz.ch/cleanMoodle*
 // @exclude     *://moodle.ksasz.ch/info*
 // @Author      lusc
 // @description Improving the looks of Moodle
@@ -37,10 +36,8 @@ function runner(sideBar) {
         replace(replaceArr[i][0], replaceArr[i][1], sideBar);
     }
 }
-async function sort(e, sideBar) {
-    if (!sideBar) {
-        sideBar = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
-    }
+async function sort(e) {
+    let sideBar = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
     await runner(sideBar);
     if (e) {
         let unsortArr = [],
@@ -84,17 +81,6 @@ function replace(selector, replace, sideBar) {
     }
 }
 
-if (!GM_getValue('replace')) {
-    GM_setValue('replace', [
-        [],
-        []
-    ]);
-}
-if (!GM_getValue('remove')) {
-    GM_setValue('remove', []);
-}
-
-
 if (window.location.pathname == '/user/preferences.php') {
     let div = document.createElement('div');
     div.className = 'span4 preferences-group';
@@ -120,7 +106,8 @@ if (window.location.pathname == '/user/preferences.php') {
     img.src = 'https://moodle.ksasz.ch/theme/image.php/clean/core/1587679874/i/navigationitem';
     a.appendChild(img);
 
-    a.innerHTML += 'Settings';
+    let settings = document.createTextNode('Settings');
+    a.appendChild(settings);
 
     document.querySelectorAll('.span12.preferences-groups > .row-fluid')[0].appendChild(div);
 }
@@ -128,7 +115,11 @@ if (window.location.pathname == '/user/preferences.php') {
 if (window.location.pathname == '/cleanMoodle') {
     setup();
 }
-async function setup() {
+const hr = () => {
+    return document.createElement('hr');
+};
+
+function setup() {
     if (location.protocol !== "https:") {
         location.replace(`https:${location.href.substring(location.protocol.length)}`);
     }
@@ -146,7 +137,7 @@ async function setup() {
     style.setAttribute('type', 'text/css');
     style.href = 'https://moodle.ksasz.ch/theme/styles.php/clean/1587679874_1557394291/all';
     document.head.appendChild(style);
-    await fetch('https://moodle.ksasz.ch/')
+    fetch('https://moodle.ksasz.ch/')
         .then(e => {
             return e.text();
         })
@@ -154,7 +145,7 @@ async function setup() {
             let response = new DOMParser().parseFromString(e, 'text/html'),
                 login = response.getElementById('login');
             if (login) {
-                window.confirm('You are logged out\nLogin and return to page');
+                window.confirm('You are logged out\nLogin, return and reload page');
                 window.open('https://moodle.ksasz.ch/login/index.php', '_blank');
             } else {
 
@@ -164,50 +155,48 @@ async function setup() {
                 while (content.getElementsByClassName('section img-text')[0].lastChild) {
                     content.getElementsByClassName('section img-text')[0].removeChild(content.getElementsByClassName('section img-text')[0].lastChild);
                 }
-                let li = document.createElement('li'),
-                    hr = document.createElement('hr'),
 
-                    removeLi = document.createElement('li'),
+                let removeLi = document.createElement('li'),
                     removeButton = document.createElement('button'),
                     clearRemoveButton = document.createElement('button'),
-
-                    li2 = document.createElement('li'),
-                    hr2 = document.createElement('hr'),
 
                     replaceLi = document.createElement('li'),
                     replaceButton = document.createElement('button'),
                     clearReplaceButton = document.createElement('button');
 
 
-                li2.appendChild(hr2);
-                content.getElementsByClassName('section img-text')[0].appendChild(li2);
+                removeLi.appendChild(hr());
 
                 removeButton.innerHTML = 'Add remover';
-                clearRemoveButton.innerHTML = 'Clear removers';
-                removeLi.appendChild(removeButton);
-                removeLi.appendChild(clearRemoveButton);
-                content.getElementsByClassName('section img-text')[0].appendChild(removeLi);
                 removeButton.addEventListener('click', () => {
-                    addRemover(sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
+                    addRemover();
                 });
-                clearRemoveButton.addEventListener('click', () => {
-                    clearRemove(sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
-                });
+                removeLi.appendChild(removeButton);
 
-                li.appendChild(hr);
-                content.getElementsByClassName('section img-text')[0].appendChild(li);
+                clearRemoveButton.innerHTML = 'Clear removers';
+                clearRemoveButton.addEventListener('click', () => {
+                    clearRemove();
+                });
+                removeLi.appendChild(clearRemoveButton);
+
+                content.getElementsByClassName('section img-text')[0].appendChild(removeLi);
+
+
+                replaceLi.appendChild(hr());
 
                 replaceButton.innerHTML = 'Add replacer';
-                clearReplaceButton.innerHTML = 'Clear replacers';
-                replaceLi.appendChild(replaceButton);
-                replaceLi.appendChild(clearReplaceButton);
-                content.getElementsByClassName('section img-text')[0].appendChild(replaceLi);
                 replaceButton.addEventListener('click', () => {
-                    addReplacer(sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
+                    addReplacer();
                 });
+                replaceLi.appendChild(replaceButton);
+
+                clearReplaceButton.innerHTML = 'Clear replacers';
                 clearReplaceButton.addEventListener('click', () => {
-                    clearReplace(sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
+                    clearReplace();
                 });
+                replaceLi.appendChild(clearReplaceButton);
+
+                content.getElementsByClassName('section img-text')[0].appendChild(replaceLi);
 
                 content.getElementsByClassName('section img-text')[0].style.listStyleType = 'none';
 
@@ -216,45 +205,43 @@ async function setup() {
                 sidebar.removeChild(sidebar.getElementsByClassName('block_calendar_month  block hidden')[0]);
                 document.body.appendChild(sidebar);
 
-                sort(true, sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
+                sort(true);
                 return content;
             }
         })
         .then(a => {
             let removeArr = GM_getValue('remove'),
-                li = document.createElement('li'),
-                hr = document.createElement('hr');
-            li.appendChild(hr);
+                removeButtonsLi = document.createElement('li');
+            removeButtonsLi.appendChild(hr());
             for (let i = 0; i < removeArr.length; i++) {
-                let button = document.createElement('button');
-                button.innerHTML = 'Stop removing "' + removeArr[i] + '"';
-                button.addEventListener('click', e => {
+                let removeButton = document.createElement('button');
+                removeButton.innerHTML = 'Stop removing "' + removeArr[i] + '"';
+                removeButton.addEventListener('click', e => {
                     removeRemover(e);
                 });
-                button.id = encodeURI(removeArr[i]);
-                button.style.display = 'block';
-                li.appendChild(button);
+                removeButton.id = encodeURI(removeArr[i]);
+                removeButton.style.display = 'block';
+                removeButtonsLi.appendChild(removeButton);
             }
 
             let replaceArr = GM_getValue('replace'),
-                li2 = document.createElement('li'),
-                hr2 = document.createElement('hr');
-            li2.appendChild(hr2);
+                replaceButtonsLi = document.createElement('li');
+            replaceButtonsLi.appendChild(hr());
             for (let i = 0; i < replaceArr.length; i++) {
-                let button = document.createElement('button');
-                button.innerHTML = 'Stop renaming "' + replaceArr[i][0] + '" to "' + replaceArr[i][1] + '"';
-                button.addEventListener('click', e => {
+                let replaceButton = document.createElement('button');
+                replaceButton.innerHTML = 'Stop renaming "' + replaceArr[i][0] + '" to "' + replaceArr[i][1] + '"';
+                replaceButton.addEventListener('click', e => {
                     removeReplacer(e);
                 });
-                button.id = encodeURI(replaceArr[i][0]);
-                button.style.display = 'block';
-                li2.appendChild(button);
+                replaceButton.id = encodeURI(replaceArr[i][0]);
+                replaceButton.style.display = 'block';
+                replaceButtonsLi.appendChild(replaceButton);
             }
 
 
 
-            a.getElementsByClassName('section img-text')[0].appendChild(li);
-            a.getElementsByClassName('section img-text')[0].appendChild(li2);
+            a.getElementsByClassName('section img-text')[0].appendChild(removeButtonsLi);
+            a.getElementsByClassName('section img-text')[0].appendChild(replaceButtonsLi);
         });
 }
 
@@ -282,14 +269,14 @@ function removeReplacer(e) {
 function addRemover() {
     let remove = prompt('Name of link to be removed', 'Allgemeine Informationen');
 
-    if (!(remove == null || remove == '') && document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + remove + '"]')) {
+    if (!(remove == null || remove == '') && (document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + remove + '"]') || document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + remove + ' "]'))) {
         let removeArr = GM_getValue('remove');
         removeArr.push(remove);
         removeArr.sort();
         GM_setValue('remove', removeArr);
         redo();
     } else if (!(remove == null || remove == '')) {
-        alert('Unable to find ' + remove + '\nIt might be written wrong or missing a whitespace at the end');
+        alert('Unable to find "' + remove + '"');
         addRemover();
     }
 }
@@ -297,29 +284,29 @@ function addRemover() {
 function addReplacer() {
     let replace = prompt('Name of link to be replaced', 'Allgemeine Informationen'),
         replaceWith;
-    if ((!(replace == null || replace == '')) && document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + replace + '"]')) {
+    if ((!(replace == null || replace == '')) && (document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + replace + '"]') || document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + replace + ' "]'))) {
         replaceWith = prompt('Name to be replaced with', 'Allgemeine Infos');
+
+        if (!(replaceWith == null || replaceWith == '')) {
+            let replaceArr = GM_getValue('replace');
+
+            replaceArr.push([replace, replaceWith]);
+            replaceArr.sort((a, b) => {
+                if (a[0] < b[0]) {
+                    return -1;
+                } else if (a[0] > b[0]) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+            GM_setValue('replace', replaceArr);
+            redo();
+
+        }
     } else if (!(replace == null || replace == '')) {
-        alert('Unable to find ' + replace + '\nIt might be written wrong or missing a whitespace at the end');
+        alert('Unable to find "' + replace + '"');
         addReplacer();
-    }
-
-    if ((!(replace == null || replace == '')) && (!(replaceWith == null || replaceWith == ''))) {
-        let replaceArr = GM_getValue('replace');
-
-        replaceArr.push([replace, replaceWith]);
-        replaceArr.sort((a, b) => {
-            if (a[0] < b[1]) {
-                return -1;
-            } else if (a[0] > b[1]) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        GM_setValue('replace', replaceArr);
-        redo();
-
     }
 }
 
