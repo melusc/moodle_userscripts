@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.04.29d
+// @version     2020.04.29e
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
 // @Author      lusc
@@ -328,14 +328,14 @@ function addReplacer() {
 }
 
 function clearRemove() {
-    if (prompt('Are you sure?\nThis action is irreversible\nTo confirm type clear') == 'clear') {
+    if (prompt('Are you sure?\nThis action is irreversible\nTo confirm type confirm').toLowerCase() == 'confirm') {
         GM_setValue('remove', []);
         redo();
     }
 }
 
 function clearReplace() {
-    if (prompt('Are you sure?\nThis action is irreversible\nTo confirm type clear') == 'clear') {
+    if (prompt('Are you sure?\nThis action is irreversible\nTo confirm type confirm').toLowerCase() == 'confirm') {
         GM_setValue('replace', []);
         redo();
     }
