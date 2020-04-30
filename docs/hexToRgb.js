@@ -1,9 +1,9 @@
 "use strict";
 window.onload = function() {
-    document.querySelector('#hex').addEventListener('keyup', function() {
+    document.getElementById('hex').addEventListener('keyup', function() {
         hex(this);
     });
-    document.querySelector('#rgb').addEventListener('keyup', function() {
+    document.getElementById('rgb').addEventListener('keyup', function() {
         rgb(this);
     });
     height();
@@ -24,8 +24,8 @@ function hex(e) {
         g = hexToRgb(g);
         b = hexToRgb(b);
         rgb = `rgb(${ r },${ g },${ b })`;
-        document.querySelector('#rgb').value = rgb;
-        document.querySelector('#background').style.backgroundColor = e.value;
+        document.getElementById('rgb').value = rgb;
+        document.getElementById('background').style.backgroundColor = rgb;
     }
 }
 
@@ -52,16 +52,17 @@ function rgb(elem) {
             elem[i] = elem[i].substring(0, 3);
         }
         if (lastChar == ')') {
-            document.querySelector('#rgb').value = `rgb(${elem[0]},${elem[1]},${elem[2]})`;
+            document.getElementById('rgb').value = `rgb(${elem[0]},${elem[1]},${elem[2]})`;
         } else {
-            document.querySelector('#rgb').value = `rgb(${elem[0]},${elem[1]},${elem[2]}`;
+            document.getElementById('rgb').value = `rgb(${elem[0]},${elem[1]},${elem[2]}`;
         }
         let r = RgbToHex(elem[0]),
             g = RgbToHex(elem[1]),
             b = RgbToHex(elem[2]),
             hex;
         hex = `#${r}${g}${b}`;
-        document.querySelector('#hex').value = hex.toUpperCase();
+        document.getElementById('hex').value = hex.toUpperCase();
+        document.getElementById('background').style.backgroundColor = hex;
     }
 }
 
@@ -78,12 +79,12 @@ function RgbToHex(num) {
 }
 
 function height() {
-    let divWidth = document.querySelector('#everything').clientWidth,
-        divHeight = document.querySelector('#everything').clientHeight,
+    let divWidth = document.getElementById('everything').clientWidth,
+        divHeight = document.getElementById('everything').clientHeight,
         bodyWidth = document.body.clientWidth,
         bodyHeight = document.body.clientHeight,
         left = (bodyWidth - divWidth) / 2,
         top = (bodyHeight - divHeight) / 2;
-    document.querySelector('#everything').style.top = top + "px";
-    document.querySelector('#everything').style.left = left + "px";
+    document.getElementById('everything').style.top = top + "px";
+    document.getElementById('everything').style.left = left + "px";
 }
