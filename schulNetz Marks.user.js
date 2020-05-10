@@ -5,6 +5,8 @@
 // @author       lusc
 // @match        https://moodle.ksasz.ch/
 // @match        https://moodle.ksasz.ch/?*
+// @downloadURL  https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
+// @updateURL    https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
 // @grant        GM_getValue
