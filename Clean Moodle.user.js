@@ -1,9 +1,10 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.05.07a
+// @version     2020.05.10a
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
+// @exclude     *://moodle.ksasz.ch/lib*
 // @Author      lusc
 // @description Improving the looks of Moodle
 // @downloadURL https://github.com/melusc/lusc/raw/master/Clean%20Moodle.user.js
@@ -54,29 +55,41 @@ addEventListener('cleanMoodle',()=>{
     }
 
     function remove(selector) {
-        let thisHeading = sideBar.querySelector(`[title="${selector}"]`);
-        if (!thisHeading) {
-            thisHeading = sideBar.querySelector(`[title="${selector} "]`);
+        let thisHeading;
+        try{
+            thisHeading = sideBar.querySelector(`[title="${selector}"]`);
+            if (!thisHeading){
+                thisHeading = sideBar.querySelector(`[title="${selector} "]`);
+            }
+            if (!thisHeading) throw new Error('Could not find "' + selector + '"')
+            thisHeading = thisHeading.parentElement.parentElement;
+            if (thisHeading && !thisHeading.className.match(/\bcurrent_branch\b/)) {
+                thisHeading.parentElement.removeChild(thisHeading);
+            }
         }
-        thisHeading = thisHeading.parentElement.parentElement;
-        if (thisHeading && !thisHeading.className.match(/\bcurrent_branch\b/)) {
-            thisHeading.parentElement.removeChild(thisHeading);
-        } else if (sideBar && !thisHeading.className.match(/\bcurrent_branch\b/)) {
+        catch (e) {
+            console.log(e)
             alert(`Error removing "${selector}"! Check if it's written correctly.`);
         }
     }
 
     function replace(selector, replace) {
-        let thisHeading = sideBar.querySelector(`[title="${selector}"]`);
-        if (!thisHeading) {
-            thisHeading = sideBar.querySelector(`[title="${selector} "]`);
+        let thisHeading;
+        try {
+            thisHeading = sideBar.querySelector(`[title="${selector}"]`);
+            if (!thisHeading){
+                thisHeading = sideBar.querySelector(`[title="${selector} "]`);
+            }
+            if (!thisHeading) throw new Error('Could not find "' + selector + '"');
+            if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 i')) {
+                thisHeading.children[1].innerHTML = replace;
+            } else if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 c')) {
+                thisHeading.innerHTML = replace;
+            }
         }
-        if (sideBar && !thisHeading) {
+        catch(e) {
+            console.log(e)
             alert(`Error replacing "${selector}"! Check if it's written correctly.`);
-        } else if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 i')) {
-            thisHeading.children[1].innerHTML = replace;
-        } else if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 c')) {
-            thisHeading.innerHTML = replace;
         }
     }
 });
