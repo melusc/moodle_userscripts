@@ -3,8 +3,7 @@
 // @version      2020.05.13a
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
-// @match        *://moodle.ksasz.ch/?
-// @match        *://moodle.ksasz.ch/?lang=*
+// @match        *://moodle.ksasz.ch/?*
 // @updateURL    https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
 // @grant        GM_getValue
