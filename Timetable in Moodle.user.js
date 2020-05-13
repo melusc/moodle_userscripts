@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable
-// @version      2020.05.13a
+// @version      2020.05.13b
 // @author       lusc
 // @match        *://moodle.ksasz.ch/
 // @match        *://moodle.ksasz.ch/?*
@@ -52,7 +52,6 @@ addEventListener('timeTable', () => {
         div4 = c('div'),
         li = c('li'),
         p2 = c('p'),
-        hr = c('hr'),
 
         timeSlot,
         oldTimeSlot,
@@ -80,7 +79,7 @@ addEventListener('timeTable', () => {
     div1.appendChild(p);
     div1.appendChild(p2);
     div2.appendChild(div1);
-    div3.appendChild(hr);
+    div3.appendChild(c('hr'));
     div3.appendChild(div2);
     div4.appendChild(div3);
     li.appendChild(div4);
@@ -113,80 +112,86 @@ addEventListener('timeTable', () => {
         if (timeSlot != oldTimeSlot) {
             if (!holiday) {
                 let day = date.getDay();
-                if (customTimeSlot) {
-                    timeSlot = +customTimeSlot;
-                    console.log(text.cTS);
-                }
-                let currentLesson,
-                    nextLesson,
-                    otherLessons,
-                    time1,
-                    time2,
-                    cancel;
-                currentLesson = GM_getValue('lessons')[`${day}-${timeSlot}`];
-                nextLesson = GM_getValue('lessons')[`${day}-${timeSlot + 1}`];
-
-
-                let k = timeSlot + 1;
-                while (!otherLessons && timeSlot >= 0 && k <= Object.keys(times).length) {
-                    otherLessons = GM_getValue('lessons')[`${day}-${k}`];
-                    k++;
-                }
-                console.log(otherLessons);
-
-                if (!nextLesson && !currentLesson && !otherLessons) cancel = true;
-
-                time1 = c('div');
-                time1.style.fontWeight = 400;
-                time1.style.display = 'inline';
-
-                if (!currentLesson) {
-                    if (!cancel) currentLesson = text.nL;
-                    else {
-                        currentLesson = text.nLA;
-                        clearInterval(interval);
-                        console.log('Cleared interval');
-                    }
-                    time1.style.color = colour;
-                    time1.innerHTML = ':';
-                } else {
-                    time1.style.color = 'white';
-                    time1.innerHTML = ` (${times[timeSlot][0]} - ${times[timeSlot][1]}):`;
-                }
-
-                time2 = c('div');
-                time2.style.fontWeight = 400;
-                time2.style.display = 'inline';
-
-                if (!nextLesson) {
-                    nextLesson = text.nL;
-
-                    time2.style.color = colour;
-                    time2.innerHTML = ':';
-                } else {
-                    time2.style.color = 'white';
-                    time2.innerHTML = ` (${times[timeSlot + 1][0]} - ${times[timeSlot + 1][1]}):`;
-                }
-
-                let links = document.getElementsByClassName('type_system depth_2 contains_branch')[0].getElementsByClassName('type_course depth_3 item_with_icon'),
-                    currentLink,
-                    nextLink;
-
-                for (let i = 0; i < links.length; i++) {
-                    if (links[i].getElementsByTagName('span')[0].innerText.indexOf(currentLesson) >= 0) currentLink = links[i].getElementsByTagName('a')[0].href;
-                    if (links[i].getElementsByTagName('span')[0].innerText.indexOf(nextLesson) >= 0) nextLink = links[i].getElementsByTagName('a')[0].href;
-                }
-
-
                 if (day != 6 && day != 0) {
+                    if (customTimeSlot) {
+                        timeSlot = +customTimeSlot;
+                        console.log(text.cTS);
+                    }
+                    let currentLesson,
+                        nextLesson;
+                    currentLesson = GM_getValue('lessons')[`${day}-${timeSlot}`];
+                    nextLesson = GM_getValue('lessons')[`${day}-${timeSlot + 1}`];
+
+
+                    let otherLessons,
+                        k = timeSlot + 1;
+                    while (!otherLessons && timeSlot >= 0 && k <= Object.keys(times).length) {
+                        otherLessons = GM_getValue('lessons')[`${day}-${k}`];
+                        k++;
+                    }
+                    console.log(otherLessons);
+
+                    let cancel;
+                    if (!nextLesson && !currentLesson && !otherLessons) cancel = true;
+
+
+                    let time1,
+                        time2;
+
+                    time1 = c('div');
+                    time1.style.fontWeight = 400;
+                    time1.style.display = 'inline';
+
+                    if (!currentLesson) {
+                        if (!cancel) currentLesson = text.nL;
+                        else {
+                            currentLesson = text.nLA;
+                            clearInterval(interval);
+                            console.log('Cleared interval');
+                        }
+                        time1.style.color = colour;
+                        time1.innerHTML = ':';
+                    } else {
+                        time1.style.color = 'white';
+                        time1.innerHTML = ` (${times[timeSlot][0]} - ${times[timeSlot][1]}):`;
+                    }
+
+                    time2 = c('div');
+                    time2.style.fontWeight = 400;
+                    time2.style.display = 'inline';
+
+                    if (!nextLesson) {
+                        nextLesson = text.nL;
+
+                        time2.style.color = colour;
+                        time2.innerHTML = ':';
+                    } else {
+                        time2.style.color = 'white';
+                        time2.innerHTML = ` (${times[timeSlot + 1][0]} - ${times[timeSlot + 1][1]}):`;
+                    }
+
+
+                    let links = document.getElementsByClassName('type_system depth_2 contains_branch')[0].getElementsByClassName('type_course depth_3 item_with_icon'),
+                        currentLink,
+                        nextLink;
+
+                    for (let i = 0; i < links.length; i++) {
+                        if (links[i].getElementsByTagName('span')[0].innerText.indexOf(currentLesson) >= 0) currentLink = links[i].getElementsByTagName('a')[0].href;
+                        if (links[i].getElementsByTagName('span')[0].innerText.indexOf(nextLesson) >= 0) nextLink = links[i].getElementsByTagName('a')[0].href;
+                    }
+
+
                     let table = c('table'),
                         tbody = c('tbody');
                     table.appendChild(tbody);
 
                     tbody.style.fontSize = 'large';
-                    tbody.appendChild(cTr(text.now, currentLink, currentLesson, time1));
+
+                    let currentTr = cTr(text.now, currentLink, currentLesson, time1)
+                    tbody.appendChild(currentTr);
                     if (!cancel) {
-                        tbody.appendChild(cTr(text.after, nextLink, nextLesson, time2));
+                        let nextTr = cTr(text.after, nextLink, nextLesson, time2)
+                        tbody.appendChild(nextTr);
                     }
 
                     let p = document.getElementById('currentLesson').children[1];
