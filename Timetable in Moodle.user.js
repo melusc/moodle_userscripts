@@ -13,6 +13,7 @@
 // @grant        GM_addStyle
 // ==/UserScript==
 'use strict';
+console.log(`Moodle timetable version ${GM_info.script.version} by lusc`)
 addEventListener('timeTable', () => {
     let customTimeSlot = '', //Leave empty this is for my testing
         notify = true,
