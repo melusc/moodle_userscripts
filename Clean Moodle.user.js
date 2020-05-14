@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.05.11a
+// @version     2020.05.14a
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
 // @exclude     *://moodle.ksasz.ch/lib*
@@ -43,16 +43,17 @@ addEventListener('cleanMoodle', () => {
 
             runner();
             if (e) {
-                let unsortArr = [],
-                    li = Array.from(sideBar.children[1].getElementsByClassName('type_course depth_3'));
+                const li = Array.from(sideBar.children[1].getElementsByClassName('type_course depth_3'));
 
+                li.sort((a, b) => {
+                    a = a.textContent;
+                    b = b.textContent;
+                    if (a < b) return -1;
+                    else if (a > b) return 1;
+                    else return 0;
+                });
                 for (let i = 0; i < li.length; i++) {
-                    unsortArr.push(li[i].innerText);
-                }
-                let sortArr = unsortArr.slice().sort();
-
-                for (let i = 0; i < unsortArr.length; i++) {
-                    sideBar.children[1].insertBefore(li[unsortArr.indexOf(sortArr[i])], sideBar.children[1].children[i]);
+                    sideBar.children[1].appendChild(li[i]);
                 }
             }
             console.log('Clean moodle version ' + GM_info.script.version + ' by lusc');
@@ -92,8 +93,8 @@ addEventListener('cleanMoodle', () => {
 });
 if (location.pathname.toLowerCase() !== '/cleanmoodle') {
     dispatchEvent(new Event('cleanMoodle'));
-    GM_addValueChangeListener('remove', (a, b, c, d) => {
-        if (d) {
+    GM_addValueChangeListener('remove', (a, b, c, remote) => {
+        if (remote) {
             fetch('/')
                 .then(e => {
                     return e.text();
@@ -106,8 +107,8 @@ if (location.pathname.toLowerCase() !== '/cleanmoodle') {
                 });
         }
     });
-    GM_addValueChangeListener('replace', (a, b, c, d) => {
-        if (d) {
+    GM_addValueChangeListener('replace', (a, b, c, remote) => {
+        if (remote) {
             fetch('/')
                 .then(e => {
                     return e.text();
@@ -155,7 +156,7 @@ if (location.pathname == '/user/preferences.php') {
     document.getElementById('maincontent').parentElement.children[2].appendChild(div);
 }
 
-if (window.location.pathname.toLowerCase() === '/cleanmoodle') {
+if (location.pathname.toLowerCase() === '/cleanmoodle') {
     history.replaceState({}, '', '/cleanMoodle');
     setup(true);
 }
@@ -209,7 +210,7 @@ function setup(newPage) {
                 login = response.getElementById('login');
             if (login) {
                 confirm('You are logged out\nLogin, return and reload page');
-                window.open('https://moodle.ksasz.ch/login/index.php', '_blank');
+                open('https://moodle.ksasz.ch/login/index.php', '_blank');
                 return false;
             } else {
 
