@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.05.14a
+// @version     2020.05.15a
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
 // @exclude     *://moodle.ksasz.ch/lib*
@@ -24,130 +24,130 @@
  */
 
 addEventListener('cleanMoodle', () => {
-    let sideBar = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
     sort(true); // set to false if you don't want it to sort the sidebar
-
-    function runner() {
-        let removeArr = GM_getValue('remove'),
-            replaceArr = GM_getValue('replace');
-        for (let i = 0; i < removeArr.length; i++) {
-            remove(removeArr[i], sideBar);
-        }
-        for (let i = 0; i < replaceArr.length; i++) {
-            replace(replaceArr[i][0], replaceArr[i][1], sideBar);
-        }
-    }
-
-    function sort(e) {
-        if (document.getElementById('inst4')) {
-
-            runner();
-            if (e) {
-                const li = Array.from(sideBar.children[1].getElementsByClassName('type_course depth_3'));
-
-                li.sort((a, b) => {
-                    a = a.textContent;
-                    b = b.textContent;
-                    if (a < b) return -1;
-                    else if (a > b) return 1;
-                    else return 0;
-                });
-                for (let i = 0; i < li.length; i++) {
-                    sideBar.children[1].appendChild(li[i]);
-                }
-            }
-            console.log('Clean moodle version ' + GM_info.script.version + ' by lusc');
-        }
-    }
-
-    function remove(selector) {
-        let thisHeading = sideBar.querySelector(`[title="${selector}"]`);
-        if (!thisHeading) {
-            thisHeading = sideBar.querySelector(`[title="${selector} "]`);
-        }
-        if (thisHeading) {
-            thisHeading = thisHeading.parentElement.parentElement;
-            if (thisHeading && !thisHeading.className.match(/\bcurrent_branch\b/)) {
-                thisHeading.parentElement.removeChild(thisHeading);
-            }
-        } else {
-            alert(`Error removing "${selector}"! Check if it's written correctly.`);
-        }
-    }
-
-    function replace(selector, replace) {
-        let thisHeading = sideBar.querySelector(`[title="${selector}"]`);
-        if (!thisHeading) {
-            thisHeading = sideBar.querySelector(`[title="${selector} "]`);
-        }
-        if (thisHeading) {
-            if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 i')) {
-                thisHeading.children[1].innerHTML = replace;
-            } else if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 c')) {
-                thisHeading.innerHTML = replace;
-            }
-        } else {
-            alert(`Error replacing "${selector}"! Check if it's written correctly.`);
-        }
-    }
 });
+function sort(e, sidebar) {
+    if (!sidebar){
+        sidebar = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
+    }
+    if (sidebar) {
+        runner(sidebar);
+        if (e) {
+            const li = Array.from(sidebar.children[1].getElementsByClassName('type_course depth_3'));
+
+            li.sort((a, b) => {
+                a = a.textContent;
+                b = b.textContent;
+                if (a < b) return -1;
+                else if (a > b) return 1;
+                else return 0;
+            });
+            for (let i = 0; i < li.length; i++) {
+                sidebar.children[1].appendChild(li[i]);
+            }
+        }
+        console.log('Clean moodle version ' + GM_info.script.version + ' by lusc');
+    }
+}
+function runner(sidebar) {
+    let removeArr = GM_getValue('remove'),
+        replaceArr = GM_getValue('replace');
+    for (let i = 0; i < removeArr.length; i++) {
+        remove(removeArr[i], sidebar);
+    }
+    for (let i = 0; i < replaceArr.length; i++) {
+        replace(replaceArr[i][0], replaceArr[i][1], sidebar);
+    }
+}
+
+
+function remove(selector,sidebar) {
+    let thisHeading = sidebar.querySelector(`[title="${selector}"]`);
+    if (!thisHeading) {
+        thisHeading = sidebar.querySelector(`[title="${selector} "]`);
+    }
+    if (thisHeading) {
+        thisHeading = thisHeading.parentElement.parentElement;
+        if (thisHeading && !thisHeading.className.match(/\bcurrent_branch\b/)) {
+            thisHeading.parentElement.removeChild(thisHeading);
+        }
+    } else {
+        alert(`Error removing "${selector}"! Check if it's written correctly.`);
+    }
+}
+
+function replace(selector, replace,sidebar) {
+    let thisHeading = sidebar.querySelector(`[title="${selector}"]`);
+    if (!thisHeading) {
+        thisHeading = sidebar.querySelector(`[title="${selector} "]`);
+    }
+    if (thisHeading) {
+        if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 i')) {
+            thisHeading.children[1].innerHTML = replace;
+        } else if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 c')) {
+            thisHeading.innerHTML = replace;
+        }
+    } else {
+        alert(`Error replacing "${selector}"! Check if it's written correctly.`);
+    }
+}
 if (location.pathname.toLowerCase() !== '/cleanmoodle') {
     dispatchEvent(new Event('cleanMoodle'));
     GM_addValueChangeListener('remove', (a, b, c, remote) => {
         if (remote) {
             fetch('/')
                 .then(e => {
-                    return e.text();
-                })
+                return e.text();
+            })
                 .then(e => {
-                    e = new DOMParser().parseFromString(e, 'text/html');
-                    document.getElementById('inst4').outerHTML = e.getElementById('inst4').outerHTML;
-                    dispatchEvent(new Event('cleanMoodle'));
-                    dispatchEvent(new Event('customIcons'));
-                });
+                e = new DOMParser().parseFromString(e, 'text/html');
+                document.getElementById('inst4').outerHTML = e.getElementById('inst4').outerHTML;
+                dispatchEvent(new Event('cleanMoodle'));
+                dispatchEvent(new Event('customIcons'));
+            });
         }
     });
     GM_addValueChangeListener('replace', (a, b, c, remote) => {
         if (remote) {
             fetch('/')
                 .then(e => {
-                    return e.text();
-                })
+                return e.text();
+            })
                 .then(e => {
-                    e = new DOMParser().parseFromString(e, 'text/html');
-                    document.getElementById('inst4').outerHTML = e.getElementById('inst4').outerHTML;
-                    dispatchEvent(new Event('cleanMoodle'));
-                    dispatchEvent(new Event('customIcons'));
-                });
+                e = new DOMParser().parseFromString(e, 'text/html');
+                document.getElementById('inst4').outerHTML = e.getElementById('inst4').outerHTML;
+                dispatchEvent(new Event('cleanMoodle'));
+                dispatchEvent(new Event('customIcons'));
+            });
         }
     });
 }
 
 if (location.pathname == '/user/preferences.php') {
-    let div = document.createElement('div');
+    let div = c('div');
     div.className = 'col-md-4';
 
-    let div2 = document.createElement('div');
+    let div2 = c('div');
     div2.className = 'card mb-3';
     div.appendChild(div2);
 
-    let div5 = document.createElement('div');
+    let div5 = c('div');
     div5.className = 'card-body';
     div2.appendChild(div5);
 
-    let h4 = document.createElement('h4');
+    let h4 = c('h4');
     h4.className = 'card-title';
     h4.innerHTML = 'Clean Moodle';
     div5.appendChild(h4);
 
-    let div3 = document.createElement('div');
+    let div3 = c('div');
     div3.className = 'card-text';
     div5.appendChild(div3);
 
-    let div4 = document.createElement('div');
+    let div4 = c('div');
     div3.appendChild(div4);
 
-    let a = document.createElement('a');
+    let a = c('a');
     a.href = 'https://moodle.ksasz.ch/cleanMoodle';
     a.setAttribute('target', '_blank');
     a.innerHTML = 'Settings';
@@ -156,12 +156,12 @@ if (location.pathname == '/user/preferences.php') {
     document.getElementById('maincontent').parentElement.children[2].appendChild(div);
 }
 
-if (location.pathname.toLowerCase() === '/cleanmoodle') {
-    history.replaceState({}, '', '/cleanMoodle');
+if (location.pathname.toLowerCase().startsWith('/cleanmoodle')) {
+    history.replaceState({}, '', '/cleanMoodle/');
     setup(true);
 }
 const hr = () => {
-    return document.createElement('hr');
+    return c('hr');
 };
 
 function setup(newPage) {
@@ -170,7 +170,7 @@ function setup(newPage) {
     }
     document.title = 'Clean Moodle Setup';
 
-    let icon = document.createElement('link');
+    let icon = c('link');
     icon.setAttribute('rel', 'shortcut icon');
     icon.href = 'https://moodle.ksasz.ch/theme/image.php/classic/theme/1588340020/favicon';
     document.head.appendChild(icon);
@@ -181,7 +181,7 @@ function setup(newPage) {
         }
     }
 
-    let style = document.createElement('link');
+    let style = c('link');
     style.setAttribute('rel', 'stylesheet');
     style.setAttribute('type', 'text/css');
     style.href = 'https://moodle.ksasz.ch/theme/styles.php/classic/1588340020_1588339031/all';
@@ -198,160 +198,216 @@ function setup(newPage) {
     `);
     fetch('https://moodle.ksasz.ch/')
         .then(e => {
-            return e.text();
-        })
+        return e.text();
+    })
         .then(e => {
-            if (!newPage) {
-                while (document.body.lastChild) {
-                    document.body.removeChild(document.body.lastChild);
-                }
+        if (!newPage) {
+            while (document.body.lastChild) {
+                document.body.removeChild(document.body.lastChild);
             }
-            let response = new DOMParser().parseFromString(e, 'text/html'),
-                login = response.getElementById('login');
-            if (login) {
-                confirm('You are logged out\nLogin, return and reload page');
-                open('https://moodle.ksasz.ch/login/index.php', '_blank');
-                return false;
-            } else {
+        }
+        let response = new DOMParser().parseFromString(e, 'text/html'),
+            login = response.getElementById('login');
+        if (login) {
+            confirm('You are logged out\nLogin, return and reload page');
+            open('https://moodle.ksasz.ch/login/index.php', '_blank');
+            return false;
+        } else {
 
-                let sidebar = response.getElementById('inst4'),
-                    content = response.getElementById('region-main');
+            let sidebar = response.getElementById('inst4'),
+                content = response.getElementById('region-main'),
+                x = content.getElementsByClassName('section img-text')[0];
+            sort(true, sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
 
-                while (content.getElementsByClassName('section img-text')[0].lastChild) {
-                    content.getElementsByClassName('section img-text')[0].removeChild(content.getElementsByClassName('section img-text')[0].lastChild);
-                }
-
-                let removeLi = document.createElement('li'),
-                    removeButton = document.createElement('button'),
-                    clearRemoveButton = document.createElement('button'),
-                    removeH3 = document.createElement('h3'),
-
-                    replaceLi = document.createElement('li'),
-                    replaceButton = document.createElement('button'),
-                    clearReplaceButton = document.createElement('button'),
-                    replaceH3 = document.createElement('h3');
-
-
-                removeLi.appendChild(hr());
-
-                removeH3.innerHTML = 'Removers';
-                removeLi.appendChild(removeH3);
-
-                removeButton.innerHTML = 'Add remover';
-                removeButton.style.display = 'block';
-                removeButton.addEventListener('click', () => {
-                    addRemover();
-                });
-                removeLi.appendChild(removeButton);
-
-                clearRemoveButton.innerHTML = 'Clear all';
-                clearRemoveButton.style.display = 'block';
-                clearRemoveButton.style.color = 'red';
-                clearRemoveButton.addEventListener('click', () => {
-                    clearRemove();
-                });
-                removeLi.appendChild(clearRemoveButton);
-
-                content.getElementsByClassName('section img-text')[0].appendChild(removeLi);
-
-
-                replaceLi.appendChild(hr());
-
-                replaceH3.innerHTML = 'Replacers';
-                replaceLi.appendChild(replaceH3);
-
-                replaceButton.innerHTML = 'Add replacer';
-                replaceButton.style.display = 'block';
-                replaceButton.addEventListener('click', addReplacer);
-                replaceLi.appendChild(replaceButton);
-
-                clearReplaceButton.innerHTML = 'Clear all';
-                clearReplaceButton.style.display = 'block';
-                clearReplaceButton.style.color = 'red';
-                clearReplaceButton.addEventListener('click', clearReplace);
-                replaceLi.appendChild(clearReplaceButton);
-
-                content.getElementsByClassName('section img-text')[0].appendChild(replaceLi);
-
-                content.getElementsByClassName('section img-text')[0].style.listStyleType = 'none';
-
-                document.body.appendChild(content);
-
-                let aside = document.createElement('aside');
-                aside.id = 'block-region-side-pre';
-                aside.className = 'block-region';
-                aside.dataset.blockregion = 'side-pre';
-                aside.dataset.droptarget = 1;
-                aside.appendChild(sidebar);
-
-                let section = document.createElement('section');
-                section.dataset.region = 'blocks-column';
-                section.className = 'hidden-print';
-                section.appendChild(aside);
-
-                let div = document.createElement('div');
-                div.className = 'columnleft blockcolumn  has-blocks ';
-                div.appendChild(section);
-
-                let div5 = document.createElement('div');
-                div5.id = 'region-main-box';
-                div5.className = 'region-main';
-                div5.appendChild(content);
-
-                let div2 = document.createElement('div');
-                div2.id = 'page-content';
-                div2.className = 'row  blocks-pre   blocks-post  d-print-block';
-                div2.appendChild(div5);
-                div2.appendChild(div);
-
-                let div3 = document.createElement('div');
-                div3.id = 'page';
-                div3.className = 'container-fluid d-print-block';
-                div3.appendChild(div2);
-
-                let div4 = document.createElement('div');
-                div4.id = 'page-wrapper';
-                div4.className = 'd-print-block';
-                div4.appendChild(div3);
-
-                document.body.appendChild(div4);
-
-                dispatchEvent(new Event('cleanMoodle'));
-                return content;
+            while (x.lastChild) {
+                x.removeChild(x.lastChild);
             }
-        })
+
+            let selectRemove = c('select'),
+                elements = sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0].children[1].children,
+                defaultOptionRemove = c('option');
+            selectRemove.id = 'selectRemove';
+            defaultOptionRemove.setAttribute('selected',true);
+            defaultOptionRemove.setAttribute('disabled',true);
+            defaultOptionRemove.setAttribute('hidden',true);
+            defaultOptionRemove.innerHTML = 'Pick element to be removed';
+            selectRemove.appendChild(defaultOptionRemove);
+            loop1:
+            for (let i = 0; i < elements.length; i++){
+                let value = elements[i].getElementsByTagName('a')[0].title,
+                    replaceArr = GM_getValue('replace');
+                loop2:
+                for (let i = 0; i < replaceArr.length; i++){
+                    if (value.trim() == replaceArr[i][0].trim()) continue loop1;
+                }
+                let option = c('option');
+                option.value = value;
+                option.innerHTML = value;
+                selectRemove.appendChild(option);
+            }
+            let removeLi = c('li'),
+                removeButton = c('button'),
+                clearRemoveButton = c('button'),
+                removeH3 = c('h3'),
+
+                replaceLi = c('li'),
+                replaceButton = c('button'),
+                clearReplaceButton = c('button'),
+                replaceH3 = c('h3');
+
+
+            removeLi.appendChild(hr());
+
+            removeH3.innerHTML = 'Removers';
+            removeLi.appendChild(removeH3);
+
+            removeButton.innerHTML = 'Select';
+            removeButton.addEventListener('click', () => {
+                addRemover();
+            });
+            removeButton.style.marginLeft = '5px';
+            removeLi.appendChild(selectRemove);
+            removeLi.appendChild(removeButton);
+
+            clearRemoveButton.innerHTML = 'Clear all';
+            clearRemoveButton.style.display = 'block';
+            clearRemoveButton.style.color = 'red';
+            clearRemoveButton.addEventListener('click', () => {
+                clearRemove();
+            });
+            removeLi.appendChild(clearRemoveButton);
+
+            content.getElementsByClassName('section img-text')[0].appendChild(removeLi);
+
+
+            replaceLi.appendChild(hr());
+
+            replaceH3.innerHTML = 'Replacers';
+            replaceLi.appendChild(replaceH3);
+
+            let selectReplace = c('select'),
+                defaultOptionReplace = c('option');
+            selectReplace.id = 'selectReplace';
+            defaultOptionReplace.setAttribute('selected',true);
+            defaultOptionReplace.setAttribute('disabled',true);
+            defaultOptionReplace.setAttribute('hidden',true);
+            defaultOptionReplace.innerHTML = 'Pick element to be replaced';
+            selectReplace.appendChild(defaultOptionReplace);
+            loop1:
+            for (let i = 0; i < elements.length; i++){
+                let option = c('option'),
+                    value = elements[i].getElementsByTagName('a')[0].title,
+                    replaceArr = GM_getValue('replace');
+                loop2:
+                for (let i = 0; i < replaceArr.length; i++){
+                    if (replaceArr[i][0].trim() == value.trim()) continue loop1;
+                }
+                option.value = value;
+                option.innerHTML = value;
+                selectReplace.appendChild(option);
+            }
+            let input = c('input');
+            input.placeholder = 'Replace with';
+            input.id = 'inputReplace';
+            input.style.display = 'block';
+            input.style.marginTop = '5px';
+            input.addEventListener('keyup',e=>{
+                if (e.which === 13) addReplacer();
+            });
+
+            replaceButton.innerHTML = 'Select';
+            replaceButton.addEventListener('click', addReplacer);
+            replaceLi.appendChild(selectReplace);
+            replaceLi.appendChild(input);
+            replaceLi.appendChild(replaceButton);
+
+            clearReplaceButton.innerHTML = 'Clear all';
+            clearReplaceButton.style.display = 'block';
+            clearReplaceButton.style.color = 'red';
+            clearReplaceButton.addEventListener('click', clearReplace);
+            replaceLi.appendChild(clearReplaceButton);
+
+            content.getElementsByClassName('section img-text')[0].appendChild(replaceLi);
+
+            content.getElementsByClassName('section img-text')[0].style.listStyleType = 'none';
+
+            document.body.appendChild(content);
+
+
+            let aside = c('aside');
+            aside.id = 'block-region-side-pre';
+            aside.className = 'block-region';
+            aside.dataset.blockregion = 'side-pre';
+            aside.dataset.droptarget = 1;
+            aside.appendChild(sidebar);
+
+            let section = c('section');
+            section.dataset.region = 'blocks-column';
+            section.className = 'hidden-print';
+            section.appendChild(aside);
+
+            let div = c('div');
+            div.className = 'columnleft blockcolumn  has-blocks ';
+            div.appendChild(section);
+
+            let div5 = c('div');
+            div5.id = 'region-main-box';
+            div5.className = 'region-main';
+            div5.appendChild(content);
+
+            let div2 = c('div');
+            div2.id = 'page-content';
+            div2.className = 'row  blocks-pre   blocks-post  d-print-block';
+            div2.appendChild(div5);
+            div2.appendChild(div);
+
+            let div3 = c('div');
+            div3.id = 'page';
+            div3.className = 'container-fluid d-print-block';
+            div3.appendChild(div2);
+
+            let div4 = c('div');
+            div4.id = 'page-wrapper';
+            div4.className = 'd-print-block';
+            div4.appendChild(div3);
+
+            document.body.appendChild(div4);
+
+            return content;
+        }
+    })
         .then(a => {
-            if (a) {
-                let removeArr = GM_getValue('remove'),
-                    removeButtonsLi = document.createElement('li');
-                removeButtonsLi.appendChild(hr());
-                for (let i = 0; i < removeArr.length; i++) {
-                    let removeButton = document.createElement('button');
-                    removeButton.innerHTML = 'Stop removing "' + removeArr[i] + '"';
-                    removeButton.addEventListener('click', removeRemover);
-                    removeButton.dataset.id = removeArr[i];
-                    removeButton.style.display = 'block';
-                    removeButtonsLi.appendChild(removeButton);
-                }
-
-                let replaceArr = GM_getValue('replace'),
-                    replaceButtonsLi = document.createElement('li');
-                replaceButtonsLi.appendChild(hr());
-                for (let i = 0; i < replaceArr.length; i++) {
-                    let replaceButton = document.createElement('button');
-                    replaceButton.innerHTML = 'Stop renaming "' + replaceArr[i][0] + '" to "' + replaceArr[i][1] + '"';
-                    replaceButton.addEventListener('click', removeReplacer);
-                    replaceButton.dataset.id = replaceArr[i][0];
-                    replaceButton.style.display = 'block';
-                    replaceButtonsLi.appendChild(replaceButton);
-                }
-
-
-
-                a.getElementsByClassName('section img-text')[0].appendChild(removeButtonsLi);
-                a.getElementsByClassName('section img-text')[0].appendChild(replaceButtonsLi);
+        if (a) {
+            let removeArr = GM_getValue('remove'),
+                removeButtonsLi = c('li');
+            removeButtonsLi.appendChild(hr());
+            for (let i = 0; i < removeArr.length; i++) {
+                let removeButton = c('button');
+                removeButton.innerHTML = 'Stop removing "' + removeArr[i] + '"';
+                removeButton.addEventListener('click', removeRemover);
+                removeButton.dataset.id = removeArr[i];
+                removeButton.style.display = 'block';
+                removeButtonsLi.appendChild(removeButton);
             }
-        });
+
+            let replaceArr = GM_getValue('replace'),
+                replaceButtonsLi = c('li');
+            replaceButtonsLi.appendChild(hr());
+            for (let i = 0; i < replaceArr.length; i++) {
+                let replaceButton = c('button');
+                replaceButton.innerHTML = 'Stop renaming "' + replaceArr[i][0] + '" to "' + replaceArr[i][1] + '"';
+                replaceButton.addEventListener('click', removeReplacer);
+                replaceButton.dataset.id = replaceArr[i][0];
+                replaceButton.style.display = 'block';
+                replaceButtonsLi.appendChild(replaceButton);
+            }
+
+
+
+            a.getElementsByClassName('section img-text')[0].appendChild(removeButtonsLi);
+            a.getElementsByClassName('section img-text')[0].appendChild(replaceButtonsLi);
+        }
+    });
 }
 
 function removeRemover(e) {
@@ -376,46 +432,47 @@ function removeReplacer(e) {
 }
 
 function addRemover() {
-    let remove = prompt('Name of link to be removed', 'Allgemeine Informationen');
-
-    if (!(remove === null || remove === '') && (document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + remove + '"]') || document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + remove + ' "]'))) {
+    let remove = document.getElementById('selectRemove').value,
+        x = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
+    if (remove != 'Pick element to be removed' && (x.querySelector('a[title="' + remove + '"]') || x.querySelector('a[title="' + remove + ' "]'))) {
+        let replaceArr = GM_getValue('replace');
+        for (let i = 0; i < replaceArr.length; i++){
+            if (replaceArr[i][0].trim() == remove.trim()){
+                alert('Error: Already used');
+                return;
+            }
+        }
         let removeArr = GM_getValue('remove');
         removeArr.push(remove);
         removeArr.sort();
         GM_setValue('remove', removeArr);
         redo();
-    } else if (!(remove === null || remove === '')) {
+    } else if (remove != 'Pick element to be removed') {
         alert('Unable to find "' + remove + '"');
-        addRemover();
     }
 }
 
 function addReplacer() {
-    let replace = prompt('Name of link to be replaced', 'Allgemeine Informationen'),
-        replaceWith;
-    if ((!(replace === null || replace === '')) && (document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + replace + '"]') || document.getElementsByClassName('type_system depth_2 contains_branch')[0].querySelector('a[title="' + replace + ' "]'))) {
-        replaceWith = prompt('Name to be replaced with', 'Allgemeine Infos');
+    let replace = document.getElementById('selectReplace').value,
+        replaceWith = document.getElementById('inputReplace').value,
+        x = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
+    if (replace != 'Pick element to be replaced' && (x.querySelector('a[title="' + replace + '"]') || x.querySelector('a[title="' + replace + ' "]'))) {
 
-        if (!(replaceWith == null || replaceWith == '')) {
+        if (replaceWith != '') {
             let replaceArr = GM_getValue('replace');
 
             replaceArr.push([replace, replaceWith]);
             replaceArr.sort((a, b) => {
-                if (a[0] < b[0]) {
-                    return -1;
-                } else if (a[0] > b[0]) {
-                    return 1;
-                } else {
-                    return 0;
-                }
+                if (a[0] < b[0]) return -1;
+                else if (a[0] > b[0])return 1;
+                else return 0;
             });
             GM_setValue('replace', replaceArr);
             redo();
 
         }
-    } else if (!(replace == null || replace == '')) {
+    } else if (replace != '' && replace != 'Pick element to be replaced') {
         alert('Unable to find "' + replace + '"');
-        addReplacer();
     }
 }
 
@@ -435,4 +492,7 @@ function clearReplace() {
 
 function redo() {
     setup(false);
+}
+function c(e){
+    return document.createElement(e);
 }
