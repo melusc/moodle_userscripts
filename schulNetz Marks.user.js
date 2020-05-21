@@ -1,7 +1,6 @@
 // ==UserScript==
 // @name         Moodle unconfirmed marks on schulNetz
-// @version      0.1
-// @description  try to take over the world!
+// @version      2020.05.21a
 // @author       lusc
 // @match        https://moodle.ksasz.ch/
 // @match        https://moodle.ksasz.ch/?*
@@ -26,13 +25,13 @@ const c = (e)=>{
     return document.createElement(e);
 }
 
-let li = c('li'),
-    div = c('div'),
-    div1 = c('div'),
-    strong = c('strong'),
-    divTable = c('div'),
-    loadingSpan = c('span'),
-    loadingI = c('i');
+const li = c('li'),
+      div = c('div'),
+      div1 = c('div'),
+      strong = c('strong'),
+      divTable = c('div'),
+      loadingSpan = c('span'),
+      loadingI = c('i');
 
 loadingSpan.className = 'loading-icon icon-no-margin';
 loadingI.className = 'icon fa fa-circle-o-notch fa-spin fa-fw ';
@@ -62,10 +61,10 @@ div.appendChild(div1);
 li.appendChild(div);
 document.getElementById('module-533').parentElement.insertBefore(li,document.getElementById('module-533'));
 
-let data = new FormData();
+const data = new FormData();
 data.append('pin',pin);
 
-let xhr = GM_xmlhttpRequest({
+GM_xmlhttpRequest({
     method: 'POST',
     url: url,
     data: data,
