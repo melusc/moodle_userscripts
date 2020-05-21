@@ -12,9 +12,9 @@
 // @grant        GM_addStyle
 // ==/UserScript==
 'use strict';
-console.log(`Moodle timetable version ${GM_info.script.version} by lusc`)
+console.log(`Moodle timetable version %c${GM_info.script.version} %cby %clusc`, 'color: #fe4c4c', 'color:', 'color:#58e');
 addEventListener('timeTable', () => {
-    let customTimeSlot = '', //Leave empty this is for my testing
+    const customTimeSlot = '', //Leave empty this is for my testing
         notify = true,
         holiday = false,
         times = {
@@ -42,7 +42,7 @@ addEventListener('timeTable', () => {
 
     if (!GM_getValue('lessons')) GM_setValue('lessons', {});
 
-    let interval = setInterval(timeTable, 10000),
+    const interval = setInterval(timeTable, 10000),
 
         strong = c('strong'),
         p = c('p'),
@@ -53,11 +53,11 @@ addEventListener('timeTable', () => {
         li = c('li'),
         p2 = c('p'),
 
-        timeSlot,
-        oldTimeSlot,
-        newPage = true,
         colour = getComputedStyle(document.getElementById('label_1_1'), null).getPropertyValue('color');
 
+    let timeSlot,
+        oldTimeSlot,
+        newPage = true;
 
     strong.innerHTML = text.tt;
     strong.style = 'font-size: medium;';
@@ -85,13 +85,13 @@ addEventListener('timeTable', () => {
     li.appendChild(div4);
     document.getElementsByClassName('section img-text')[0].insertBefore(li, document.getElementsByClassName('section img-text')[0].children[0]);
 
-    let timesArr = {
+    const timesArr = {
         1: times['1'][0].split(':')
     };
     for (let j = 1; j <= Object.keys(times).length; j++) {
         timesArr[j + 1] = times[j][1].split(':');
     }
-    let timesMin = {};
+    const timesMin = {};
     for (let k = 1; k <= Object.keys(timesArr).length; k++) {
         timesMin[k] = timesArr[k][0] * 60 + Number(timesArr[k][1]);
     }
@@ -99,7 +99,7 @@ addEventListener('timeTable', () => {
 
     function timeTable() {
         oldTimeSlot = timeSlot;
-        let date = new Date(),
+        const date = new Date(),
             hour = date.getHours(),
             minute = date.getMinutes() + hour * 60;
 
@@ -111,7 +111,7 @@ addEventListener('timeTable', () => {
 
         if (timeSlot != oldTimeSlot) {
             if (!holiday) {
-                let day = date.getDay();
+                const day = date.getDay();
                 if (day != 6 && day != 0) {
                     if (customTimeSlot) {
                         timeSlot = +customTimeSlot;
@@ -171,8 +171,8 @@ addEventListener('timeTable', () => {
                     }
 
 
-                    let links = document.getElementsByClassName('type_system depth_2 contains_branch')[0].getElementsByClassName('type_course depth_3 item_with_icon'),
-                        currentLink,
+                    const links = document.getElementsByClassName('type_system depth_2 contains_branch')[0].getElementsByClassName('type_course depth_3 item_with_icon');
+                    let currentLink,
                         nextLink;
 
                     for (let i = 0; i < links.length; i++) {
@@ -181,27 +181,27 @@ addEventListener('timeTable', () => {
                     }
 
 
-                    let table = c('table'),
+                    const table = c('table'),
                         tbody = c('tbody');
                     table.appendChild(tbody);
 
                     tbody.style.fontSize = 'large';
 
-                    let currentTr = cTr(text.now, currentLink, currentLesson, time1)
+                    const currentTr = cTr(text.now, currentLink, currentLesson, time1);
                     tbody.appendChild(currentTr);
                     if (!cancel) {
-                        let nextTr = cTr(text.after, nextLink, nextLesson, time2)
+                        const nextTr = cTr(text.after, nextLink, nextLesson, time2);
                         tbody.appendChild(nextTr);
                     }
 
-                    let p = document.getElementById('currentLesson').children[1];
+                    const p = document.getElementById('currentLesson').children[1];
                     while (p.lastChild) p.removeChild(p.lastChild);
                     p.appendChild(table);
 
                     console.log(new Date(), 'refreshed');
                     if (!cancel && !newPage && notify) {
                         console.log('notified at', new Date());
-                        let notificationObj = {
+                        const notificationObj = {
                             text: currentLesson,
                             title: text.now,
                             image: 'https://i.imgur.com/ZtPH8v7.png',
@@ -218,18 +218,22 @@ addEventListener('timeTable', () => {
                     }
                     newPage = false;
                 } else {
-                    let weekEndStrong = c('strong');
+                    const weekEndStrong = c('strong');
                     weekEndStrong.style.color = colour;
                     weekEndStrong.style.fontSize = 'large';
                     weekEndStrong.innerHTML = text.wE;
-                    document.getElementById('currentLesson').children[1].appendChild(weekEndStrong);
+                    const p = document.getElementById('currentLesson').children[1];
+                    while (p.lastChild) p.removeChild(p.lastChild);
+                    p.appendChild(weekEndStrong);
                 }
             } else {
-                let holidayStrong = c('strong');
+                const holidayStrong = c('strong');
                 holidayStrong.style.color = colour;
                 holidayStrong.style.fontSize = 'large';
                 holidayStrong.innerHTML = text.hD;
-                document.getElementById('currentLesson').children[1].appendChild(holidayStrong);
+                const p = document.getElementById('currentLesson').children[1];
+                while (p.lastChild) p.removeChild(p.lastChild);
+                p.appendChild(holidayStrong);
             }
         }
     }
@@ -239,7 +243,7 @@ addEventListener('timeTable', () => {
     }
 
     function cTr(text, link, lesson, time) {
-        let tr = c('tr'),
+        const tr = c('tr'),
             th = c('th'),
             td = c('td'),
             textA = document.createTextNode(text);
@@ -254,13 +258,13 @@ addEventListener('timeTable', () => {
         tr.appendChild(td);
 
         if (link) {
-            let anchor = c('a');
+            const anchor = c('a');
             anchor.href = link;
             anchor.target = '_blank';
             anchor.innerHTML = lesson;
             td.appendChild(anchor);
         } else {
-            let textNode = document.createTextNode(lesson);
+            const textNode = document.createTextNode(lesson);
             td.appendChild(textNode);
         }
         return tr;
