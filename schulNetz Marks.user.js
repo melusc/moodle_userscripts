@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle unconfirmed marks on schulNetz
-// @version      2020.05.21a
+// @version      2020.05.21b
 // @author       lusc
 // @match        https://moodle.ksasz.ch/
 // @match        https://moodle.ksasz.ch/?*
@@ -33,21 +33,21 @@ const li = c('li'),
       loadingSpan = c('span'),
       loadingI = c('i');
 
-loadingSpan.className = 'loading-icon icon-no-margin';
-loadingI.className = 'icon fa fa-circle-o-notch fa-spin fa-fw ';
+loadingSpan.classList.add('loading-icon','icon-no-margin');
+loadingI.classList.add('icon','fa','fa-circle-o-notch','fa-spin','fa-fw');
 loadingI.title = 'Loading';
 loadingI.style.color = 'white';
 loadingSpan.appendChild(loadingI);
 
-li.className = 'activity label modtype_label ';
+li.classList.add('activity','label','modtype_label');
 li.id = 'module-marks';
 
 strong.innerHTML = 'Unbestätigte Noten';
 strong.style.fontSize = 'medium';
 
-div.className = 'mod-indent-outer';
+div.classList.add('mod-indent-outer');
 
-div1.className = 'contentwithoutlink ';
+div1.classList.add('contentwithoutlink');
 
 divTable.appendChild(loadingSpan);
 
