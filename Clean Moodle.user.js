@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.05.21a
+// @version     2020.06.02a
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
 // @exclude     *://moodle.ksasz.ch/lib*
@@ -32,7 +32,14 @@ function sort(e, sidebar) {
         sidebar = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
     }
     if (sidebar) {
-        runner(sidebar);
+        const removeArr = GM_getValue('remove'),
+              replaceArr = GM_getValue('replace');
+        for (let i = 0; i < removeArr.length; i++) {
+            remove(removeArr[i], sidebar);
+        }
+        for (let i = 0; i < replaceArr.length; i++) {
+            replace(replaceArr[i][0], replaceArr[i][1], sidebar);
+        }
         if (e) {
             const li = Array.from(sidebar.children[1].getElementsByClassName('type_course depth_3'));
 
@@ -47,21 +54,9 @@ function sort(e, sidebar) {
                 sidebar.children[1].appendChild(li[i]);
             }
         }
-        console.log('Clean moodle version %c' + GM_info.script.version + ' %cby %clusc', 'color: #fe4c4c', 'color:', 'color:#58e');
+        console.log('Clean moodle version %c' + GM_info.script.version + ' %cby %clusc', 'color: #fe4c4c', 'color:initial', 'color:#58e');
     }
 }
-
-function runner(sidebar) {
-    const removeArr = GM_getValue('remove'),
-        replaceArr = GM_getValue('replace');
-    for (let i = 0; i < removeArr.length; i++) {
-        remove(removeArr[i], sidebar);
-    }
-    for (let i = 0; i < replaceArr.length; i++) {
-        replace(replaceArr[i][0], replaceArr[i][1], sidebar);
-    }
-}
-
 
 function remove(selector, sidebar) {
     let thisHeading = sidebar.querySelector(`[title="${selector}"]`);
@@ -69,8 +64,8 @@ function remove(selector, sidebar) {
         thisHeading = sidebar.querySelector(`[title="${selector} "]`);
     }
     if (thisHeading) {
-        thisHeading = thisHeading.parentElement.parentElement;
-        if (thisHeading && !thisHeading.className.match(/\bcurrent_branch\b/)) {
+        thisHeading = thisHeading.closest('li');
+        if (thisHeading && !thisHeading.classList.contains('current_branch')) {
             thisHeading.parentElement.removeChild(thisHeading);
         }
     } else {
@@ -84,9 +79,9 @@ function replace(selector, replace, sidebar) {
         thisHeading = sidebar.querySelector(`[title="${selector} "]`);
     }
     if (thisHeading) {
-        if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 i')) {
+        if (thisHeading.closest('li').classList.contains('item_with_icon')) {
             thisHeading.children[1].innerHTML = replace;
-        } else if (thisHeading.parentElement.parentElement.className.startsWith('type_course depth_3 c')) {
+        } else if (thisHeading.closest('li').classList.contains('current_branch')) {
             thisHeading.innerHTML = replace;
         }
     } else {
@@ -100,11 +95,11 @@ if (location.pathname.toLowerCase() !== '/cleanmoodle') {
             fetch('/')
                 .then(e => e.text())
                 .then(e => {
-                    e = new DOMParser().parseFromString(e, 'text/html');
-                    document.getElementById('inst4').outerHTML = e.getElementById('inst4').outerHTML;
-                    dispatchEvent(new Event('cleanMoodle'));
-                    dispatchEvent(new Event('customIcons'));
-                });
+                e = new DOMParser().parseFromString(e, 'text/html');
+                document.getElementById('inst4').outerHTML = e.getElementById('inst4').outerHTML;
+                dispatchEvent(new Event('cleanMoodle'));
+                dispatchEvent(new Event('customIcons'));
+            });
         }
     });
     GM_addValueChangeListener('replace', (a, b, c, remote) => {
@@ -112,18 +107,18 @@ if (location.pathname.toLowerCase() !== '/cleanmoodle') {
             fetch('/')
                 .then(e => e.text())
                 .then(e => {
-                    e = new DOMParser().parseFromString(e, 'text/html');
-                    document.getElementById('inst4').outerHTML = e.getElementById('inst4').outerHTML;
-                    dispatchEvent(new Event('cleanMoodle'));
-                    dispatchEvent(new Event('customIcons'));
-                });
+                e = new DOMParser().parseFromString(e, 'text/html');
+                document.getElementById('inst4').outerHTML = e.getElementById('inst4').outerHTML;
+                dispatchEvent(new Event('cleanMoodle'));
+                dispatchEvent(new Event('customIcons'));
+            });
         }
     });
 }
 
 if (location.pathname == '/user/preferences.php') {
     const element = document.getElementById('maincontent').parentElement.children[2].children[0].cloneNode(true),
-        temp = element.getElementsByClassName('card-text')[0];
+          temp = element.getElementsByClassName('card-text')[0];
     element.getElementsByTagName('h4')[0].innerHTML = 'Clean Moodle';
 
     while (temp.children.length != 1) temp.removeChild(temp.lastChild);
@@ -175,202 +170,193 @@ function setup(newPage) {
     fetch('https://moodle.ksasz.ch/')
         .then(e => e.text())
         .then(e => {
-            if (!newPage) {
-                while (document.body.lastChild) {
-                    document.body.removeChild(document.body.lastChild);
-                }
+        if (!newPage) {
+            while (document.body.lastChild) {
+                document.body.removeChild(document.body.lastChild);
             }
-            const response = new DOMParser().parseFromString(e, 'text/html'),
-                login = response.getElementById('login');
-            if (login) {
-                confirm('You are logged out\nLogin, return and reload page');
-                open('https://moodle.ksasz.ch/login/index.php', '_blank');
-                return false;
-            } else {
+        }
+        const response = new DOMParser().parseFromString(e, 'text/html'),
+              login = response.getElementById('login');
+        if (login) {
+            confirm('You are logged out\nLogin, return and reload page');
+            open('https://moodle.ksasz.ch/login/index.php', '_blank');
+            return false;
+        } else {
 
-                const sidebar = response.getElementById('inst4'),
-                    content = response.getElementById('region-main'),
-                    x = content.getElementsByClassName('section img-text')[0];
-                sort(true, sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
+            const sidebar = response.getElementById('inst4'),
+                  content = response.getElementById('region-main'),
+                  x = content.getElementsByClassName('section img-text')[0];
+            sort(true, sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
 
-                while (x.lastChild) {
-                    x.removeChild(x.lastChild);
-                }
-
-                const selectRemove = c('select'),
-                    elements = sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0].children[1].children,
-                    defaultOptionRemove = c('option');
-                selectRemove.id = 'selectRemove';
-                defaultOptionRemove.setAttribute('selected', true);
-                defaultOptionRemove.setAttribute('disabled', true);
-                defaultOptionRemove.setAttribute('hidden', true);
-                defaultOptionRemove.innerHTML = 'Pick element to be removed';
-                selectRemove.appendChild(defaultOptionRemove);
-                loop1:
-                    for (let i = 0; i < elements.length; i++) {
-                        const value = elements[i].getElementsByTagName('a')[0].title,
-                            replaceArr = GM_getValue('replace');
-                        loop2:
-                            for (let i = 0; i < replaceArr.length; i++) {
-                                if (value.trim() == replaceArr[i][0].trim()) continue loop1;
-                            }
-                        const option = c('option');
-                        option.value = value;
-                        option.innerHTML = value;
-                        selectRemove.appendChild(option);
-                    }
-                const removeLi = c('li'),
-                    removeButton = c('button'),
-                    clearRemoveButton = c('button'),
-                    removeH3 = c('h3'),
-
-                    replaceLi = c('li'),
-                    replaceButton = c('button'),
-                    clearReplaceButton = c('button'),
-                    replaceH3 = c('h3');
-
-
-                removeLi.appendChild(c('hr'));
-
-                removeH3.innerHTML = 'Removers';
-                removeLi.appendChild(removeH3);
-
-                removeButton.innerHTML = 'Select';
-                removeButton.addEventListener('click', () => {
-                    addRemover();
-                });
-                removeButton.style.marginLeft = '5px';
-                removeLi.appendChild(selectRemove);
-                removeLi.appendChild(removeButton);
-
-                clearRemoveButton.innerHTML = 'Clear all';
-                clearRemoveButton.style.display = 'block';
-                clearRemoveButton.style.color = 'red';
-                clearRemoveButton.addEventListener('click', () => {
-                    clearRemove();
-                });
-                removeLi.appendChild(clearRemoveButton);
-
-                content.getElementsByClassName('section img-text')[0].appendChild(removeLi);
-
-
-                replaceLi.appendChild(c('hr'));
-
-                replaceH3.innerHTML = 'Replacers';
-                replaceLi.appendChild(replaceH3);
-
-                const selectReplace = c('select'),
-                    defaultOptionReplace = c('option');
-                selectReplace.id = 'selectReplace';
-                defaultOptionReplace.setAttribute('selected', true);
-                defaultOptionReplace.setAttribute('disabled', true);
-                defaultOptionReplace.setAttribute('hidden', true);
-                defaultOptionReplace.innerHTML = 'Pick element to be replaced';
-                selectReplace.appendChild(defaultOptionReplace);
-                loop1:
-                    for (let i = 0; i < elements.length; i++) {
-                        const option = c('option'),
-                            value = elements[i].getElementsByTagName('a')[0].title,
-                            replaceArr = GM_getValue('replace');
-                        loop2:
-                            for (let i = 0; i < replaceArr.length; i++) {
-                                if (replaceArr[i][0].trim() == value.trim()) continue loop1;
-                            }
-                        option.value = value;
-                        option.innerHTML = value;
-                        selectReplace.appendChild(option);
-                    }
-                const input = c('input');
-                input.placeholder = 'Replace with';
-                input.id = 'inputReplace';
-                input.style.display = 'block';
-                input.style.marginTop = '5px';
-                input.addEventListener('keyup', e => {
-                    if (e.which === 13) addReplacer();
-                });
-
-                replaceButton.innerHTML = 'Select';
-                replaceButton.addEventListener('click', addReplacer);
-                replaceLi.appendChild(selectReplace);
-                replaceLi.appendChild(input);
-                replaceLi.appendChild(replaceButton);
-
-                clearReplaceButton.innerHTML = 'Clear all';
-                clearReplaceButton.style.display = 'block';
-                clearReplaceButton.style.color = 'red';
-                clearReplaceButton.addEventListener('click', clearReplace);
-                replaceLi.appendChild(clearReplaceButton);
-
-                content.getElementsByClassName('section img-text')[0].appendChild(replaceLi);
-
-                content.getElementsByClassName('section img-text')[0].style.listStyleType = 'none';
-
-                document.body.appendChild(content);
-
-
-                const aside = response.getElementById('block-region-side-pre').cloneNode(false);
-                aside.appendChild(sidebar);
-
-                const section = response.querySelector('section.hidden-print').cloneNode(false);
-                section.appendChild(aside);
-
-                const div = c('div');
-                div.className = 'columnleft blockcolumn  has-blocks ';
-                div.appendChild(section);
-
-                const div5 = response.getElementById('region-main-box').cloneNode(false);
-                div5.appendChild(content);
-
-                const div2 = response.getElementById('page-content').cloneNode(false);
-                div2.appendChild(div5);
-                div2.appendChild(div);
-
-                const div3 = response.getElementById('page').cloneNode(false);
-                div3.appendChild(div2);
-
-                const div4 = response.getElementById('page-wrapper').cloneNode(false);
-                div4.appendChild(div3);
-
-                document.body.appendChild(div4);
-
-
-                if (content) {
-                    const removeArr = GM_getValue('remove'),
-                        removeButtonsLi = c('li');
-                    removeButtonsLi.appendChild(c('hr'));
-                    for (let i = 0; i < removeArr.length; i++) {
-                        const removeButton = c('button');
-                        removeButton.innerHTML = 'Stop removing "' + removeArr[i] + '"';
-                        removeButton.addEventListener('click', removeRemover);
-                        removeButton.dataset.id = removeArr[i];
-                        removeButton.style.display = 'block';
-                        removeButtonsLi.appendChild(removeButton);
-                    }
-
-                    const replaceArr = GM_getValue('replace'),
-                        replaceButtonsLi = c('li');
-                    replaceButtonsLi.appendChild(c('hr'));
-                    for (let i = 0; i < replaceArr.length; i++) {
-                        const replaceButton = c('button');
-                        replaceButton.innerHTML = 'Stop renaming "' + replaceArr[i][0] + '" to "' + replaceArr[i][1] + '"';
-                        replaceButton.addEventListener('click', removeReplacer);
-                        replaceButton.dataset.id = replaceArr[i][0];
-                        replaceButton.style.display = 'block';
-                        replaceButtonsLi.appendChild(replaceButton);
-                    }
-
-
-
-                    content.getElementsByClassName('section img-text')[0].appendChild(removeButtonsLi);
-                    content.getElementsByClassName('section img-text')[0].appendChild(replaceButtonsLi);
-                }
+            while (x.lastChild) {
+                x.removeChild(x.lastChild);
             }
-        });
+
+            const selectRemove = c('select'),
+                  elements = sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0].children[1].children,
+                  defaultOptionRemove = c('option');
+            selectRemove.id = 'selectRemove';
+            defaultOptionRemove.setAttribute('selected', true);
+            defaultOptionRemove.setAttribute('disabled', true);
+            defaultOptionRemove.setAttribute('hidden', true);
+            defaultOptionRemove.innerHTML = 'Pick element to be removed';
+            selectRemove.appendChild(defaultOptionRemove);
+            loop1:
+            for (let i = 0; i < elements.length; i++) {
+                const value = elements[i].getElementsByTagName('a')[0].title,
+                      replaceArr = GM_getValue('replace');
+                loop2:
+                for (let i = 0; i < replaceArr.length; i++) {
+                    if (value.trim() == replaceArr[i][0].trim()) continue loop1;
+                }
+                const option = c('option');
+                option.value = value;
+                option.innerHTML = value;
+                selectRemove.appendChild(option);
+            }
+            const removeLi = c('li'),
+                  removeButton = c('button'),
+                  clearRemoveButton = c('button'),
+                  removeH3 = c('h3'),
+
+                  replaceLi = c('li'),
+                  replaceButton = c('button'),
+                  clearReplaceButton = c('button'),
+                  replaceH3 = c('h3');
+
+
+            removeLi.appendChild(c('hr'));
+
+            removeH3.innerHTML = 'Removers';
+            removeLi.appendChild(removeH3);
+
+            removeButton.innerHTML = 'Select';
+            removeButton.addEventListener('click', () => {
+                addRemover();
+            });
+            removeButton.style.marginLeft = '5px';
+            removeLi.appendChild(selectRemove);
+            removeLi.appendChild(removeButton);
+
+            clearRemoveButton.innerHTML = 'Clear all';
+            clearRemoveButton.style.display = 'block';
+            clearRemoveButton.style.color = 'red';
+            clearRemoveButton.addEventListener('click', () => {
+                clearRemove();
+            });
+            removeLi.appendChild(clearRemoveButton);
+
+            content.getElementsByClassName('section img-text')[0].appendChild(removeLi);
+
+
+            replaceLi.appendChild(c('hr'));
+
+            replaceH3.innerHTML = 'Replacers';
+            replaceLi.appendChild(replaceH3);
+
+            const selectReplace = c('select'),
+                  defaultOptionReplace = c('option');
+            selectReplace.id = 'selectReplace';
+            defaultOptionReplace.setAttribute('selected', true);
+            defaultOptionReplace.setAttribute('disabled', true);
+            defaultOptionReplace.setAttribute('hidden', true);
+            defaultOptionReplace.innerHTML = 'Pick element to be replaced';
+            selectReplace.appendChild(defaultOptionReplace);
+            loop1:
+            for (let i = 0; i < elements.length; i++) {
+                const option = c('option'),
+                      value = elements[i].getElementsByTagName('a')[0].title,
+                      replaceArr = GM_getValue('replace');
+                loop2:
+                for (let i = 0; i < replaceArr.length; i++) {
+                    if (replaceArr[i][0].trim() == value.trim()) continue loop1;
+                }
+                option.value = value;
+                option.innerHTML = value;
+                selectReplace.appendChild(option);
+            }
+            const input = c('input');
+            input.placeholder = 'Replace with';
+            input.id = 'inputReplace';
+            input.style.display = 'block';
+            input.style.marginTop = '5px';
+            input.addEventListener('keyup', e => {
+                if (e.which === 13) addReplacer();
+            });
+
+            replaceButton.innerHTML = 'Select';
+            replaceButton.addEventListener('click', addReplacer);
+            replaceLi.appendChild(selectReplace);
+            replaceLi.appendChild(input);
+            replaceLi.appendChild(replaceButton);
+
+            clearReplaceButton.innerHTML = 'Clear all';
+            clearReplaceButton.style.display = 'block';
+            clearReplaceButton.style.color = 'red';
+            clearReplaceButton.addEventListener('click', clearReplace);
+            replaceLi.appendChild(clearReplaceButton);
+
+            content.getElementsByClassName('section img-text')[0].appendChild(replaceLi);
+
+            content.getElementsByClassName('section img-text')[0].style.listStyleType = 'none';
+
+            const div5 = response.getElementById('region-main-box').cloneNode(false);
+            div5.appendChild(content);
+
+            let element = response.getElementById('block-region-side-pre');
+            element.appendChild(sidebar);
+            let tree = element.cloneNode(true);
+            while (element.parentElement.nodeName !== 'BODY'){
+                let temp = tree.cloneNode(true);
+                tree = element.parentElement.cloneNode(false);
+                tree.appendChild(temp);
+                element = element.parentElement;
+            }
+            document.body.appendChild(tree);
+            document.getElementById('page-content').appendChild(div5);
+
+            let aside = document.getElementById('inst4').parentElement;
+            while(aside.children.length !== 1){
+                aside.removeChild(aside.firstChild)
+            }
+
+            if (content) {
+                const removeArr = GM_getValue('remove'),
+                      removeButtonsLi = c('li');
+                removeButtonsLi.appendChild(c('hr'));
+                for (let i = 0; i < removeArr.length; i++) {
+                    const removeButton = c('button');
+                    removeButton.innerHTML = 'Stop removing "' + removeArr[i] + '"';
+                    removeButton.addEventListener('click', removeRemover);
+                    removeButton.dataset.id = removeArr[i];
+                    removeButton.style.display = 'block';
+                    removeButtonsLi.appendChild(removeButton);
+                }
+
+                const replaceArr = GM_getValue('replace'),
+                      replaceButtonsLi = c('li');
+                replaceButtonsLi.appendChild(c('hr'));
+                for (let i = 0; i < replaceArr.length; i++) {
+                    const replaceButton = c('button');
+                    replaceButton.innerHTML = 'Stop renaming "' + replaceArr[i][0] + '" to "' + replaceArr[i][1] + '"';
+                    replaceButton.addEventListener('click', removeReplacer);
+                    replaceButton.dataset.id = replaceArr[i][0];
+                    replaceButton.style.display = 'block';
+                    replaceButtonsLi.appendChild(replaceButton);
+                }
+
+
+
+                content.getElementsByClassName('section img-text')[0].appendChild(removeButtonsLi);
+                content.getElementsByClassName('section img-text')[0].appendChild(replaceButtonsLi);
+            }
+        }
+    });
 }
 
 function removeRemover(e) {
     const removeArr = GM_getValue('remove'),
-        pos = removeArr.indexOf(e.target.dataset.id);
+          pos = removeArr.indexOf(e.target.dataset.id);
     removeArr.splice(pos, 1);
     GM_setValue('remove', removeArr);
     redo();
@@ -391,46 +377,32 @@ function removeReplacer(e) {
 
 function addRemover() {
     const remove = document.getElementById('selectRemove').value,
-        x = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
-    if (remove != 'Pick element to be removed' && (x.querySelector(`a[title="${remove}"]`) || x.querySelector(`a[title="${remove} "]`))) {
-        const replaceArr = GM_getValue('replace');
-        for (let i = 0; i < replaceArr.length; i++) {
-            if (replaceArr[i][0].trim() == remove.trim()) {
-                alert('Error: Already used');
-                return;
-            }
-        }
-        const removeArr = GM_getValue('remove');
+          x = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
+    if (remove != 'Pick element to be removed') {
+        const replaceArr = GM_getValue('replace'),
+              removeArr = GM_getValue('remove');
         removeArr.push(remove);
         removeArr.sort();
         GM_setValue('remove', removeArr);
         redo();
-    } else if (remove != 'Pick element to be removed') {
-        alert('Unable to find "' + remove + '"');
     }
 }
 
 function addReplacer() {
     const replace = document.getElementById('selectReplace').value,
-        replaceWith = document.getElementById('inputReplace').value,
-        x = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
-    if (replace != 'Pick element to be replaced' && (x.querySelector(`a[title="${replace}"]`) || x.querySelector(`a[title="${replace} "]`))) {
+          replaceWith = document.getElementById('inputReplace').value,
+          x = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
+    if (replace != 'Pick element to be replaced' && replaceWith !== '') {
+        const replaceArr = GM_getValue('replace');
 
-        if (replaceWith != '') {
-            const replaceArr = GM_getValue('replace');
-
-            replaceArr.push([replace, replaceWith]);
-            replaceArr.sort((a, b) => {
-                if (a[0] < b[0]) return -1;
-                else if (a[0] > b[0]) return 1;
-                else return 0;
-            });
-            GM_setValue('replace', replaceArr);
-            redo();
-
-        }
-    } else if (replace != '' && replace != 'Pick element to be replaced') {
-        alert('Unable to find "' + replace + '"');
+        replaceArr.push([replace, replaceWith]);
+        replaceArr.sort((a, b) => {
+            if (a[0] < b[0]) return -1;
+            else if (a[0] > b[0]) return 1;
+            else return 0;
+        });
+        GM_setValue('replace', replaceArr);
+        redo();
     }
 }
 
