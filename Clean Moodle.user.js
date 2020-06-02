@@ -323,7 +323,6 @@ function setup(newPage) {
                 if (content) {
                     const removeArr = GM_getValue('remove'),
                         removeButtonsLi = c('li');
-                    
                     removeButtonsLi.appendChild(c('hr'));
                     for (let i = 0; i < removeArr.length; i++) {
                         const removeButton = c('button');
