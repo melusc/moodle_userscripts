@@ -17,7 +17,9 @@
 // @run-at      document-body
 // ===/UserScript===
 /* jshint esversion: 10 */
+
 /* Check out preferences or https://moodle.ksasz.ch/customIcons/ directly */
+
 'use strict';
 
 addEventListener('customIcons', async() => {
