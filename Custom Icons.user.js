@@ -1,6 +1,6 @@
 // ===UserScript===
 // @name        Moodle Custom Icons
-// @version     2020.06.10a
+// @version     2020.06.10b
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
 // @exclude     *://moodle.ksasz.ch/cleanMoodle*
