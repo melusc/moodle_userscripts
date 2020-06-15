@@ -17,7 +17,7 @@
 // ===/UserScript===
 /* jshint esversion: 10 */
 'use strict';
-/* testing2 */
+
 /*
  * Click on name in top right and click on preferences, there click on Clean Moodle -> settings
  *
