@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name        Clean Moodle
 // @namespace   https://github.com/melusc/lusc
-// @version     2020.06.15a
+// @version     2020.06.16a
 // @include     *://moodle.ksasz.ch/*
 // @exclude     *://moodle.ksasz.ch/info*
 // @exclude     *://moodle.ksasz.ch/lib*
@@ -21,17 +21,46 @@
 /*
  * Click on name in top right and click on preferences, there click on Clean Moodle -> settings
  *
+ * Or click on gear icon in the left navigation bar
+ *
  * Or go directly to https://moodle.ksasz.ch/cleanMoodle/
  */
 
-addEventListener('cleanMoodle', () => {
-    sort(true); // set to false if you don't want it to sort the sidebar
-});
-
-async function sort(e, sidebar) {
-    if (!sidebar) {
-        sidebar = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
+const lang = {
+    console: [`%c[%cClean Moodle%c] %cVersion %c${GM_info.script.version} %cby %clusc`, 'color: #fe4c4c', 'color:initial', 'color: #fe4c4c', 'color:initial', 'color: #fe4c4c', 'color:initial', 'color:#58e'],
+    error: `Error removing "{{{s}}}"! Check if it's written correctly.`,
+    userPreferences: {
+        anchor: 'Settings',
+        title: 'Clean Moodle'
+    },
+    settings: {
+        pageTitle: 'Clean Moodle Setup',
+        loggedOut: 'You are logged out\nLogin, return and reload page',
+        easterEgg: 'Haha, good one',
+        title: 'Add replacer / remover',
+        selectCourse: 'Select Course on left',
+        input: 'Leave input empty to reset name',
+        replace: 'replace',
+        remove: 'remove',
+        replaceText: 'Replace text',
+        removeText: 'Remove selected',
+        button: 'Save',
+        sortTitle: 'Sorting',
+        sortText: 'Sort alphabetically',
+        noCourse: 'No course selected'
     }
+},
+      settings = {
+          lineThrough: true,
+          easterEgg: false
+      };
+
+
+addEventListener('cleanMoodle', start);
+
+async function start(e) {
+    const sidebar = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
+
     if (sidebar) {
         const removeArr = GM_getValue('remove'),
               replaceArr = GM_getValue('replace');
@@ -41,93 +70,70 @@ async function sort(e, sidebar) {
         for (let i = 0; i < replaceArr.length; i++) {
             replace(replaceArr[i][0], replaceArr[i][1], sidebar);
         }
-        if (e) {
-            const li = [...sidebar.children[1].getElementsByClassName('type_course depth_3')];
-
-            li.sort((a, b) => {
-                a = a.textContent.toLowerCase();
-                b = b.textContent.toLowerCase();
-                if (a < b) return -1;
-                else if (a > b) return 1;
-                else return 0;
-            });
-            for (let i = 0; i < li.length; i++) {
-                sidebar.children[1].appendChild(li[i]);
-            }
+        sort(sidebar);
+        if (!e.detail || e.detail.newPage) {
+            console.log.apply(console, lang.console);
         }
-        console.log(`%c[%cClean Moodle%c] %cVersion %c${GM_info.script.version} %cby %clusc`, 'color: #fe4c4c', 'color:initial', 'color: #fe4c4c', 'color:initial','color: #fe4c4c', 'color:initial', 'color:#58e');
     }
 }
 
 async function remove(selector, sidebar) {
-    let thisHeading = sidebar.querySelector(`[title="${selector}"]`);
-    if (!thisHeading) {
-        thisHeading = sidebar.querySelector(`[title="${selector} "]`);
+    let element = sidebar.querySelector(`[title="${selector}"]`);
+    if (!element) {
+        element = sidebar.querySelector(`[title="${selector} "]`);
     }
-    if (thisHeading) {
-        thisHeading = thisHeading.closest('li');
-        if (thisHeading && !thisHeading.classList.contains('current_branch')) {
-            thisHeading.remove();
+    if (element) {
+        element = element.closest('li');
+        if (element && !element.classList.contains('current_branch')) {
+            element.remove();
         }
     } else {
-        alert(`Error removing "${selector}"! Check if it's written correctly.`);
+        alert(lang.error.replace('{{{s}}}', selector));
     }
 }
 
+
 async function replace(selector, replace, sidebar) {
-    let thisHeading = sidebar.querySelector(`[title="${selector}"]`);
-    if (!thisHeading) {
-        thisHeading = sidebar.querySelector(`[title="${selector} "]`);
-    }
-    if (thisHeading) {
-        if (thisHeading.closest('li').classList.contains('item_with_icon')) {
-            thisHeading.children[1].innerHTML = replace;
-        } else if (thisHeading.closest('li').classList.contains('current_branch')) {
-            thisHeading.innerHTML = replace;
+    const element = sidebar.querySelector(`[title="${selector}"]`),
+          closestLi = element.closest('li').classList;
+    if (element) {
+        if (closestLi.contains('item_with_icon')) {
+            element.children[1].innerText = replace;
+        } else if (closestLi.contains('current_branch')) {
+            element.innerText = replace;
         }
     } else {
-        alert(`Error replacing "${selector}"! Check if it's written correctly.`);
+        alert(lang.error.replace('{{{s}}}', selector));
     }
 }
-if (!location.pathname.toLowerCase().startsWith('/cleanmoodle')) {
-    dispatchEvent(new Event('cleanMoodle'));
-    GM_addValueChangeListener('remove', (a, b, c, remote) => {
-        if (remote) {
-            fetch(location)
-                .then(e => e.text())
-                .then(e => {
-                e = new DOMParser().parseFromString(e, 'text/html');
-                document.getElementById('inst4').outerHTML = e.getElementById('inst4').outerHTML;
-                dispatchEvent(new Event('cleanMoodle'));
-                dispatchEvent(new Event('customIcons'));
-                dispatchEvent(new Event('moreSidebarLinks'));
-            });
+
+function sort(sidebar) {
+    if (GM_getValue('sort')) {
+        const li = [...sidebar.children[1].getElementsByClassName('type_course depth_3')];
+
+        li.sort((a, b) => {
+            a = a.textContent.toLowerCase();
+            b = b.textContent.toLowerCase();
+            if (a < b) return -1;
+            else if (a > b) return 1;
+            else return 0;
+        });
+        for (let i = 0; i < li.length; i++) {
+            sidebar.children[1].appendChild(li[i]);
         }
-    });
-    GM_addValueChangeListener('replace', (a, b, c, remote) => {
-        if (remote) {
-            fetch('/')
-                .then(e => e.text())
-                .then(e => {
-                e = new DOMParser().parseFromString(e, 'text/html');
-                document.getElementById('inst4').outerHTML = e.getElementById('inst4').outerHTML;
-                dispatchEvent(new Event('cleanMoodle'));
-                dispatchEvent(new Event('customIcons'));
-            });
-        }
-    });
+    }
 }
 
 if (location.pathname === '/user/preferences.php') {
     const element = document.getElementById('maincontent').parentElement.children[2].children[0].cloneNode(true),
           temp = element.getElementsByClassName('card-text')[0];
-    element.getElementsByTagName('h4')[0].innerHTML = 'Clean Moodle';
+    element.getElementsByTagName('h4')[0].innerHTML = lang.userPreferences.title;
 
-    while (temp.children.length != 1) temp.lastChild.remove();
+    while (temp.children.length !== 1) temp.lastChild.remove();
     const a = temp.children[0].children[0];
     a.href = 'https://moodle.ksasz.ch/cleanMoodle/';
     a.setAttribute('target', '_blank');
-    a.innerHTML = 'Settings';
+    a.innerHTML = lang.userPreferences.anchor;
 
     document.getElementById('maincontent').parentElement.children[2].appendChild(element);
 }
@@ -136,12 +142,23 @@ if (location.pathname.toLowerCase().startsWith('/cleanmoodle')) {
     history.replaceState({}, '', '/cleanMoodle/');
     setup(true);
 }
+else{
+    dispatchEvent(new CustomEvent('cleanMoodle', {
+        detail: {
+            newPage: true
+        }
+    }));
+    settingsGear();
+    GM_addValueChangeListener('remove', reloadFrontpage);
+    GM_addValueChangeListener('replace', reloadFrontpage);
+    GM_addValueChangeListener('sort', reloadFrontpage);
+}
 
 function setup(newPage) {
     if (location.protocol !== 'https:') {
         location.replace(`https:${location.href.substring(location.protocol.length)}`);
     }
-    document.title = 'Clean Moodle Setup';
+    document.title = lang.settings.pageTitle;
 
     const icon = c('link');
     icon.setAttribute('rel', 'shortcut icon');
@@ -160,15 +177,6 @@ function setup(newPage) {
     style.href = 'https://moodle.ksasz.ch/theme/styles.php/classic/1588340020_1588339031/all';
     document.head.appendChild(style);
 
-    GM_addStyle(`
-        button{
-            background-color:transparent;
-            border: 1px solid white;
-            border-radius: 0.25rem;
-            color:white;
-            margin-top: 10px;
-        }
-    `);
     fetch('/')
         .then(e => e.text())
         .then(e => {
@@ -180,255 +188,355 @@ function setup(newPage) {
         const response = new DOMParser().parseFromString(e, 'text/html'),
               login = response.getElementById('login');
         if (login) {
-            confirm('You are logged out\nLogin, return and reload page');
-            open('https://moodle.ksasz.ch/login/index.php', '_blank');
-            return false;
+            confirm(lang.settings.loggedOut);
+            open('https://moodle.ksasz.ch/login/index.php');
+            return;
         } else {
-
-            const sidebar = response.getElementById('inst4'),
-                  content = response.getElementById('region-main'),
-                  x = content.getElementsByClassName('section img-text')[0];
-            sort(true, sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0]);
-
-            while (x.lastChild) {
-                x.lastChild.remove();
+            let tempSidebar = response.getElementById('inst4');
+            const sidebarLinks = tempSidebar.getElementsByTagName('a');
+            for (let i = 0; i < sidebarLinks.length; i++) {
+                sidebarLinks[i].removeAttribute('href');
             }
-
-            const selectRemove = c('select'),
-                  elements = sidebar.getElementsByClassName('type_system depth_2 contains_branch')[0].children[1].children,
-                  defaultOptionRemove = c('option');
-            selectRemove.id = 'selectRemove';
-            defaultOptionRemove.setAttribute('selected', true);
-            defaultOptionRemove.setAttribute('disabled', true);
-            defaultOptionRemove.setAttribute('hidden', true);
-            defaultOptionRemove.innerHTML = 'Pick element to be removed';
-            selectRemove.appendChild(defaultOptionRemove);
-            loop1:
-            for (let i = 0; i < elements.length; i++) {
-                const value = elements[i].getElementsByTagName('a')[0].title,
-                      replaceArr = GM_getValue('replace');
-                loop2:
-                for (let i = 0; i < replaceArr.length; i++) {
-                    if (value.trim() == replaceArr[i][0].trim()) continue loop1;
+            const dashboard = response.getElementsByClassName('item-content-wrap');
+            for (let i = 0; i < dashboard.length; i++) {
+                if (dashboard[i].textContent === 'Dashboard') {
+                    dashboard[i].closest('li').remove();
+                    break;
                 }
-                const option = c('option');
-                option.value = value;
-                option.innerHTML = value;
-                selectRemove.appendChild(option);
             }
-            const removeLi = c('li'),
-                  removeButton = c('button'),
-                  clearRemoveButton = c('button'),
-                  removeH3 = c('h3'),
-
-                  replaceLi = c('li'),
-                  replaceButton = c('button'),
-                  clearReplaceButton = c('button'),
-                  replaceH3 = c('h3');
-
-
-            removeLi.appendChild(c('hr'));
-
-            removeH3.innerHTML = 'Removers';
-            removeLi.appendChild(removeH3);
-
-            removeButton.innerHTML = 'Select';
-            removeButton.addEventListener('click', () => {
-                addRemover();
-            });
-            removeButton.style.marginLeft = '5px';
-            removeLi.appendChild(selectRemove);
-            removeLi.appendChild(removeButton);
-
-            clearRemoveButton.innerHTML = 'Clear all';
-            clearRemoveButton.style.display = 'block';
-            clearRemoveButton.style.color = 'red';
-            clearRemoveButton.addEventListener('click', () => {
-                clearRemove();
-            });
-            removeLi.appendChild(clearRemoveButton);
-
-            content.getElementsByClassName('section img-text')[0].appendChild(removeLi);
-
-
-            replaceLi.appendChild(c('hr'));
-
-            replaceH3.innerHTML = 'Replacers';
-            replaceLi.appendChild(replaceH3);
-
-            const selectReplace = c('select'),
-                  defaultOptionReplace = c('option');
-            selectReplace.id = 'selectReplace';
-            defaultOptionReplace.setAttribute('selected', true);
-            defaultOptionReplace.setAttribute('disabled', true);
-            defaultOptionReplace.setAttribute('hidden', true);
-            defaultOptionReplace.innerHTML = 'Pick element to be replaced';
-            selectReplace.appendChild(defaultOptionReplace);
-            loop1:
-            for (let i = 0; i < elements.length; i++) {
-                const option = c('option'),
-                      value = elements[i].getElementsByTagName('a')[0].title,
-                      replaceArr = GM_getValue('replace');
-                loop2:
-                for (let i = 0; i < replaceArr.length; i++) {
-                    if (replaceArr[i][0].trim() == value.trim()) continue loop1;
-                }
-                option.value = value;
-                option.innerHTML = value;
-                selectReplace.appendChild(option);
-            }
-            const input = c('input');
-            input.placeholder = 'Replace with';
-            input.id = 'inputReplace';
-            input.style.display = 'block';
-            input.style.marginTop = '5px';
-            input.addEventListener('keyup', e => {
-                if (e.which === 13) addReplacer();
-            });
-
-            replaceButton.innerHTML = 'Select';
-            replaceButton.addEventListener('click', addReplacer);
-            replaceLi.appendChild(selectReplace);
-            replaceLi.appendChild(input);
-            replaceLi.appendChild(replaceButton);
-
-            clearReplaceButton.innerHTML = 'Clear all';
-            clearReplaceButton.style.display = 'block';
-            clearReplaceButton.style.color = 'red';
-            clearReplaceButton.addEventListener('click', clearReplace);
-            replaceLi.appendChild(clearReplaceButton);
-
-            content.getElementsByClassName('section img-text')[0].appendChild(replaceLi);
-
-            content.getElementsByClassName('section img-text')[0].style.listStyleType = 'none';
-
-            const div5 = response.getElementById('region-main-box').cloneNode(false);
-            div5.appendChild(content);
-
-            let element = response.getElementById('block-region-side-pre');
-            element.appendChild(sidebar);
-            let tree = element.cloneNode(true);
-            while (element.parentElement.nodeName !== 'BODY') {
-                let temp = tree.cloneNode(true);
-                tree = element.parentElement.cloneNode(false);
+            let tree = tempSidebar.cloneNode(true);
+            while (tempSidebar.parentElement.nodeName !== 'BODY') {
+                let temp = tree;
+                tempSidebar = tempSidebar.parentElement;
+                tree = tempSidebar.cloneNode(false);
                 tree.appendChild(temp);
-                element = element.parentElement;
             }
+
+
+            const replaceArr = GM_getValue('replace'),
+                  sidebar = tree.getElementsByClassName('type_system depth_2 contains_branch')[0];
+            sidebar.getElementsByTagName('ul')[0].onclick = addCourse;
+
+            for (let i = 0; i < replaceArr.length; i++) {
+                replace(replaceArr[i][0], replaceArr[i][1], sidebar);
+            }
+
+            sort(sidebar);
+
+            const removeArr = GM_getValue('remove');
+
+            for (let i = 0; i < removeArr.length; i++) {
+                setupRemove(removeArr[i], sidebar);
+            }
+
+            const mainContent = response.getElementById('region-main-box'),
+                  mainContentUl = mainContent.getElementsByClassName('section img-text')[0];
+
+            mainContentUl.clearChildren();
+
+            tree.querySelector('#page-content').children[0].before(mainContent);
+
             document.body.appendChild(tree);
-            document.getElementById('page-content').appendChild(div5);
 
-            let aside = document.getElementById('inst4').parentElement;
-            while (aside.children.length !== 1) {
-                aside.firstChild.remove();
+            if (settings.easterEgg){
+                settingsGear(lang.settings.easterEgg);
             }
 
-            if (content) {
-                const removeArr = GM_getValue('remove'),
-                      removeButtonsLi = c('li');
-                removeButtonsLi.appendChild(c('hr'));
-                for (let i = 0; i < removeArr.length; i++) {
-                    const removeButton = c('button');
-                    removeButton.innerHTML = 'Stop removing "' + removeArr[i] + '"';
-                    removeButton.addEventListener('click', removeRemover);
-                    removeButton.dataset.id = removeArr[i];
-                    removeButton.style.display = 'block';
-                    removeButtonsLi.appendChild(removeButton);
-                }
-
-                const replaceArr = GM_getValue('replace'),
-                      replaceButtonsLi = c('li');
-                replaceButtonsLi.appendChild(c('hr'));
-                for (let i = 0; i < replaceArr.length; i++) {
-                    const replaceButton = c('button');
-                    replaceButton.innerHTML = 'Stop renaming "' + replaceArr[i][0] + '" to "' + replaceArr[i][1] + '"';
-                    replaceButton.addEventListener('click', removeReplacer);
-                    replaceButton.dataset.id = replaceArr[i][0];
-                    replaceButton.style.display = 'block';
-                    replaceButtonsLi.appendChild(replaceButton);
-                }
 
 
+            /*** Settings ***/
+            const form = c('form'),
+                  selectedCourseDiv = c('div'),
+                  li = c('li'),
+                  title = c('h2');
 
-                content.getElementsByClassName('section img-text')[0].appendChild(removeButtonsLi);
-                content.getElementsByClassName('section img-text')[0].appendChild(replaceButtonsLi);
+
+            title.innerText = lang.settings.title;
+
+            selectedCourseDiv.dataset.selectedCourse = null;
+            selectedCourseDiv.innerText = lang.settings.selectCourse;
+            selectedCourseDiv.id = 'selectedCourseDiv';
+
+            const replaceLabel = createLabel(lang.settings.replace),
+                  replaceRadio = replaceLabel.children[0],
+                  replaceText = document.createTextNode(lang.settings.replaceText);
+
+            replaceRadio.style.marginTop = '10px';
+            replaceRadio.defaultChecked = true;
+            replaceLabel.appendChild(replaceText);
+
+
+            const removeLabel = createLabel(lang.settings.remove),
+                  removeRadio = removeLabel.children[0],
+                  removeText = document.createTextNode(lang.settings.removeText);
+
+            removeRadio.style.marginBottom = '10px';
+            removeLabel.appendChild(removeText);
+
+            const replaceInput = c('input');
+            replaceInput.type = 'text';
+            replaceInput.id = 'replaceInput';
+            replaceInput.placeholder = lang.settings.input;
+            replaceInput.style.width = '250px';
+            replaceInput.style.marginBottom = '10px';
+            replaceInput.oninput = submit;
+
+            const submitButton = c('button');
+            submitButton.innerText = lang.settings.button;
+            submitButton.style.display = 'block';
+            submitButton.onclick = submit;
+
+
+            li.appendChild(title);
+            form.appendChild(selectedCourseDiv);
+            form.appendChild(replaceLabel);
+            form.appendChild(removeLabel);
+            form.appendChild(replaceInput);
+            form.appendChild(submitButton);
+            li.appendChild(form);
+            mainContentUl.appendChild(li);
+            mainContentUl.style.listStyle = 'none';
+
+
+            const sortLi = c('li'),
+                  sortCheckbox = c('input'),
+                  sortLabel = c('label'),
+                  sortTitle = c('h2');
+            sortTitle.innerText = lang.settings.sortTitle;
+            sortCheckbox.type = 'checkbox';
+            sortCheckbox.style.marginRight = '10px';
+            if (GM_getValue('sort')) {
+                sortCheckbox.defaultChecked = true;
             }
+            sortLabel.oninput = e => {
+                GM_setValue('sort', sortCheckbox.checked);
+                reload(false);
+            };
+            sortLabel.appendChild(sortCheckbox);
+            sortLabel.appendChild(document.createTextNode(lang.settings.sortText));
+            sortLi.appendChild(sortLabel);
+            mainContentUl.appendChild(c('hr'));
+            mainContentUl.appendChild(sortTitle);
+            mainContentUl.appendChild(sortLi);
         }
     });
 }
 
-function removeRemover(e) {
-    const removeArr = GM_getValue('remove'),
-          pos = removeArr.indexOf(e.target.dataset.id);
-    removeArr.splice(pos, 1);
-    GM_setValue('remove', removeArr);
-    redo();
+function addCourse(e) {
+    if (e.target.getAttribute('role') !== 'group' || e.target.nodeName !== 'UL') {
+        const li = e.target.closest('li'),
+              anchor = li.getElementsByTagName('a')[0];
+        console.log(li);
+        console.log(anchor);
+
+        if (li) {
+            if (li.dataset.removed === '1') {
+                const removeArr = GM_getValue('remove');
+                removeArr.splice(removeArr.indexOf(anchor.title), 1);
+                GM_setValue('remove', removeArr);
+                setup(false);
+            } else {
+                const replaceInput = document.getElementById('replaceInput'),
+                      selectedCourseDiv = document.getElementById('selectedCourseDiv');
+                replaceInput.value = anchor.textContent;
+                selectedCourseDiv.clearChildren();
+                selectedCourseDiv.appendChild(li.getElementsByTagName('p')[0].cloneNode(true));
+                selectedCourseDiv.dataset.selectedCourse = anchor.title;
+            }
+        }
+    }
+}
+
+function handleCheckbox(e) {
+    const remove = document.getElementById('removeRadio'),
+          replaceInput = document.getElementById('replaceInput');
+    if (e.target.closest('label') === remove.parentElement) {
+        replaceInput.style.display = 'none';
+    } else {
+        replaceInput.style.display = '';
+    }
+
+}
+
+function submit(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.target.nodeName === 'BUTTON' || e.key === 'Enter') {
+        const remove = document.getElementById('removeRadio'),
+              replaceInput = document.getElementById('replaceInput'),
+              selectedCourse = document.getElementById('selectedCourseDiv').dataset.selectedCourse;
+
+        if (selectedCourse !== 'null') {
+            if (remove.checked) {
+                const removeArr = GM_getValue('remove');
+                for (let i = 0; i < removeArr.length; i++) {
+                    if (removeArr[i] === selectedCourse) {
+                        removeArr.splice(i--, 1);
+                    }
+                }
+                removeArr.push(selectedCourse);
+                removeArr.sort((a, b) => {
+                    a = a.toLowerCase();
+                    b = b.toLowerCase();
+                    if (a < b) return -1;
+                    else if (a > b) return 1;
+                    else return 0;
+                });
+                GM_setValue('remove', removeArr);
+                removeReplacer(selectedCourse);
+            } else {
+                if (replaceInput.value === '' || replaceInput.value === selectedCourse) {
+                    removeReplacer(selectedCourse);
+                } else {
+                    removeReplacer(selectedCourse);
+                    addReplacer(selectedCourse, replaceInput.value);
+                }
+            }
+            reload(true);
+        } else alert(lang.settings.noCourse);
+    }
+}
+
+
+function reload(reset) {
+    if (reset) {
+        document.getElementById('replaceInput').style.display = '';
+        document.getElementsByTagName('form')[0].reset();
+        const selectedCourse = document.getElementById('selectedCourseDiv');
+
+        selectedCourse.clearChildren();
+        selectedCourse.appendChild(document.createTextNode(lang.settings.selectCourse));
+    }
+    fetch('/')
+        .then(e => e.text())
+        .then(e => {
+        e = new DOMParser().parseFromString(e, 'text/html');
+        const replaceArr = GM_getValue('replace'),
+              sidebar = e.getElementsByClassName('type_system depth_2 contains_branch')[0];
+
+        for (let i = 0; i < replaceArr.length; i++) {
+            replace(replaceArr[i][0], replaceArr[i][1], sidebar);
+        }
+
+        sort(sidebar);
+
+        const removeArr = GM_getValue('remove');
+
+        for (let i = 0; i < removeArr.length; i++) {
+            setupRemove(removeArr[i], sidebar);
+        }
+
+        const sidebarLinks = sidebar.getElementsByTagName('a');
+        for (let i = 0; i < sidebarLinks.length; i++) {
+            sidebarLinks[i].removeAttribute('href');
+        }
+        const dashboard = e.getElementsByClassName('item-content-wrap');
+        for (let i = 0; i < dashboard.length; i++) {
+            if (dashboard[i].textContent === 'Dashboard') {
+                dashboard[i].closest('li').remove();
+                break;
+            }
+        }
+        sidebar.getElementsByTagName('ul')[0].onclick = addCourse;
+
+        document.getElementById('inst4').clearChildren();
+        document.getElementById('inst4').appendChild(e.getElementById('inst4').children[0]);
+    });
+}
+
+function setupRemove(e, sidebar) {
+    const element = sidebar.querySelector(`[title="${e}"]`);
+    element.style.color = 'grey';
+    if (settings.lineThrough) {
+        element.children[1].style.textDecoration = 'line-through';
+    }
+    sidebar.getElementsByTagName('ul')[0].appendChild(element.closest('li'));
+    element.closest('li').dataset.removed = 1;
+}
+
+function addReplacer(e, f) {
+    const replaceArr = GM_getValue('replace');
+    replaceArr.push([e, f]);
+    GM_setValue('replace', replaceArr);
 }
 
 function removeReplacer(e) {
     const replaceArr = GM_getValue('replace');
-    let pos;
     for (let i = 0; i < replaceArr.length; i++) {
-        if (replaceArr[i][0] === e.target.dataset.id) {
-            pos = i;
+        if (replaceArr[i][0] === e) {
+            replaceArr.splice(i--, 1);
         }
     }
-    replaceArr.splice(pos, 1);
     GM_setValue('replace', replaceArr);
-    redo();
 }
 
-function addRemover() {
-    const remove = document.getElementById('selectRemove').value,
-          x = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
-    if (remove != 'Pick element to be removed') {
-        const replaceArr = GM_getValue('replace'),
-              removeArr = GM_getValue('remove');
-        removeArr.push(remove);
-        removeArr.sort();
-        GM_setValue('remove', removeArr);
-        redo();
-    }
+function createLabel(e) {
+    const radio = c('input'),
+          label = c('label');
+
+    radio.id = e + 'Radio';
+    radio.type = 'radio';
+    radio.name = 'radioSelection';
+    radio.style.marginRight = '5px';
+    label.for = e + 'Radio';
+    label.appendChild(radio);
+    label.style.display = 'block';
+    label.oninput = handleCheckbox;
+    return label;
 }
 
-function addReplacer() {
-    const replace = document.getElementById('selectReplace').value,
-          replaceWith = document.getElementById('inputReplace').value,
-          x = document.getElementsByClassName('type_system depth_2 contains_branch')[0];
-    if (replace != 'Pick element to be replaced' && replaceWith !== '') {
-        const replaceArr = GM_getValue('replace');
-
-        replaceArr.push([replace, replaceWith]);
-        replaceArr.sort((a, b) => {
-            if (a[0] < b[0]) return -1;
-            else if (a[0] > b[0]) return 1;
-            else return 0;
+function reloadFrontpage() {
+    if (arguments[3]) {
+        fetch('/')
+            .then(e => e.text())
+            .then(e => {
+            e = new DOMParser().parseFromString(e, 'text/html');
+            document.getElementById('inst4').clearChildren();
+            document.getElementById('inst4').appendChild(e.getElementById('inst4').children[0]);
+            settingsGear();
+            dispatchEvent(new CustomEvent('cleanMoodle', {
+                detail: {
+                    newPage: false
+                }
+            }));
+            dispatchEvent(new Event('customIcons'));
+            dispatchEvent(new Event('moreSidebarLinks'));
         });
-        GM_setValue('replace', replaceArr);
-        redo();
     }
 }
 
-function clearRemove() {
-    if (prompt('Are you sure?\nThis action is irreversible\nTo confirm type confirm').toLowerCase() === 'confirm') {
-        GM_setValue('remove', []);
-        redo();
-    }
-}
+function settingsGear(e) {
+    const settingsAnchor = c('a'),
+          settingsIcon = c('i');
 
-function clearReplace() {
-    if (prompt('Are you sure?\nThis action is irreversible\nTo confirm type confirm').toLowerCase() === 'confirm') {
-        GM_setValue('replace', []);
-        redo();
+    settingsAnchor.href = '/cleanMoodle/';
+    settingsAnchor.target = '_blank';
+    if (e) {
+        settingsAnchor.onclick = ev => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            alert(e);
+        };
     }
-}
+    settingsAnchor.style.marginLeft = '5px';
 
-function redo() {
-    setup(false);
+    settingsIcon.classList.add('fa', 'fa-gear');
+    settingsIcon.setAttribute('aria-hidden', true);
+    settingsAnchor.appendChild(settingsIcon);
+    try {
+    document.getElementById('instance-4-header').appendChild(settingsAnchor);
+    } catch(a){}
 }
 
 function c(e) {
     return document.createElement(e);
 }
-Element.prototype.remove = function(){
+Element.prototype.remove = function() {
     this.parentElement.removeChild(this);
+};
+
+Element.prototype.clearChildren = function() {
+    while (this.lastChild) {
+        this.lastChild.remove();
+    }
 };
