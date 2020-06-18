@@ -1,21 +1,23 @@
 # Projects
 
-- [Game by me](../lusc/123boom)
+- [Game by me](/lusc/123boom)
 
-- [A counter](../lusc/counter)
+- [Countdown to summer holidays](/lusc/time%20to%20summer%20holidays)
 
-- [Proof of concept](../lusc/firstLastName)
+- [A counter](/lusc/counter)
 
-- [Another proof of concept](../lusc/a)
+- [Proof of concept](/lusc/firstLastName)
 
-- [Stundenplan creator for one of my userscripts](../lusc/Stundenplan)
+- [Another proof of concept](/lusc/a)
 
-- [Find out from where you are](../lusc/name)
+- [Stundenplan creator for one of my userscripts](/lusc/Stundenplan)
 
-- [Convert hex to rgb and vice versa](../lusc/hexToRgb)
+- [Find out from where you are](/lusc/name)
 
-- [Css trickery](../lusc/Brille)
+- [Convert hex to rgb and vice versa](/lusc/hexToRgb)
 
-- [Url trickery](../lusc/changeurl)
+- [Css trickery](/lusc/Brille)
 
-- [Keyboard from html buttons](../lusc/htmlKeyboard)
+- [Url trickery](/lusc/changeurl)
+
+- [Keyboard from html buttons](/lusc/htmlKeyboard)
