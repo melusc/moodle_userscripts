@@ -3,21 +3,7 @@
 
 <head>
     <title>Time until holidays</title>
-    <style>
-        body {
-            background-color: #14232c;
-        }
-        h1 {
-            font-family: sans-serif;
-            text-align: center;
-            padding: 200px 0;
-            color: white;
-        }
-        div {
-            display: inline;
-            color: #efb148;
-        }
-    </style>
+    <style>body{background-color:#14232c}h1{font-family:sans-serif;text-align:center;padding:200px 0;color:white}div{display:inline;color:#efb148}</style>
 </head>
 
 <body>
@@ -28,48 +14,7 @@
         <div id="seconds">00</div> seconds until
         <div>summer holidays</div>
     </h1>
-    <script>
-        (() => {
-            const id = e => document.getElementById(e),
-                time = () => {
-                    const now = new Date(),
-                        difference = Math.floor((then - now) / 1000);
-                    let days = Math.floor(difference / daysCalc) * daysCalc,
-                        hours = Math.floor((difference - days) / hoursCalc) * hoursCalc,
-                        minutes = Math.floor((difference - days - hours) / minutesCalc) * minutesCalc,
-                        seconds = Math.floor((difference - days - hours - minutes));
-                    days /= daysCalc;
-                    hours /= hoursCalc;
-                    minutes /= minutesCalc;
-                    days = '' + days;
-                    hours = (hours < 10 ? '0' : '') + hours;
-                    minutes = (minutes < 10 ? '0' : '') + minutes;
-                    seconds = (seconds < 10 ? '0' : '') + seconds;
-                    if (daysDiv.innerText !== days) {
-                        daysDiv.innerText = days
-                    }
-                    if (hoursDiv.innerText !== hours) {
-                        hoursDiv.innerText = hours
-                    }
-                    if (minsDiv.innerText !== minutes) {
-                        minsDiv.innerText = minutes
-                    }
-                    if (secsDiv.innerText !== seconds) {
-                        secsDiv.innerText = seconds
-                    }
-                },
-                then = new Date(new Date().getFullYear(), 6, 3, 14, 40, 0),
-                daysCalc = 24 * 60 * 60,
-                hoursCalc = 60 * 60,
-                minutesCalc = 60,
-                daysDiv = id('days'),
-                hoursDiv = id('hours'),
-                minsDiv = id('minutes'),
-                secsDiv = id('seconds');
-            time();
-            setInterval(time, 250)
-        })();
-    </script>
+    <script>(()=>{const id=e=>document.getElementById(e),time=()=>{const now=new Date(),difference=Math.floor((then-now)/1000);let days=Math.floor(difference/daysCalc)*daysCalc,hours=Math.floor((difference-days)/hoursCalc)*hoursCalc,minutes=Math.floor((difference-days-hours)/minutesCalc)*minutesCalc,seconds=Math.floor((difference-days-hours-minutes));days/=daysCalc;hours/=hoursCalc;minutes/=minutesCalc;days=''+days;hours=(hours<10?'0':'')+hours;minutes=(minutes<10?'0':'')+minutes;seconds=(seconds<10?'0':'')+seconds;if(daysDiv.innerText!==days){daysDiv.innerText=days}if(hoursDiv.innerText!==hours){hoursDiv.innerText=hours}if(minsDiv.innerText!==minutes){minsDiv.innerText=minutes}if(secsDiv.innerText!==seconds){secsDiv.innerText=seconds}},then=new Date(new Date().getFullYear(),6,3,14,40,0),daysCalc=24*60*60,hoursCalc=60*60,minutesCalc=60,daysDiv=id('days'),hoursDiv=id('hours'),minsDiv=id('minutes'),secsDiv=id('seconds');time();setInterval(time,250)})();</script>
 
 </body>
 
