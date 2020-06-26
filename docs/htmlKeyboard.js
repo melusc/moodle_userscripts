@@ -15,14 +15,13 @@ function upperCase() {
 
 function addTextNode(e) {
     if (e.target.nodeName === 'BUTTON') {
-        let text = e.target.textContent.toLowerCase();
+        let text = e.target.innerHTML.toLowerCase();
         switch (text) {
             case '[enter]':
-                const br = document.createElement('br');
-                p1.appendChild(br);
+                p1.innerHTML = p1.innerHTML + '\n';
                 break;
             case '[backspace]':
-                p1.innerText = p1.innerText.slice(0,p1.innerText.length - 1);
+                p1.innerHTML = p1.innerHTML.slice(0,p1.innerHTML.length - 1);
                 break;
             case '[capslk]':
                 capslock = !capslock;
@@ -33,7 +32,7 @@ function addTextNode(e) {
                 upperCase();
                 break;
             case '[space]':
-                p1.innerText = p1.innerText + ' ';
+                p1.innerHTML = p1.innerHTML + ' ';
                 break;
             default:
                 if (shift ^ capslock) {
@@ -43,7 +42,7 @@ function addTextNode(e) {
                     shift = false;
                     upperCase();
                 }
-                p1.innerText = p1.innerText + text;
+                p1.innerHTML = p1.innerHTML + text;
         }
     }
 }

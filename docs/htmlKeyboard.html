@@ -2,16 +2,21 @@
 <html lang="en">
 
 <head>
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-167739571-3"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167739571-3"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','UA-167739571-3');</script>
     <title>Keyboard with html buttons</title>
     <style>
-        button {
-    		width: 100%;
-	}
-	body {
-    		font-family: sans-serif;
-	}
+    button {
+        width: 100%;
+    }
+    body {
+            font-family: sans-serif;
+			user-select: none;
+    }
+    #p1 {
+        white-space: pre;
+		user-select: text;
+    }
     </style>
 </head>
 
@@ -89,7 +94,7 @@
     </table>
 
     <p id="p1"></p>
-	<script src="htmlKeyboard.js"></script>
+    <script src="htmlKeyboard.js"></script>
 </body>
 
 </html>
