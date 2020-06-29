@@ -126,9 +126,9 @@ const id = e => document.getElementById(e),
                 amount.dispatchEvent(new Event('input'));
 
                 for (const key in json) {
-                    if (key === 'amount' || key === 'lunch' || !regex.exec(key)) {
+                    if (key === 'amount' || key === 'lunch') {
                         continue;
-                    } else if (json.hasOwnProperty(key)) {
+                    } else if (json.hasOwnProperty(key) && regex.exec(key)) {
                         id(key).textContent = json[key];
                     }
                 }
