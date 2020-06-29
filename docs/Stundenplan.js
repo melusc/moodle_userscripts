@@ -1,118 +1,130 @@
-let amount,
-lunch,
-checkbox;
+'use strict';
+Element.prototype.ac = function(e) {
+    this.appendChild(e);
+};
+const id = e => document.getElementById(e),
 
-const add = ()=>{
-  e = amount;
-  lunch.max=e.value;
-  Number(e.value) < Number(lunch.value) && (lunch.value = e.value);
-  let permanent = document.getElementsByTagName('tbody')[0].querySelector('#permanent');
-  document.getElementsByTagName('tbody')[0].innerHTML = '';
-  document.getElementsByTagName('tbody')[0].appendChild(permanent);
-  for (let i = 1; i <= e.value; i++) {
-    const cI = () => {
-      return document.createElement('input');
+    amount = id('amount'),
+    lunch = id('lunch'),
+    checkbox = id('checkbox'),
+    table = id('table'),
+    tbody = table.firstElementChild,
+    cTd = (e, f) => {
+        const td = document.createElement('td');
+        td.contentEditable = true;
+        td.id = e + '-' + f;
+        td.tabIndex = f * amount.value + 1;
+        return td;
     },
-    cTd = () => {
-      return document.createElement('td');
+    tI = (a, num) => {
+        a.setAttribute('tabindex', num * amount.value);
+    },
+    fillLunch = a => {
+        for (let i = 0; i < a.length; i++) {
+            a[i].textContent = 'Mittag';
+        }
+    },
+    add = () => {
+        lunch.max = amount.value;
+        if (+amount.value < +lunch.value) {
+            lunch.value = amount.value;
+            table.dataset.lunchRow = amount.value;
+        }
+        while (tbody.children.length > 1) tbody.removeChild(tbody.lastChild);
+        for (let i = 1; i <= +amount.value; i++) {
+
+            const tr = document.createElement('tr'),
+                th = document.createElement('th'),
+                td1 = cTd(i, 1),
+                td2 = cTd(i, 2),
+                td3 = cTd(i, 3),
+                td4 = cTd(i, 4),
+                td5 = cTd(i, 5),
+                inputTh = document.createElement('input');
+            inputTh.tabindex = i
+
+            if (checkbox.checked && +lunch.value && i === +lunch.value) {
+                fillLunch([td1, td2, td3, td4, td5]);
+            }
+
+            inputTh.value = i;
+            th.style.width = '80px';
+            inputTh.style.width = '90%';
+            inputTh.setAttribute('tabindex', -1);
+            th.ac(inputTh);
+            tr.ac(th);
+
+            tr.ac(td1);
+            tr.ac(td2);
+            tr.ac(td3);
+            tr.ac(td4);
+            tr.ac(td5);
+            tbody.ac(tr);
+        }
+        run();
+    },
+    run = e => {
+        const doc = {};
+        for (let j = 1; j <= 5; j++) {
+            for (let i = 1; i <= +amount.value; i++) {
+                const _id = `${i}-${j}`,
+                    temp = id(_id).textContent;
+                if (temp) {
+                    doc[_id] = temp;
+                }
+            }
+        }
+        id('result').value = JSON.stringify(doc, null, 4);
+    },
+    modifyLunch = e => {
+        if (+lunch.value > +lunch.max) {
+            lunch.value = lunch.max;
+            return;
+        }
+        const rowWas = table.dataset.lunchRow,
+            rowWill = lunch.value;
+
+        if (rowWas === 'null' || rowWas === '') {
+            if (checkbox.checked) {
+                for (let i = 1; i <= 5; i++) {
+                    const element = id(rowWill + '-' + i);
+                    if (element.textContent === '') element.textContent = 'Mittag';
+                }
+                table.dataset.lunchRow = rowWill;
+            }
+        } else {
+            if (checkbox.checked) {
+                for (let i = 1; i <= 5; i++) {
+                    const element = id(rowWas + '-' + i);
+                    if (element.textContent === 'Mittag') element.textContent = '';
+                }
+
+if (rowWill !== ''){
+                for (let i = 1; i <= 5; i++) {
+                    const element = id(rowWill + '-' + i);
+                    if (element.textContent === '') element.textContent = 'Mittag';
+                }
+                table.dataset.lunchRow = rowWill;
+}
+else table.dataset.lunchRow = null;
+            } else {
+                table.dataset.lunchRow = null;
+                for (let i = 1; i <= 5; i++) {
+                    const element = id(rowWas + '-' + i);
+                    if (element.textContent === 'Mittag') element.textContent = '';
+                }
+            }
+        }
+        add();
+
     };
-    let tr = document.createElement('tr'),
-    th = document.createElement('th'),
-    td1 = cTd(),
-    td2 = cTd(),
-    td3 = cTd(),
-    td4 = cTd(),
-    td5 = cTd(),
-    input1 = cI(),
-    input2 = cI(),
-    input3 = cI(),
-    input4 = cI(),
-    input5 = cI(),
-    inputTh = document.createElement('input');
-    input1.id = `1-${i}`;
-    input2.id = `2-${i}`;
-    input3.id = `3-${i}`;
-    input4.id = `4-${i}`;
-    input5.id = `5-${i}`;
-    const addEl = a => {
-      a.addEventListener('keyup', a => run(a));
-    };
-    addEl(input1);
-    addEl(input2);
-    addEl(input3);
-    addEl(input4);
-    addEl(input5);
 
-    const tI = (a, num) => {
-      a.setAttribute('tabindex', num * e.value);
-    };
-    tI(input1, 1);
-    tI(input2, 2);
-    tI(input3, 3);
-    tI(input4, 4);
-    tI(input5, 5);
-    const l5 = a=>{a.value = 'Mittag';};
-    checkbox.checked && lunch.value && i == lunch.value && (l5(input1),l5(input2),l5(input3),l5(input4),l5(input5));
 
-    td1.appendChild(input1);
-    td2.appendChild(input2);
-    td3.appendChild(input3);
-    td4.appendChild(input4);
-    td5.appendChild(input5);
-
-    inputTh.value = i;
-    th.style.width = '80px';
-    inputTh.style.width = '90%';
-    inputTh.setAttribute('tabindex', -1);
-    th.appendChild(inputTh);
-    tr.appendChild(th);
-    const ac = a => {
-      tr.appendChild(a);
-    };
-    ac(td1);
-    ac(td2);
-    ac(td3);
-    ac(td4);
-    ac(td5);
-    document.getElementsByTagName('tbody')[0].appendChild(tr);
-  }
-  run();
-};
-
-const run = e=>{
-  let doc = {};
-  for (let j = 1; j <= 5; j++) {
-    for (let i = 1; i <= amount.value; i++) {
-      let temp = document.querySelector(`[id="${j}-${i}"]`).value;
-      temp && (doc[`${j}-${i}`] = temp);
-    }
-  }
-  doc = JSON.stringify(doc);
-  doc != '{}' && (doc = doc.replace('{', '{\n    ').replace(/,/g, ',\n    ').replace('}', '\n}'));
-  document.querySelector('#result').value = doc;
-};
-
-window.onload = () => {
-  amount = document.getElementById('amount');
-  lunch = document.getElementById('lunch');
-  checkbox = document.getElementById('checkbox');
-  amount.value = 9;
-  lunch.value = 5;
-  add();
-  run();
-  amount.addEventListener('change', () => {
-    add();
-  });
-  amount.addEventListener('keyup', () => {
-    add();
-  });
-  lunch.addEventListener('change', () => {
-    add();
-  });
-  lunch.addEventListener('keyup', () => {
-    add();
-  });
-  checkbox.addEventListener('change',()=>{
-    add();
-  });
-};
+amount.value = 9;
+lunch.value = 5;
+add();
+run();
+amount.oninput = add;
+checkbox.oninput = modifyLunch;
+lunch.oninput = modifyLunch;
+document.getElementsByTagName('table')[0].oninput = run;

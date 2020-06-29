@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<meta charset="utf-8"/>
+<meta charset="utf-8" />
 <html>
 
 <head>
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-167739571-3"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','UA-167739571-3');</script>
-	<link rel="shortcut icon" href="Stundenplan.ico">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167739571-3"></script>
+    <script>
+        window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','UA-167739571-3');
+    </script>
+    <link rel="shortcut icon" href="Stundenplan.ico">
     <title>Stundenplan Generator</title>
-    <script src="Stundenplan.js"></script>
     <style>
         table, th, td{
             border: 2px solid black;
@@ -26,9 +27,13 @@
         textarea {
             width: 300px;
             height: 150px;
+			border:1px solid black;
+			border-radius:2px;
         }
         table {
             border-collapse: collapse;
+			width: 50%;
+			table-layout: fixed;
         }
         input:not(#amount):not(#lunch) {
             border: transparent;
@@ -36,31 +41,39 @@
             text-align: center;
         }
         input:focus,
-				input:active {
+		input:active {
             outline: none;
         }
     </style>
 </head>
 
 <body>
-	<label for="amount">Stunden pro Tag:</label>
-	<input id="amount" tabindex="-1" type="number" placeholder="Anzahl Reihen" min="1"></input><br><br>
-	<label for="lunch">Stunde Mittagessen:</label>
-	<input id="lunch" tabindex="-1" type="number" placeholder="Wann ist Mittag" min="1"></input><br><div style="margin-left:2.5%"><label for="checkbox">&#09;Aktiviert?</label><input id="checkbox" type="checkbox" checked></input></div><br>
-  <table>
-	<tbody>
-        <tr id="permanent">
-            <th>Zeit:</th>
-            <th>Montag</th>
-            <th>Dienstag</th>
-            <th>Mittwoch</th>
-            <th>Donnerstag</th>
-            <th>Freitag</th>
-        </tr>
-		</tbody>
+    <label for="amount">Stunden pro Tag:</label>
+    <input id="amount" tabindex="-1" type="number" placeholder="Anzahl Reihen" min="1"></input>
+    <br><br>
+    <label for="lunch">Stunde Mittagessen:</label>
+    <input id="lunch" tabindex="-1" type="number" placeholder="Wann ist Mittag" min="1"></input>
+    <br>
+    <div style="margin-left:2.5%">
+        <label for="checkbox">Aktiviert?</label>
+        <input id="checkbox" type="checkbox" checked></input>
+    </div>
+    <br>
+    <table id="table" data-lunch-row="5">
+        <tbody id="tbody">
+            <tr id="permanent">
+                <th>Zeit:</th>
+                <th>Montag</th>
+                <th>Dienstag</th>
+                <th>Mittwoch</th>
+                <th>Donnerstag</th>
+                <th>Freitag</th>
+            </tr>
+        </tbody>
     </table>
-		<small>* Zwei aufeinanderfolgende Stunden sollten beide eingetragen um optimal mit meinem Userscript zu funktionieren</small><br><br>
-	<textarea tabindex="-1" onClick="this.focus();this.select()" readonly id="result" style="border:1px solid black;border-radius:2px"></textarea>
+    <small>* Zwei aufeinanderfolgende Stunden sollten beide eingetragen um optimal mit meinem Userscript zu funktionieren</small><br><br>
+    <textarea tabindex="-1" onClick="this.focus();this.select()" readonly="true" id="result"></textarea>
+    <script src="Stundenplan.js"></script>
 </body>
 
 </html>
