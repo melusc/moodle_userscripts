@@ -69,10 +69,10 @@
                 daysDiv = id('days'),
                 hoursDiv = id('hours'),
                 minsDiv = id('minutes'),
-                secsDiv = id('seconds');
-            let then = new Date('7/2/' + new Date().getFullYear() + ', 15:35:00');
-            if (then < new Date().getTime()) {
-                then = then.setYear(then.getFullYear() + 1);
+                secsDiv = id('seconds'),
+				then = new Date('7/2/' + new Date().getFullYear() + ', 15:35:00');
+            if (then < new Date()) {
+                then.setYear(then.getFullYear() + 1);
             }
             time();
             setInterval(time, 250);
