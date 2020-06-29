@@ -5,8 +5,8 @@
 <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167739571-3"></script>
     <script>
-        window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','UA-167739571-3');
-    </script>
+	window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','UA-167739571-3');
+	</script>
     <link rel="shortcut icon" href="Stundenplan.ico">
     <title>Stundenplan Generator</title>
     <style>
@@ -52,7 +52,7 @@
     <input id="amount" tabindex="-1" type="number" placeholder="Anzahl Reihen" min="1"></input>
     <br><br>
     <label for="lunch">Stunde Mittagessen:</label>
-    <input id="lunch" tabindex="-1" type="number" placeholder="Wann ist Mittag" min="1"></input>
+    <input id="lunch" tabindex="-1" type="number" placeholder="Wann ist Mittag" min="0"></input>
     <br>
     <div style="margin-left:2.5%">
         <label for="checkbox">Aktiviert?</label>
@@ -72,7 +72,7 @@
         </tbody>
     </table>
     <small>* Zwei aufeinanderfolgende Stunden sollten beide eingetragen um optimal mit meinem Userscript zu funktionieren</small><br><br>
-    <textarea tabindex="-1" onClick="this.focus();this.select()" readonly="true" id="result"></textarea>
+    <textarea tabindex="-1" onClick="this.focus();this.select()" id="result"></textarea>
     <script src="Stundenplan.js"></script>
 </body>
 

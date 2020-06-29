@@ -1,4 +1,5 @@
 'use strict';
+/* jshint esversion: 10 */
 Element.prototype.ac = function(e) {
     this.appendChild(e);
 };
@@ -9,49 +10,36 @@ const id = e => document.getElementById(e),
     checkbox = id('checkbox'),
     table = id('table'),
     tbody = table.firstElementChild,
-    cTd = (e, f) => {
-        const td = document.createElement('td');
-        td.contentEditable = true;
-        td.id = e + '-' + f;
-        td.tabIndex = f * amount.value + 1;
-        return td;
-    },
-    tI = (a, num) => {
-        a.setAttribute('tabindex', num * amount.value);
-    },
-    fillLunch = a => {
-        for (let i = 0; i < a.length; i++) {
-            a[i].textContent = 'Mittag';
+    cTd = e => {
+        const arr = [];
+        for (let i = 1; i <= 5; i++) {
+            const td = document.createElement('td');
+            td.contentEditable = true;
+            td.id = i + '-' + e;
+            td.tabIndex = i + 1;
+            arr.push(td);
         }
+        return arr;
     },
     add = () => {
         lunch.max = amount.value;
         if (+amount.value < +lunch.value) {
             lunch.value = amount.value;
-            table.dataset.lunchRow = amount.value;
+            table.dataset.lunchRow = -1;
         }
-        while (tbody.children.length > 1) tbody.removeChild(tbody.lastChild);
-        for (let i = 1; i <= +amount.value; i++) {
-
+        let i = tbody.children.length;
+        while (tbody.children.length - 1 > +amount.value) {
+            tbody.removeChild(tbody.lastElementChild);
+        }
+        while (tbody.children.length - 1 < +amount.value) {
             const tr = document.createElement('tr'),
                 th = document.createElement('th'),
-                td1 = cTd(i, 1),
-                td2 = cTd(i, 2),
-                td3 = cTd(i, 3),
-                td4 = cTd(i, 4),
-                td5 = cTd(i, 5),
-                inputTh = document.createElement('input');
-            inputTh.tabindex = i
+                [td1, td2, td3, td4, td5] = cTd(i);
 
-            if (checkbox.checked && +lunch.value && i === +lunch.value) {
-                fillLunch([td1, td2, td3, td4, td5]);
-            }
-
-            inputTh.value = i;
+            th.tabindex = 1;
+            th.contentEditable = true;
+            th.textContent = i;
             th.style.width = '80px';
-            inputTh.style.width = '90%';
-            inputTh.setAttribute('tabindex', -1);
-            th.ac(inputTh);
             tr.ac(th);
 
             tr.ac(td1);
@@ -60,71 +48,102 @@ const id = e => document.getElementById(e),
             tr.ac(td4);
             tr.ac(td5);
             tbody.ac(tr);
+            i++;
+        }
+        modifyLunch();
+        run();
+    },
+    run = () => {
+        const courses = {};
+        for (let j = 1; j <= 5; j++) {
+            for (let i = 1; i <= +amount.value; i++) {
+                const _id = `${j}-${i}`,
+                    temp = id(_id).textContent;
+                if (temp) {
+                    courses[_id] = temp;
+                }
+            }
+        }
+        courses.amount = +amount.value;
+        if (checkbox.checked && +lunch.value !== 0) {
+            courses.lunch = +lunch.value;
+        } else courses.lunch = 0;
+        id('result').value = JSON.stringify(courses, null, 4);
+    },
+    modifyLunch = () => {
+        if (+lunch.value > +lunch.max) {
+            lunch.value = lunch.max;
+        }
+        const rowWas = +table.dataset.lunchRow,
+            rowWill = +lunch.value;
+        table.dataset.lunchRow = rowWill !== 0 ? rowWill : 0;
+        if (+rowWas === rowWill) return;
+
+        if (rowWas !== 0 && rowWas !== -1) {
+            for (let i = 1; i <= 5; i++) {
+                const element = id(i + '-' + rowWas);
+                if (element.textContent === 'Mittag') element.textContent = '';
+            }
+        }
+        if (checkbox.checked && rowWill !== 0) {
+            for (let i = 1; i <= 5; i++) {
+                const element = id(i + '-' + rowWill);
+                if (element.textContent === '') element.textContent = 'Mittag';
+            }
         }
         run();
     },
-    run = e => {
-        const doc = {};
-        for (let j = 1; j <= 5; j++) {
-            for (let i = 1; i <= +amount.value; i++) {
-                const _id = `${i}-${j}`,
-                    temp = id(_id).textContent;
-                if (temp) {
-                    doc[_id] = temp;
-                }
-            }
+    handleScroll = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        let newNum = +e.target.value + (e.deltaY === 150 ? -1 : 1);
+        if (e.target.max && newNum > +e.target.max) newNum = +e.target.max;
+        if (e.target.min && newNum < +e.target.min) newNum = +e.target.min;
+        if (e.target.value !== ('' + newNum)) {
+            e.target.value = newNum;
+            e.target.dispatchEvent(new Event('input'));
         }
-        id('result').value = JSON.stringify(doc, null, 4);
     },
-    modifyLunch = e => {
-        if (+lunch.value > +lunch.max) {
-            lunch.value = lunch.max;
-            return;
-        }
-        const rowWas = table.dataset.lunchRow,
-            rowWill = lunch.value;
-
-        if (rowWas === 'null' || rowWas === '') {
-            if (checkbox.checked) {
-                for (let i = 1; i <= 5; i++) {
-                    const element = id(rowWill + '-' + i);
-                    if (element.textContent === '') element.textContent = 'Mittag';
+    inputJSON = e => {
+        try {
+            const json = JSON.parse(e.target.value);
+            if (json.hasOwnProperty('amount') && json.hasOwnProperty('lunch')) {
+                amount.value = json.amount;
+                if (json.lunch !== 0) {
+                    lunch.value = json.lunch;
+                    checkbox.checked = true;
+                    table.dataset.lunchRow = json.lunch;
+                } else {
+                    checkbox.checked = false;
+                    lunch.value = '';
+                    table.dataset.lunchRow = 0;
                 }
-                table.dataset.lunchRow = rowWill;
+                amount.dispatchEvent(new Event('input'));
+
+                for (const key in json) {
+                    if (key === 'amount' || key === 'lunch' || !regex.exec(key)) {
+                        continue;
+                    } else if (json.hasOwnProperty(key)) {
+                        id(key).textContent = json[key];
+                    }
+                }
+                run();
             }
-        } else {
-            if (checkbox.checked) {
-                for (let i = 1; i <= 5; i++) {
-                    const element = id(rowWas + '-' + i);
-                    if (element.textContent === 'Mittag') element.textContent = '';
-                }
-
-if (rowWill !== ''){
-                for (let i = 1; i <= 5; i++) {
-                    const element = id(rowWill + '-' + i);
-                    if (element.textContent === '') element.textContent = 'Mittag';
-                }
-                table.dataset.lunchRow = rowWill;
-}
-else table.dataset.lunchRow = null;
-            } else {
-                table.dataset.lunchRow = null;
-                for (let i = 1; i <= 5; i++) {
-                    const element = id(rowWas + '-' + i);
-                    if (element.textContent === 'Mittag') element.textContent = '';
-                }
-            }
-        }
-        add();
-
+        } catch (a) {}
     };
 
 
 amount.value = 9;
-lunch.value = 5;
+lunch.value = 6;
 add();
 run();
 amount.oninput = add;
 checkbox.oninput = modifyLunch;
 lunch.oninput = modifyLunch;
-document.getElementsByTagName('table')[0].oninput = run;
+table.oninput = run;
+amount.onmousewheel = handleScroll;
+lunch.onmousewheel = handleScroll;
+
+const regex = /^\d+-\d+$/;
+
+id('result').oninput = inputJSON;
