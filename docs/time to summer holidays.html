@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167739571-3"></script>
+    <script>
+        window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','UA-167739571-3');
+    </script>
+    <title>Time until holidays</title>
+    <style>
+        body {
+            background-color: #14232c;
+        }
+        h1 {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 200px 0;
+            color: white;
+        }
+        div {
+            display: inline;
+            color: #efb148;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>
+        <div id="days">0</div> days,
+        <div id="hours">00</div> hours,
+        <div id="minutes">00</div> minutes and
+        <div id="seconds">00</div> seconds until
+        <div>summer holidays</div>
+    </h1>
+    <script>
+        (() => {
+            const id = e => document.getElementById(e),
+                time = () => {
+                    const now = new Date(),
+                        difference = Math.floor((then - now) / 1000);
+                    let days = Math.floor(difference / daysCalc) * daysCalc,
+                        hours = Math.floor((difference - days) / hoursCalc) * hoursCalc,
+                        minutes = Math.floor((difference - days - hours) / minutesCalc) * minutesCalc,
+                        seconds = Math.floor((difference - days - hours - minutes));
+                    days /= daysCalc;
+                    hours /= hoursCalc;
+                    minutes /= minutesCalc;
+                    days = '' + days;
+                    hours = (hours < 10 ? '0' : '') + hours;
+                    minutes = (minutes < 10 ? '0' : '') + minutes;
+                    seconds = (seconds < 10 ? '0' : '') + seconds;
+                    if (daysDiv.innerText !== days) {
+                        daysDiv.innerText = days;
+                    }
+                    if (hoursDiv.innerText !== hours) {
+                        hoursDiv.innerText = hours;
+                    }
+                    if (minsDiv.innerText !== minutes) {
+                        minsDiv.innerText = minutes;
+                    }
+                    if (secsDiv.innerText !== seconds) {
+                        secsDiv.innerText = seconds;
+                    }
+                },
+                daysCalc = 24 * 60 * 60,
+                hoursCalc = 60 * 60,
+                minutesCalc = 60,
+                daysDiv = id('days'),
+                hoursDiv = id('hours'),
+                minsDiv = id('minutes'),
+                secsDiv = id('seconds');
+            let then = new Date('7/2/' + new Date().getFullYear() + ', 15:35:00');
+            if (then < new Date().getTime()) {
+                then = then.setYear(then.getFullYear() + 1);
+            }
+            time();
+            setInterval(time, 250);
+        })();
+    </script>
+
+</body>
+
+</html>
