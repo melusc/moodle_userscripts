@@ -77,7 +77,6 @@ const id = e => document.getElementById(e),
         const rowWas = +table.dataset.lunchRow,
             rowWill = +lunch.value;
         table.dataset.lunchRow = rowWill !== 0 ? rowWill : 0;
-        if (+rowWas === rowWill) return;
 
         if (rowWas !== 0 && rowWas !== -1) {
             for (let i = 1; i <= 5; i++) {
