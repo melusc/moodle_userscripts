@@ -48,15 +48,15 @@ const id = e => document.getElementById(e),
         while (tbody.children.length - 1 < +amount.value) {
             const tr = document.createElement('tr'),
                 th = document.createElement('th');
-                
+
 
             th.tabindex = 1;
             th.contentEditable = true;
-            th.textContent = i++;
+            th.textContent = i;
             tr.append(th);
-            
-            cTd(i, tr);
-            
+
+            cTd(i++, tr);
+
             tbody.appendChild(tr);
         }
         modifyLunch();
@@ -123,12 +123,13 @@ const id = e => document.getElementById(e),
         e.preventDefault();
         e.stopPropagation();
         if (!e.target.disabled) {
-            let newNum = +e.target.value + (e.deltaY === 150 ? -1 : 1);
-            if (e.target.max && newNum > +e.target.max) newNum = +e.target.max;
-            if (e.target.min && newNum < +e.target.min) newNum = +e.target.min;
-            if (e.target.value !== ('' + newNum)) {
-                e.target.value = newNum;
-                e.target.dispatchEvent(new Event('input'));
+            const target = e.target.nodeName === 'LABEL' ? e.target.getElementsByTagName('input')[0] : e.target;
+            let newNum = +target.value + (e.deltaY === 150 ? -1 : 1);
+            if (target.max && newNum > +target.max) newNum = +target.max;
+            if (target.min && newNum < +target.min) newNum = +target.min;
+            if (target.value !== ('' + newNum)) {
+                target.value = newNum;
+                target.dispatchEvent(new Event('input'));
             }
         }
     },
@@ -169,8 +170,8 @@ amount.oninput = add;
 checkbox.oninput = modifyLunch;
 lunch.oninput = modifyLunch;
 table.oninput = run;
-amount.onmousewheel = handleScroll;
-lunch.onmousewheel = handleScroll;
+amount.parentElement.onmousewheel = handleScroll;
+lunch.parentElement.onmousewheel = handleScroll;
 
 const regex = /^\d+-\d+$/;
 
