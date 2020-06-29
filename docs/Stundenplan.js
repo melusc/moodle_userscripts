@@ -1,8 +1,5 @@
 'use strict';
 /* jshint esversion: 10 */
-Element.prototype.ac = function(e) {
-    this.appendChild(e);
-};
 const id = e => document.getElementById(e),
 
     amount = id('amount'),
@@ -10,48 +7,57 @@ const id = e => document.getElementById(e),
     checkbox = id('checkbox'),
     table = id('table'),
     tbody = table.firstElementChild,
-    cTd = e => {
-        const arr = [];
+    coursesAll = {},
+    originalLunch = {
+        original: 6,
+        modify: true
+    },
+    cTd = (e, parent) => {
         for (let i = 1; i <= 5; i++) {
             const td = document.createElement('td');
             td.contentEditable = true;
             td.id = i + '-' + e;
             td.tabIndex = i + 1;
-            arr.push(td);
+            if (coursesAll.hasOwnProperty(td.id)) td.textContent = coursesAll[td.id];
+            parent.append(td);
         }
-        return arr;
     },
     add = () => {
-        if (+amount.value < 1){
+        if (+amount.value < 1) {
             amount.value = 1;
         }
         lunch.max = amount.value;
         if (+amount.value < +lunch.value) {
+            if (originalLunch.modify) {
+                originalLunch.original = +lunch.value;
+                originalLunch.modify = false;
+            }
             lunch.value = +amount.value;
             table.dataset.lunchRow = -1;
+        } else if (+amount.value > +lunch.value && !originalLunch.modify) {
+            lunch.value = originalLunch.original;
+
+            if (+amount.value >= originalLunch.original) {
+                originalLunch.modify = true;
+            }
         }
-        let i = tbody.children.length;
         while (tbody.children.length - 1 > +amount.value) {
             tbody.removeChild(tbody.lastElementChild);
         }
+        let i = tbody.children.length;
         while (tbody.children.length - 1 < +amount.value) {
             const tr = document.createElement('tr'),
-                th = document.createElement('th'),
-                [td1, td2, td3, td4, td5] = cTd(i);
+                th = document.createElement('th');
+                
 
             th.tabindex = 1;
             th.contentEditable = true;
-            th.textContent = i;
-            th.style.width = '80px';
-            tr.ac(th);
-
-            tr.ac(td1);
-            tr.ac(td2);
-            tr.ac(td3);
-            tr.ac(td4);
-            tr.ac(td5);
-            tbody.ac(tr);
-            i++;
+            th.textContent = i++;
+            tr.append(th);
+            
+            cTd(i, tr);
+            
+            tbody.appendChild(tr);
         }
         modifyLunch();
         run();
@@ -64,21 +70,35 @@ const id = e => document.getElementById(e),
                     temp = id(_id).textContent;
                 if (temp) {
                     courses[_id] = temp;
-                }
+
+                    if (temp !== 'Mittag') {
+                        coursesAll[_id] = temp;
+                    } else if (coursesAll.hasOwnProperty(_id)) {
+                        delete coursesAll[_id];
+                    }
+
+                } else if (coursesAll.hasOwnProperty(_id)) delete coursesAll[_id];
             }
         }
         courses.amount = +amount.value;
         if (checkbox.checked && +lunch.value !== 0) {
             courses.lunch = +lunch.value;
-        } else courses.lunch = 0;
+        } else {
+            courses.lunch = 0;
+        }
+
         id('result').value = JSON.stringify(courses, null, 4);
     },
     modifyLunch = () => {
         if (+lunch.value > +lunch.max) {
             lunch.value = lunch.max;
         }
-        if (+lunch.value < +lunch.min){
+        if (+lunch.value < +lunch.min) {
             lunch.value = lunch.min;
+        }
+        if (+lunch.max > +lunch.value) {
+            originalLunch.original = +lunch.value;
+            originalLunch.modify = true;
         }
         const rowWas = +table.dataset.lunchRow,
             rowWill = +lunch.value;
@@ -96,17 +116,20 @@ const id = e => document.getElementById(e),
                 if (element.textContent === '') element.textContent = 'Mittag';
             }
         }
+        lunch.disabled = !checkbox.checked;
         run();
     },
     handleScroll = e => {
         e.preventDefault();
         e.stopPropagation();
-        let newNum = +e.target.value + (e.deltaY === 150 ? -1 : 1);
-        if (e.target.max && newNum > +e.target.max) newNum = +e.target.max;
-        if (e.target.min && newNum < +e.target.min) newNum = +e.target.min;
-        if (e.target.value !== ('' + newNum)) {
-            e.target.value = newNum;
-            e.target.dispatchEvent(new Event('input'));
+        if (!e.target.disabled) {
+            let newNum = +e.target.value + (e.deltaY === 150 ? -1 : 1);
+            if (e.target.max && newNum > +e.target.max) newNum = +e.target.max;
+            if (e.target.min && newNum < +e.target.min) newNum = +e.target.min;
+            if (e.target.value !== ('' + newNum)) {
+                e.target.value = newNum;
+                e.target.dispatchEvent(new Event('input'));
+            }
         }
     },
     inputJSON = e => {
