@@ -22,9 +22,12 @@ const id = e => document.getElementById(e),
         return arr;
     },
     add = () => {
+        if (+amount.value < 1){
+            amount.value = 1;
+        }
         lunch.max = amount.value;
         if (+amount.value < +lunch.value) {
-            lunch.value = amount.value;
+            lunch.value = +amount.value;
             table.dataset.lunchRow = -1;
         }
         let i = tbody.children.length;
@@ -73,6 +76,9 @@ const id = e => document.getElementById(e),
     modifyLunch = () => {
         if (+lunch.value > +lunch.max) {
             lunch.value = lunch.max;
+        }
+        if (+lunch.value < +lunch.min){
+            lunch.value = lunch.min;
         }
         const rowWas = +table.dataset.lunchRow,
             rowWill = +lunch.value;
