@@ -6,17 +6,30 @@ const id = e => document.getElementById(e),
     lunch = id('lunch'),
     checkbox = id('checkbox'),
     table = id('table'),
+    clearButton = id('clear'),
+    regex = /^\d+-\d+$/,
     tbody = table.firstElementChild,
     coursesAll = {},
     originalLunch = {
         original: 6,
         modify: true
     },
-    cTd = (e, parent) => {
+    times = {
+        1: '08:00-08:45',
+        2: '08:45-09:30',
+        3: '09:50-10:35',
+        4: '10:40-11:25',
+        5: '11:30-12:15',
+        6: '12:15-13:10',
+        7: '13:10-13:55',
+        8: '13:55-14:40',
+        9: '14:50-15:35',
+    },
+    cTd = (row, parent) => {
         for (let i = 1; i <= 5; i++) {
             const td = document.createElement('td');
             td.contentEditable = true;
-            td.id = i + '-' + e;
+            td.id = i + '-' + row;
             td.tabIndex = i + 1;
             if (coursesAll.hasOwnProperty(td.id)) td.textContent = coursesAll[td.id];
             parent.append(td);
@@ -42,6 +55,11 @@ const id = e => document.getElementById(e),
             }
         }
         while (tbody.children.length - 1 > +amount.value) {
+            const text = tbody.lastElementChild.firstElementChild.textContent,
+                index = tbody.childElementCount - 1;
+            if (!times.hasOwnProperty(index) || times[index] !== text) {
+                times[index] = text;
+            }
             tbody.removeChild(tbody.lastElementChild);
         }
         let i = tbody.children.length;
@@ -52,7 +70,7 @@ const id = e => document.getElementById(e),
 
             th.tabindex = 1;
             th.contentEditable = true;
-            th.textContent = i;
+            th.textContent = times.hasOwnProperty(i) ? times[i] : i;
             tr.append(th);
 
             cTd(i++, tr);
@@ -137,17 +155,16 @@ const id = e => document.getElementById(e),
         try {
             const json = JSON.parse(e.target.value);
             if (json.hasOwnProperty('amount') && json.hasOwnProperty('lunch')) {
+                clear();
                 amount.value = json.amount;
                 if (json.lunch !== 0) {
                     lunch.value = json.lunch;
                     checkbox.checked = true;
-                    table.dataset.lunchRow = json.lunch;
                 } else {
                     checkbox.checked = false;
-                    lunch.value = '';
-                    table.dataset.lunchRow = 0;
+                    lunch.value = 0;
                 }
-                amount.dispatchEvent(new Event('input'));
+                add();
 
                 for (const key in json) {
                     if (key === 'amount' || key === 'lunch') {
@@ -159,6 +176,14 @@ const id = e => document.getElementById(e),
                 run();
             }
         } catch (a) {}
+    },
+    clear = () =>{
+        for (let i = 1; i <= 5; i++){
+            for (let j = 1; j <= +amount.value; j++){
+                id(i + '-' + j).textContent = '';
+            }
+        }
+        if (checkbox.checked) checkbox.click();
     };
 
 
@@ -170,9 +195,8 @@ amount.oninput = add;
 checkbox.oninput = modifyLunch;
 lunch.oninput = modifyLunch;
 table.oninput = run;
+clearButton.onclick = clear;
 amount.parentElement.onmousewheel = handleScroll;
 lunch.parentElement.onmousewheel = handleScroll;
-
-const regex = /^\d+-\d+$/;
 
 id('result').oninput = inputJSON;
