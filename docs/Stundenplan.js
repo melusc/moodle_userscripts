@@ -177,9 +177,9 @@ const id = e => document.getElementById(e),
             }
         } catch (a) {}
     },
-    clear = () =>{
-        for (let i = 1; i <= 5; i++){
-            for (let j = 1; j <= +amount.value; j++){
+    clear = () => {
+        for (let i = 1; i <= 5; i++) {
+            for (let j = 1; j <= +amount.value; j++) {
                 id(i + '-' + j).textContent = '';
             }
         }
