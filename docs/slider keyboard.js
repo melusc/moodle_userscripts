@@ -25,7 +25,7 @@ submit.onclick = e => {
             break;
     }
     output.textContent = 'A';
-    slider.value = 1;
+    slider.value = 0;
 };
 send.onclick = e => {
     location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
