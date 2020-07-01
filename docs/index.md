@@ -17,3 +17,5 @@
 - [Css trickery](/lusc/Brille)
 
 - [Keyboard from html buttons](/lusc/htmlKeyboard)
+
+- [Keyboard from a slider](/lusc/slider%20keyboard)
