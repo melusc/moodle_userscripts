@@ -28,7 +28,7 @@ submit.onclick = e => {
     slider.value = 0;
 };
 send.onclick = e => {
-    if (text.textContent.length <= 5){
+    if (text.textContent.length <= 5) {
         alert('Your message is a bit short');
-    } else location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+    } else location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 };
