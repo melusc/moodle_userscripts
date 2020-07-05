@@ -1,90 +1,60 @@
-"use strict";
-window.onload = function() {
-    document.getElementById('hex').addEventListener('keyup', function() {
-        hex(this);
-    });
-    document.getElementById('rgb').addEventListener('keyup', function() {
-        rgb(this);
-    });
-    height();
-};
+'use strict';
+/* jshint esversion: 10 */
+document.getElementById('hex').addEventListener('input', hex);
+const hexInput = document.getElementById('hex').lastElementChild;
+
+document.getElementById('rgb').addEventListener('input', rgb);
+const inputs = [...document.getElementById('rgb').querySelectorAll('input')];
+
+let oldValHex = hexInput.value.length;
+
+const oldValRgb = inputs.map(e => e.value);
+
+rgb({
+    target: inputs[0]
+});
+
+
 
 function hex(e) {
-    let elem = e.value.replace(/[^0-9a-fA-F]/g, '').toLowerCase();
-    e.value = '#' + elem.toUpperCase();
-    if (elem.length == 3 || elem.length == 6) {
-        if (elem.length == 3) {
-            elem = elem[0] + elem[0] + elem[1] + elem[1] + elem[2] + elem[2];
+    let index = hexInput.selectionStart + (hexInput.value.indexOf('#') === -1 ? 1 : 0);
+
+    let string = e.target.value.toLowerCase().replace(/[^0-9a-f]/g, '');
+    e.target.value = '#' + string.toUpperCase();
+
+    if (oldValHex === string.length) index--;
+
+    oldValHex = string.length;
+
+    e.target.setSelectionRange(index, index);
+
+    if (string.length === 3) string = string.split('').map(e => e.repeat(2)).join('');
+    if (string.length === 6) {
+        const nums = string.match(/.{2}/g).map(e => parseInt(e, 16));
+
+        for (let i = 0; i < 3; i++) {
+            inputs[i].value = nums[i];
         }
-        let r = elem[0] + elem[1],
-            g = elem[2] + elem[3],
-            b = elem[4] + elem[5],
-            rgb;
-        r = hexToRgb(r);
-        g = hexToRgb(g);
-        b = hexToRgb(b);
-        rgb = `rgb(${ r },${ g },${ b })`;
-        document.getElementById('rgb').value = rgb;
-        document.getElementById('background').style.backgroundColor = rgb;
+        document.body.style.backgroundColor = e.target.value;
     }
 }
 
-function hexToRgb(num) {
-    num = String(num);
-    let first = translate(num[0]),
-        second = translate(num[1]);
+function rgb(e) {
+    console.log(e.target.selectionStart);
+    const index = inputs.indexOf(e.target);
+    if (e.target.validity.badInput) e.target.value = oldValRgb[index];
+    else oldValRgb[index] = e.target.value;
 
-    function translate(elem) {
-        return String(elem).replace(/a/g, '10').replace(/b/g, '11').replace(/c/g, '12').replace(/d/g, '13').replace(/e/g, '14').replace(/f/g, '15');
-    }
-    return (Number(first) * 16 + Number(second));
-}
+    e.target.value = e.target.value === '' ? '' : parseInt(e.target.value);
+    
+    console.log(e.target.selectionStart);
 
-function rgb(elem) {
-    let e = elem.value.replace(/[^0-9bgr(,)]/g, '').toLowerCase().replace(',', ':').replace(',', ':').replace(/,/g, '').replace(/:/g, ',');
-    elem.value = e;
-    const lastChar = e.slice(-1);
-    elem = e.replace(/[^0-9,]/g, '');
-    elem = elem.split(',');
-    const numCommas = elem.length - 1;
-    if (numCommas == 2) {
-        for (let i = 0; i <= numCommas; i++) {
-            elem[i] = elem[i].substring(0, 3);
-        }
-        if (lastChar == ')') {
-            document.getElementById('rgb').value = `rgb(${elem[0]},${elem[1]},${elem[2]})`;
-        } else {
-            document.getElementById('rgb').value = `rgb(${elem[0]},${elem[1]},${elem[2]}`;
-        }
-        let r = RgbToHex(elem[0]),
-            g = RgbToHex(elem[1]),
-            b = RgbToHex(elem[2]),
-            hex;
-        hex = `#${r}${g}${b}`;
-        document.getElementById('hex').value = hex.toUpperCase();
-        document.getElementById('background').style.backgroundColor = hex;
-    }
-}
+    if (+e.target.value > 255) e.target.value = 255;
+    else if (+e.target.value < 0) e.target.value = 0;
 
-function RgbToHex(num) {
-    let first = Math.floor(num / 16),
-        second = Math.round(num - first * 16);
+    const nums = inputs.map(a => parseInt(a.value || 0).toString(16)).map(a => a.length < 2 ? '0' + a : a);
 
-    function translate(num) {
-        return String(num).replace('10', 'a').replace('11', 'b').replace('12', 'c').replace('13', 'd').replace('14', 'e').replace('15', 'f');
-    }
-    first = translate(first);
-    second = translate(second);
-    if (!isNaN(num)) return first + second;
-}
+    hexInput.value = ('#' + nums.join('')).toUpperCase();
 
-function height() {
-    let divWidth = document.getElementById('everything').clientWidth,
-        divHeight = document.getElementById('everything').clientHeight,
-        bodyWidth = document.body.clientWidth,
-        bodyHeight = document.body.clientHeight,
-        left = (bodyWidth - divWidth) / 2,
-        top = (bodyHeight - divHeight) / 2;
-    document.getElementById('everything').style.top = top + "px";
-    document.getElementById('everything').style.left = left + "px";
+    document.body.style.backgroundColor = hexInput.value;
 }
