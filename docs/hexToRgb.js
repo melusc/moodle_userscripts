@@ -40,19 +40,16 @@ function hex(e) {
 }
 
 function rgb(e) {
-    console.log(e.target.selectionStart);
     const index = inputs.indexOf(e.target);
     if (e.target.validity.badInput) e.target.value = oldValRgb[index];
     else oldValRgb[index] = e.target.value;
 
-    e.target.value = e.target.value === '' ? '' : parseInt(e.target.value);
+    e.target.value = ( (e.target.value === '') ? '' : parseInt(e.target.value) );
     
-    console.log(e.target.selectionStart);
-
     if (+e.target.value > 255) e.target.value = 255;
     else if (+e.target.value < 0) e.target.value = 0;
 
-    const nums = inputs.map(a => parseInt(a.value || 0).toString(16)).map(a => a.length < 2 ? '0' + a : a);
+    const nums = inputs.map(a => (+a.value).toString(16)).map(a => a.length < 2 ? '0' + a : a);
 
     hexInput.value = ('#' + nums.join('')).toUpperCase();
 
