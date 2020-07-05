@@ -2,7 +2,7 @@ Below are some Userscripts I made to improve mainly Moodle.
 
 On https://melusc.github.io/lusc I have random things I made for fun.
 
-Also check out the extension I made for Firefox, it's not signed yet (pending), though, so you'll need to install it in `about:debugging`.
+Also check out the extension I made for Firefox, it calculates your marks to check if you're passing.
 
 [Install ```Clean Moodle.user.js```](https://github.com/melusc/lusc/raw/master/Clean%20Moodle.user.js)
 
