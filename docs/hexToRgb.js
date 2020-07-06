@@ -6,27 +6,21 @@ const hexInput = document.getElementById('hex').lastElementChild;
 document.getElementById('rgb').addEventListener('input', rgb);
 const inputs = [...document.getElementById('rgb').querySelectorAll('input')];
 
-let oldValHex = hexInput.value.length;
+const random = ()=>Math.floor(Math.random()*256);
+
+inputs.map(e=>e.value = random());
+
 
 const oldValRgb = inputs.map(e => e.value);
 
-rgb({
-    target: inputs[0]
-});
+rgb();
 
 
 
 function hex(e) {
-    let index = hexInput.selectionStart + (hexInput.value.indexOf('#') === -1 ? 1 : 0);
 
-    let string = e.target.value.toLowerCase().replace(/[^0-9a-f]/g, '');
-    e.target.value = '#' + string.toUpperCase();
-
-    if (oldValHex === string.length) index--;
-
-    oldValHex = string.length;
-
-    e.target.setSelectionRange(index, index);
+    let string = e.target.value.toUpperCase().replace(/[^0-9A-F]/g, '');
+    e.target.value = '#' + string;
 
     if (string.length === 3) string = string.split('').map(e => e.repeat(2)).join('');
     if (string.length === 6) {
@@ -40,18 +34,20 @@ function hex(e) {
 }
 
 function rgb(e) {
-    const index = inputs.indexOf(e.target);
-    if (e.target.validity.badInput) e.target.value = oldValRgb[index];
-    else oldValRgb[index] = e.target.value;
-
-    e.target.value = ( (e.target.value === '') ? '' : parseInt(e.target.value) );
+    if(e){
+        const index = inputs.indexOf(e.target);
     
-    if (+e.target.value > 255) e.target.value = 255;
-    else if (+e.target.value < 0) e.target.value = 0;
+        if (e.target.validity.badInput) e.target.value = oldValRgb[index];
+        else oldValRgb[index] = e.target.value;
 
-    const nums = inputs.map(a => (+a.value).toString(16)).map(a => a.length < 2 ? '0' + a : a);
+        e.target.value = ( (e.target.value === '') ? '' : +e.target.value.replace(/[^\d]/g,'') );
+    
+        if (+e.target.value > 255) e.target.value = 255;
+        else if (+e.target.value < 0) e.target.value = 0;
+    }
+    const nums = inputs.map(a => (+a.value).toString(16)).map(a => ('0' + a).slice(-2));
 
-    hexInput.value = ('#' + nums.join('')).toUpperCase();
-
+    hexInput.value = '#' + nums.join('').toUpperCase();
+    
     document.body.style.backgroundColor = hexInput.value;
 }
