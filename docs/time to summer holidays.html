@@ -14,25 +14,44 @@
         h1 {
             font-family: sans-serif;
             text-align: center;
-            padding: 200px 0;
             color: white;
         }
-        div {
+        div.c {
             display: inline;
             color: #efb148;
+        }
+        .outer {
+            display: table;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+        }
+        .middle {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .inner {
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 
 </head>
 
 <body>
-    <h1>
-        <div id="days">0</div> days,
-        <div id="hours">00</div> hours,
-        <div id="minutes">00</div> minutes and
-        <div id="seconds">00</div> seconds until
-        <div>summer holidays</div>
-    </h1>
+    <div class="outer">
+        <div class="middle">
+            <h1 class="inner">
+                <div class="c" id="days">0</div> days,
+                <div class="c" id="hours">00</div> hours,
+                <div class="c" id="minutes">00</div> minutes and
+                <div class="c" id="seconds">00</div> seconds until
+                <div class="c">summer holidays</div>
+            </h1>
+        </div>
+    </div>
     <script>
         (() => {
             const id = e => document.getElementById(e),
@@ -47,9 +66,9 @@
                     hours /= hoursCalc;
                     minutes /= minutesCalc;
                     days = '' + days;
-                    hours = (hours < 10 ? '0' : '') + hours;
-                    minutes = (minutes < 10 ? '0' : '') + minutes;
-                    seconds = (seconds < 10 ? '0' : '') + seconds;
+                    hours = ('0' + hours).slice(-2);
+                    minutes = ('0' + minutes).slice(-2);
+                    seconds = ('0' + seconds).slice(-2);
                     if (daysDiv.textContent !== days) {
                         daysDiv.textContent = days;
                     }
