@@ -50,17 +50,17 @@
                     hours = (hours < 10 ? '0' : '') + hours;
                     minutes = (minutes < 10 ? '0' : '') + minutes;
                     seconds = (seconds < 10 ? '0' : '') + seconds;
-                    if (daysDiv.innerText !== days) {
-                        daysDiv.innerText = days;
+                    if (daysDiv.textContent !== days) {
+                        daysDiv.textContent = days;
                     }
-                    if (hoursDiv.innerText !== hours) {
-                        hoursDiv.innerText = hours;
+                    if (hoursDiv.textContent !== hours) {
+                        hoursDiv.textContent = hours;
                     }
-                    if (minsDiv.innerText !== minutes) {
-                        minsDiv.innerText = minutes;
+                    if (minsDiv.textContent !== minutes) {
+                        minsDiv.textContent = minutes;
                     }
-                    if (secsDiv.innerText !== seconds) {
-                        secsDiv.innerText = seconds;
+                    if (secsDiv.textContent !== seconds) {
+                        secsDiv.textContent = seconds;
                     }
                 },
                 daysCalc = 24 * 60 * 60,
