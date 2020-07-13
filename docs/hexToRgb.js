@@ -8,6 +8,10 @@ const inputs = [...document.getElementById('rgb').querySelectorAll('input')];
 
 document.getElementById('rand').addEventListener('click', randomise);
 
+addEventListener('popstate',()=>{
+    hex();
+});
+
 const random = () => Math.floor(Math.random() * 256);
 
 let oldValRgb;
@@ -32,7 +36,7 @@ function hex(e) {
     if (string.length === 6) {
         const url = new URL(location.href);
         url.search = '?hex=' + string;
-        history.replaceState({},'',url);
+        history.pushState({},'',url);
         const nums = string.match(/.{2}/g).map(e => parseInt(e, 16));
 
         for (let i = 0; i < 3; i++) {
@@ -60,7 +64,7 @@ function rgb(e) {
     hexInput.value = '#' + nums.join('').toUpperCase();
     const url = new URL(location.href);
     url.search = '?hex=' + nums.join('').toUpperCase();
-    history.replaceState({},'',url);
+    history.pushState({},'',url);
 
     document.body.style.backgroundColor = hexInput.value;
     return false;
