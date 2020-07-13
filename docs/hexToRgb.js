@@ -9,7 +9,7 @@ const inputs = [...document.getElementById('rgb').querySelectorAll('input')];
 document.getElementById('rand').addEventListener('click', randomise);
 
 addEventListener('popstate',()=>{
-    hex();
+    hex(undefined,false);
 });
 if(location.hash !== '') location.hash = '';
 
@@ -20,14 +20,14 @@ let oldValRgb;
 if (location.search === '') {
     inputs.map(e => e.value = random());
 } else {
-    hex();
+    hex(undefined, false);
 }
 oldValRgb = inputs.map(e => e.value);
 
 rgb();
 
 
-function hex(e) {
+function hex(e, push) {
     let string = typeof(e) === 'undefined' ? new URLSearchParams(location.search).get('hex') : hexInput.value;
 
     string = string.toUpperCase().replace(/[^0-9A-F]/g, '');
@@ -35,9 +35,11 @@ function hex(e) {
 
     if (string.length === 3) string = string.split('').map(e => e.repeat(2)).join('');
     if (string.length === 6) {
-        const url = new URL(location.href);
-        url.search = '?hex=' + string;
-        history.pushState({},'',url);
+        if(push !== false){
+            const url = new URL(location.href);
+            url.search = '?hex=' + string;
+            history.pushState({},'',url);
+        }
         const nums = string.match(/.{2}/g).map(e => parseInt(e, 16));
 
         for (let i = 0; i < 3; i++) {
