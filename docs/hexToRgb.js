@@ -12,7 +12,7 @@ const random = () => Math.floor(Math.random() * 256);
 
 let oldValRgb;
 
-if (location.hash === '') {
+if (location.search === '') {
     inputs.map(e => e.value = random());
 } else {
     hex();
@@ -23,14 +23,16 @@ rgb();
 
 
 function hex(e) {
-    let string = typeof(e) === 'undefined' ? location.hash : hexInput.value;
+    let string = typeof(e) === 'undefined' ? new URLSearchParams(location.search).get('hex') : hexInput.value;
 
     string = string.toUpperCase().replace(/[^0-9A-F]/g, '');
     hexInput.value = '#' + string;
 
     if (string.length === 3) string = string.split('').map(e => e.repeat(2)).join('');
     if (string.length === 6) {
-        location.hash = string;
+        const url = new URL(location.href);
+        url.search = '?hex=' + string;
+        history.replaceState({},'',url);
         const nums = string.match(/.{2}/g).map(e => parseInt(e, 16));
 
         for (let i = 0; i < 3; i++) {
@@ -56,7 +58,9 @@ function rgb(e) {
     const nums = inputs.map(a => (+a.value).toString(16)).map(a => ('0' + a).slice(-2));
 
     hexInput.value = '#' + nums.join('').toUpperCase();
-    location.hash = hexInput.value;
+    const url = new URL(location.href);
+    url.search = '?hex=' + nums.join('').toUpperCase();
+    history.replaceState({},'',url);
 
     document.body.style.backgroundColor = hexInput.value;
     return false;
