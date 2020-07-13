@@ -17,7 +17,8 @@ const random = () => Math.floor(Math.random() * 256);
 
 let oldValRgb;
 
-if (location.search === '') {
+const searchVal = new URLSearchParams(location.search).get('hex');
+if (searchVal === '' || searchVal.length !== 3 && searchVal !== 6) {
     inputs.map(e => e.value = random());
 } else {
     hex(undefined, false);
@@ -31,6 +32,7 @@ function hex(e, push) {
     let string = typeof(e) === 'undefined' ? new URLSearchParams(location.search).get('hex') : hexInput.value;
 
     string = string.toUpperCase().replace(/[^0-9A-F]/g, '');
+    
     hexInput.value = '#' + string;
 
     if (string.length === 3) string = string.split('').map(e => e.repeat(2)).join('');
