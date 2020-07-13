@@ -11,6 +11,7 @@ document.getElementById('rand').addEventListener('click', randomise);
 addEventListener('popstate',()=>{
     hex();
 });
+location.hash = '';
 
 const random = () => Math.floor(Math.random() * 256);
 
