@@ -6,30 +6,37 @@ const hexInput = document.getElementById('hex').lastElementChild;
 document.getElementById('rgb').addEventListener('input', rgb);
 const inputs = [...document.getElementById('rgb').querySelectorAll('input')];
 
-document.getElementById('random').addEventListener('click', randomise);
+document.getElementById('rand').addEventListener('click', randomise);
 
 const random = () => Math.floor(Math.random() * 256);
 
-inputs.map(e => e.value = random());
+let oldValRgb;
 
-const oldValRgb = inputs.map(e => e.value);
+if (location.hash === '') {
+    inputs.map(e => e.value = random());
+} else {
+    hex();
+}
+oldValRgb = inputs.map(e => e.value);
 
 rgb();
 
 
 function hex(e) {
+    let string = typeof(e) === 'undefined' ? location.hash : hexInput.value;
 
-    let string = e.target.value.toUpperCase().replace(/[^0-9A-F]/g, '');
-    e.target.value = '#' + string;
+    string = string.toUpperCase().replace(/[^0-9A-F]/g, '');
+    hexInput.value = '#' + string;
 
     if (string.length === 3) string = string.split('').map(e => e.repeat(2)).join('');
     if (string.length === 6) {
+        location.hash = string;
         const nums = string.match(/.{2}/g).map(e => parseInt(e, 16));
 
         for (let i = 0; i < 3; i++) {
             inputs[i].value = nums[i];
         }
-        document.body.style.backgroundColor = e.target.value;
+        document.body.style.backgroundColor = hexInput.value;
     }
     return false;
 }
@@ -49,6 +56,7 @@ function rgb(e) {
     const nums = inputs.map(a => (+a.value).toString(16)).map(a => ('0' + a).slice(-2));
 
     hexInput.value = '#' + nums.join('').toUpperCase();
+    location.hash = hexInput.value;
 
     document.body.style.backgroundColor = hexInput.value;
     return false;
