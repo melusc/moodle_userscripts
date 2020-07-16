@@ -15,15 +15,13 @@ if(location.hash !== '') location.hash = '';
 
 const random = () => Math.floor(Math.random() * 256);
 
-let oldValRgb;
-
 const searchVal = new URLSearchParams(location.search).get('hex');
-if (searchVal === '' || searchVal.length !== 3 && searchVal !== 6) {
+if (searchVal === null || searchVal.length !== 3 && searchVal !== 6) {
     inputs.map(e => e.value = random());
 } else {
     hex(undefined, false);
 }
-oldValRgb = inputs.map(e => e.value);
+const oldValRgb = inputs.map(e => e.value);
 
 rgb();
 
