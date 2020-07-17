@@ -192,7 +192,7 @@ const selectAll = e => {
     const end = e.target.textContent.length;
     this.focus();
     range.setStart(e.target.firstChild, 0);
-    range.setEnd(e.target.lastChild, end);
+    range.setEnd(e.target.firstChild, end);
     sel.removeAllRanges();
     sel.addRange(range);
 };
