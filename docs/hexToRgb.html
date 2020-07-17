@@ -3,52 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <style>
-        html {
-            margin: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-        label {
-            font-family: Roboto;
-            margin-right: 2px;
-        }
-        input {
-            outline: none;
-            margin-bottom: 2px;
-            margin-top: 2px;
-        }
-        .row {
-            margin: 1em 0;
-        }
-        .block {
-            display:block;
-        }
-        .outer {
-            display: table;
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-        }
-        
-        .middle {
-            display: table-cell;
-            vertical-align: middle;
-        }
-        
-        .inner {
-            margin-left: auto;
-            margin-right: auto;
-            width: 20%;
-        
-            background-color: white;
-            border-radius: 3px;
-            border: 3px solid #3c79b2;
-        }
-    </style>
+    <link href="normalize.css" type="text/css" rel="stylesheet">
+    <link href="hexToRgb.css" type="text/css" rel="stylesheet">
 </head>
 
 <body>
@@ -57,27 +13,28 @@
             <div id="everything" class="inner" align="center">
                 <div class="row">
                     <div align="center" id="hex">
-                        <label class="block" for="hex">Hex:</label>
+                        <label class="block">Hex</label>
                         <input maxlength="7" value="#">
                     </div>
                 </div>
-                
+
                 <div class="row">
-                    <div align="center" id="rgb">
-                        <label class="block">Rgb:</label>
-                        <input type="number" min="0" max="255" placeholder="R">
-                        <input type="number" min="0" max="255" placeholder="G">
-                        <input type="number" min="0" max="255" placeholder="B">
+                    <div align="center" class="flex" id="rgb">
+                        <label class="block">Rgb</label>
+                        <input type="tel" min="0" max="255" maxlength="3" placeholder="R">
+                        <input type="tel" min="0" max="255" maxlength="3" placeholder="G">
+                        <input type="tel" min="0" max="255" maxlength="3" placeholder="B">
                     </div>
                 </div>
                 <div class="row">
-                    <div align="center">
-                        <button id="rand">Random colour</button>
+                    <div align="center" class="rainbowTextOuter">
+                        <div class="rainbow"></div>
+                        <div class="rainbow2"></div>
+                        <div class="rainbowText" id="rand">Random colour</div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
     <script src="hexToRgb.js"></script>
 </body>

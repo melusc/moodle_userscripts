@@ -4,10 +4,10 @@ document.getElementById('hex').addEventListener('input', hex);
 const hexInput = document.getElementById('hex').lastElementChild;
 
 document.getElementById('rgb').addEventListener('input', rgb);
-const inputs = [...document.getElementById('rgb').querySelectorAll('input')];
+const inputs = [...document.getElementById('rgb').getElementsByTagName('input')];
+document.getElementById('rgb').addEventListener('wheel', increase);
 
 document.getElementById('rand').addEventListener('click', randomise);
-
 addEventListener('popstate', () => {
     hex(undefined, false);
 });
@@ -57,12 +57,12 @@ function rgb(e) {
         if (e.target.validity.badInput) e.target.value = oldValRgb[index];
         else oldValRgb[index] = e.target.value;
 
-        e.target.value = ((e.target.value === '') ? '' : +e.target.value.replace(/[^\d]/g, ''));
+        e.target.value = (e.target.value === '') ? '' : parseInt(e.target.value);
 
         if (+e.target.value > 255) e.target.value = 255;
         else if (+e.target.value < 0) e.target.value = 0;
     }
-    const nums = inputs.map(a => (+a.value).toString(16)).map(a => ('0' + a).slice(-2));
+    const nums = inputs.map(a => parseInt(a.value).toString(16)).map(a => ('0' + a).slice(-2));
 
     hexInput.value = '#' + nums.join('').toUpperCase();
     const url = new URL(location.href);
@@ -79,4 +79,15 @@ function randomise(e) {
     inputs.map(e => e.value = random());
     rgb();
     return false;
+}
+
+function increase(e) {
+    if (e.target.nodeName === 'INPUT') {
+        e.target.value = +e.target.value + (e.deltaY < 0 ? 1 : -1);
+        rgb(e);
+
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
 }
