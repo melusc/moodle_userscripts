@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v2.0
-// @version      2020.07.17c
+// @version      2020.07.17d
 // @author       lusc
 // @include      https://moodle.ksasz.ch/
 // @include      https://moodle.ksasz.ch/?*
@@ -55,7 +55,7 @@ if (location.pathname.indexOf('Stundenplan') !== -1 && document.getElementById('
         });
 
     });
-} else if (location.pathname === '/' && !holiday) {
+} else if (location.pathname === '/' && !holiday && GM_getValue('times') && GM_getValue(1) && GM_getValue(2) && GM_getValue(3) && GM_getValue(5)) {
     sidebar = document.querySelector('li.type_unknown.depth_1.contains_branch.current_branch').getElementsByTagName('ul')[0].getElementsByTagName('ul')[0];
     const outerLi = c('li');
     outerLi.classList.add('activity', 'label', 'modtype_label');
@@ -132,8 +132,7 @@ function time(dontNotify) {
         let course = -1;
         if (now < times[0][0]) {
             course = 0;
-        }
-        else {
+        } else {
             if (now < times[0][1]) course = 1;
             for (let i = 0; i < times.length; i++) {
                 if (now > times[i][1]) course = i + 2;
@@ -176,14 +175,13 @@ function time(dontNotify) {
                 currentCourse = GM_getValue(day)[course] || 'Frei';
                 currentRow = createRow('Jetzt', currentTime, currentCourse);
             }
-            if(course > -2){
+            if (course > -2) {
                 const nextTime = parseTime(times[course]);
                 const nextCourse = GM_getValue(day)[course + 1] || 'Frei';
                 nextRow = createRow('Nachher', nextTime, nextCourse);
-            }
-            else {
+            } else {
                 const free = c('div');
-                free.classList.add('bold','color');
+                free.classList.add('bold', 'color');
                 free.textContent = 'Frei';
                 innerDiv.appendChild(free);
             }
@@ -207,6 +205,7 @@ function time(dontNotify) {
                         },
                     };
                     GM_notification(notificationObj);
+                    console.log(notificationObj);
                 }
             }
         }
