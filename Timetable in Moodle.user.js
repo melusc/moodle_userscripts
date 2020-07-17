@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v2.0
-// @version      2020.07.17c
+// @version      2020.07.17d
 // @author       lusc
 // @include      https://moodle.ksasz.ch/
 // @include      https://moodle.ksasz.ch/?*
@@ -17,7 +17,6 @@
 /* jshint esversion: 10 */
 /* global updateTextarea: true, textarea: true, handleJSON: true */
 'use strict';
-debugger;
 
 const holiday = false;
 const c = e => document.createElement(e);
