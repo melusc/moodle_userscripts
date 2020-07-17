@@ -2,7 +2,9 @@ body {
     background-color: white;
     color: #454545;
     font-family: sans-serif;
-    padding: 20px 7%;
+}
+.marginBody {
+    margin: 20px 7%;
 }
 label {
     display: inline-block;
@@ -94,7 +96,7 @@ button:last-child {
     margin-top: 2px;
 }
 button:hover {
-    filter: brightness(1.5);
+    filter: brightness(1.5)
 }
 .buttonParent {
     display: grid;

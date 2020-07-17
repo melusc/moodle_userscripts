@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v2.0
-// @version      2020.07.17b
+// @version      2020.07.17c
 // @author       lusc
 // @include      https://moodle.ksasz.ch/
 // @include      https://moodle.ksasz.ch/?*
@@ -25,7 +25,7 @@ let interval = null;
 let innerDiv = null;
 let then;
 let tbody;
-const sidebar = document.querySelector('li.type_unknown.depth_1.contains_branch.current_branch').getElementsByTagName('ul')[0].getElementsByTagName('ul')[0];
+let sidebar;
 
 
 if (location.pathname.indexOf('Stundenplan') !== -1 && document.getElementById('userScriptSave')) {
@@ -57,6 +57,7 @@ if (location.pathname.indexOf('Stundenplan') !== -1 && document.getElementById('
 
     });
 } else if (location.pathname === '/' && !holiday) {
+    sidebar = document.querySelector('li.type_unknown.depth_1.contains_branch.current_branch').getElementsByTagName('ul')[0].getElementsByTagName('ul')[0];
     const outerLi = c('li');
     outerLi.classList.add('activity', 'label', 'modtype_label');
     outerLi.id = 'module-timetable';
