@@ -19,7 +19,7 @@
 /* global updateTextarea: true, textarea: true, handleJSON: true */
 'use strict';
 
-const holiday = true;
+const holiday = false;
 const c = e => document.createElement(e);
 let interval = null;
 let innerDiv = null;
