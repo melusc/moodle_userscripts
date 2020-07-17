@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v2.0
-// @version      2020.07.17e
+// @version      2020.07.17f
 // @author       lusc
 // @include      https://moodle.ksasz.ch/
 // @include      https://moodle.ksasz.ch/?*
@@ -12,6 +12,7 @@
 // @grant        GM_listValues
 // @grant        GM_addStyle
 // @grant        GM_notification
+// @grant        GM_registerMenuCommand
 // @run-at       document-end
 // ==/UserScript==
 /* jshint esversion: 10 */
@@ -25,6 +26,9 @@ let innerDiv = null;
 let then;
 let tbody;
 let sidebar;
+GM_registerMenuCommand('Open timetable generator',()=>{
+    open('https://melusc.github.io/lusc/Stundenplan v2.0', '_blank');
+});
 
 
 if (location.pathname.indexOf('Stundenplan') !== -1 && document.getElementById('userScriptSave')) {
