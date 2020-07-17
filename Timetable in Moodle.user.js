@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v2.0
-// @version      2020.07.17d
+// @version      2020.07.17c
 // @author       lusc
 // @include      https://moodle.ksasz.ch/
 // @include      https://moodle.ksasz.ch/?*
@@ -142,7 +142,7 @@ function time(dontNotify) {
         if (course > Math.max(...Object.keys(GM_getValue(day)))) {
             course = -2;
         }
-        if (now === -1) {
+        if (now === -2) {
             if (interval) clearInterval(interval);
             if (tbody) innerDiv.removeChild(tbody.parentNode);
             const free = c('div');
