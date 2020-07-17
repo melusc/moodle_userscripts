@@ -46,10 +46,11 @@ input {
 }
 .rainbow {
     animation-name: rainbow_animation;
+    top: -27.6px;
 }
 .rainbow2 {
     animation-name: rainbow_animation2;
-    top: -27.6px;
+    top: -55.2px;
 }
 .rainbowText {
     background-color: white;
@@ -58,10 +59,10 @@ input {
     font-weight: bold;
     position: relative;
     width: 100%;
-    top: -55.2px;
     mix-blend-mode: screen;
     cursor: pointer;
     user-select: none;
+    z-index: 1;
 }
 .row {
     margin: 1em 0;
