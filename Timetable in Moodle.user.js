@@ -5,6 +5,7 @@
 // @include      https://moodle.ksasz.ch/
 // @include      https://moodle.ksasz.ch/?*
 // @include      https://melusc.github.io/lusc/Stundenplan%20v2.0*
+// @include      file:///C:/Users/lucas/Documents/GitHub/lusc/docs/Stundenplan%20v2.0.html
 // @updateURL    https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
 // @grant        GM_setValue
@@ -18,7 +19,7 @@
 /* global updateTextarea: true, textarea: true, handleJSON: true */
 'use strict';
 
-const holiday = false;
+const holiday = true;
 const c = e => document.createElement(e);
 let interval = null;
 let innerDiv = null;
@@ -36,6 +37,7 @@ if (location.pathname.indexOf('Stundenplan') !== -1 && document.getElementById('
     handleJSON();
     const element = document.getElementById('userScriptSave');
     element.style.display = '';
+    document.getElementById('textareaOuter').style.display = 'none';
     element.addEventListener('click', e => {
         updateTextarea();
         const json = JSON.parse(textarea.value);
