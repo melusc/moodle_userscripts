@@ -8,7 +8,7 @@
 
 - [Proof of concept](/lusc/firstLastName)
 
-- [Stundenplan creator for one of my userscripts](/lusc/Stundenplan v2.0)
+- [Stundenplan creator for one of my userscripts](/lusc/Stundenplan%20v2.0)
 
 - [Find out from where you are](/lusc/name)
 
