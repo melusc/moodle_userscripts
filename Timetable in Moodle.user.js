@@ -5,7 +5,6 @@
 // @include      https://moodle.ksasz.ch/
 // @include      https://moodle.ksasz.ch/?*
 // @include      https://melusc.github.io/lusc/Stundenplan%20v2.0*
-// @include      file:///C:/Users/lucas/Documents/GitHub/lusc/docs/Stundenplan%20v2.0.html
 // @updateURL    https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
 // @grant        GM_setValue
