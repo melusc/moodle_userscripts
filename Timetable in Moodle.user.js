@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name         Moodle Timetable v2.0
-// @version      2020.07.17a
+// @version      2020.07.17b
 // @author       lusc
 // @include      https://moodle.ksasz.ch/
 // @include      https://moodle.ksasz.ch/?*
 // @include      https://melusc.github.io/lusc/Stundenplan%20v2.0*
+// @updateURL    https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
+// @downloadURL  https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_listValues
