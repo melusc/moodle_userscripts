@@ -38,8 +38,6 @@ html {
     margin-right: auto;
     width: 85%;
     text-align: center;
-    position: relative;
-    top: -40px;
 }
 .inline {
     display: inline;
