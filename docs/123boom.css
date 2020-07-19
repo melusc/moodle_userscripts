@@ -2,12 +2,12 @@
     font-family: "Montserrat";
     src: url("fonts/Montserrat-Regular.ttf");
 }
-@media (min-width: 801px){
-    button{
-        font-size: 1.2em
+@media (min-width: 801px) {
+    button {
+        font-size: 1.2em;
     }
 }
-@media (max-width: 800px){
+@media (max-width: 800px) {
     button {
         font-size: 2em;
     }
@@ -52,22 +52,22 @@ button {
     border-radius: 10px;
     margin-left: 10px;
     margin-right: 10px;
-    padding: 10% 10%;
+    padding: 10%;
     width: 50%;
     max-width: 50%;
     font-size: 200%;
 }
-#buttons{
+#buttons {
     width: 100%;
-    display:flex;
+    display: flex;
     align-items: center;
 }
-#number{
+#number {
     font-size: 3em;
 }
 .topRight {
     position: absolute;
-    margin:10px;
+    margin: 10px;
 }
 #reset {
     position: relative;

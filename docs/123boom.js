@@ -1,4 +1,4 @@
-(()=>{
+(() => {
     const id = _ => document.getElementById(_);
 
     id('buttons').addEventListener('click', check);
@@ -31,7 +31,7 @@
             console.log('n');
             id('buttons').style.visibility = 'hidden';
             id('reset').style.visibility = 'visible';
-        
+
             addEventListener('click', reset, {
                 once: true,
             });
@@ -47,7 +47,7 @@
         id('number').textContent = 1;
 
         num = 1;
-    
+
         e.preventDefault();
         e.stopPropagation();
         return false;
