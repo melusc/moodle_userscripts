@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles - ajax 2.0
-// @version      2020.07.16a
+// @version      2020.07.19a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/user/profile.php?*
 // @include      *://moodle.ksasz.ch/exploreProfiles/index*
@@ -86,7 +86,6 @@ font-size: initial;
         action: '10'
     }]);
     addEventListener('popstate', () => {
-        const url = new URLSearchParams(location.search).get('id');
         fetchPage(null, true);
     });
 
@@ -121,7 +120,7 @@ function handleClick(e) {
 
 function fetchPage(action, popstate) {
     loadingNewPage = true;
-    const num = (typeof(popstate) === true) ? +(new URLSearchParams(location.search).get('id')) : (isNaN(action) ? getRandNum() : getNum(action));
+    const num = (popstate === true) ? +(new URLSearchParams(location.search).get('id')) : (isNaN(action) ? getRandNum() : getNum(action));
 
     if (document.getElementById('checking')) {
         document.getElementById('checking').textContent = 'Checking ' + num + '...';
@@ -130,46 +129,46 @@ function fetchPage(action, popstate) {
     fetch(url)
         .then(e => e.text())
         .then(e => {
-        const parsed = new DOMParser().parseFromString(e, 'text/html');
-        const deleted = document.querySelector('div.alert.alert-danger.alert-block.fade.in');
+            const parsed = new DOMParser().parseFromString(e, 'text/html');
+            const deleted = document.querySelector('div.alert.alert-danger.alert-block.fade.in');
 
-        try {
-            if (parsed.querySelector('div.alert.alert-danger.alert-block.fade.in')) throw new Error('Deleted Profile');
-            if (!popstate) {
-                history.pushState({}, '', url);
-            }
-            if (!deleted) {
-                document.getElementById('inst4').replaceWith(parsed.getElementById('inst4'));
-                document.getElementById('page-header').replaceWith(parsed.getElementById('page-header'));
-                document.getElementById('region-main-box').replaceWith(parsed.getElementById('region-main-box'));
-            } else {
-                document.getElementById('page').replaceWith(parsed.getElementById('page'));
-            }
-
-            if (document.getElementById('notification') !== null) {
-                document.body.removeChild(document.getElementById('notification'));
-            }
-            const buttons = document.getElementsByClassName('button');
-            for (let i = 0; i < buttons.length; i++) {
-                buttons[i].disabled = false;
-            }
-            document.title = parsed.title;
-            dispatchEvent(new Event('exploreProfiles'));
-            dispatchEvent(new Event('firstLastLogin'));
-            dispatchEvent(new CustomEvent('cleanMoodle', {
-                detail: {
-                    newPage: false
+            try {
+                if (parsed.querySelector('div.alert.alert-danger.alert-block.fade.in')) throw new Error('Deleted Profile');
+                if (!popstate) {
+                    history.pushState({}, '', url);
                 }
-            }));
-            dispatchEvent(new Event('customIcons'));
-            dispatchEvent(new Event('moreSidebarLinks'));
-            dispatchEvent(new Event('sortProfiles'));
-            loadingNewPage = false;
-        } catch (a) {
-            GM_setValue(num, 1);
-            fetchPage(action);
-        }
-    });
+                if (!deleted) {
+                    document.getElementById('inst4').replaceWith(parsed.getElementById('inst4'));
+                    document.getElementById('page-header').replaceWith(parsed.getElementById('page-header'));
+                    document.getElementById('region-main-box').replaceWith(parsed.getElementById('region-main-box'));
+                } else {
+                    document.getElementById('page').replaceWith(parsed.getElementById('page'));
+                }
+
+                if (document.getElementById('notification') !== null) {
+                    document.body.removeChild(document.getElementById('notification'));
+                }
+                const buttons = document.getElementsByClassName('button');
+                for (let i = 0; i < buttons.length; i++) {
+                    buttons[i].disabled = false;
+                }
+                document.title = parsed.title;
+                dispatchEvent(new Event('exploreProfiles'));
+                dispatchEvent(new Event('firstLastLogin'));
+                dispatchEvent(new CustomEvent('cleanMoodle', {
+                    detail: {
+                        newPage: false
+                    }
+                }));
+                dispatchEvent(new Event('customIcons'));
+                dispatchEvent(new Event('moreSidebarLinks'));
+                dispatchEvent(new Event('sortProfiles'));
+                loadingNewPage = false;
+            } catch (a) {
+                GM_setValue(num, 1);
+                fetchPage(action);
+            }
+        });
 }
 
 function getNum(action) {
@@ -311,29 +310,29 @@ async function index(e) {
         await fetch(url)
             .then(e => e.text())
             .then(e => {
-            const parsed = new DOMParser().parseFromString(e, 'text/html');
-            const deleted = [...parsed.getElementsByClassName('alert alert-danger alert-block fade in')].some(e => e.nodeName === 'DIV');
+                const parsed = new DOMParser().parseFromString(e, 'text/html');
+                const deleted = [...parsed.getElementsByClassName('alert alert-danger alert-block fade in')].some(e => e.nodeName === 'DIV');
 
-            if (deleted) {
-                GM_setValue(i, 1);
-            } else {
-                const div = document.createElement('div');
-                div.textContent = parsed.getElementsByTagName('h1')[0].textContent;
-                div.style.color = '#4caf50';
-                GM_deleteValue(i);
-                div.addEventListener('animationend', (e) => {
-                    historyNames.removeChild(div);
-                }, {
-                    once: true
-                });
-                historyNames.appendChild(div);
-                div.classList.add('animate');
-            }
+                if (deleted) {
+                    GM_setValue(i, 1);
+                } else {
+                    const div = document.createElement('div');
+                    div.textContent = parsed.getElementsByTagName('h1')[0].textContent;
+                    div.style.color = '#4caf50';
+                    GM_deleteValue(i);
+                    div.addEventListener('animationend', () => {
+                        historyNames.removeChild(div);
+                    }, {
+                        once: true
+                    });
+                    historyNames.appendChild(div);
+                    div.classList.add('animate');
+                }
 
-            progressCalcVal.textContent = i;
-            progressCalcPercent.textContent = (Math.floor(i / GM_getValue('to') * 100)) + '%';
-            progress.style.width = ((i / GM_getValue('to') * 99) + 1).toFixed(3) + '%';
-        });
+                progressCalcVal.textContent = i;
+                progressCalcPercent.textContent = (Math.floor(i / GM_getValue('to') * 100)) + '%';
+                progress.style.width = ((i / GM_getValue('to') * 99) + 1).toFixed(3) + '%';
+            });
     }
     removeEventListener('beforeunload', prevent);
     location.href = 'https://moodle.ksasz.ch/';
