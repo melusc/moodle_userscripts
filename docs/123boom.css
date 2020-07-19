@@ -73,3 +73,9 @@ button {
     position: relative;
     top: -192px;
 }
+.version {
+    position: absolute;
+    bottom: 0;
+    margin: 5px;
+    font-size: medium;
+}
