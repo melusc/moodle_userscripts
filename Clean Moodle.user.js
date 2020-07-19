@@ -73,7 +73,7 @@ async function start(e) {
             for (let i = 0; i < removeArr.length; i++) {
                 remove(removeArr[i], sidebar);
             }
-        } else GM_setValue('remove', [])
+        } else GM_setValue('remove', []);
         if (replaceArr) {
             for (let i = 0; i < replaceArr.length; i++) {
                 replace(replaceArr[i][0], replaceArr[i][1], sidebar);
@@ -337,7 +337,7 @@ span#spanEditable {
             if (GM_getValue('sort')) {
                 sortCheckbox.defaultChecked = true;
             }
-            sortLabel.oninput = e => {
+            sortLabel.oninput = () => {
                 GM_setValue('sort', sortCheckbox.checked);
                 resetSidebar();
             };
@@ -637,7 +637,7 @@ function changeIcons(sidebar) {
     for (let i = 0; i < icons.length; i++) {
         if (!icons[i].closest('li').dataset.isRemoved) {
             icons[i].classList.replace('fa-graduation-cap', 'fa-ban');
-            icons[i].title = 'Remove ' + icons[i].closest('a').title
+            icons[i].title = 'Remove ' + icons[i].closest('a').title;
         }
     }
 }
