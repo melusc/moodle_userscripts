@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle unconfirmed marks on schulNetz
-// @version      2020.05.21b
+// @version      2020.07.19a
 // @author       lusc
 // @match        https://moodle.ksasz.ch/
 // @match        https://moodle.ksasz.ch/?*
@@ -23,15 +23,15 @@ if(!pin){
 }
 const c = (e)=>{
     return document.createElement(e);
-}
+};
 
-const li = c('li'),
-      div = c('div'),
-      div1 = c('div'),
-      strong = c('strong'),
-      divTable = c('div'),
-      loadingSpan = c('span'),
-      loadingI = c('i');
+const li = c('li');
+const div = c('div');
+const div1 = c('div');
+const strong = c('strong');
+const divTable = c('div');
+const loadingSpan = c('span');
+const loadingI = c('i');
 
 loadingSpan.classList.add('loading-icon','icon-no-margin');
 loadingI.classList.add('icon','fa','fa-circle-o-notch','fa-spin','fa-fw');
@@ -71,7 +71,7 @@ GM_xmlhttpRequest({
     anonymous: true,
     onload: res => {
         divTable.removeChild(loadingSpan);
-        let doc = new DOMParser().parseFromString(res.response,'text/html');
+        const doc = new DOMParser().parseFromString(res.response,'text/html');
         divTable.appendChild(doc.getElementsByClassName('mdl-data-table mdl-js-data-table mdl-shadow--2dp mdl-table--cls-print-table')[0]);
     }
-})
+});

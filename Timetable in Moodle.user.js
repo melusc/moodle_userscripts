@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v2.0
-// @version      2020.07.17f
+// @version      2020.07.19a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/
 // @include      https://moodle.ksasz.ch/?*
@@ -41,7 +41,7 @@ if (location.pathname.indexOf('Stundenplan') !== -1 && document.getElementById('
     const element = document.getElementById('userScriptSave');
     element.style.display = '';
     document.getElementById('textareaOuter').style.display = 'none';
-    element.addEventListener('click', e => {
+    element.addEventListener('click', () => {
         updateTextarea();
         const json = JSON.parse(textarea.value);
         const keys = Object.keys(json);

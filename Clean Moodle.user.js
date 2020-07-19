@@ -229,7 +229,7 @@ span#spanEditable {
             }
             let tree = tempSidebar.cloneNode(true);
             while (tempSidebar.parentElement.nodeName !== 'BODY') {
-                let temp = tree;
+                const temp = tree;
                 tempSidebar = tempSidebar.parentElement;
                 tree = tempSidebar.cloneNode(false);
                 tree.appendChild(temp);

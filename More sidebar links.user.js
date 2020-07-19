@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Moodle more sidebar links
 // @description  Adds more links to the sidebar in moodle and is somewhat customisable
-// @version      2020.07.19a
+// @version      2020.07.19b
 // @author       lusc
 // @match        https://moodle.ksasz.ch/
 // @match        https://moodle.ksasz.ch/?*
@@ -106,10 +106,10 @@ async function updateMensa(anchor){
             onload: e => {
                 const parsed = new DOMParser().parseFromString(e.response, 'text/html'),
                     a = parsed.querySelector('a[href^="/images/PDF-Dokumente/Mensa/Me"][href$=".pdf"]');
-//                 const div = document.createElement('div');
-//                 const matched = e.response.match(/<a href="\/images\/PDF-Dokumente\/Mensa\/Men?Wo\d{1,2}\.pdf" target="_blank">Menü vom \d{1,2}\. - \d{1,2}\.\d{1,2}\.\d{4}<\/a>/i)[0];
-//                 div.innerHTML = matched;
-//                 const a = div.firstElementChild;
+                //  const div = document.createElement('div');
+                //  const matched = e.response.match(/<a href="\/images\/PDF-Dokumente\/Mensa\/Men?Wo\d{1,2}\.pdf" target="_blank">Menü vom \d{1,2}\. - \d{1,2}\.\d{1,2}\.\d{4}<\/a>/i)[0];
+                //  div.innerHTML = matched;
+                //  const a = div.firstElementChild;
 
                 anchor.getElementsByTagName('span')[0].textContent = a.textContent;
                 anchor.title = a.textContent;
@@ -125,10 +125,11 @@ async function updateMensa(anchor){
     }
 }
 
+// eslint-disable-next-line no-unused-vars
 function search(url, name) {
     if (location.pathname === '/') {
         const input = document.createElement('input');
-        name = name.replace(/[^\w:\/.&;]/g, '');
+        name = name.replace(/[^\w:/.&;]/g, '');
         input.placeholder = `Search on ${ name }`;
         input.type = 'text';
 
@@ -142,6 +143,7 @@ function search(url, name) {
     }
 }
 
+// eslint-disable-next-line no-unused-vars
 function lcm() {
     if (location.pathname === '/') {
         const input = document.createElement('input'),
@@ -187,7 +189,7 @@ function lcm() {
 
                 const uniques = {};
                 for (let i = 0; i < value.length; i++) {
-                    if (!uniques.hasOwnProperty(value[i])) {
+                    if (!Object.prototype.hasOwnProperty.call(uniques,value[i])) {
                         uniques[value[i]] = true;
                     }
                 }
