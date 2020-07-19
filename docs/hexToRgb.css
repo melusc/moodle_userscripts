@@ -1,3 +1,19 @@
+@media (width > 400px) {
+    :root{
+    --fS: 1;
+}
+body{
+        font-size: 1em;
+    }
+}
+@media (width <= 400px) {
+    body{
+        font-size: 2em;
+    }
+    :root{
+        --fS: 2;
+    }
+}
 html {
     margin: 0;
     height: 100%;
@@ -12,7 +28,6 @@ input {
     color: black;
     background-color: transparent;
     padding: 0.15em 0.3em;
-    
     border: none;
     border-bottom: 1px solid #444;
     border-radius: 0;
@@ -31,7 +46,7 @@ input {
         left: -100%;
     }
     100% {
-        left: 0%;
+        left: 0;
     }
 }
 .rainbow,
@@ -55,7 +70,7 @@ input {
 .rainbowText {
     background-color: white;
     color: black;
-    font-size: 24px;
+    font-size: calc(24px * var(--fS));
     font-weight: bold;
     position: relative;
     width: 100%;
