@@ -34,11 +34,15 @@ input {
         left: 0%;
     }
 }
+:root{
+    --height: 24px;
+    --diff: 2px;
+}
 .rainbow,
 .rainbow2 {
     background: linear-gradient(to right, #66f, #09f , #0f0, #f39, #66f);
     width: 100%;
-    height: 27.6px;
+    height: calc(var(--height) - var(--diff));
     position: relative;
     animation-duration: 5s;
     animation-timing-function: linear;
@@ -46,16 +50,16 @@ input {
 }
 .rainbow {
     animation-name: rainbow_animation;
-    top: -27.6px;
+    top: calc((var(--height)) * -1 - var(--diff));
 }
 .rainbow2 {
     animation-name: rainbow_animation2;
-    top: -55.2px;
+    top: calc((var(--height)) * -2);
 }
 .rainbowText {
     background-color: white;
     color: black;
-    font-size: 1.5em;
+    font-size: var(--height);
     font-weight: bold;
     position: relative;
     width: 100%;
@@ -89,14 +93,14 @@ input {
     background-color: white;
     border-radius: 3px;
     border: 3px solid #3c79b2;
-    padding-right: 5%;
-    padding-left: 5%;
+    padding-right: 4%;
+    padding-left: 4%;
 }
 .flex {
     display: flex;
     flex-direction: column;
 }
 .rainbowTextOuter {
-    margin-bottom: -55.2px;
+    margin-bottom: calc(var(--height) * -2);
     overflow: hidden;
 }
