@@ -1,48 +1,76 @@
+@font-face {
+    font-family: "Montserrat";
+    src: url("fonts/Montserrat-Regular.ttf");
+}
+@media (min-width: 801px){
+    button{
+        font-size: 1.2em
+    }
+}
+@media (max-width: 800px){
+    button {
+        font-size: 2em;
+    }
+}
 * {
-	user-select: none;
+    font-family: Montserrat;
+    user-select: none;
 }
-div {
-	position: relative;
-	height: 100%;
-	width: 100%;
-	text-align: center;
+html {
+    background-color: #708090;
+    color: white;
+    font-size: 1.5em;
 }
-body {
-	background-color: #708090;
+.outer {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
 }
-.number,
-.text {
-	font-family: montserrat;
-	position: relative;
+.middle {
+    display: table-cell;
+    vertical-align: middle;
 }
-h1.number {
-	line-height: 50px;
-	font-size: 100px;
-	color: white;
-	font-weight: 500;
+.inner {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    text-align: center;
+    position: relative;
+    top: -40px;
 }
-.record {
-	font-size: 30px;
-	font-family: montserrat;
-	color: white;
-	position: fixed;
-}
-h3.text {
-	top: 50%;
-	font-size: 30px;
-	color: #708090;
-	/* color: #000; */
-	text-align: center;
-	display: inline;
+.inline {
+    display: inline;
 }
 button {
-	font-size: 400%;
-	width: 45%;
-	line-height: 400%;
-	border: 3px solid white;
-	color: white;
-	border-radius: 5px;
-	background-color: transparent;
-	margin: 10px;
-	font-family: 'Montserrat';
+    background-color: transparent;
+    outline: none;
+    border-width: 2px;
+    border-style: solid;
+    border-color: white;
+    color: white;
+    border-radius: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10% 10%;
+    width: 50%;
+    max-width: 50%;
+}
+#buttons{
+    width: 100%;
+    display:flex;
+    align-items: center;
+}
+#number{
+    font-size: 3em;
+}
+.topRight {
+    position: absolute;
+    margin:10px;
+}
+#reset {
+    position: relative;
+    top: -192px;
 }
