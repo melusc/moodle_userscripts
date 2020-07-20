@@ -225,7 +225,7 @@ function fetcher(src) {
         }
         const mime = value.match(/(?<=data:)\w+\/[\w.]+(?=;)/)[0];
         const blob = new Blob([uintArray], {
-            type: mime
+            type: mime,
         });
         const objectUrl = URL.createObjectURL(blob);
         resolve(objectUrl);

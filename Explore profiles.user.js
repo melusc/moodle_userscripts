@@ -24,66 +24,22 @@ if (!/^\/exploreprofiles\/index\/?$/i.test(location.pathname)) {
     GM_registerMenuCommand('Index all deleted profiles', () => {
         open('https://moodle.ksasz.ch/exploreProfiles/index', '_blank');
     });
-    GM_addStyle(`
-.button {
-    margin-left: 4px;
-    margin-right: 4px;
-    border-radius: 2px;
-    padding: 3px;
-}
-.button:active,
-.button:focus{
-outline: none;
-}
-.outerNotification,
-.outerText {
-    display: table;
-    width: 100%;
-    height: 100%;
-}
-.outerNotification {
-    position: fixed;
-    top: 0;
-    left: 0;
-}
-.middleNotification,
-.middleText {
-    display: table-cell;
-    vertical-align: middle;
-}
-.innerNotification {
-    width: 20%;
-    height: 100px;
-    background-color: #e5e5e5;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 3px;
-    border: 2px solid #444;
-}
-.innerText {
-    color: #444;
-    text-align: center;
-    font-size: 1.5em;
-}
-.small{
-font-size: initial;
-}`);
+    GM_addStyle('.button{margin-left:4px;margin-right:4px;border-radius:2px;padding:3px}.button:active,.button:focus{outline:none}.outerNotification,.outerText{display:table;width:100%;height:100%}.outerNotification{position:fixed;top:0;left:0}.middleNotification,.middleText{display:table-cell;vertical-align:middle}.innerNotification{width:20%;height:100px;background-color:#e5e5e5;margin-left:auto;margin-right:auto;border-radius:3px;border:2px solid #444}.innerText{color:#444;text-align:center;font-size:1.5em}.small{font-size:initial}.loadingPeriods::after{content:"";animation-duration:4s;animation-timing-function:linear;animation-iteration-count:infinite;animation-direction:alternate;animation-name:loadingPeriods}@keyframes loadingPeriods{0%{content:"..."}33%{content:".."}66%{content:"."}100%{content:""}}');
 
     createButton([{
         name: 'Previous profile',
-        action: '-1'
+        action: '-1',
     }, {
         name: 'Next profile',
-        action: '1'
+        action: '1',
     }, {
         name: 'Random profile',
-        action: 'rand'
+        action: 'rand',
     }, {
         name: '-10 Profiles',
-        action: '-10'
-    }, {
-        name: '+10 Profiles',
-        action: '10'
+        action: '-10',
+    }, {name: '+10 Profiles',
+        action: '10',
     }]);
     addEventListener('popstate', () => {
         fetchPage(null, true);
@@ -110,7 +66,7 @@ function handleClick(e) {
         for (let i = 0; i < buttons.length; i++) {
             buttons[i].disabled = true;
         }
-        createNotification('Loading...');
+        createNotification('Loading');
         const action = e.target.dataset.action;
         fetchPage(action);
     } else if (loadingNewPage === true) {
@@ -123,7 +79,7 @@ function fetchPage(action, popstate) {
     const num = (popstate === true) ? +(new URLSearchParams(location.search).get('id')) : (isNaN(action) ? getRandNum() : getNum(action));
 
     if (document.getElementById('checking')) {
-        document.getElementById('checking').textContent = 'Checking ' + num + '...';
+        document.getElementById('checking').textContent = 'Checking ' + num;
     }
     const url = 'https://moodle.ksasz.ch/user/profile.php?id=' + num;
     fetch(url)
@@ -157,8 +113,8 @@ function fetchPage(action, popstate) {
                 dispatchEvent(new Event('firstLastLogin'));
                 dispatchEvent(new CustomEvent('cleanMoodle', {
                     detail: {
-                        newPage: false
-                    }
+                        newPage: false,
+                    },
                 }));
                 dispatchEvent(new Event('customIcons'));
                 dispatchEvent(new Event('moreSidebarLinks'));
@@ -323,7 +279,7 @@ async function index(e) {
                     div.addEventListener('animationend', () => {
                         historyNames.removeChild(div);
                     }, {
-                        once: true
+                        once: true,
                     });
                     historyNames.appendChild(div);
                     div.classList.add('animate');
@@ -350,7 +306,7 @@ function createNotification(e) {
         'innerNotification',
         'outerText',
         'middleText',
-        'innerText'
+        'innerText',
     ];
     const loadingSpan = document.createElement('span');
     const loadingI = document.createElement('i');
@@ -361,7 +317,7 @@ function createNotification(e) {
     loadingSpan.appendChild(loadingI);
 
     const checkingDiv = document.createElement('div');
-    checkingDiv.classList.add('innerText', 'small');
+    checkingDiv.classList.add('innerText', 'small', 'loadingPeriods');
     checkingDiv.id = 'checking';
 
     let div = document.createElement('div');
