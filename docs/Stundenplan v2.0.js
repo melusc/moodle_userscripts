@@ -25,8 +25,7 @@ const times = {
     8: '14:50 - 15:35',
 };
 
-
-const courses = {}
+const courses = {};
 const lunchVals = {
     old: null,
     origin: null,
@@ -58,10 +57,12 @@ function modifyRows() {
                 td.contentEditable = true;
                 td.tabIndex = i + 2;
                 td.addEventListener('focus', selectAll);
-                const dataId = (tbody.childElementCount) + '-' + (i + 1)
+                const dataId = tbody.childElementCount + '-' + (i + 1);
                 td.dataset.id = dataId;
-                if (courses.hasOwnProperty(dataId)) td.textContent = courses[dataId];
-                if (tbody.childElementCount === +lunchInput.value - 1) td.textContent = 'Mittag';
+                if (courses.hasOwnProperty(dataId))
+                    td.textContent = courses[dataId];
+                if (tbody.childElementCount === +lunchInput.value - 1)
+                    td.textContent = 'Mittag';
                 td.appendChild(c('br'));
                 row.appendChild(td);
             }
@@ -79,7 +80,10 @@ function modifyRows() {
 function handleInput(e) {
     if (e.target.classList.contains('time')) {
         validateTime();
-    } else if (e.target.nodeName === 'DIV' && e.target.classList.contains('td')) {
+    } else if (
+        e.target.nodeName === 'DIV' &&
+        e.target.classList.contains('td')
+    ) {
         if (e.target.textContent.trim() === 'Mittag') {
             delete courses[e.target.dataset.id];
         } else {
@@ -101,7 +105,12 @@ function validateTime() {
     let anyRed = false;
     for (let i = 0; i < children.length; i++) {
         const value = children[i].textContent;
-        if (value.match(/-/g) && value.match(/-/g).length === 1 && value.match(/:/g) && value.match(/:/g).length === 2) {
+        if (
+            value.match(/-/g) &&
+            value.match(/-/g).length === 1 &&
+            value.match(/:/g) &&
+            value.match(/:/g).length === 2
+        ) {
             let [from, to] = value.split('-');
             from = from.trim();
             to = to.trim();
@@ -152,18 +161,23 @@ function validateTime() {
 }
 
 function changeLunch(e) {
-    if (typeof(e) !== 'undefined') {
+    if (typeof e !== 'undefined') {
         lunchVals.origin = null;
     }
 
-    if (lunchVals.origin !== null && +lunchInput.value < lunchVals.origin && amountInput.value > +lunchInput.value) {
+    if (
+        lunchVals.origin !== null &&
+        +lunchInput.value < lunchVals.origin &&
+        amountInput.value > +lunchInput.value
+    ) {
         lunchInput.value = lunchVals.origin;
     }
-    if (+lunchInput.value > +amountInput.value) lunchInput.value = amountInput.value;
+    if (+lunchInput.value > +amountInput.value)
+        lunchInput.value = amountInput.value;
     if (+lunchInput.value < +lunchInput.min) lunchInput.value = lunchInput.min;
 
-
-    if (lunchVals !== null && lunchInput.value >= lunchVals.origin) lunchVals.origin = null;
+    if (lunchVals !== null && lunchInput.value >= lunchVals.origin)
+        lunchVals.origin = null;
 
     const oldRow = tbody.children[lunchVals.old];
     if (oldRow) {
@@ -219,7 +233,6 @@ function updateTextarea() {
         }
     }
     textarea.value = JSON.stringify(obj, null, 2);
-
 }
 
 function selectAll(e) {
@@ -249,13 +262,21 @@ function handleJSON(e) {
     const value = textarea.value;
     try {
         const json = JSON.parse(value);
-        if (json.hasOwnProperty(1) && json.hasOwnProperty(2) && json.hasOwnProperty(3) && json.hasOwnProperty(4) && json.hasOwnProperty(5) && json.hasOwnProperty('times') && json.hasOwnProperty('lunch') && json.hasOwnProperty('amount')) {
+        if (
+            json.hasOwnProperty(1) &&
+            json.hasOwnProperty(2) &&
+            json.hasOwnProperty(3) &&
+            json.hasOwnProperty(4) &&
+            json.hasOwnProperty(5) &&
+            json.hasOwnProperty('times') &&
+            json.hasOwnProperty('lunch') &&
+            json.hasOwnProperty('amount')
+        ) {
             amount.value = json.amount;
             lunch.value = json.lunch;
             lunchVals.origin = null;
             lunchVals.old = 4;
             modifyRows();
-
 
             for (let i = 0; i < json.times.length; i++) {
                 const first = +json.times[i][0];
@@ -267,7 +288,11 @@ function handleJSON(e) {
                 const secondMin = second % 60;
                 const secondHour = (second - secondMin) / 60;
 
-                const time = `${('0' + firstHour).slice(-2)}:${('0' + firstMin).slice(-2)} - ${('0' + secondHour).slice(-2)}:${('0' + secondMin).slice(-2)}`
+                const time = `${('0' + firstHour).slice(-2)}:${(
+                    '0' + firstMin
+                ).slice(-2)} - ${('0' + secondHour).slice(-2)}:${(
+                    '0' + secondMin
+                ).slice(-2)}`;
                 tbody.children[i].firstChild.textContent = time;
                 tbody.children[i].firstChild.style.color = '';
             }
@@ -275,14 +300,13 @@ function handleJSON(e) {
             for (let i = 1; i < 6; i++) {
                 const keys = Object.keys(json[i]);
                 for (let j = 0; j < keys.length; j++) {
-                    tbody.children[+keys[j] - 1].children[i].textContent = json[i][keys[j]];
+                    tbody.children[+keys[j] - 1].children[i].textContent =
+                        json[i][keys[j]];
                 }
             }
 
             textarea.style.color = '';
         } else throw new Error();
-
-
     } catch (a) {
         textarea.style.color = 'red';
     }
