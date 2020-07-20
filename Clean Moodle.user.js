@@ -36,7 +36,7 @@ const lang = {
         error: 'You appear to not be in "{{{s}}}" anymore! As a result, "{{{s}}}" has been removed from your list.',
         userPreferences: {
             anchor: 'Settings',
-            title: 'Clean Moodle'
+            title: 'Clean Moodle',
         },
         settings: {
             pageTitle: 'Clean Moodle Setup',
@@ -52,12 +52,12 @@ const lang = {
             button: 'Save',
             sortTitle: 'Sorting',
             sortText: 'Sort alphabetically',
-            noCourse: 'No course selected'
-        }
+            noCourse: 'No course selected',
+        },
     },
     settings = {
         lineThrough: true,
-        easterEgg: true
+        easterEgg: true,
     },
     c = e => document.createElement(e);
 
@@ -156,8 +156,8 @@ if (location.pathname.toLowerCase().startsWith('/cleanmoodle')) {
 } else {
     dispatchEvent(new CustomEvent('cleanMoodle', {
         detail: {
-            newPage: true
-        }
+            newPage: true,
+        },
     }));
     GM_addValueChangeListener('remove', reloadFrontpage);
     GM_addValueChangeListener('replace', reloadFrontpage);
@@ -548,8 +548,8 @@ function reloadFrontpage(name, oldVal, newVal, remote) {
                     document.getElementById('inst4').appendChild(e.getElementById('inst4').children[0]);
                     dispatchEvent(new CustomEvent('cleanMoodle', {
                         detail: {
-                            newPage: false
-                        }
+                            newPage: false,
+                        },
                     }));
                     dispatchEvent(new Event('customIcons'));
                     if (!location.pathname.toLowerCase().startsWith('/customicons')) {
@@ -585,10 +585,10 @@ function settingsGear(context, e) {
 }
 
 function selectSpan(e) {
-    const span = document.getElementById('spanEditable'),
-        range = new Range(),
-        sel = getSelection(),
-        start = (typeof e === 'number') ? e : span.textContent.length;
+    const span = document.getElementById('spanEditable');
+    const range = new Range();
+    const sel = getSelection();
+    const start = (typeof e === 'number') ? e : span.textContent.length;
 
     span.focus();
     range.setStart(span.childNodes[0], start);
@@ -647,8 +647,8 @@ function resetSidebar() {
         .then(e => e.text())
         .then(e => {
             e = new DOMParser().parseFromString(e, 'text/html');
-            const replaceArr = GM_getValue('replace'),
-                sidebar = e.getElementsByClassName('type_system depth_2 contains_branch')[0];
+            const replaceArr = GM_getValue('replace');
+            const sidebar = e.getElementsByClassName('type_system depth_2 contains_branch')[0];
 
             for (let i = 0; i < replaceArr.length; i++) {
                 replace(replaceArr[i][0], replaceArr[i][1], sidebar);
