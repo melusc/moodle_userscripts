@@ -1,7 +1,7 @@
 // ===UserScript===
 // @name         Clean Moodle
 // @namespace    https://github.com/melusc/lusc
-// @version      2020.07.19a
+// @version      2020.07.28a
 // @include      *://moodle.ksasz.ch/*
 // @exclude      *://moodle.ksasz.ch/info*
 // @exclude      *://moodle.ksasz.ch/lib*
@@ -628,6 +628,7 @@ function addText(e) {
 function handleRemove(e) {
     e.preventDefault();
     e.stopPropagation();
+    removeReplacer(e.target.closest('a').title);
     addRemover(e.target.closest('a').title);
     reload();
 }
