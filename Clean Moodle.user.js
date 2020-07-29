@@ -114,7 +114,7 @@ async function remove(selector, sidebar) {
             element.remove();
         }
     } else {
-        removeRemover(selector);
+        removeElement(selector);
         alert(lang.error.replace(/{{{s}}}/g, selector));
     }
 }
@@ -133,7 +133,7 @@ async function replace(selector, replace, sidebar) {
         }
     } else {
         alert(lang.error.replace(/{{{s}}}/g, selector));
-        removeReplacer(selector);
+        removeElement(selector);
     }
 }
 
@@ -479,12 +479,11 @@ function submit(e) {
 
         if (selectedCourse !== 'null') {
             if (formData.get('radioSelection') === 'remove') {
-                removeReplacer(selectedCourse);
                 addRemover(selectedCourse);
             } else {
                 const textContent = span.textContent.trim();
                 if (textContent === '' || textContent === selectedCourse) {
-                    removeReplacer(selectedCourse);
+                    removeElement(selectedCourse);
                 } else {
                     addReplacer(selectedCourse, textContent);
                 }
@@ -519,55 +518,61 @@ function setupRemove(e, sidebar) {
             .getElementsByTagName('ul')[0]
             .appendChild(element.closest('li'));
         element.closest('li').dataset.removed = 1;
-    } else removeRemover(e);
+    } else {
+        removeElement(e);
+    }
 }
 
-function addReplacer(e, f) {
-    const replaceArr = removeReplacer(e, true);
-    replaceArr.push([e, f]);
-    replaceArr.sort((a, b) => {
+function addReplacer(course, newName) {
+    const obj = removeElement(course, true);
+    obj.replaceArr.push([course, newName]);
+    obj.replaceArr.sort((a, b) => {
         a = a[0].toLowerCase();
         b = b[0].toLowerCase();
         if (a < b) return -1;
         else if (a > b) return 1;
         else return 0;
     });
-    GM_setValue('replace', replaceArr);
+    GM_setValue('replace', obj.replaceArr);
+    GM_setValue('remove', obj.removeArr);
 }
 
-function removeReplacer(e, r) {
-    const replaceArr = GM_getValue('replace');
-    for (let i = 0; i < replaceArr.length; i++) {
-        if (replaceArr[i][0] === e) {
-            replaceArr.splice(i--, 1);
-        }
-    }
-    if (r) return replaceArr;
-    else GM_setValue('replace', replaceArr);
-}
-
-function addRemover(e) {
-    const removeArr = removeRemover(e, true);
-    removeArr.push(e);
-    removeArr.sort((a, b) => {
+function addRemover(course) {
+    const obj = removeElement(course, true);
+    obj.removeArr.push(course);
+    obj.removeArr.sort((a, b) => {
         a = a.toLowerCase();
         b = b.toLowerCase();
         if (a < b) return -1;
         else if (a > b) return 1;
         else return 0;
     });
-    GM_setValue('remove', removeArr);
+    GM_setValue('replace', obj.replaceArr);
+    GM_setValue('remove', obj.removeArr);
 }
 
-function removeRemover(e, r) {
+function removeElement(e, doNotSet) {
     const removeArr = GM_getValue('remove');
+    const replaceArr = GM_getValue('replace');
     for (let i = 0; i < removeArr.length; i++) {
         if (removeArr[i] === e) {
             removeArr.splice(i--, 1);
         }
     }
-    if (r) return removeArr;
-    else GM_setValue('remove', removeArr);
+    for (let i = 0; i < replaceArr.length; i++) {
+        if (replaceArr[i][0] === e) {
+            replaceArr.splice(i--, 1);
+        }
+    }
+    if (!doNotSet) {
+        GM_setValue('replace', replaceArr);
+        GM_setValue('remove', removeArr);
+    }
+    const returnVal = {
+        removeArr,
+        replaceArr,
+    };
+    return returnVal;
 }
 
 function createLabel(e) {
@@ -688,7 +693,6 @@ function addText(e) {
 function handleRemove(e) {
     e.preventDefault();
     e.stopPropagation();
-    removeReplacer(e.target.closest('a').title);
     addRemover(e.target.closest('a').title);
     reload();
 }
