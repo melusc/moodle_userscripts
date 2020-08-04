@@ -104,6 +104,9 @@ button:hover {
 .saved {
     animation: fade_green 2s;
 }
+.failed {
+    animation: fade_red 2s;
+}
 @keyframes fade_green {
     0% {
         color: green;
@@ -116,6 +119,24 @@ button:hover {
     75% {
         color: green;
         border-color: green;
+    }
+    100% {
+        color: initial;
+        border-color: initial;
+    }
+}
+@keyframes fade_red {
+    0% {
+        color: red;
+        border-color: red;
+    }
+    50% {
+        color: red;
+        border-color: red;
+    }
+    75% {
+        color: red;
+        border-color: red;
     }
     100% {
         color: initial;
