@@ -205,9 +205,13 @@ function updateTextarea() {
     amount: +amountInput.value,
     valid: true,
   };
-  const invalid = JSON.parse({
-    valid: false,
-  });
+  const invalid = JSON.stringify(
+    {
+      valid: false,
+    },
+    null,
+    2
+  );
   for (let i = 0; i < tbody.childElementCount; i++) {
     if (tbody.children[i].firstElementChild.style.color === 'red') {
       textarea.value = invalid;
