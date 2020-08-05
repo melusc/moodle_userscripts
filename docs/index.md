@@ -2,6 +2,8 @@
 
 - [Game by me](/lusc/123boom)
 
+- [Find the least common multiple (lcm) of x numbers](/lusc/lcm)
+
 - [Countdown to summer holidays](/lusc/time%20to%20summer%20holidays)
 
 - [A counter](/lusc/counter)
