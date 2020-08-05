@@ -84,10 +84,14 @@ const getLCM = () => {
         Object.prototype.hasOwnProperty.call(amount, e)
       );
       const result = keys.reduce(
-        (acc, cur) => acc * Math.pow(cur, amount[cur]),
-        1
+        (acc, cur) => acc * BigInt(cur) ** BigInt(amount[cur]),
+        1n
       );
-      document.getElementById('output').textContent = result;
+      console.log(result);
+      const zeroWidthSpace = '​';
+      document.getElementById('output').textContent = result
+        .toLocaleString('en')
+        .replace(/,/g, `,${zeroWidthSpace}`);
     }
   } else {
     input.classList.add('invalid');
