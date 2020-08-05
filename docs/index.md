@@ -4,6 +4,8 @@
 
 - [Find the least common multiple (lcm) of x numbers](/lusc/lcm)
 
+- [Find the highest common factor (hcf) of x numbers](/lusc/hcf)
+
 - [Countdown to summer holidays](/lusc/time%20to%20summer%20holidays)
 
 - [A counter](/lusc/counter)
