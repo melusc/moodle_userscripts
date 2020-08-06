@@ -88,10 +88,15 @@ const getLCM = () => {
         1n
       );
       console.log(result);
-      const zeroWidthSpace = '​';
-      document.getElementById('output').textContent = result
-        .toLocaleString('en')
-        .replace(/,/g, `,${zeroWidthSpace}`);
+      const zeroWidthSpace = '​'; // for proper linebreaking
+      let parsedResult = String(result);
+      while (/^\d{4,}/.test(parsedResult)) {
+        parsedResult = parsedResult.replace(
+          /^(\d+)(\d{3})/,
+          `$1,${zeroWidthSpace}$2`
+        );
+      }
+      document.getElementById('output').textContent = parsedResult;
     }
   } else {
     input.classList.add('invalid');
