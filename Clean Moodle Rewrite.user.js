@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.08.05a
+// @version      2020.08.06a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -168,20 +168,16 @@ const addRemover = (name = required()) => {
   GM_setValue('remove', removers);
 };
 
+const getSidebar = context =>
+  context.querySelector('li[aria-labelledby="label_2_4"] ul[role="group"]');
+
 const refresh = (name, oldVal, newVal, remote) => {
   if (remote && !/^\/cleanmoodle/i.test(location.pathname)) {
     fetch(location.href)
       .then(e => e.text())
       .then(e => {
         const parsed = new DOMParser().parseFromString(e, 'text/html');
-        document
-          .querySelector('li[aria-labelledby="label_2_4"]')
-          .querySelector('ul[role="group"]')
-          .replaceWith(
-            parsed
-              .querySelector('li[aria-labelledby="label_2_4"]')
-              .querySelector('ul[role="group"]')
-          );
+        getSidebar(document).replaceWith(getSidebar(parsed));
         dispatchEvent(new Event('cleanMoodleRewrite'));
         dispatchEvent(new Event('customIcons'));
         if (!/^\/customicons/i.test(location.pathname)) {
@@ -311,21 +307,17 @@ const updateSort = () => {
     lang.sorting[checkbox.checked ? 'sorting' : 'not'];
 
   if (checkbox.checked === false) {
-    const sidebar = document.querySelector(
-      'li[aria-labelledby="label_2_4"] ul[role="group"]'
-    );
-    sidebar.replaceWith(
-      document.getElementById('unmodifiedSidebar').cloneNode('true')
-    );
-    const newSidebar = document.querySelector(
-      'li[aria-labelledby="label_2_4"] ul[role="group"]'
-    );
-    newSidebar.removeAttribute('id');
-    newSidebar.hidden = false;
-    cleanSetup(true);
-  } else {
-    cleanSetup(false);
+    const sidebar = getSidebar(document);
+    const children = [...sidebar.children].sort((a, b) => {
+      const match = e =>
+        +e.getAttribute('aria-labelledby').match(/(?<=_\d_)(\d+)$/)[0];
+      return match(a) - match(b);
+    });
+    for (let i = 0; i < children.length; i++) {
+      sidebar.appendChild(children[i]);
+    }
   }
+  cleanSetup(false);
 };
 
 const cleanSetup = (isNewPage = true) => {
@@ -336,9 +328,7 @@ const cleanSetup = (isNewPage = true) => {
   }
 
   /* Clean sidebar */
-  const sidebar = document.querySelector(
-    'li[aria-labelledby="label_2_4"] ul[role="group"]'
-  );
+  const sidebar = getSidebar(document);
 
   /* Turn all icons into ticks ✓ and make text green*/
   const icons = sidebar.getElementsByTagName('i');
@@ -457,12 +447,6 @@ const setup = () => {
       while (mainRegion.lastChild) {
         mainRegion.removeChild(mainRegion.lastChild);
       }
-      const clonedSidebar = document
-        .querySelector('li[aria-labelledby="label_2_4"] ul[role="group"]')
-        .cloneNode(true);
-      clonedSidebar.id = 'unmodifiedSidebar';
-      clonedSidebar.hidden = true;
-      document.body.appendChild(clonedSidebar);
 
       cleanSetup(true);
 
@@ -551,9 +535,7 @@ const selectSpan = e => {
 };
 
 addEventListener('cleanMoodleRewrite', () => {
-  const sidebar = document.querySelector(
-    'li[aria-labelledby="label_2_4"] ul[role="group"]'
-  );
+  const sidebar = getSidebar(document);
 
   if (sidebar !== null) {
     const replacers = GM_getValue('replace');
