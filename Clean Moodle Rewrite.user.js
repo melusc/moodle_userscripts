@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.08.08a
+// @version      2020.08.06b
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -183,10 +183,8 @@ const refresh = (name, oldVal, newVal, remote) => {
         const parsed = new DOMParser().parseFromString(e, 'text/html');
         getSidebar(document).replaceWith(getSidebar(parsed));
         dispatchEvent(new Event('cleanMoodleRewrite'));
-        dispatchEvent(new Event('customIcons'));
-        if (!/^\/customicons/i.test(location.pathname)) {
-          dispatchEvent(new Event('moreSidebarLinks'));
-        }
+        dispatchEvent(new Event('customIconsRewrite'));
+        dispatchEvent(new Event('moreSidebarLinks'));
       });
   }
 };
