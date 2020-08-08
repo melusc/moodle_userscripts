@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.08.06a
+// @version      2020.08.08a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -172,7 +172,11 @@ const getSidebar = context =>
   context.querySelector('li[aria-labelledby="label_2_4"] ul[role="group"]');
 
 const refresh = (name, oldVal, newVal, remote) => {
-  if (remote && !/^\/cleanmoodle/i.test(location.pathname)) {
+  if (
+    remote &&
+    !/^\/cleanmoodle/i.test(location.pathname) &&
+    !/^\/customicons/i.test(location.pathname)
+  ) {
     fetch(location.href)
       .then(e => e.text())
       .then(e => {
@@ -560,7 +564,7 @@ addEventListener('cleanMoodleRewrite', () => {
 
 if (/^\/cleanmoodlerewrite/i.test(location.pathname)) {
   setup();
-} else {
+} else if (!/^\/customicons/i.test(location.pathname)) {
   GM_registerMenuCommand(lang.openSettings, () => {
     open('https://moodle.ksasz.ch/cleanMoodleRewrite/');
   });
