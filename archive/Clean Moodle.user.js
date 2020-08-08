@@ -7,8 +7,8 @@
 // @exclude      *://moodle.ksasz.ch/lib*
 // @Author       lusc
 // @description  Improving the looks of Moodle
-// @downloadURL  https://github.com/melusc/lusc/raw/master/Clean%20Moodle.user.js
-// @updateURL    https://github.com/melusc/lusc/raw/master/Clean%20Moodle.user.js
+// @downloadURL  https://raw.githubusercontent.com/melusc/lusc/master/archive/Clean%20Moodle.user.js
+// @updateURL    https://raw.githubusercontent.com/melusc/lusc/master/archive/Clean%20Moodle.user.js
 // @run-at       document-end
 // @grant        GM_setValue
 // @grant        GM_getValue
