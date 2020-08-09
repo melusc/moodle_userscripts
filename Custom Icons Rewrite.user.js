@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Custom Icons Rewrite
-// @version      2020.08.08a
+// @version      2020.08.09a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -8,6 +8,7 @@
 // @grant        GM_addStyle
 // @grant        GM_addValueChangeListener
 // @grant        GM_registerMenuCommand
+// @grant        GM_xmlhttpRequest
 // @run-at       document-start
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Custom%20Icons%20Rewrite.user.js
 // @updateURL    https://github.com/melusc/lusc/raw/master/Custom%20Icons%20Rewrite.user.js
@@ -388,14 +389,23 @@ const saveValues = e => {
       const file = fileInput.files[0];
       addToStorage(name, file);
     } else {
-      fetch(urlInput.value)
-        .then(e => (e.ok ? e.blob() : new Error(e)))
-        .then(e => {
-          addToStorage(name, e);
-        })
-        .catch(e => {
-          alert(e.message);
+      try {
+        const url = new URL(urlInput.value);
+        GM_xmlhttpRequest({
+          method: 'GET',
+          url: url,
+          responseType: 'blob',
+          anonymous: true,
+          onload: e => {
+            addToStorage(name, e.response);
+          },
+          onerror: e => {
+            alert(e.message);
+          },
         });
+      } catch (a) {
+        alert(a.message);
+      }
     }
   }
 };
