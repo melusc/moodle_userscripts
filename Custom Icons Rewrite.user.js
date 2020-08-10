@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Custom Icons Rewrite
-// @version      2020.08.09a
+// @version      2020.08.10a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -276,9 +276,7 @@ ul.section {
 
       const selectCopyDiv = new CustomElement('div', { class: 'margin-top' });
       const selectCopy = new CustomElement('select', { id: 'selectCopy' });
-      selectCopy.add(
-        new CustomElement('option', { value: null }, { textContent: '-' })
-      );
+      selectCopy.add(new CustomElement('option', { value: null }));
 
       const references = GM_getValue('references');
       for (let i = 0; i < references.length; i++) {
@@ -321,6 +319,7 @@ ul.section {
       const li = new CustomElement('li');
 
       li.append(
+        new CustomElement('hr'),
         new CustomElement(
           'h2',
           {},
@@ -343,7 +342,7 @@ ul.section {
           buttonsDiv.append(
             new CustomElement(
               'button',
-              { 'data-name': cur[0] },
+              { 'data-name': cur[0], class: 'courses-left-btn' },
               { textContent: 'Remove icon for ' + cur[0] }
             )
           );
@@ -353,6 +352,32 @@ ul.section {
 
       li.append(buttonsDiv);
 
+      mainRegion.append(li);
+
+      return mainRegion;
+    })
+    .then(mainRegion => {
+      const li = new CustomElement('li');
+      li.append(
+        new CustomElement('hr'),
+        new CustomElement('h2', {}, { textContent: 'Clear all icons' })
+      );
+      const clearButton = new CustomElement(
+        'button',
+        { id: 'clearButton' },
+        { textContent: 'Clear all icons' }
+      );
+      clearButton.addEventListener('click', () => {
+        if (confirm('Are you sure?\nThis action is irreversible')) {
+          GM_setValue('values', {});
+          GM_setValue('references', []);
+          reset();
+        }
+      });
+
+      li.hidden = GM_getValue('references').length === 0;
+
+      li.append(clearButton);
       mainRegion.append(li);
     });
 };
@@ -384,7 +409,11 @@ const saveValues = e => {
     const urlInput = document.getElementById('urlInput');
     const selectCopy = document.getElementById('selectCopy');
     if (selectCopy.value !== 'null') {
-      addToStorage(name, selectCopy.value);
+      if (
+        Object.fromEntries(GM_getValue('references'))[name] !== selectCopy.value
+      ) {
+        addToStorage(name, selectCopy.value);
+      }
     } else if (fileInput.files[0]) {
       const file = fileInput.files[0];
       addToStorage(name, file);
@@ -410,12 +439,12 @@ const saveValues = e => {
   }
 };
 const addToStorage = (name = required(), data = required()) => {
+  const arrs = removeElement(name, {
+    references: false,
+    reset: false,
+  });
   if (typeof data === 'string') {
-    if (!Array.isArray(GM_getValue('references'))) {
-      GM_setValue('references', []);
-    }
-
-    const references = GM_getValue('references').reduce(
+    const references = arrs.references.reduce(
       (acc, cur) => (acc.every(e => e[0] !== cur[0]) ? acc.concat([cur]) : acc),
       []
     );
@@ -433,24 +462,19 @@ const addToStorage = (name = required(), data = required()) => {
         []
       )
     );
-
     reset();
   } else if (/image\/(png|jpe?g)/i.test(data.type)) {
-    removeElement(name);
     const fr = new FileReader();
     fr.addEventListener('load', () => {
       const id = randomId(10);
-      const references = GM_getValue('references');
+      const references = arrs.references;
       references.push([name, id]);
       references.sort((a, b) => {
         a = a[0].toLowerCase();
         b = b[0].toLowerCase();
         return a < b ? -1 : a > b ? 1 : 0;
       });
-      if (typeof GM_getValue('values') !== 'object') {
-        GM_setValue('values', {});
-      }
-      const values = GM_getValue('values');
+      const values = Object.fromEntries(arrs.values);
       values[id] = fr.result;
 
       GM_setValue('values', values);
@@ -508,9 +532,23 @@ const addSelectedCourse = e => {
   selectedCourseDiv.dataset.selectedCourse = element.getElementsByTagName(
     'a'
   )[0].title;
+
+  const selectCopy = document.getElementById('selectCopy');
+  const selectCopyChildren = selectCopy.childNodes;
+  const references = Object.fromEntries(GM_getValue('references'));
+  for (let i = 0; i < selectCopyChildren.length; i++) {
+    selectCopyChildren[i].disabled =
+      references[selectCopyChildren[i].textContent] ===
+      references[selectedCourseDiv.dataset.selectedCourse];
+  }
+
+  scroll({
+    top: 0,
+    behavior: 'smooth',
+  });
 };
 
-const removeElement = (name = required('Name')) => {
+const removeElement = (name = required('Name'), options = {}) => {
   if (!Array.isArray(GM_getValue('references'))) {
     GM_setValue('references', []);
   }
@@ -530,10 +568,17 @@ const removeElement = (name = required('Name')) => {
     }
   }
 
-  GM_setValue('values', Object.fromEntries(values));
-  GM_setValue('references', references);
+  if (options.values !== false) {
+    GM_setValue('values', Object.fromEntries(values));
+  }
+  if (options.references !== false) {
+    GM_setValue('references', references);
+  }
 
-  reset();
+  if (options.reset !== false) {
+    reset();
+  }
+  return { values, references };
 };
 
 const handleRemove = e => {
@@ -576,9 +621,7 @@ const reset = () => {
 
   const selectCopy = document.getElementById('selectCopy');
   selectCopy.clear();
-  selectCopy.add(
-    new CustomElement('option', { value: null }, { textContent: '-' })
-  );
+  selectCopy.add(new CustomElement('option', { value: null }));
 
   if (!Array.isArray(GM_getValue('references'))) {
     GM_setValue('references', []);
@@ -605,13 +648,16 @@ const reset = () => {
       buttonsDiv.append(
         new CustomElement(
           'button',
-          { 'data-name': cur[0] },
+          { 'data-name': cur[0], class: 'courses-left-btn' },
           { textContent: 'Remove icon for ' + cur[0] }
         )
       );
     }
   }
   buttonsDiv.closest('li').hidden = buttonsDiv.childNodes.length === 0;
+
+  document.getElementById('clearButton').closest('li').hidden =
+    references.length === 0;
 };
 
 const refresh = (...args) => {
@@ -673,7 +719,7 @@ Element.prototype.clear = function () {
 };
 
 if (/^\/customiconsrewrite/i.test(location.pathname)) {
-  setup();
+  addEventListener('DOMContentLoaded', setup);
 } else if (!/^\/cleanmooddle/i.test(location.pathname)) {
   addEventListener('DOMContentLoaded', run);
   addEventListener('customIconsRewrite', run);
