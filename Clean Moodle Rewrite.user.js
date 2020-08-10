@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.08.06b
+// @version      2020.08.10a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -561,7 +561,9 @@ addEventListener('cleanMoodleRewrite', () => {
 });
 
 if (/^\/cleanmoodlerewrite/i.test(location.pathname)) {
-  setup();
+  addEventListener('DOMContentLoaded', () => {
+    setup();
+  });
 } else if (!/^\/customicons/i.test(location.pathname)) {
   GM_registerMenuCommand(lang.openSettings, () => {
     open('https://moodle.ksasz.ch/cleanMoodleRewrite/');
