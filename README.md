@@ -1,6 +1,6 @@
 Below are some Userscripts I made to mainly improve Moodle.
 
-On https://melusc.github.io/lusc I have random things I made for fun.
+On https://melusc.github.io/ I have random things I made for fun.
 
 Also check out the [extension](https://github.com/melusc/schulNetz-extension/) I made for Firefox, it calculates your marks to check if you're passing.
 
