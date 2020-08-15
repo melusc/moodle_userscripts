@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles - ajax 2.0
-// @version      2020.08.03a
+// @version      2020.08.15a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/user/profile.php?*
 // @include      *://moodle.ksasz.ch/exploreProfiles/index*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 /* jshint esversion: 10 */
 'use strict';
-if (GM_getValue('to') !== 1927) GM_setValue('to', 1927); // I've decided to hardcode the value to give me the option to update it via update
+if (GM_getValue('to') !== 1930) GM_setValue('to', 1930); // I've decided to hardcode the value to give me the option to update it via update
 if (GM_getValue('from') !== 2) GM_setValue('from', 2); //   ^
 
 let loadingNewPage = false;
@@ -83,6 +83,7 @@ function handleClick(e) {
 
 function fetchPage(action, popstate) {
   loadingNewPage = true;
+  /* prettier-ignore */
   const num =
     popstate === true
       ? +new URLSearchParams(location.search).get('id')
@@ -103,12 +104,15 @@ function fetchPage(action, popstate) {
       );
 
       try {
-        if (parsed.querySelector('div.alert.alert-danger.alert-block.fade.in'))
+        if (
+          parsed.querySelector('div.alert.alert-danger.alert-block.fade.in')
+        ) {
           throw new Error('Deleted Profile');
+        }
         if (!popstate) {
           history.pushState({}, '', url);
         }
-        if (!deleted) {
+        if (deleted === null) {
           document
             .getElementById('page-header')
             .replaceWith(parsed.getElementById('page-header'));
@@ -119,15 +123,16 @@ function fetchPage(action, popstate) {
           document
             .querySelector('meta[name="keywords"]')
             .replaceWith(parsed.querySelector('meta[name="keywords"]'));
+
           const users = document.querySelector(
-            'li[aria-labelledby="label_2_34"]'
+            'li[aria-labelledby="label_2_32"]'
           );
           if (users !== null) {
             users.parentElement.removeChild(users);
           }
 
           const parsedUsers = parsed.querySelector(
-            'li[aria-labelledby="label_2_34"]'
+            'li[aria-labelledby="label_2_32"]'
           );
           if (parsedUsers !== null) {
             document
@@ -145,7 +150,8 @@ function fetchPage(action, popstate) {
               },
             })
           );
-          dispatchEvent(new Event('customIcons'));
+          dispatchEvent(new Event('cleanMoodleRewrite'));
+          dispatchEvent(new Event('customIconsRewrite'));
           dispatchEvent(new Event('moreSidebarLinks'));
         }
 
@@ -209,7 +215,7 @@ if (/^\/exploreprofiles\/index\/?$/i.test(location.pathname)) {
   while (document.body.lastChild)
     document.body.removeChild(document.body.lastChild);
   document.title = 'Index deleted profiles';
-  history.pushState({}, '', '/exploreProfiles/index/');
+  history.replaceState({}, '', '/exploreProfiles/index/');
 
   const button = document.createElement('button');
   button.textContent = 'Start indexing';
