@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Custom Icons Rewrite
-// @version      2020.08.23a
+// @version      2020.08.23b
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -666,7 +666,7 @@ const refresh = (...args) => {
     !/^\/cleanmoodle/i.test(location.pathname) &&
     !/^\/customicons/i.test(location.pathname)
   ) {
-    fetch(location.pathname)
+    fetch(location.href)
       .then(e => e.text())
       .then(e => {
         const parsed = new DOMParser().parseFromString(e, 'text/html');
