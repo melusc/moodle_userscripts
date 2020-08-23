@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Custom Icons Rewrite
-// @version      2020.08.10a
+// @version      2020.08.23a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -37,18 +37,18 @@ const modIcon = (
   sidebar = required('Sidebar'),
   addRemoveIcon = false
 ) => {
-  const dataURI = GM_getValue('values')[vals[1]];
-  const blobURI = getBlob(dataURI);
-  blobURI.then(src => {
-    try {
-      const element = sidebar.querySelector(`a[title="${vals[0]}"]`);
-      const icon = new CustomElement('img', {
-        class: 'icon navicon customIcon',
-        'aria-hidden': true,
-        src,
-        'tab-index': -1,
-      });
-      if (element.children.length > 0) {
+  const element = sidebar.querySelector(`a[title="${vals[0]}"]`);
+  if (element !== null && element.children.length > 0) {
+    const dataURI = GM_getValue('values')[vals[1]];
+    const blobURI = getBlob(dataURI);
+    blobURI.then(src => {
+      try {
+        const icon = new CustomElement('img', {
+          class: 'icon navicon customIcon',
+          'aria-hidden': true,
+          src,
+          'tab-index': -1,
+        });
         element.firstChild.replaceWith(icon);
         if (addRemoveIcon === true) {
           element.firstChild.after(
@@ -60,12 +60,12 @@ const modIcon = (
             })
           );
         }
-      }
-      icon.onload = () => {
-        URL.revokeObjectURL(icon.src);
-      };
-    } catch {}
-  });
+        icon.onload = () => {
+          URL.revokeObjectURL(icon.src);
+        };
+      } catch {}
+    });
+  }
 };
 
 const getBlob = (dataURI = required('dataURI')) =>
