@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.08.25b
+// @version      2020.08.25c
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -181,7 +181,7 @@ const compareReplacers = (origArr, compareTo) =>
   origArr.filter(curOrig =>
     compareTo.every(
       curCompareTo =>
-        curOrig[0] !== curCompareTo[0] && curOrig[1] !== curCompareTo[1]
+        curOrig[0] !== curCompareTo[0] || curOrig[1] !== curCompareTo[1]
     )
   );
 
