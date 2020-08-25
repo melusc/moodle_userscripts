@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.08.10b
+// @version      2020.08.25a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -91,54 +91,60 @@ const remove = (name = required('name'), sidebar = required('sidebar')) => {
 
 const sort = (sidebar = required()) => {
   if (/^\/cleanmoodle/i.test(location.pathname)) {
-    if (GM_getValue('sort') === true) {
-      sidebar.dataset.isSorted = true;
-    } else {
-      sidebar.dataset.isSorted = false;
-    }
+    sidebar.dataset.isSorted = Boolean(GM_getValue('sort'));
   }
   if (GM_getValue('sort') === true) {
-    const children = [...sidebar.children].filter(
-      e =>
-        e.nodeName === 'LI' &&
-        e.classList.contains('type_course', 'depth_3', 'item_with_icon')
-    );
+    const children = filterCourses([...sidebar.children]);
     children.sort((a, b) => {
       const aText = a.textContent.toLowerCase();
       const bText = b.textContent.toLowerCase();
       return aText < bText ? -1 : aText > bText ? 1 : 0;
     });
-    children.reverse();
-    for (let i = 0; i < children.length; i++) {
-      sidebar.prepend(children[i]);
-    }
+    sidebar.prepend(...children);
   } else if (GM_getValue('sort') !== false) GM_setValue('sort', true);
 };
+
+const unsort = (sidebar = required()) => {
+  const getNum = e => +e.getAttribute('aria-labelledby').match(/\d+$/)[0];
+  const children = filterCourses([...sidebar.children]).sort(
+    (a, b) => getNum(a) - getNum(b)
+  );
+  sidebar.prepend(...children);
+};
+
+const filterCourses = children =>
+  children.filter(
+    e => e.nodeName === 'LI' && e.classList.contains('type_course')
+  );
 
 const removeElement = (
   name = required(),
   setRemove = true,
   setReplace = true
 ) => {
-  const replacers = GM_getValue('replace');
-  const removers = GM_getValue('remove');
-  for (let i = 0; i < replacers.length; i++) {
-    if (replacers[i][0] === name) replacers.splice(i--, 1);
-  }
-  for (let i = 0; i < removers.length; i++) {
-    if (removers[i] === name) removers.splice(i--, 1);
+  const origReplacers = GM_getValue('replace');
+  const newReplacers = origReplacers.map(e => e.slice());
+
+  for (let i = 0; i < newReplacers.length; i++) {
+    if (newReplacers[i][0] === name) newReplacers.splice(i--, 1);
   }
 
-  if (setRemove === true) {
-    GM_setValue('remove', removers);
+  const origRemovers = GM_getValue('remove');
+  const newRemovers = origRemovers.slice();
+  for (let i = 0; i < newRemovers.length; i++) {
+    if (newRemovers[i] === name) newRemovers.splice(i--, 1);
   }
-  if (setReplace === true) {
-    GM_setValue('replace', replacers);
+
+  if (setRemove === true && origRemovers.length !== newRemovers.length) {
+    GM_setValue('remove', newRemovers);
+  }
+  if (setReplace === true && origReplacers.length !== newReplacers.length) {
+    GM_setValue('replace', newReplacers);
   }
 
   return {
-    replace: replacers,
-    remove: removers,
+    replace: newReplacers,
+    remove: newRemovers,
   };
 };
 
@@ -173,19 +179,59 @@ const getSidebar = context =>
 
 const refresh = (name, oldVal, newVal, remote) => {
   if (
-    remote &&
+    (remote === true || remote === undefined) &&
     !/^\/cleanmoodle/i.test(location.pathname) &&
     !/^\/customicons/i.test(location.pathname)
   ) {
-    fetch(location.href)
-      .then(e => e.text())
-      .then(e => {
-        const parsed = new DOMParser().parseFromString(e, 'text/html');
-        getSidebar(document).replaceWith(getSidebar(parsed));
-        dispatchEvent(new Event('cleanMoodleRewrite'));
-        dispatchEvent(new Event('customIconsRewrite'));
-        dispatchEvent(new Event('moreSidebarLinks'));
-      });
+    const sidebar = getSidebar(document);
+    if (name === 'replace') {
+      const oldDiff = oldVal.filter(e => newVal.indexOf(e) === -1);
+      for (let i = 0; i < oldDiff.length; i++) {
+        const element = sidebar
+          .querySelector(`a[title="${oldDiff[i][0]}`)
+          ?.closest('li');
+        if (element !== null && element !== undefined) {
+          const liClassList = element.classList;
+          if (liClassList.contains('item_with_icon')) {
+            element.getElementsByTagName(
+              'span'
+            )[0].textContent = element.getElementsByTagName('a')[0].title;
+          } else {
+            const anchor = element.getElementsByTagName('a')[0];
+            anchor.textContent = anchor.title;
+          }
+        }
+      }
+      const newDiff = newVal.filter(e => oldVal.indexOf(e) === -1);
+      for (let i = 0; i < newDiff.length; i++) {
+        replace(...newDiff[i], sidebar);
+      }
+      refresh('sort');
+    } else if (name === 'sort') {
+      (GM_getValue('sort') ? sort : unsort)(sidebar);
+    } else {
+      if (oldVal.length < newVal.length) {
+        const diff = newVal.filter(e => oldVal.indexOf(e) === -1);
+        for (let i = 0; i < diff.length; i++) {
+          remove(diff[i], sidebar);
+        }
+      } else {
+        fetch(location.href)
+          .then(e => e.text())
+          .then(e => {
+            const parsed = new DOMParser().parseFromString(e, 'text/html');
+            if (sidebar !== null) {
+              sidebar.replaceWith(getSidebar(parsed));
+              dispatchEvent(new Event('cleanMoodleRewrite'));
+              dispatchEvent(new Event('customIconsRewrite'));
+              dispatchEvent(new Event('moreSidebarLinks'));
+            } else {
+              location.reload();
+            }
+          })
+          .catch(() => location.reload());
+      }
+    }
   }
 };
 
@@ -309,15 +355,7 @@ const updateSort = () => {
     lang.sorting[checkbox.checked ? 'sorting' : 'not'];
 
   if (checkbox.checked === false) {
-    const sidebar = getSidebar(document);
-    const children = [...sidebar.children].sort((a, b) => {
-      const match = e =>
-        +e.getAttribute('aria-labelledby').match(/(?<=_\d_)(\d+)$/)[0];
-      return match(a) - match(b);
-    });
-    for (let i = 0; i < children.length; i++) {
-      sidebar.appendChild(children[i]);
-    }
+    unsort(getSidebar(document));
   }
   cleanSetup(false);
 };
