@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.08.25a
+// @version      2020.08.25b
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -177,6 +177,14 @@ const addRemover = (name = required()) => {
 const getSidebar = context =>
   context.querySelector('li[aria-labelledby="label_2_4"] ul[role="group"]');
 
+const compareReplacers = (origArr, compareTo) =>
+  origArr.filter(curOrig =>
+    compareTo.every(
+      curCompareTo =>
+        curOrig[0] !== curCompareTo[0] && curOrig[1] !== curCompareTo[1]
+    )
+  );
+
 const refresh = (name, oldVal, newVal, remote) => {
   if (
     (remote === true || remote === undefined) &&
@@ -185,7 +193,7 @@ const refresh = (name, oldVal, newVal, remote) => {
   ) {
     const sidebar = getSidebar(document);
     if (name === 'replace') {
-      const oldDiff = oldVal.filter(e => newVal.indexOf(e) === -1);
+      const oldDiff = compareReplacers(oldVal, newVal);
       for (let i = 0; i < oldDiff.length; i++) {
         const element = sidebar
           .querySelector(`a[title="${oldDiff[i][0]}`)
@@ -202,7 +210,7 @@ const refresh = (name, oldVal, newVal, remote) => {
           }
         }
       }
-      const newDiff = newVal.filter(e => oldVal.indexOf(e) === -1);
+      const newDiff = compareReplacers(newVal, oldVal);
       for (let i = 0; i < newDiff.length; i++) {
         replace(...newDiff[i], sidebar);
       }
