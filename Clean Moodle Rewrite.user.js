@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.08.25c
+// @version      2020.08.26a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -218,10 +218,11 @@ const refresh = (name, oldVal, newVal, remote) => {
     } else if (name === 'sort') {
       (GM_getValue('sort') ? sort : unsort)(sidebar);
     } else {
-      if (oldVal.length < newVal.length) {
-        const diff = newVal.filter(e => oldVal.indexOf(e) === -1);
-        for (let i = 0; i < diff.length; i++) {
-          remove(diff[i], sidebar);
+      const oldDiff = oldVal.filter(e => newVal.indexOf(e) === -1);
+      if (oldDiff.length === 0) {
+        const newDiff = newVal.filter(e => oldVal.indexOf(e) === -1);
+        for (let i = 0; i < newDiff.length; i++) {
+          remove(newDiff[i], sidebar);
         }
       } else {
         fetch(location.href)
