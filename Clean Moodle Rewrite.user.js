@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.08.26a
+// @version      2020.09.08a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -90,9 +90,6 @@ const remove = (name = required('name'), sidebar = required('sidebar')) => {
 };
 
 const sort = (sidebar = required()) => {
-  if (/^\/cleanmoodle/i.test(location.pathname)) {
-    sidebar.dataset.isSorted = Boolean(GM_getValue('sort'));
-  }
   if (GM_getValue('sort') === true) {
     const children = filterCourses([...sidebar.children]);
     children.sort((a, b) => {
@@ -225,20 +222,20 @@ const refresh = (name, oldVal, newVal, remote) => {
           remove(newDiff[i], sidebar);
         }
       } else {
-        fetch(location.href)
-          .then(e => e.text())
-          .then(e => {
-            const parsed = new DOMParser().parseFromString(e, 'text/html');
-            if (sidebar !== null) {
+        if (sidebar !== null) {
+          fetch(location.href)
+            .then(e => e.text())
+            .then(e => {
+              const parsed = new DOMParser().parseFromString(e, 'text/html');
               sidebar.replaceWith(getSidebar(parsed));
               dispatchEvent(new Event('cleanMoodleRewrite'));
               dispatchEvent(new Event('customIconsRewrite'));
               dispatchEvent(new Event('moreSidebarLinks'));
-            } else {
-              location.reload();
-            }
-          })
-          .catch(() => location.reload());
+            })
+            .catch(() => location.reload());
+        } else {
+          location.reload();
+        }
       }
     }
   }
