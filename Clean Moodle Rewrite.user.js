@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.08a
+// @version      2020.09.09a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -435,23 +435,41 @@ const setup = () => {
   document.head.appendChild(style);
 
   GM_addStyle(`
-    #page {
-        margin-top: auto!important;
-    }
-    #page-content.blocks-pre.blocks-post .region-main {
-        flex: 0 0 80%!important;
-        max-width: 80%!important;
-        padding-right: 1rem;
-    }
-    ul.section {
-        list-style: none;
-    }
-    button {
-        margin-top: 10px;
-    }
-    i.fa-undo {
-        margin-left: 3px !important;
-    }`);
+#page {
+  margin-top: auto !important;
+}
+@media (min-width: 768px) {
+  #page-content.blocks-pre.blocks-post .region-main {
+    flex-basis: 68%;
+    max-width: 68%;
+  }
+}
+
+@media (min-width: 992px) {
+  #page-content.blocks-pre.blocks-post .region-main {
+    flex-basis: 75%;
+    max-width: 75%;
+  }
+}
+@media (min-width: 1200px) {
+  #page-content.blocks-pre.blocks-post .region-main {
+    flex-basis: 80%;
+    max-width: 80%;
+  }
+}
+#page-content.blocks-pre.blocks-post .region-main {
+  padding-right: 1rem;
+}
+ul.section {
+  list-style: none;
+}
+button {
+  margin-top: 10px;
+}
+i.fa-undo {
+  margin-left: 3px !important;
+}
+`);
 
   GM_addStyle('#spanEditable:empty::after{content:"Reset to null"}').id =
     'spanEditableStyle';
