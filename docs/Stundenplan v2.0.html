@@ -1,62 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>Stundenplan Generator v2.0</title>
-    <link rel="shortcut icon" href="Stundenplan.ico">
-    <meta charset="utf-8">
-    <link href="normalize.css" type="text/css" rel="stylesheet">
-    <link href="Stundenplan v2.0.css" type="text/css" rel="stylesheet">
-</head>
+    <link rel="shortcut icon" href="Stundenplan.ico" />
+    <meta charset="utf-8" />
+    <link href="normalize.css" type="text/css" rel="stylesheet" />
+    <link href="sanitize.css" type="text/css" rel="stylesheet" />
+    <link href="Stundenplan v2.0.css" type="text/css" rel="stylesheet" />
+  </head>
 
-<body>
+  <body>
     <div class="marginBody">
-        <div class="outerInput">
-            <div class="middleInput">
-                <div class="innerInput">
-                    <div class="divInput">
-                        <label for="amount">Anzahl Kurse</label>
-                        <input id="amount" type="number" min="1">
-                    </div>
-                    <div class="divInput">
-                        <label for="lunch">Wann ist Mittag?</label>
-                        <input id="lunch" type="number" min="0">
-                    </div>
-                </div>
+      <div class="outerInput">
+        <div class="middleInput">
+          <div class="innerInput">
+            <div class="divInput">
+              <label for="amount">Anzahl Kurse</label>
+              <input id="amount" type="number" min="1" />
             </div>
+            <div class="divInput">
+              <label for="lunch">Wann ist Mittag?</label>
+              <input id="lunch" type="number" min="0" />
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div class="table">
-            <div class="thead">
-                <div class="row">
-                    <div class="th">Zeit</div>
-                    <div class="th">Montag</div>
-                    <div class="th">Dienstag</div>
-                    <div class="th">Mittwoch</div>
-                    <div class="th">Donnerstag</div>
-                    <div class="th">Freitag</div>
-                </div>
-            </div>
-            <div class="tbody">
-            </div>
+      <div class="table">
+        <div class="thead">
+          <div class="row">
+            <div class="th">Zeit</div>
+            <div class="th">Montag</div>
+            <div class="th">Dienstag</div>
+            <div class="th">Mittwoch</div>
+            <div class="th">Donnerstag</div>
+            <div class="th">Freitag</div>
+          </div>
         </div>
-        <div class="outerInput marginTop">
-            <div class="middleInput">
-                <div class="innerInput buttonParent">
-                    <button tabindex="-1" id="clear">Clear</button>
-                    <button tabindex="-1" id="userScriptSave" style="display:none">Save to userscript</button>
-                </div>
-            </div>
+        <div class="tbody"></div>
+      </div>
+      <div class="outerInput marginTop">
+        <div class="middleInput">
+          <div class="innerInput buttonParent">
+            <button tabindex="-1" id="clear">Clear</button>
+            <button tabindex="-1" id="userScriptSave" style="display: none">
+              Save to userscript
+            </button>
+          </div>
         </div>
-        <div class="outerInput marginTop" id="textareaOuter">
-            <div class="middleInput">
-                <div class="innerInput">
-                    <textarea tabindex="-1" onclick="this.focus();this.select()"></textarea>
-                </div>
-            </div>
+      </div>
+      <div class="outerInput marginTop" id="textareaOuter">
+        <div class="middleInput">
+          <div class="innerInput">
+            <textarea
+              tabindex="-1"
+              onclick="this.focus();this.select()"
+            ></textarea>
+          </div>
         </div>
+      </div>
     </div>
     <script src="Stundenplan v2.0.js"></script>
-</body>
-
+  </body>
 </html>
