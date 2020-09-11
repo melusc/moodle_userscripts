@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.10a
+// @version      2020.09.11a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -98,8 +98,8 @@ const sort = ( sidebar = required() ) => {
   if ( GM_getValue( 'sort' ) === true ) {
     const children = filterCourses( [ ...sidebar.children ] );
     children.sort( ( a, b ) => {
-      const aText = a.textContent.toLowerCase();
-      const bText = b.textContent.toLowerCase();
+      const aText = a.firstElementChild.textContent.toLowerCase();
+      const bText = b.firstElementChild.textContent.toLowerCase();
       return aText < bText
         ? -1
         : aText > bText
@@ -161,7 +161,7 @@ const removeElement = (
 };
 
 const addReplacer = ( name = required(), replaceWith = required() ) => {
-  const trimmedReplaceWith = replaceWith.trim();
+  const trimmedReplaceWith = replaceWith.trim().replace( /\s{2,}/gu, ' ' );
   if ( trimmedReplaceWith === '' || trimmedReplaceWith === name ) {
     removeElement( name );
   }
