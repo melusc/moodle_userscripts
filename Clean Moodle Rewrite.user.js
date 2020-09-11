@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.11a
+// @version      2020.09.11b
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -35,10 +35,24 @@ const lang = {
   spanAfter: 'Reset to "{{{s}}}"',
 };
 
+/**
+ * Throws error when called
+ * Use in function arguments as default value
+ * @param {string} e - The name of the variable
+ * @returns {undefined}
+ */
 const required = ( e = 'Variable' ) => {
   throw new Error( `${ e } not defined` );
 };
 
+/**
+ * Changes text of element with [title=name] to newName
+ * @param {string} name Name of link
+ * @param {string} newName Name to replace it with
+ * @param {HTMLElement} sidebar HTMLElement where link can be found
+ * @param {Boolean} [setupPage=false] If set to true will add FontAwesome undo icon
+ * @returns {undefined}
+ */
 const replace = (
   name = required( 'name' ),
   newName = required( 'newName' ),
@@ -74,6 +88,12 @@ const replace = (
   }
 };
 
+/**
+ * Removes element with [title=name]
+ * @param {String} name Name of link
+ * @param {HTMLElement} sidebar HTMLElement where link can be found
+ * @returns {undefined}
+ */
 const remove = (
   name = required( 'name' ),
   sidebar = required( 'sidebar' )
@@ -94,6 +114,11 @@ const remove = (
   }
 };
 
+/**
+ * Sorts children of sidebar by textContent
+ * @param {HTMLElement} sidebar HTMLElement where the children to be sorted can be found
+ * @returns {undefined}
+ */
 const sort = ( sidebar = required() ) => {
   if ( GM_getValue( 'sort' ) === true ) {
     const children = filterCourses( [ ...sidebar.children ] );
@@ -113,18 +138,44 @@ const sort = ( sidebar = required() ) => {
   }
 };
 
+/**
+ * Gets last digits
+ * @param {HTMLElement} e HTMLElement from which the digits should taken
+ * @returns {Number} Number from HTMLElement
+ */
+const getNum = e => +e.getAttribute( 'aria-labelledby' ).match( /(?<num>\d+)$/u ).groups.num;
+
+/**
+ * Undoes sorting by bringing it back to default sorting
+ * @param {HTMLElement} sidebar HTMLElement where the children to be unsorted can be found
+ * @returns {undefined}
+ */
 const unsort = ( sidebar = required() ) => {
-  const getNum = e => Number( e.getAttribute( 'aria-labelledby' ).match( /\d+$/u )[ 0 ] );
   const children = filterCourses( [ ...sidebar.children ] ).sort(
     ( a, b ) => getNum( a ) - getNum( b )
   );
   sidebar.prepend( ...children );
 };
 
-const filterCourses = children => children.filter(
+/**
+ * Filters courses that don't have nodeName 'li' and don't have the className 'type_course'
+ * @param {ArrayLike|Array} children Children that need to be filtered
+ * @returns {Array} Filtered children
+ */
+const filterCourses = children => [ ...children ].filter(
   e => e.nodeName === 'LI' && e.classList.contains( 'type_course' )
 );
 
+/**
+ * Remove element from TM storage
+ * @param {String} name Exact string that needs to be removed from storage
+ * @param {Boolean} [setRemove=true] Update storage for removers
+ * @param {Boolean} [setReplace=true] Update storage for replacers
+ *
+ * @returns {Object} newVals An object containing the new replacer- and remover values
+ * @returns {Array} newVals.remove The new removers
+ * @returns {Array} newVals.replace The new replacers
+ */
 const removeElement = (
   name = required(),
   setRemove = true,
@@ -160,13 +211,19 @@ const removeElement = (
   };
 };
 
+/**
+ * Adds a new replacer to TM storage
+ * @param {String} name Name of new replacer
+ * @param {String} replaceWith String to replace old val with
+ * @returns {undefined}
+ */
 const addReplacer = ( name = required(), replaceWith = required() ) => {
   const trimmedReplaceWith = replaceWith.trim().replace( /\s{2,}/gu, ' ' );
   if ( trimmedReplaceWith === '' || trimmedReplaceWith === name ) {
     removeElement( name );
   }
   else {
-    const replacers = removeElement( name, true, false ).replace;
+    const { replace: replacers } = removeElement( name, true, false );
     replacers.push( [ name, trimmedReplaceWith ] );
     replacers.sort( ( a, b ) => {
       const aText = a[ 0 ].toLowerCase();
@@ -180,7 +237,11 @@ const addReplacer = ( name = required(), replaceWith = required() ) => {
     GM_setValue( 'replace', replacers );
   }
 };
-
+/**
+ * Adds a new remover to TM storage
+ * @param {String} name Name of new remover
+ * @returns {undefined}
+ */
 const addRemover = ( name = required() ) => {
   const removers = removeElement( name, false, true ).remove.concat( name );
   removers.sort( ( a, b ) => {
@@ -195,16 +256,35 @@ const addRemover = ( name = required() ) => {
   GM_setValue( 'remove', removers );
 };
 
+/**
+ * Get sidebar from any context
+ * @param {Document} context Context where sidebar can be found
+ * @returns {HTMLElement} Sidebar
+ */
 const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' );
 
+/**
+ * Returns only values from origArr that aren't in compareTo
+ * @param {Array} origArr Original Array
+ * @param {Array} compareTo Array compared to
+ * @returns {Array} Unique values in origArr
+ */
 const compareReplacers = ( origArr, compareTo ) => origArr.filter( curOrig => compareTo.every(
   curCompareTo => curOrig[ 0 ] !== curCompareTo[ 0 ] || curOrig[ 1 ] !== curCompareTo[ 1 ]
 )
 );
 
-const refresh = ( name, oldVal, newVal, remote ) => {
+/**
+ * Update sidebar i.e. set names correctly, remove all elements that should be, sort or unsort
+ * @param {String} name Name of TM Storage item
+ * @param {*} [oldVal] Old value in storage
+ * @param {*} [newVal] New value already in storage
+ * @param {Boolean} [remote=true] Whether storage was updated in current or remote tab
+ * @returns {undefined}
+ */
+const refresh = ( name, oldVal, newVal, remote = true ) => {
   if (
-    ( remote === true || remote === undefined )
+    remote
     && !( /^\/cleanmoodle/iu ).test( location.pathname )
     && !( /^\/customicons/iu ).test( location.pathname )
   ) {
@@ -266,6 +346,12 @@ const refresh = ( name, oldVal, newVal, remote ) => {
   }
 };
 
+/**
+ * Adds fontAwesome's fa-check to element for toggling the visibility of an item
+ * @param {String} name Name of link
+ * @param {*} sidebar sidebar where element can be found
+ * @returns {undefined}
+ */
 const setupCustomRemove = ( name = required(), sidebar = required() ) => {
   const element = sidebar.querySelector( `a[title="${ name }"]` );
   if ( element === null ) {
@@ -280,6 +366,11 @@ const setupCustomRemove = ( name = required(), sidebar = required() ) => {
   }
 };
 
+/**
+ * Handles click of sidebar and calls various functions depending on the clicked element
+ * @param {Event} e Eventobject
+ * @returns {undefined}
+ */
 const sidebarClick = e => {
   e.preventDefault();
   e.stopPropagation();
@@ -309,6 +400,11 @@ const sidebarClick = e => {
   }
 };
 
+/**
+ * Copies link to main region for setting a replacer
+ * @param {Event} e Eventobject
+ * @returns {undefined}
+ */
 const selectCourse = e => {
   const p = ( e.target.nodeName === 'LI'
     ? e.target.getElementsByTagName( 'p' )[ 0 ]
@@ -334,7 +430,7 @@ const selectCourse = e => {
     }
 
     while ( selectedCourseDiv.lastChild ) {
-      selectedCourseDiv.removeChild( selectedCourseDiv.lastChild );
+      selectedCourseDiv.lastChild.remove();
     }
     selectedCourseDiv.appendChild( p );
     span.contentEditable = true;
@@ -358,6 +454,11 @@ const selectCourse = e => {
   }
 };
 
+/**
+ * Adds replacer to TM storage
+ * @param {Event} e Eventobject
+ * @returns {undefined}
+ */
 const updateSelectedCourse = e => {
   if ( ( e.type === 'keydown' && e.key === 'Enter' ) || e.type === 'click' ) {
     e.preventDefault();
@@ -381,6 +482,10 @@ const updateSelectedCourse = e => {
   }
 };
 
+/**
+ * Updates sorting in TM storage to checkbox value and sorts sidebar accordingly
+ * @returns {undefined}
+ */
 const updateSort = () => {
   const checkbox = document.getElementById( 'sortCheckbox' );
   GM_setValue( 'sort', checkbox.checked );
@@ -396,10 +501,16 @@ const updateSort = () => {
   cleanSetup( false );
 };
 
+/**
+ * Cleans settings page and resets everything
+ * To be used only on settings page
+ * @param {Boolean} [isNewPage=true] If set to true adds event listener to sidebar
+ * @returns {undefined}
+ */
 const cleanSetup = ( isNewPage = true ) => {
   /* Remove "Dashboard" */
   const dashboard = document.querySelector( 'li[aria-labelledby="label_2_2"]' );
-  if ( dashboard ) {
+  if ( dashboard !== null ) {
     dashboard.parentNode.removeChild( dashboard );
   }
 
@@ -458,6 +569,10 @@ const cleanSetup = ( isNewPage = true ) => {
   }
 };
 
+/**
+ * Generates settings page
+ * @returns {undefined}
+ */
 const setup = () => {
   const icon = document.createElement( 'link' );
   icon.rel = 'shortcut icon';
@@ -515,7 +630,7 @@ i.fa-undo {
   document.title = lang.title;
 
   while ( document.body.lastChild ) {
-    document.body.removeChild( document.body.lastChild );
+    document.body.lastChild.remove();
   }
 
   fetch( '/' )
@@ -602,6 +717,12 @@ i.fa-undo {
       mainRegion.appendChild( sortLi );
     } );
 };
+
+/**
+ * Adds a gear that links to settings
+ * @param {HTMLElement} sidebar sidebar where settings gear should be added
+ * @returns {undefined}
+ */
 const settingsGear = ( sidebar = required() ) => {
   const p = sidebar.previousSibling;
 
@@ -623,12 +744,17 @@ const settingsGear = ( sidebar = required() ) => {
   }
 };
 
-const selectSpan = e => {
+/**
+ * Sets cursor at position
+ * @param {Number} [position] Position of cursor, defaults to textlength
+ * @returns {undefined}
+ */
+const selectSpan = position => {
   const span = document.getElementById( 'spanEditable' );
   const range = new Range();
   const sel = getSelection();
-  const start = typeof e === 'number'
-    ? e
+  const start = typeof position === 'number'
+    ? position
     : span.textContent.length;
 
   span.focus();
@@ -669,7 +795,9 @@ addEventListener( 'cleanMoodleRewrite', () => {
 } );
 
 if ( ( /^\/cleanmoodlerewrite/iu ).test( location.pathname ) ) {
-  addEventListener( 'DOMContentLoaded', setup );
+  document.readyState === 'complete'
+    ? setup()
+    : addEventListener( 'DOMContentLoaded', setup );
 }
 else if ( !( /^\/customicons/iu ).test( location.pathname ) ) {
   GM_registerMenuCommand( lang.openSettings, () => {
@@ -680,9 +808,14 @@ else if ( !( /^\/customicons/iu ).test( location.pathname ) ) {
     GM_setValue( 'sort', !val );
     refresh( 'sort', val, !val, true );
   } );
-  addEventListener( 'DOMContentLoaded', () => {
-    dispatchEvent( new Event( 'cleanMoodleRewrite' ) );
-  } );
+
+  const cleanMoodleEvent = new Event( 'cleanMoodleRewrite' );
+
+  document.readyState === 'complete'
+    ? dispatchEvent( cleanMoodleEvent )
+    : addEventListener( 'DOMContentLoaded', () => {
+      dispatchEvent( cleanMoodleEvent );
+    } );
 }
 
 GM_addValueChangeListener( 'replace', refresh );
