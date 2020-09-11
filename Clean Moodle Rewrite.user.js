@@ -39,7 +39,7 @@ const lang = {
  * Throws error when called
  * Use in function arguments as default value
  * @param {string} e - The name of the variable
- * @returns {undefined}
+ * @returns {void}
  */
 const required = ( e = 'Variable' ) => {
   throw new Error( `${ e } not defined` );
@@ -51,7 +51,7 @@ const required = ( e = 'Variable' ) => {
  * @param {string} newName Name to replace it with
  * @param {HTMLElement} sidebar HTMLElement where link can be found
  * @param {Boolean} [setupPage=false] If set to true will add FontAwesome undo icon
- * @returns {undefined}
+ * @returns {void}
  */
 const replace = (
   name = required( 'name' ),
@@ -92,7 +92,7 @@ const replace = (
  * Removes element with [title=name]
  * @param {String} name Name of link
  * @param {HTMLElement} sidebar HTMLElement where link can be found
- * @returns {undefined}
+ * @returns {void}
  */
 const remove = (
   name = required( 'name' ),
@@ -117,7 +117,7 @@ const remove = (
 /**
  * Sorts children of sidebar by textContent
  * @param {HTMLElement} sidebar HTMLElement where the children to be sorted can be found
- * @returns {undefined}
+ * @returns {void}
  */
 const sort = ( sidebar = required() ) => {
   if ( GM_getValue( 'sort' ) === true ) {
@@ -148,7 +148,7 @@ const getNum = e => +e.getAttribute( 'aria-labelledby' ).match( /(?<num>\d+)$/u 
 /**
  * Undoes sorting by bringing it back to default sorting
  * @param {HTMLElement} sidebar HTMLElement where the children to be unsorted can be found
- * @returns {undefined}
+ * @returns {void}
  */
 const unsort = ( sidebar = required() ) => {
   const children = filterCourses( [ ...sidebar.children ] ).sort(
@@ -215,7 +215,7 @@ const removeElement = (
  * Adds a new replacer to TM storage
  * @param {String} name Name of new replacer
  * @param {String} replaceWith String to replace old val with
- * @returns {undefined}
+ * @returns {void}
  */
 const addReplacer = ( name = required(), replaceWith = required() ) => {
   const trimmedReplaceWith = replaceWith.trim().replace( /\s{2,}/gu, ' ' );
@@ -240,7 +240,7 @@ const addReplacer = ( name = required(), replaceWith = required() ) => {
 /**
  * Adds a new remover to TM storage
  * @param {String} name Name of new remover
- * @returns {undefined}
+ * @returns {void}
  */
 const addRemover = ( name = required() ) => {
   const removers = removeElement( name, false, true ).remove.concat( name );
@@ -280,7 +280,7 @@ const compareReplacers = ( origArr, compareTo ) => origArr.filter( curOrig => co
  * @param {*} [oldVal] Old value in storage
  * @param {*} [newVal] New value already in storage
  * @param {Boolean} [remote=true] Whether storage was updated in current or remote tab
- * @returns {undefined}
+ * @returns {void}
  */
 const refresh = ( name, oldVal, newVal, remote = true ) => {
   if (
@@ -350,7 +350,7 @@ const refresh = ( name, oldVal, newVal, remote = true ) => {
  * Adds fontAwesome's fa-check to element for toggling the visibility of an item
  * @param {String} name Name of link
  * @param {*} sidebar sidebar where element can be found
- * @returns {undefined}
+ * @returns {void}
  */
 const setupCustomRemove = ( name = required(), sidebar = required() ) => {
   const element = sidebar.querySelector( `a[title="${ name }"]` );
@@ -368,8 +368,10 @@ const setupCustomRemove = ( name = required(), sidebar = required() ) => {
 
 /**
  * Handles click of sidebar and calls various functions depending on the clicked element
- * @param {Event} e Eventobject
- * @returns {undefined}
+ * @param {Object} e Eventobject
+ * @returns {void}
+ *
+ * @listens Click
  */
 const sidebarClick = e => {
   e.preventDefault();
@@ -402,8 +404,8 @@ const sidebarClick = e => {
 
 /**
  * Copies link to main region for setting a replacer
- * @param {Event} e Eventobject
- * @returns {undefined}
+ * @param {Object} e Eventobject
+ * @returns {void}
  */
 const selectCourse = e => {
   const p = ( e.target.nodeName === 'LI'
@@ -456,8 +458,10 @@ const selectCourse = e => {
 
 /**
  * Adds replacer to TM storage
- * @param {Event} e Eventobject
- * @returns {undefined}
+ * @param {Object} e Eventobject
+ * @returns {void}
+ * @listens Keydown
+ * @listens Click
  */
 const updateSelectedCourse = e => {
   if ( ( e.type === 'keydown' && e.key === 'Enter' ) || e.type === 'click' ) {
@@ -484,7 +488,7 @@ const updateSelectedCourse = e => {
 
 /**
  * Updates sorting in TM storage to checkbox value and sorts sidebar accordingly
- * @returns {undefined}
+ * @returns {void}
  */
 const updateSort = () => {
   const checkbox = document.getElementById( 'sortCheckbox' );
@@ -505,7 +509,7 @@ const updateSort = () => {
  * Cleans settings page and resets everything
  * To be used only on settings page
  * @param {Boolean} [isNewPage=true] If set to true adds event listener to sidebar
- * @returns {undefined}
+ * @returns {void}
  */
 const cleanSetup = ( isNewPage = true ) => {
   /* Remove "Dashboard" */
@@ -571,7 +575,7 @@ const cleanSetup = ( isNewPage = true ) => {
 
 /**
  * Generates settings page
- * @returns {undefined}
+ * @returns {void}
  */
 const setup = () => {
   const icon = document.createElement( 'link' );
@@ -721,7 +725,7 @@ i.fa-undo {
 /**
  * Adds a gear that links to settings
  * @param {HTMLElement} sidebar sidebar where settings gear should be added
- * @returns {undefined}
+ * @returns {void}
  */
 const settingsGear = ( sidebar = required() ) => {
   const p = sidebar.previousSibling;
@@ -747,7 +751,7 @@ const settingsGear = ( sidebar = required() ) => {
 /**
  * Sets cursor at position
  * @param {Number} [position] Position of cursor, defaults to textlength
- * @returns {undefined}
+ * @returns {void}
  */
 const selectSpan = position => {
   const span = document.getElementById( 'spanEditable' );
