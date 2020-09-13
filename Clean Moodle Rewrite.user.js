@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.11b
+// @version      2020.09.13a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -17,9 +17,7 @@
 
 const lang = {
   nonExistant: name => {
-    alert(
-      `You appear to not be in "${ name }" anymore. ${ name } has been removed from your list.`
-    );
+    alert( `You appear to not be in "${ name }" anymore. ${ name } has been removed from your list.` );
   },
   selectCourse: 'Select course on left',
   renameTitle: 'Rename course',
@@ -61,7 +59,10 @@ const replace = (
 ) => {
   const element = sidebar.querySelector( `a[title="${ name }"]` );
   if ( element === null ) {
-    removeElement( name, true );
+    removeElement(
+      name,
+      true
+    );
     lang.nonExistant( name );
   }
   else {
@@ -70,7 +71,13 @@ const replace = (
       element.getElementsByTagName( 'span' )[ 0 ].textContent = newName;
       if ( setupPage ) {
         const icon = document.createElement( 'i' );
-        icon.classList.add( 'icon', 'fa', 'fa-fw', 'navicon', 'fa-undo' );
+        icon.classList.add(
+          'icon',
+          'fa',
+          'fa-fw',
+          'navicon',
+          'fa-undo'
+        );
         element.getElementsByTagName( 'span' )[ 0 ].after( icon );
       }
     }
@@ -81,7 +88,13 @@ const replace = (
       element.textContent = newName;
       if ( setupPage ) {
         const icon = document.createElement( 'i' );
-        icon.classList.add( 'icon', 'fa', 'fa-fw', 'navicon', 'fa-undo' );
+        icon.classList.add(
+          'icon',
+          'fa',
+          'fa-fw',
+          'navicon',
+          'fa-undo'
+        );
         element.after( icon );
       }
     }
@@ -100,7 +113,10 @@ const remove = (
 ) => {
   const element = sidebar.querySelector( `a[title="${ name }"]` );
   if ( element === null ) {
-    removeElement( name, true );
+    removeElement(
+      name,
+      true
+    );
     lang.nonExistant( name );
   }
   else {
@@ -122,7 +138,9 @@ const remove = (
 const sort = ( sidebar = required() ) => {
   if ( GM_getValue( 'sort' ) === true ) {
     const children = filterCourses( [ ...sidebar.children ] );
-    children.sort( ( a, b ) => {
+    children.sort( (
+      a, b
+    ) => {
       const aText = a.firstElementChild.textContent.toLowerCase();
       const bText = b.firstElementChild.textContent.toLowerCase();
       return aText < bText
@@ -134,7 +152,10 @@ const sort = ( sidebar = required() ) => {
     sidebar.prepend( ...children );
   }
   else if ( GM_getValue( 'sort' ) !== false ) {
-    GM_setValue( 'sort', true );
+    GM_setValue(
+      'sort',
+      true
+    );
   }
 };
 
@@ -151,9 +172,9 @@ const getNum = e => +e.getAttribute( 'aria-labelledby' ).match( /(?<num>\d+)$/u 
  * @returns {void}
  */
 const unsort = ( sidebar = required() ) => {
-  const children = filterCourses( [ ...sidebar.children ] ).sort(
-    ( a, b ) => getNum( a ) - getNum( b )
-  );
+  const children = filterCourses( [ ...sidebar.children ] ).sort( (
+    a, b
+  ) => getNum( a ) - getNum( b ) );
   sidebar.prepend( ...children );
 };
 
@@ -162,9 +183,7 @@ const unsort = ( sidebar = required() ) => {
  * @param {ArrayLike|Array} children Children that need to be filtered
  * @returns {Array} Filtered children
  */
-const filterCourses = children => [ ...children ].filter(
-  e => e.nodeName === 'LI' && e.classList.contains( 'type_course' )
-);
+const filterCourses = children => [ ...children ].filter( e => e.nodeName === 'LI' && e.classList.contains( 'type_course' ) );
 
 /**
  * Remove element from TM storage
@@ -186,7 +205,10 @@ const removeElement = (
 
   for ( let i = 0; i < newReplacers.length; i++ ) {
     if ( newReplacers[ i ][ 0 ] === name ) {
-      newReplacers.splice( i--, 1 );
+      newReplacers.splice(
+        i--,
+        1
+      );
     }
   }
 
@@ -194,15 +216,24 @@ const removeElement = (
   const newRemovers = origRemovers.slice();
   for ( let i = 0; i < newRemovers.length; i++ ) {
     if ( newRemovers[ i ] === name ) {
-      newRemovers.splice( i--, 1 );
+      newRemovers.splice(
+        i--,
+        1
+      );
     }
   }
 
   if ( setRemove === true && origRemovers.length !== newRemovers.length ) {
-    GM_setValue( 'remove', newRemovers );
+    GM_setValue(
+      'remove',
+      newRemovers
+    );
   }
   if ( setReplace === true && origReplacers.length !== newReplacers.length ) {
-    GM_setValue( 'replace', newReplacers );
+    GM_setValue(
+      'replace',
+      newReplacers
+    );
   }
 
   return {
@@ -217,15 +248,26 @@ const removeElement = (
  * @param {String} replaceWith String to replace old val with
  * @returns {void}
  */
-const addReplacer = ( name = required(), replaceWith = required() ) => {
-  const trimmedReplaceWith = replaceWith.trim().replace( /\s{2,}/gu, ' ' );
+const addReplacer = (
+  name = required(), replaceWith = required()
+) => {
+  const trimmedReplaceWith = replaceWith.trim().replace(
+    /\s{2,}/gu,
+    ' '
+  );
   if ( trimmedReplaceWith === '' || trimmedReplaceWith === name ) {
     removeElement( name );
   }
   else {
-    const { replace: replacers } = removeElement( name, true, false );
+    const { replace: replacers } = removeElement(
+      name,
+      true,
+      false
+    );
     replacers.push( [ name, trimmedReplaceWith ] );
-    replacers.sort( ( a, b ) => {
+    replacers.sort( (
+      a, b
+    ) => {
       const aText = a[ 0 ].toLowerCase();
       const bText = b[ 0 ].toLowerCase();
       return aText < bText
@@ -234,7 +276,10 @@ const addReplacer = ( name = required(), replaceWith = required() ) => {
           ? 1
           : 0;
     } );
-    GM_setValue( 'replace', replacers );
+    GM_setValue(
+      'replace',
+      replacers
+    );
   }
 };
 /**
@@ -243,8 +288,14 @@ const addReplacer = ( name = required(), replaceWith = required() ) => {
  * @returns {void}
  */
 const addRemover = ( name = required() ) => {
-  const removers = removeElement( name, false, true ).remove.concat( name );
-  removers.sort( ( a, b ) => {
+  const removers = removeElement(
+    name,
+    false,
+    true
+  ).remove.concat( name );
+  removers.sort( (
+    a, b
+  ) => {
     const aText = a.toLowerCase();
     const bText = b.toLowerCase();
     return aText < bText
@@ -253,7 +304,10 @@ const addRemover = ( name = required() ) => {
         ? 1
         : 0;
   } );
-  GM_setValue( 'remove', removers );
+  GM_setValue(
+    'remove',
+    removers
+  );
 };
 
 /**
@@ -261,7 +315,7 @@ const addRemover = ( name = required() ) => {
  * @param {Document} context Context where sidebar can be found
  * @returns {HTMLElement} Sidebar
  */
-const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' );
+const getSidebar = context => context.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
 
 /**
  * Returns only values from origArr that aren't in compareTo
@@ -269,10 +323,9 @@ const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_
  * @param {Array} compareTo Array compared to
  * @returns {Array} Unique values in origArr
  */
-const compareReplacers = ( origArr, compareTo ) => origArr.filter( curOrig => compareTo.every(
-  curCompareTo => curOrig[ 0 ] !== curCompareTo[ 0 ] || curOrig[ 1 ] !== curCompareTo[ 1 ]
-)
-);
+const compareReplacers = (
+  origArr, compareTo
+) => origArr.filter( curOrig => compareTo.every( curCompareTo => curOrig[ 0 ] !== curCompareTo[ 0 ] || curOrig[ 1 ] !== curCompareTo[ 1 ] ) );
 
 /**
  * Update sidebar i.e. set names correctly, remove all elements that should be, sort or unsort
@@ -282,7 +335,9 @@ const compareReplacers = ( origArr, compareTo ) => origArr.filter( curOrig => co
  * @param {Boolean} [remote=true] Whether storage was updated in current or remote tab
  * @returns {void}
  */
-const refresh = ( name, oldVal, newVal, remote = true ) => {
+const refresh = (
+  name, oldVal, newVal, remote = true
+) => {
   if (
     remote
     && !( /^\/cleanmoodle/iu ).test( location.pathname )
@@ -290,7 +345,10 @@ const refresh = ( name, oldVal, newVal, remote = true ) => {
   ) {
     const sidebar = getSidebar( document );
     if ( name === 'replace' ) {
-      const oldDiff = compareReplacers( oldVal, newVal );
+      const oldDiff = compareReplacers(
+        oldVal,
+        newVal
+      );
       for ( let i = 0; i < oldDiff.length; i++ ) {
         const element = sidebar
           .querySelector( `a[title="${ oldDiff[ i ][ 0 ] }` )
@@ -298,9 +356,7 @@ const refresh = ( name, oldVal, newVal, remote = true ) => {
         if ( element !== null && element !== undefined ) {
           const liClassList = element.classList;
           if ( liClassList.contains( 'item_with_icon' ) ) {
-            element.getElementsByTagName(
-              'span'
-            )[ 0 ].textContent = element.getElementsByTagName( 'a' )[ 0 ].title;
+            element.getElementsByTagName( 'span' )[ 0 ].textContent = element.getElementsByTagName( 'a' )[ 0 ].title;
           }
           else {
             const anchor = element.getElementsByTagName( 'a' )[ 0 ];
@@ -308,9 +364,15 @@ const refresh = ( name, oldVal, newVal, remote = true ) => {
           }
         }
       }
-      const newDiff = compareReplacers( newVal, oldVal );
+      const newDiff = compareReplacers(
+        newVal,
+        oldVal
+      );
       for ( let i = 0; i < newDiff.length; i++ ) {
-        replace( ...newDiff[ i ], sidebar );
+        replace(
+          ...newDiff[ i ],
+          sidebar
+        );
       }
       refresh( 'sort' );
     }
@@ -324,7 +386,10 @@ const refresh = ( name, oldVal, newVal, remote = true ) => {
       if ( oldDiff.length === 0 ) {
         const newDiff = newVal.filter( e => oldVal.indexOf( e ) === -1 );
         for ( let i = 0; i < newDiff.length; i++ ) {
-          remove( newDiff[ i ], sidebar );
+          remove(
+            newDiff[ i ],
+            sidebar
+          );
         }
       }
       else if ( sidebar === null ) {
@@ -334,7 +399,10 @@ const refresh = ( name, oldVal, newVal, remote = true ) => {
         fetch( location.href )
           .then( e => e.text() )
           .then( e => {
-            const parsed = new DOMParser().parseFromString( e, 'text/html' );
+            const parsed = new DOMParser().parseFromString(
+              e,
+              'text/html'
+            );
             sidebar.replaceWith( getSidebar( parsed ) );
             dispatchEvent( new Event( 'cleanMoodleRewrite' ) );
             dispatchEvent( new Event( 'customIconsRewrite' ) );
@@ -352,7 +420,9 @@ const refresh = ( name, oldVal, newVal, remote = true ) => {
  * @param {*} sidebar sidebar where element can be found
  * @returns {void}
  */
-const setupCustomRemove = ( name = required(), sidebar = required() ) => {
+const setupCustomRemove = (
+  name = required(), sidebar = required()
+) => {
   const element = sidebar.querySelector( `a[title="${ name }"]` );
   if ( element === null ) {
     removeElement( name );
@@ -361,7 +431,10 @@ const setupCustomRemove = ( name = required(), sidebar = required() ) => {
   else {
     element
       .getElementsByTagName( 'i' )[ 0 ]
-      .classList.replace( 'fa-check', 'fa-times' );
+      .classList.replace(
+        'fa-check',
+        'fa-times'
+      );
     element.style.color = 'red';
   }
 };
@@ -437,21 +510,28 @@ const selectCourse = e => {
     selectedCourseDiv.appendChild( p );
     span.contentEditable = true;
     span.id = 'spanEditable';
-    selectedCourseDiv.dataset.selectedCourse = p.getElementsByTagName(
-      'a'
-    )[ 0 ].title;
+    selectedCourseDiv.dataset.selectedCourse = p.getElementsByTagName( 'a' )[ 0 ].title;
 
-    p.addEventListener( 'keydown', updateSelectedCourse );
+    p.addEventListener(
+      'keydown',
+      updateSelectedCourse
+    );
 
     anchor.style.color = '';
-    icon.classList.remove( 'fa-check', 'fa-times' );
+    icon.classList.remove(
+      'fa-check',
+      'fa-times'
+    );
     icon.classList.add( 'fa-graduation-cap' );
 
     selectSpan();
 
     const style = document.getElementById( 'spanEditableStyle' );
     style.textContent = `#spanEditable:empty::after{
-        content: '${ lang.spanAfter.replace( '{{{s}}}', anchor.title ) }';
+        content: '${ lang.spanAfter.replace(
+    '{{{s}}}',
+    anchor.title
+  ) }';
     }`;
   }
 };
@@ -474,7 +554,10 @@ const updateSelectedCourse = e => {
       const replaceWith = document.getElementById( 'spanEditable' ).textContent;
       const name = selectedCourse.dataset.selectedCourse;
 
-      addReplacer( name, replaceWith );
+      addReplacer(
+        name,
+        replaceWith
+      );
       selectedCourse.dataset.selectedCourse = null;
       while ( selectedCourse.lastChild ) {
         selectedCourse.removeChild( selectedCourse.lastChild );
@@ -492,7 +575,10 @@ const updateSelectedCourse = e => {
  */
 const updateSort = () => {
   const checkbox = document.getElementById( 'sortCheckbox' );
-  GM_setValue( 'sort', checkbox.checked );
+  GM_setValue(
+    'sort',
+    checkbox.checked
+  );
 
   document.querySelector( 'label[for="sortCheckbox"]' ).textContent
     = lang.sorting[ checkbox.checked
@@ -524,7 +610,10 @@ const cleanSetup = ( isNewPage = true ) => {
   /* Turn all icons into ticks ✓ and make text green*/
   const icons = sidebar.getElementsByTagName( 'i' );
   for ( let i = 0; i < icons.length; i++ ) {
-    icons[ i ].classList.remove( 'fa-graduation-cap', 'fa-times' );
+    icons[ i ].classList.remove(
+      'fa-graduation-cap',
+      'fa-times'
+    );
     icons[ i ].classList.add( 'fa-check' );
     icons[ i ].closest( 'a' ).style.color = 'green';
   }
@@ -543,27 +632,43 @@ const cleanSetup = ( isNewPage = true ) => {
   const replacers = GM_getValue( 'replace' );
   if ( Array.isArray( replacers ) ) {
     for ( let i = 0; i < replacers.length; i++ ) {
-      replace( ...replacers[ i ], sidebar, true );
+      replace(
+        ...replacers[ i ],
+        sidebar,
+        true
+      );
     }
   }
   else {
-    GM_setValue( 'replace', [] );
+    GM_setValue(
+      'replace',
+      []
+    );
   }
 
   const removers = GM_getValue( 'remove' );
   if ( Array.isArray( removers ) ) {
     for ( let i = 0; i < removers.length; i++ ) {
-      setupCustomRemove( removers[ i ], sidebar );
+      setupCustomRemove(
+        removers[ i ],
+        sidebar
+      );
     }
   }
   else {
-    GM_setValue( 'remove', [] );
+    GM_setValue(
+      'remove',
+      []
+    );
   }
 
   sort( sidebar );
 
   if ( isNewPage ) {
-    sidebar.addEventListener( 'click', sidebarClick );
+    sidebar.addEventListener(
+      'click',
+      sidebarClick
+    );
   }
 
   /* Remove links */
@@ -629,7 +734,11 @@ i.fa-undo {
   GM_addStyle( '#spanEditable:empty::after{content:"Reset to null"}' ).id
     = 'spanEditableStyle';
 
-  history.replaceState( {}, '', '/cleanMoodleRewrite/' );
+  history.replaceState(
+    {},
+    '',
+    '/cleanMoodleRewrite/'
+  );
 
   document.title = lang.title;
 
@@ -640,7 +749,10 @@ i.fa-undo {
   fetch( '/' )
     .then( e => e.text() )
     .then( e => {
-      const parsed = new DOMParser().parseFromString( e, 'text/html' );
+      const parsed = new DOMParser().parseFromString(
+        e,
+        'text/html'
+      );
 
       const sidebar = parsed.getElementById( 'inst4' );
       const mainRegion = parsed.getElementById( 'region-main-box' );
@@ -686,7 +798,10 @@ i.fa-undo {
       const saveButton = document.createElement( 'button' );
       saveButton.textContent = lang.saveButton;
       saveButton.style.userSelect = 'none';
-      saveButton.addEventListener( 'click', updateSelectedCourse );
+      saveButton.addEventListener(
+        'click',
+        updateSelectedCourse
+      );
       replaceLi.appendChild( saveButton );
 
       mainRegion.appendChild( replaceLi );
@@ -705,14 +820,20 @@ i.fa-undo {
       sortCheckbox.type = 'checkbox';
       sortCheckbox.id = 'sortCheckbox';
       sortCheckbox.checked = GM_getValue( 'sort' );
-      sortCheckbox.addEventListener( 'change', updateSort );
+      sortCheckbox.addEventListener(
+        'change',
+        updateSort
+      );
       inputDiv.appendChild( sortCheckbox );
 
       const label = document.createElement( 'label' );
       label.textContent = lang.sorting[ GM_getValue( 'sort' )
         ? 'sorting'
         : 'not' ];
-      label.setAttribute( 'for', 'sortCheckbox' );
+      label.setAttribute(
+        'for',
+        'sortCheckbox'
+      );
       label.style.marginLeft = '5px';
       inputDiv.appendChild( label );
 
@@ -734,14 +855,26 @@ const settingsGear = ( sidebar = required() ) => {
     const anchor = document.createElement( 'a' );
     anchor.target = '_blank';
     anchor.href = '/cleanMoodleRewrite/';
-    anchor.addEventListener( 'click', e => {
-      e.stopPropagation();
-      e.preventDefault();
-      open( '/cleanMoodleRewrite/', '_blank' );
-    } );
+    anchor.addEventListener(
+      'click',
+      e => {
+        e.stopPropagation();
+        e.preventDefault();
+        open(
+          '/cleanMoodleRewrite/',
+          '_blank'
+        );
+      }
+    );
 
     const icon = document.createElement( 'i' );
-    icon.classList.add( 'icon', 'fa', 'fa-fw', 'navicon', 'fa-cogs' );
+    icon.classList.add(
+      'icon',
+      'fa',
+      'fa-fw',
+      'navicon',
+      'fa-cogs'
+    );
     icon.style.marginLeft = '5px';
     anchor.appendChild( icon );
     p.appendChild( anchor );
@@ -762,66 +895,113 @@ const selectSpan = position => {
     : span.textContent.length;
 
   span.focus();
-  range.setStart( span.childNodes[ 0 ], start );
+  range.setStart(
+    span.childNodes[ 0 ],
+    start
+  );
   range.collapse( true );
   sel.removeAllRanges();
   sel.addRange( range );
 };
 
-addEventListener( 'cleanMoodleRewrite', () => {
-  const sidebar = getSidebar( document );
+addEventListener(
+  'cleanMoodleRewrite',
+  () => {
+    const sidebar = getSidebar( document );
 
-  if ( sidebar !== null ) {
-    const replacers = GM_getValue( 'replace' );
-    if ( Array.isArray( replacers ) ) {
-      for ( let i = 0; i < replacers.length; i++ ) {
-        replace( ...replacers[ i ], sidebar );
+    if ( sidebar !== null ) {
+      const replacers = GM_getValue( 'replace' );
+      if ( Array.isArray( replacers ) ) {
+        for ( let i = 0; i < replacers.length; i++ ) {
+          replace(
+            ...replacers[ i ],
+            sidebar
+          );
+        }
       }
-    }
-    else {
-      GM_setValue( 'replace', [] );
-    }
-
-    const removers = GM_getValue( 'remove' );
-    if ( Array.isArray( removers ) ) {
-      for ( let i = 0; i < removers.length; i++ ) {
-        remove( removers[ i ], sidebar );
+      else {
+        GM_setValue(
+          'replace',
+          []
+        );
       }
-    }
-    else {
-      GM_setValue( 'remove', [] );
-    }
 
-    sort( sidebar );
+      const removers = GM_getValue( 'remove' );
+      if ( Array.isArray( removers ) ) {
+        for ( let i = 0; i < removers.length; i++ ) {
+          remove(
+            removers[ i ],
+            sidebar
+          );
+        }
+      }
+      else {
+        GM_setValue(
+          'remove',
+          []
+        );
+      }
 
-    settingsGear( sidebar );
+      sort( sidebar );
+
+      settingsGear( sidebar );
+    }
   }
-} );
+);
 
 if ( ( /^\/cleanmoodlerewrite/iu ).test( location.pathname ) ) {
   document.readyState === 'complete'
     ? setup()
-    : addEventListener( 'DOMContentLoaded', setup );
+    : addEventListener(
+      'DOMContentLoaded',
+      setup
+    );
 }
 else if ( !( /^\/customicons/iu ).test( location.pathname ) ) {
-  GM_registerMenuCommand( lang.openSettings, () => {
-    open( 'https://moodle.ksasz.ch/cleanMoodleRewrite/' );
-  } );
-  GM_registerMenuCommand( lang.toggleSorting, () => {
-    const val = GM_getValue( 'sort' );
-    GM_setValue( 'sort', !val );
-    refresh( 'sort', val, !val, true );
-  } );
+  GM_registerMenuCommand(
+    lang.openSettings,
+    () => {
+      open( 'https://moodle.ksasz.ch/cleanMoodleRewrite/' );
+    }
+  );
+  GM_registerMenuCommand(
+    lang.toggleSorting,
+    () => {
+      const val = GM_getValue( 'sort' );
+      GM_setValue(
+        'sort',
+        !val
+      );
+      refresh(
+        'sort',
+        val,
+        !val,
+        true
+      );
+    }
+  );
 
   const cleanMoodleEvent = new Event( 'cleanMoodleRewrite' );
 
   document.readyState === 'complete'
     ? dispatchEvent( cleanMoodleEvent )
-    : addEventListener( 'DOMContentLoaded', () => {
-      dispatchEvent( cleanMoodleEvent );
-    } );
+    : addEventListener(
+      'DOMContentLoaded',
+      () => {
+        dispatchEvent( cleanMoodleEvent );
+      }
+    );
 }
 
-GM_addValueChangeListener( 'replace', refresh );
-GM_addValueChangeListener( 'remove', refresh );
-GM_addValueChangeListener( 'sort', refresh );
+GM_addValueChangeListener(
+  'replace',
+  refresh
+);
+GM_addValueChangeListener(
+  'remove',
+  refresh
+);
+GM_addValueChangeListener(
+  'sort',
+  refresh
+);

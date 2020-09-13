@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Custom Icons Rewrite
-// @version      2020.09.10a
+// @version      2020.09.13a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -13,9 +13,9 @@
 // @downloadURL  https://github.com/melusc/lusc/raw/master/Custom%20Icons%20Rewrite.user.js
 // @updateURL    https://github.com/melusc/lusc/raw/master/Custom%20Icons%20Rewrite.user.js
 // ==/UserScript==
-/* jshint esversion: 10 */
+/* eslint-disable require-jsdoc */
 'use strict';
-const getSidebar = ( ctx = required( 'Context' ) ) => ctx.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' );
+const getSidebar = context => context.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
 
 const required = ( name = 'Variable' ) => new Error( `${ name } is not defined` );
 
@@ -25,11 +25,20 @@ const run = ( addRemoveIcon = false ) => {
   if ( Array.isArray( references ) ) {
     if ( sidebar !== null ) {
       for ( let i = 0; i < references.length; i++ ) {
-        modIcon( references[ i ], sidebar, addRemoveIcon );
+        modIcon(
+          references[ i ],
+          sidebar,
+          addRemoveIcon
+        );
       }
     }
   }
-  else { GM_setValue( 'references', [] ); }
+  else {
+    GM_setValue(
+      'references',
+      []
+    );
+  }
 };
 
 const modIcon = (
@@ -43,22 +52,26 @@ const modIcon = (
     const blobURI = getBlob( dataURI );
     blobURI.then( src => {
       try {
-        const icon = CustomElement( 'img', {
-          class: 'icon navicon customIcon',
-          'aria-hidden': true,
-          src,
-          'tab-index': -1,
-        } );
+        const icon = CustomElement(
+          'img',
+          {
+            class: 'icon navicon customIcon',
+            'aria-hidden': true,
+            src,
+            'tab-index': -1,
+          }
+        );
         element.firstChild.replaceWith( icon );
         if ( addRemoveIcon === true ) {
-          element.firstChild.after(
-            CustomElement( 'i', {
+          element.firstChild.after( CustomElement(
+            'i',
+            {
               class: 'icon fa fa-times fa-fw navicon remove',
               'aria-hidden': true,
               style: 'color: red;',
               title: 'Remove icon for current element',
-            } )
-          );
+            }
+          ) );
         }
         icon.onload = () => {
           URL.revokeObjectURL( icon.src );
@@ -77,14 +90,19 @@ const getBlob = ( dataURI = required( 'dataURI' ) ) => new Promise( resolve => {
     uintArray[ i ] = byteString.charCodeAt( i );
   }
   const mime = dataURI.match( /(?<=data:)\w+\/[\w.]+(?=;)/u )[ 0 ];
-  const blob = new Blob( [ uintArray ], {
-    type: mime,
-  } );
+  const blob = new Blob(
+    [ uintArray ],
+    {
+      type: mime,
+    }
+  );
   const objectUrl = URL.createObjectURL( blob );
   resolve( objectUrl );
 } );
 
-const range = ( end, start = 0, step = 1 ) => {
+const range = (
+  end, start = 0, step = 1
+) => {
   function* generateRange() {
     let x = start - step;
     while ( x < end - step ) { yield x += step; }
@@ -96,15 +114,27 @@ const range = ( end, start = 0, step = 1 ) => {
 
 const randomId = ( length = 10 ) => {
   const str = String.fromCharCode(
-    ...range( 58, 48 ), // 0-9
-    ...range( 91, 65 ), // A-Z
-    ...range( 123, 97 ), // A-z
+    ...range(
+      58,
+      48
+    ), // 0-9
+    ...range(
+      91,
+      65
+    ), // A-Z
+    ...range(
+      123,
+      97
+    ), // A-z
     45, // '-'
     95 // '_'
   );
 
   if ( !Array.isArray( GM_getValue( 'references' ) ) ) {
-    GM_setValue( 'references', [] );
+    GM_setValue(
+      'references',
+      []
+    );
   }
   const allIDs = GM_getValue( 'references' ).map( e => e[ 1 ] );
 
@@ -121,20 +151,30 @@ const randomId = ( length = 10 ) => {
 const setup = () => {
   document.title = 'Custom Icons Rewrite Setup';
 
-  history.replaceState( {}, '', '/customIconsRewrite/' );
+  history.replaceState(
+    {},
+    '',
+    '/customIconsRewrite/'
+  );
 
   document.body.clear();
 
   document.head.append(
-    CustomElement( 'link', {
-      rel: 'stylesheet',
-      type: 'text/css',
-      href: '/theme/styles.php/classic/1588340020_1588339031/all',
-    } ), // Default stylesheet of Moodle
-    CustomElement( 'link', {
-      rel: 'shortcut icon',
-      href: '/theme/image.php/classic/theme/1588340020/favicon',
-    } )
+    CustomElement(
+      'link',
+      {
+        rel: 'stylesheet',
+        type: 'text/css',
+        href: '/theme/styles.php/classic/1588340020_1588339031/all',
+      }
+    ), // Default stylesheet of Moodle
+    CustomElement(
+      'link',
+      {
+        rel: 'shortcut icon',
+        href: '/theme/image.php/classic/theme/1588340020/favicon',
+      }
+    )
   );
 
   GM_addStyle( `
@@ -166,7 +206,10 @@ ul.section {
   fetch( '/' )
     .then( e => e.text() )
     .then( e => {
-      const parsed = new DOMParser().parseFromString( e, 'text/html' );
+      const parsed = new DOMParser().parseFromString(
+        e,
+        'text/html'
+      );
 
       let cur = parsed.getElementById( 'inst4' );
       let tree = cur.cloneNode( true );
@@ -185,7 +228,9 @@ ul.section {
         .prepend( parsed.getElementById( 'region-main-box' ) );
 
       const sidebar = getSidebar( document );
-      const sidebarChildren = [ ...sidebar.children ].sort( ( a, b ) => {
+      const sidebarChildren = [ ...sidebar.children ].sort( (
+        a, b
+      ) => {
         const getText = e => e.getElementsByTagName( 'a' )[ 0 ].textContent.toLowerCase();
 
         const aText = getText( a );
@@ -200,8 +245,13 @@ ul.section {
         sidebar.append( sidebarChildren[ i ] );
       }
 
-      const dashboard = [ ...document.getElementsByTagName( 'i' ) ].filter( e => e.classList.contains( 'icon', 'fa', 'fa-tachometer', 'fa-fw', 'navicon' )
-      )[ 0 ];
+      const dashboard = [ ...document.getElementsByTagName( 'i' ) ].filter( e => e.classList.contains(
+        'icon',
+        'fa',
+        'fa-tachometer',
+        'fa-fw',
+        'navicon'
+      ) )[ 0 ];
       if ( dashboard !== undefined ) {
         dashboard.closest( 'li' ).remove();
       }
@@ -215,12 +265,13 @@ ul.section {
 
       run( true );
 
-      sidebar.addEventListener( 'click', handleSidebarClick );
+      sidebar.addEventListener(
+        'click',
+        handleSidebarClick
+      );
     } )
     .then( () => {
-      const mainRegion = document.querySelector(
-        'div.box.py-3.generalbox.sitetopic > ul.section.img-text'
-      );
+      const mainRegion = document.querySelector( 'div.box.py-3.generalbox.sitetopic > ul.section.img-text' );
 
       mainRegion.clear();
 
@@ -243,52 +294,86 @@ ul.section {
         )
       );
 
-      const form = CustomElement( 'form', {
-        id: 'form',
-      } );
+      const form = CustomElement(
+        'form',
+        {
+          id: 'form',
+        }
+      );
 
-      const urlDiv = CustomElement( 'div', { class: 'margin-top' } );
-      const urlInput = CustomElement( 'input', {
-        type: 'url',
-        id: 'urlInput',
-        placeholder: 'URL to image',
-        class: 'padding inout',
-      } );
+      const urlDiv = CustomElement(
+        'div',
+        { class: 'margin-top' }
+      );
+      const urlInput = CustomElement(
+        'input',
+        {
+          type: 'url',
+          id: 'urlInput',
+          placeholder: 'URL to image',
+          class: 'padding inout',
+        }
+      );
       urlDiv.append(
-        CustomElement( 'h3', {}, { textContent: 'Upload image from url' } ),
+        CustomElement(
+          'h3',
+          {},
+          { textContent: 'Upload image from url' }
+        ),
         urlInput
       );
 
-      const fileDiv = CustomElement( 'div', { class: 'margin-top' } );
-      fileDiv.append(
-        CustomElement( 'h3', {}, { textContent: 'Upload image' } )
+      const fileDiv = CustomElement(
+        'div',
+        { class: 'margin-top' }
       );
-      const fileInput = CustomElement( 'input', {
-        type: 'file',
-        id: 'fileInput',
-        class: 'input',
-      } );
+      fileDiv.append( CustomElement(
+        'h3',
+        {},
+        { textContent: 'Upload image' }
+      ) );
+      const fileInput = CustomElement(
+        'input',
+        {
+          type: 'file',
+          id: 'fileInput',
+          class: 'input',
+        }
+      );
       const resetFileButton = CustomElement(
         'button',
         { class: 'input' },
         { textContent: 'Reset file' }
       );
-      resetFileButton.addEventListener( 'click', resetFile );
-      fileDiv.append( fileInput, resetFileButton );
+      resetFileButton.addEventListener(
+        'click',
+        resetFile
+      );
+      fileDiv.append(
+        fileInput,
+        resetFileButton
+      );
 
-      const selectCopyDiv = CustomElement( 'div', { class: 'margin-top' } );
-      const selectCopy = CustomElement( 'select', { id: 'selectCopy' } );
-      selectCopy.add( CustomElement( 'option', { value: null } ) );
+      const selectCopyDiv = CustomElement(
+        'div',
+        { class: 'margin-top' }
+      );
+      const selectCopy = CustomElement(
+        'select',
+        { id: 'selectCopy' }
+      );
+      selectCopy.add( CustomElement(
+        'option',
+        { value: null }
+      ) );
 
       const references = GM_getValue( 'references' );
       for ( let i = 0; i < references.length; i++ ) {
-        selectCopy.add(
-          CustomElement(
-            'option',
-            { value: references[ i ][ 1 ] },
-            { textContent: references[ i ][ 0 ] }
-          )
-        );
+        selectCopy.add( CustomElement(
+          'option',
+          { value: references[ i ][ 1 ] },
+          { textContent: references[ i ][ 0 ] }
+        ) );
       }
       selectCopyDiv.append(
         CustomElement(
@@ -299,17 +384,31 @@ ul.section {
         selectCopy
       );
 
-      const saveDiv = CustomElement( 'div', { class: 'margin-top' } );
+      const saveDiv = CustomElement(
+        'div',
+        { class: 'margin-top' }
+      );
       const saveButton = CustomElement(
         'button',
         {},
         { textContent: 'Save' }
       );
-      saveButton.addEventListener( 'click', saveValues );
+      saveButton.addEventListener(
+        'click',
+        saveValues
+      );
       saveDiv.append( saveButton );
 
-      form.append( urlDiv, fileDiv, selectCopyDiv, saveDiv );
-      form.addEventListener( 'input', handleInput );
+      form.append(
+        urlDiv,
+        fileDiv,
+        selectCopyDiv,
+        saveDiv
+      );
+      form.addEventListener(
+        'input',
+        handleInput
+      );
 
       li.append( form );
 
@@ -329,25 +428,32 @@ ul.section {
         )
       );
 
-      const buttonsDiv = CustomElement( 'div', { id: 'buttonsDiv' } );
-      buttonsDiv.addEventListener( 'click', handleRemove );
+      const buttonsDiv = CustomElement(
+        'div',
+        { id: 'buttonsDiv' }
+      );
+      buttonsDiv.addEventListener(
+        'click',
+        handleRemove
+      );
 
       const sidebar = getSidebar( document );
       if ( !Array.isArray( GM_getValue( 'references' ) ) ) {
-        GM_setValue( 'references', [] );
+        GM_setValue(
+          'references',
+          []
+        );
       }
       const references = GM_getValue( 'references' );
       for ( let i = 0; i < references.length; i++ ) {
         const cur = references[ i ];
 
         if ( sidebar.querySelector( `a[title="${ cur[ 0 ] }"]` ) === null ) {
-          buttonsDiv.append(
-            CustomElement(
-              'button',
-              { 'data-name': cur[ 0 ], class: 'courses-left-btn' },
-              { textContent: `Remove icon for ${ cur[ 0 ] }` }
-            )
-          );
+          buttonsDiv.append( CustomElement(
+            'button',
+            { 'data-name': cur[ 0 ], class: 'courses-left-btn' },
+            { textContent: `Remove icon for ${ cur[ 0 ] }` }
+          ) );
         }
       }
       li.hidden = buttonsDiv.childNodes.length === 0;
@@ -362,20 +468,33 @@ ul.section {
       const li = CustomElement( 'li' );
       li.append(
         CustomElement( 'hr' ),
-        CustomElement( 'h2', {}, { textContent: 'Clear all icons' } )
+        CustomElement(
+          'h2',
+          {},
+          { textContent: 'Clear all icons' }
+        )
       );
       const clearButton = CustomElement(
         'button',
         { id: 'clearButton' },
         { textContent: 'Clear all icons' }
       );
-      clearButton.addEventListener( 'click', () => {
-        if ( confirm( 'Are you sure?\nThis action is irreversible' ) ) {
-          GM_setValue( 'values', {} );
-          GM_setValue( 'references', [] );
-          reset();
+      clearButton.addEventListener(
+        'click',
+        () => {
+          if ( confirm( 'Are you sure?\nThis action is irreversible' ) ) {
+            GM_setValue(
+              'values',
+              {}
+            );
+            GM_setValue(
+              'references',
+              []
+            );
+            reset();
+          }
         }
-      } );
+      );
 
       li.hidden = GM_getValue( 'references' ).length === 0;
 
@@ -414,12 +533,18 @@ const saveValues = e => {
       if (
         Object.fromEntries( GM_getValue( 'references' ) )[ name ] !== selectCopy.value
       ) {
-        addToStorage( name, selectCopy.value );
+        addToStorage(
+          name,
+          selectCopy.value
+        );
       }
     }
     else if ( fileInput.files[ 0 ] ) {
       const file = fileInput.files[ 0 ];
-      addToStorage( name, file );
+      addToStorage(
+        name,
+        file
+      );
     }
     else {
       try {
@@ -430,7 +555,10 @@ const saveValues = e => {
           responseType: 'blob',
           anonymous: true,
           onload: e => {
-            addToStorage( name, e.response );
+            addToStorage(
+              name,
+              e.response
+            );
           },
           onerror: e => {
             alert( e.message );
@@ -443,20 +571,29 @@ const saveValues = e => {
     }
   }
 };
-const addToStorage = ( name = required(), data = required() ) => {
-  const arrs = removeElement( name, {
-    references: false,
-    reset: false,
-  } );
+const addToStorage = (
+  name = required(), data = required()
+) => {
+  const arrs = removeElement(
+    name,
+    {
+      references: false,
+      reset: false,
+    }
+  );
   if ( typeof data === 'string' ) {
     const references = arrs.references.reduce(
-      ( acc, cur ) => acc.every( e => e[ 0 ] !== cur[ 0 ] )
+      (
+        acc, cur
+      ) => acc.every( e => e[ 0 ] !== cur[ 0 ] )
         ? acc.concat( [ cur ] )
         : acc,
       []
     );
     references.push( [ name, data ] );
-    references.sort( ( a, b ) => {
+    references.sort( (
+      a, b
+    ) => {
       const aText = a[ 0 ].toLowerCase();
       const bText = b[ 0 ].toLowerCase();
       return aText < bText
@@ -468,7 +605,9 @@ const addToStorage = ( name = required(), data = required() ) => {
     GM_setValue(
       'references',
       references.reduce(
-        ( acc, cur ) => acc.every( e => e[ 0 ] !== cur[ 0 ] )
+        (
+          acc, cur
+        ) => acc.every( e => e[ 0 ] !== cur[ 0 ] )
           ? acc.concat( [ cur ] )
           : acc,
         []
@@ -478,28 +617,39 @@ const addToStorage = ( name = required(), data = required() ) => {
   }
   else if ( ( /image\/(?:png|jpe?g)/iu ).test( data.type ) ) {
     const fr = new FileReader();
-    fr.addEventListener( 'load', () => {
-      const id = randomId( 10 );
-      const { references } = arrs;
-      references.push( [ name, id ] );
-      references.sort( ( a, b ) => {
-        const aText = a[ 0 ].toLowerCase();
-        const bText = b[ 0 ].toLowerCase();
+    fr.addEventListener(
+      'load',
+      () => {
+        const id = randomId( 10 );
+        const { references } = arrs;
+        references.push( [ name, id ] );
+        references.sort( (
+          a, b
+        ) => {
+          const aText = a[ 0 ].toLowerCase();
+          const bText = b[ 0 ].toLowerCase();
 
-        return aText < bText
-          ? -1
-          : aText > bText
-            ? 1
-            : 0;
-      } );
-      const values = Object.fromEntries( arrs.values );
-      values[ id ] = fr.result;
+          return aText < bText
+            ? -1
+            : aText > bText
+              ? 1
+              : 0;
+        } );
+        const values = Object.fromEntries( arrs.values );
+        values[ id ] = fr.result;
 
-      GM_setValue( 'values', values );
-      GM_setValue( 'references', references );
+        GM_setValue(
+          'values',
+          values
+        );
+        GM_setValue(
+          'references',
+          references
+        );
 
-      reset();
-    } );
+        reset();
+      }
+    );
     fr.readAsDataURL( data );
   }
   else {
@@ -527,9 +677,7 @@ const handleSidebarClick = e => {
   else if (
     e.target.closest( 'li.type_course.depth_3.item_with_icon' ) !== null
   ) {
-    addSelectedCourse(
-      e.target.closest( 'li.type_course.depth_3.item_with_icon' )
-    );
+    addSelectedCourse( e.target.closest( 'li.type_course.depth_3.item_with_icon' ) );
   }
 };
 const addSelectedCourse = e => {
@@ -539,19 +687,18 @@ const addSelectedCourse = e => {
 
   const element = e.firstChild.cloneNode( true );
   if ( element.getElementsByClassName( 'customIcon' )[ 0 ] !== undefined ) {
-    element.getElementsByClassName( 'customIcon' )[ 0 ].replaceWith(
-      CustomElement( 'i', {
+    element.getElementsByClassName( 'customIcon' )[ 0 ].replaceWith( CustomElement(
+      'i',
+      {
         class: 'icon fa fa-graduation-cap fa-fw navicon',
         'aria-hidden': true,
-      } )
-    );
+      }
+    ) );
   }
   element.getElementsByClassName( 'remove' ).remove();
   selectedCourseDiv.append( element );
 
-  selectedCourseDiv.dataset.selectedCourse = element.getElementsByTagName(
-    'a'
-  )[ 0 ].title;
+  selectedCourseDiv.dataset.selectedCourse = element.getElementsByTagName( 'a' )[ 0 ].title;
 
   const selectCopy = document.getElementById( 'selectCopy' );
   const selectCopyChildren = selectCopy.childNodes;
@@ -568,31 +715,51 @@ const addSelectedCourse = e => {
   } );
 };
 
-const removeElement = ( name = required( 'Name' ), options = {} ) => {
+const removeElement = (
+  name = required( 'Name' ), options = {}
+) => {
   if ( !Array.isArray( GM_getValue( 'references' ) ) ) {
-    GM_setValue( 'references', [] );
+    GM_setValue(
+      'references',
+      []
+    );
   }
   const references = GM_getValue( 'references' );
   for ( let i = 0; i < references.length; i++ ) {
     if ( references[ i ][ 0 ] === name ) {
-      references.splice( i--, 1 );
+      references.splice(
+        i--,
+        1
+      );
     }
   }
   if ( typeof GM_getValue( 'values' ) !== 'object' ) {
-    GM_setValue( 'values', {} );
+    GM_setValue(
+      'values',
+      {}
+    );
   }
   const values = Object.entries( GM_getValue( 'values' ) );
   for ( let i = 0; i < values.length; i++ ) {
     if ( references.every( reference => values[ i ][ 0 ] !== reference[ 1 ] ) ) {
-      values.splice( i--, 1 );
+      values.splice(
+        i--,
+        1
+      );
     }
   }
 
   if ( options.values !== false ) {
-    GM_setValue( 'values', Object.fromEntries( values ) );
+    GM_setValue(
+      'values',
+      Object.fromEntries( values )
+    );
   }
   if ( options.references !== false ) {
-    GM_setValue( 'references', references );
+    GM_setValue(
+      'references',
+      references
+    );
   }
 
   if ( options.reset !== false ) {
@@ -619,12 +786,13 @@ const reset = () => {
       if ( img.nextSibling !== null && img.nextSibling.nodeName === 'I' ) {
         img.nextSibling.remove();
       }
-      img.replaceWith(
-        CustomElement( 'i', {
+      img.replaceWith( CustomElement(
+        'i',
+        {
           class: 'icon fa fa-graduation-cap fa-fw navicon',
           'aria-hidden': true,
-        } )
-      );
+        }
+      ) );
     }
   }
 
@@ -641,20 +809,24 @@ const reset = () => {
 
   const selectCopy = document.getElementById( 'selectCopy' );
   selectCopy.clear();
-  selectCopy.add( CustomElement( 'option', { value: null } ) );
+  selectCopy.add( CustomElement(
+    'option',
+    { value: null }
+  ) );
 
   if ( !Array.isArray( GM_getValue( 'references' ) ) ) {
-    GM_setValue( 'references', [] );
+    GM_setValue(
+      'references',
+      []
+    );
   }
   const references = GM_getValue( 'references' );
   for ( let i = 0; i < references.length; i++ ) {
-    selectCopy.add(
-      CustomElement(
-        'option',
-        { value: references[ i ][ 1 ] },
-        { textContent: references[ i ][ 0 ] }
-      )
-    );
+    selectCopy.add( CustomElement(
+      'option',
+      { value: references[ i ][ 1 ] },
+      { textContent: references[ i ][ 0 ] }
+    ) );
   }
 
   handleInput();
@@ -665,13 +837,11 @@ const reset = () => {
     const cur = references[ i ];
 
     if ( sidebar.querySelector( `a[title="${ cur[ 0 ] }"]` ) === null ) {
-      buttonsDiv.append(
-        CustomElement(
-          'button',
-          { 'data-name': cur[ 0 ], class: 'courses-left-btn' },
-          { textContent: `Remove icon for ${ cur[ 0 ] }` }
-        )
-      );
+      buttonsDiv.append( CustomElement(
+        'button',
+        { 'data-name': cur[ 0 ], class: 'courses-left-btn' },
+        { textContent: `Remove icon for ${ cur[ 0 ] }` }
+      ) );
     }
   }
   buttonsDiv.closest( 'li' ).hidden = buttonsDiv.childNodes.length === 0;
@@ -689,7 +859,10 @@ const refresh = ( ...args ) => {
     fetch( location.href )
       .then( e => e.text() )
       .then( e => {
-        const parsed = new DOMParser().parseFromString( e, 'text/html' );
+        const parsed = new DOMParser().parseFromString(
+          e,
+          'text/html'
+        );
 
         getSidebar( document ).replaceWith( getSidebar( parsed ) );
 
@@ -700,7 +873,9 @@ const refresh = ( ...args ) => {
   }
 };
 
-const CustomElement = ( type, props = {} ) => {
+const CustomElement = (
+  type, props = {}
+) => {
   const element = document.createElement( type );
   const propEntries = Object.entries( props );
   for ( let i = 0; i < propEntries.length; i++ ) {
@@ -712,7 +887,10 @@ const CustomElement = ( type, props = {} ) => {
         element[ key ] = val;
         break;
       default:
-        element.setAttribute( key, val );
+        element.setAttribute(
+          key,
+          val
+        );
         break;
     }
   }
@@ -735,15 +913,33 @@ Element.prototype.clear = function () {
 };
 
 if ( ( /^\/customiconsrewrite/iu ).test( location.pathname ) ) {
-  addEventListener( 'DOMContentLoaded', setup );
+  addEventListener(
+    'DOMContentLoaded',
+    setup
+  );
 }
 else if ( !( /^\/cleanmooddle/iu ).test( location.pathname ) ) {
-  addEventListener( 'DOMContentLoaded', run );
-  addEventListener( 'customIconsRewrite', run );
+  addEventListener(
+    'DOMContentLoaded',
+    run
+  );
+  addEventListener(
+    'customIconsRewrite',
+    run
+  );
 
-  GM_registerMenuCommand( 'Open settings', () => {
-    open( 'https://moodle.ksasz.ch/customIconsRewrite/', '_blank' );
-  } );
+  GM_registerMenuCommand(
+    'Open settings',
+    () => {
+      open(
+        'https://moodle.ksasz.ch/customIconsRewrite/',
+        '_blank'
+      );
+    }
+  );
 
-  GM_addValueChangeListener( 'references', refresh );
+  GM_addValueChangeListener(
+    'references',
+    refresh
+  );
 }
