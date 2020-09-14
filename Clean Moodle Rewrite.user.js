@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.13a
+// @version      2020.09.14a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -312,10 +312,10 @@ const addRemover = ( name = required() ) => {
 
 /**
  * Get sidebar from any context
- * @param {Document} context Context where sidebar can be found
+ * @param {Document} ctx Context where sidebar can be found
  * @returns {HTMLElement} Sidebar
  */
-const getSidebar = context => context.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
+const getSidebar = ctx => ctx.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' ) ?? ctx.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
 
 /**
  * Returns only values from origArr that aren't in compareTo

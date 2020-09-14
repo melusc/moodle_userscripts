@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Custom Icons Rewrite
-// @version      2020.09.13a
+// @version      2020.09.14a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -15,7 +15,7 @@
 // ==/UserScript==
 /* eslint-disable require-jsdoc */
 'use strict';
-const getSidebar = context => context.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
+const getSidebar = ctx => ctx.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' ) ?? ctx.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
 
 const required = ( name = 'Variable' ) => new Error( `${ name } is not defined` );
 
