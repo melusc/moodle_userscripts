@@ -1,271 +1,604 @@
 // ==UserScript==
-// @name         Clean Moodle Rewrite
-// @version      2020.09.14a
+// @name         Moodle Custom Icons Rewrite
+// @version      2020.09.15a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
 // @grant        GM_getValue
-// @grant        GM_deleteValue
 // @grant        GM_addStyle
-// @grant        GM_registerMenuCommand
 // @grant        GM_addValueChangeListener
+// @grant        GM_registerMenuCommand
+// @grant        GM_xmlhttpRequest
 // @run-at       document-start
-// @downloadURL  https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20Rewrite.user.js
-// @updateURL    https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20Rewrite.user.js
+// @downloadURL  https://github.com/melusc/lusc/raw/master/Custom%20Icons%20Rewrite.user.js
+// @updateURL    https://github.com/melusc/lusc/raw/master/Custom%20Icons%20Rewrite.user.js
 // ==/UserScript==
+/* eslint-disable require-jsdoc */
 'use strict';
+const getSidebar = ctx => ctx.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' )
+  ?? ctx.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
 
-const lang = {
-  nonExistant: name => {
-    alert( `You appear to not be in "${ name }" anymore. ${ name } has been removed from your list.` );
-  },
-  selectCourse: 'Select course on left',
-  renameTitle: 'Rename course',
-  sortTitle: 'Sort sidebar',
-  saveButton: 'Save',
-  sorting: {
-    sorting: 'Sorting',
-    not: 'Not sorting',
-  },
-  title: 'Clean Moodle Rewrite Setup',
-  openSettings: 'Open settings',
-  toggleSorting: 'Toggle sorting',
-  spanAfter: 'Reset to "{{{s}}}"',
-};
+const required = ( name = 'Variable' ) => new Error( `${ name } is not defined` );
 
-/**
- * Throws error when called
- * Use in function arguments as default value
- * @param {string} e - The name of the variable
- * @returns {void}
- */
-const required = ( e = 'Variable' ) => {
-  throw new Error( `${ e } not defined` );
-};
-
-/**
- * Changes text of element with [title=name] to newName
- * @param {string} name Name of link
- * @param {string} newName Name to replace it with
- * @param {HTMLElement} sidebar HTMLElement where link can be found
- * @param {Boolean} [setupPage=false] If set to true will add FontAwesome undo icon
- * @returns {void}
- */
-const replace = (
-  name = required( 'name' ),
-  newName = required( 'newName' ),
-  sidebar = required( 'sidebar' ),
-  setupPage = false
-) => {
-  const element = sidebar.querySelector( `a[title="${ name }"]` );
-  if ( element === null ) {
-    removeElement(
-      name,
-      true
-    );
-    lang.nonExistant( name );
-  }
-  else {
-    const liClassList = element.closest( 'li' ).classList;
-    if ( liClassList.contains( 'item_with_icon' ) ) {
-      element.getElementsByTagName( 'span' )[ 0 ].textContent = newName;
-      if ( setupPage ) {
-        const icon = document.createElement( 'i' );
-        icon.classList.add(
-          'icon',
-          'fa',
-          'fa-fw',
-          'navicon',
-          'fa-undo'
+const run = ( addRemoveIcon = false ) => {
+  const sidebar = getSidebar( document );
+  const references = GM_getValue( 'references' );
+  if ( Array.isArray( references ) ) {
+    if ( sidebar !== null ) {
+      for ( let i = 0; i < references.length; i++ ) {
+        modIcon(
+          references[ i ],
+          sidebar,
+          addRemoveIcon
         );
-        element.getElementsByTagName( 'span' )[ 0 ].after( icon );
-      }
-    }
-    else if (
-      liClassList.contains( 'contains_branch' )
-      || liClassList.contains( 'current_branch' )
-    ) {
-      element.textContent = newName;
-      if ( setupPage ) {
-        const icon = document.createElement( 'i' );
-        icon.classList.add(
-          'icon',
-          'fa',
-          'fa-fw',
-          'navicon',
-          'fa-undo'
-        );
-        element.after( icon );
       }
     }
   }
-};
-
-/**
- * Removes element with [title=name]
- * @param {String} name Name of link
- * @param {HTMLElement} sidebar HTMLElement where link can be found
- * @returns {void}
- */
-const remove = (
-  name = required( 'name' ),
-  sidebar = required( 'sidebar' )
-) => {
-  const element = sidebar.querySelector( `a[title="${ name }"]` );
-  if ( element === null ) {
-    removeElement(
-      name,
-      true
-    );
-    lang.nonExistant( name );
-  }
   else {
-    const liClassList = element.closest( 'li' ).classList;
-    if (
-      !liClassList.contains( 'contains_branch' )
-      || !liClassList.contains( 'current_branch' )
-    ) {
-      sidebar.removeChild( element.closest( 'li' ) );
-    }
+    GM_setValue(
+      'references',
+      []
+    );
   }
 };
 
-/**
- * Sorts children of sidebar by textContent
- * @param {HTMLElement} sidebar HTMLElement where the children to be sorted can be found
- * @returns {void}
- */
-const sort = ( sidebar = required() ) => {
-  if ( GM_getValue( 'sort' ) === true ) {
-    const children = filterCourses( [ ...sidebar.children ] );
-    children.sort( (
-      a, b
-    ) => {
-      const aText = a.firstElementChild.textContent.toLowerCase();
-      const bText = b.firstElementChild.textContent.toLowerCase();
-      return aText < bText
-        ? -1
-        : aText > bText
-          ? 1
-          : 0;
+const modIcon = (
+  vals = required( 'vals' ),
+  sidebar = required( 'Sidebar' ),
+  addRemoveIcon = false
+) => {
+  const element = sidebar.querySelector( `a[title="${ vals[ 0 ] }"]` );
+  if ( element !== null && element.children.length > 0 ) {
+    const dataURI = GM_getValue( 'values' )[ vals[ 1 ] ];
+    const blobURI = getBlob( dataURI );
+    blobURI.then( src => {
+      try {
+        const icon = CustomElement(
+          'img',
+          {
+            class: 'icon navicon customIcon',
+            'aria-hidden': true,
+            src,
+            'tab-index': -1,
+          }
+        );
+        element.firstChild.replaceWith( icon );
+        if ( addRemoveIcon === true ) {
+          element.firstChild.after( CustomElement(
+            'i',
+            {
+              class: 'icon fa fa-times fa-fw navicon remove',
+              'aria-hidden': true,
+              style: 'color: red;',
+              title: 'Remove icon for current element',
+            }
+          ) );
+        }
+        icon.onload = () => {
+          URL.revokeObjectURL( icon.src );
+        };
+      }
+      catch {}
     } );
-    sidebar.prepend( ...children );
-  }
-  else if ( GM_getValue( 'sort' ) !== false ) {
-    GM_setValue(
-      'sort',
-      true
-    );
   }
 };
 
-/**
- * Gets last digits
- * @param {HTMLElement} e HTMLElement from which the digits should taken
- * @returns {Number} Number from HTMLElement
- */
-const getNum = e => +e.getAttribute( 'aria-labelledby' ).match( /(?<num>\d+)$/u ).groups.num;
+const getBlob = ( dataURI = required( 'dataURI' ) ) => new Promise( resolve => {
+  const byteString = atob( dataURI.split( 'base64,' )[ 1 ] );
+  const array = new ArrayBuffer( byteString.length );
+  const uintArray = new Uint8Array( array );
+  for ( let i = 0; i < byteString.length; i++ ) {
+    uintArray[ i ] = byteString.charCodeAt( i );
+  }
+  const mime = dataURI.match( /(?<=data:)\w+\/[\w.]+(?=;)/u )[ 0 ];
+  const blob = new Blob(
+    [ uintArray ],
+    {
+      type: mime,
+    }
+  );
+  const objectUrl = URL.createObjectURL( blob );
+  resolve( objectUrl );
+} );
 
-/**
- * Undoes sorting by bringing it back to default sorting
- * @param {HTMLElement} sidebar HTMLElement where the children to be unsorted can be found
- * @returns {void}
- */
-const unsort = ( sidebar = required() ) => {
-  const children = filterCourses( [ ...sidebar.children ] ).sort( (
-    a, b
-  ) => getNum( a ) - getNum( b ) );
-  sidebar.prepend( ...children );
-};
-
-/**
- * Filters courses that don't have nodeName 'li' and don't have the className 'type_course'
- * @param {ArrayLike|Array} children Children that need to be filtered
- * @returns {Array} Filtered children
- */
-const filterCourses = children => [ ...children ].filter( e => e.nodeName === 'LI' && e.classList.contains( 'type_course' ) );
-
-/**
- * Remove element from TM storage
- * @param {String} name Exact string that needs to be removed from storage
- * @param {Boolean} [setRemove=true] Update storage for removers
- * @param {Boolean} [setReplace=true] Update storage for replacers
- *
- * @returns {Object} newVals An object containing the new replacer- and remover values
- * @returns {Array} newVals.remove The new removers
- * @returns {Array} newVals.replace The new replacers
- */
-const removeElement = (
-  name = required(),
-  setRemove = true,
-  setReplace = true
+const range = (
+  end, start = 0, step = 1
 ) => {
-  const origReplacers = GM_getValue( 'replace' );
-  const newReplacers = origReplacers.map( e => e.slice() );
-
-  for ( let i = 0; i < newReplacers.length; i++ ) {
-    if ( newReplacers[ i ][ 0 ] === name ) {
-      newReplacers.splice(
-        i--,
-        1
-      );
+  function* generateRange() {
+    let x = start - step;
+    while ( x < end - step ) {
+      yield x += step;
     }
   }
-
-  const origRemovers = GM_getValue( 'remove' );
-  const newRemovers = origRemovers.slice();
-  for ( let i = 0; i < newRemovers.length; i++ ) {
-    if ( newRemovers[ i ] === name ) {
-      newRemovers.splice(
-        i--,
-        1
-      );
-    }
-  }
-
-  if ( setRemove === true && origRemovers.length !== newRemovers.length ) {
-    GM_setValue(
-      'remove',
-      newRemovers
-    );
-  }
-  if ( setReplace === true && origReplacers.length !== newReplacers.length ) {
-    GM_setValue(
-      'replace',
-      newReplacers
-    );
-  }
-
   return {
-    replace: newReplacers,
-    remove: newRemovers,
+    [ Symbol.iterator ]: generateRange,
   };
 };
 
-/**
- * Adds a new replacer to TM storage
- * @param {String} name Name of new replacer
- * @param {String} replaceWith String to replace old val with
- * @returns {void}
- */
-const addReplacer = (
-  name = required(), replaceWith = required()
-) => {
-  const trimmedReplaceWith = replaceWith.trim().replace(
-    /\s{2,}/gu,
-    ' '
+const randomId = ( length = 10 ) => {
+  const str = String.fromCharCode(
+    ...range(
+      58,
+      48
+    ), // 0-9
+    ...range(
+      91,
+      65
+    ), // A-Z
+    ...range(
+      123,
+      97
+    ), // A-z
+    45, // '-'
+    95 // '_'
   );
-  if ( trimmedReplaceWith === '' || trimmedReplaceWith === name ) {
-    removeElement( name );
-  }
-  else {
-    const { replace: replacers } = removeElement(
-      name,
-      true,
-      false
+
+  if ( !Array.isArray( GM_getValue( 'references' ) ) ) {
+    GM_setValue(
+      'references',
+      []
     );
-    replacers.push( [ name, trimmedReplaceWith ] );
-    replacers.sort( (
+  }
+  const allIDs = GM_getValue( 'references' ).map( e => e[ 1 ] );
+
+  const returnVal = [];
+
+  while ( returnVal.length < length ) {
+    returnVal.push( str.charAt( Math.random() * ( str.length + 1 ) ) );
+  }
+  return allIDs.indexOf( returnVal.join( '' ) ) === -1
+    ? returnVal.join( '' )
+    : randomId( length );
+};
+
+const setup = () => {
+  document.title = 'Custom Icons Rewrite Setup';
+
+  history.replaceState(
+    {},
+    '',
+    '/customIconsRewrite/'
+  );
+
+  document.body.clear();
+
+  document.head.append(
+    CustomElement(
+      'link',
+      {
+        rel: 'stylesheet',
+        type: 'text/css',
+        href: '/theme/styles.php/classic/1588340020_1588339031/all',
+      }
+    ), // Default stylesheet of Moodle
+    CustomElement(
+      'link',
+      {
+        rel: 'shortcut icon',
+        href: '/theme/image.php/classic/theme/1588340020/favicon',
+      }
+    )
+  );
+
+  GM_addStyle( `
+#page {
+  margin-top: auto;
+}
+#page-content.blocks-pre.blocks-post .region-main {
+  flex: 0 0 80%;
+  max-width: 80%;
+  padding-right: 1rem;
+}
+ul.section {
+  list-style: none;
+}
+.margin-top {
+  margin-top: 25px;
+}
+.margin-bottom {
+  margin-bottom: 25px;
+}
+.padding {
+  padding: 5px;
+}
+.input {
+  display: block;
+  margin-top: 10px;
+}` );
+
+  fetch( '/' )
+    .then( e => e.text() )
+    .then( e => {
+      const parsed = new DOMParser().parseFromString(
+        e,
+        'text/html'
+      );
+
+      let cur = parsed.getElementById( 'inst4' );
+      let tree = cur.cloneNode( true );
+
+      /* Doing this because otherwise calendar and more will also be there */
+      while ( cur.parentNode.nodeName !== 'BODY' ) {
+        const temp = tree;
+        cur = cur.parentNode;
+        tree = cur.cloneNode( false );
+        tree.append( temp );
+      }
+      document.body.append( tree );
+
+      document
+        .getElementById( 'page-content' )
+        .prepend( parsed.getElementById( 'region-main-box' ) );
+
+      const sidebar = getSidebar( document );
+      const sidebarChildren = [ ...sidebar.children ].sort( (
+        a, b
+      ) => {
+        const getText = e => e.getElementsByTagName( 'a' )[ 0 ].textContent.toLowerCase();
+
+        const aText = getText( a );
+        const bText = getText( b );
+        return aText < bText
+          ? -1
+          : aText > bText
+            ? 1
+            : 0;
+      } );
+      for ( let i = 0; i < sidebarChildren.length; i++ ) {
+        sidebar.append( sidebarChildren[ i ] );
+      }
+
+      const dashboard = [ ...document.getElementsByTagName( 'i' ) ].filter( e => e.classList.contains(
+        'icon',
+        'fa',
+        'fa-tachometer',
+        'fa-fw',
+        'navicon'
+      ) )[ 0 ];
+      if ( dashboard !== undefined ) {
+        dashboard.closest( 'li' ).remove();
+      }
+
+      const anchors = sidebar.getElementsByTagName( 'a' );
+      for ( let i = 0; i < anchors.length; i++ ) {
+        anchors[ i ].removeAttribute( 'href' );
+      }
+      document.querySelector( 'div.box.py-3.generalbox.sitetopic ~ br' ).remove();
+      document.getElementById( 'maincontent' ).remove();
+
+      run( true );
+
+      sidebar.addEventListener(
+        'click',
+        handleSidebarClick
+      );
+    } )
+    .then( () => {
+      const mainRegion = document.querySelector( 'div.box.py-3.generalbox.sitetopic > ul.section.img-text' );
+
+      mainRegion.clear();
+
+      const li = CustomElement( 'li' );
+
+      li.append(
+        CustomElement(
+          'h2',
+          { textContent: 'Change, add or remove icons' }
+        ),
+        CustomElement(
+          'div',
+          {
+            id: 'selectedCourseDiv',
+            class: 'margin-top margin-bottom',
+            'data-selected-course': null,
+            textContent: 'Select course on left',
+          }
+        )
+      );
+
+      const form = CustomElement(
+        'form',
+        {
+          id: 'form',
+        }
+      );
+
+      const urlDiv = CustomElement(
+        'div',
+        { class: 'margin-top' }
+      );
+      const urlInput = CustomElement(
+        'input',
+        {
+          type: 'url',
+          id: 'urlInput',
+          placeholder: 'URL to image',
+          class: 'padding inout',
+        }
+      );
+      urlDiv.append(
+        CustomElement(
+          'h3',
+          { textContent: 'Upload image from url' }
+        ),
+        urlInput
+      );
+
+      const fileDiv = CustomElement(
+        'div',
+        { class: 'margin-top' }
+      );
+      fileDiv.append( CustomElement(
+        'h3',
+        { textContent: 'Upload image' }
+      ) );
+      const fileInput = CustomElement(
+        'input',
+        {
+          type: 'file',
+          id: 'fileInput',
+          class: 'input',
+        }
+      );
+      const resetFileButton = CustomElement(
+        'button',
+        {
+          class: 'input',
+          textContent: 'Reset file',
+        }
+      );
+      resetFileButton.addEventListener(
+        'click',
+        resetFile
+      );
+      fileDiv.append(
+        fileInput,
+        resetFileButton
+      );
+
+      const selectCopyDiv = CustomElement(
+        'div',
+        { class: 'margin-top' }
+      );
+      const selectCopy = CustomElement(
+        'select',
+        { id: 'selectCopy' }
+      );
+      selectCopy.add( CustomElement(
+        'option',
+        { value: null }
+      ) );
+
+      const references = GM_getValue( 'references' );
+      for ( let i = 0; i < references.length; i++ ) {
+        selectCopy.add( CustomElement(
+          'option',
+          {
+            value: references[ i ][ 1 ],
+            textContent: references[ i ][ 0 ],
+          }
+        ) );
+      }
+      selectCopyDiv.append(
+        CustomElement(
+          'h3',
+          { textContent: 'Copy image from other element' }
+        ),
+        selectCopy
+      );
+
+      const saveDiv = CustomElement(
+        'div',
+        { class: 'margin-top' }
+      );
+      const saveButton = CustomElement(
+        'button',
+        { textContent: 'Save' }
+      );
+      saveButton.addEventListener(
+        'click',
+        saveValues
+      );
+      saveDiv.append( saveButton );
+
+      form.append(
+        urlDiv,
+        fileDiv,
+        selectCopyDiv,
+        saveDiv
+      );
+      form.addEventListener(
+        'input',
+        handleInput
+      );
+
+      li.append( form );
+
+      mainRegion.append( li );
+
+      return mainRegion;
+    } )
+    .then( mainRegion => {
+      const li = CustomElement( 'li' );
+
+      li.append(
+        CustomElement( 'hr' ),
+        CustomElement(
+          'h2',
+          {
+            textContent: "Remove icons for courses you've left",
+          }
+        )
+      );
+
+      const buttonsDiv = CustomElement(
+        'div',
+        { id: 'buttonsDiv' }
+      );
+      buttonsDiv.addEventListener(
+        'click',
+        handleRemove
+      );
+
+      const sidebar = getSidebar( document );
+      if ( !Array.isArray( GM_getValue( 'references' ) ) ) {
+        GM_setValue(
+          'references',
+          []
+        );
+      }
+      const references = GM_getValue( 'references' );
+      for ( let i = 0; i < references.length; i++ ) {
+        const cur = references[ i ];
+
+        if ( sidebar.querySelector( `a[title="${ cur[ 0 ] }"]` ) === null ) {
+          buttonsDiv.append( CustomElement(
+            'button',
+            {
+              'data-name': cur[ 0 ],
+              class: 'courses-left-btn',
+              textContent: `Remove icon for ${ cur[ 0 ] }`,
+            }
+          ) );
+        }
+      }
+      li.hidden = buttonsDiv.childNodes.length === 0;
+
+      li.append( buttonsDiv );
+
+      mainRegion.append( li );
+
+      return mainRegion;
+    } )
+    .then( mainRegion => {
+      const li = CustomElement( 'li' );
+      li.append(
+        CustomElement( 'hr' ),
+        CustomElement(
+          'h2',
+          { textContent: 'Clear all icons' }
+        )
+      );
+      const clearButton = CustomElement(
+        'button',
+        {
+          id: 'clearButton',
+          textContent: 'Clear all icons',
+        }
+      );
+      clearButton.addEventListener(
+        'click',
+        () => {
+          if ( confirm( 'Are you sure?\nThis action is irreversible' ) ) {
+            GM_setValue(
+              'values',
+              {}
+            );
+            GM_setValue(
+              'references',
+              []
+            );
+            reset();
+          }
+        }
+      );
+
+      li.hidden = GM_getValue( 'references' ).length === 0;
+
+      li.append( clearButton );
+      mainRegion.append( li );
+    } );
+};
+
+const resetFile = e => {
+  if ( e !== undefined ) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const fileInput = document.getElementById( 'fileInput' );
+  const tempForm = CustomElement( 'form' );
+  fileInput.after( tempForm );
+  tempForm.append( fileInput );
+  tempForm.reset();
+  tempForm.after( fileInput );
+  tempForm.remove();
+  handleInput();
+};
+
+const saveValues = e => {
+  if ( e !== undefined ) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const name = document.getElementById( 'selectedCourseDiv' ).dataset
+    .selectedCourse;
+  if ( name !== 'null' ) {
+    const fileInput = document.getElementById( 'fileInput' );
+    const urlInput = document.getElementById( 'urlInput' );
+    const selectCopy = document.getElementById( 'selectCopy' );
+    if ( selectCopy.value !== 'null' ) {
+      if (
+        Object.fromEntries( GM_getValue( 'references' ) )[ name ] !== selectCopy.value
+      ) {
+        addToStorage(
+          name,
+          selectCopy.value
+        );
+      }
+    }
+    else if ( fileInput.files[ 0 ] ) {
+      const file = fileInput.files[ 0 ];
+      addToStorage(
+        name,
+        file
+      );
+    }
+    else {
+      try {
+        const url = new URL( urlInput.value );
+        GM_xmlhttpRequest( {
+          method: 'GET',
+          url,
+          responseType: 'blob',
+          anonymous: true,
+          onload: e => {
+            addToStorage(
+              name,
+              e.response
+            );
+          },
+          onerror: e => {
+            alert( e.message );
+          },
+        } );
+      }
+      catch ( a ) {
+        alert( a.message );
+      }
+    }
+  }
+};
+const addToStorage = (
+  name = required(), data = required()
+) => {
+  const arrs = removeElement(
+    name,
+    {
+      references: false,
+      reset: false,
+    }
+  );
+  if ( typeof data === 'string' ) {
+    const references = arrs.references.reduce(
+      (
+        acc, cur
+      ) => acc.every( e => e[ 0 ] !== cur[ 0 ] )
+        ? acc.concat( [ cur ] )
+        : acc,
+      []
+    );
+    references.push( [ name, data ] );
+    references.sort( (
       a, b
     ) => {
       const aText = a[ 0 ].toLowerCase();
@@ -277,731 +610,348 @@ const addReplacer = (
           : 0;
     } );
     GM_setValue(
-      'replace',
-      replacers
+      'references',
+      references.reduce(
+        (
+          acc, cur
+        ) => acc.every( e => e[ 0 ] !== cur[ 0 ] )
+          ? acc.concat( [ cur ] )
+          : acc,
+        []
+      )
     );
+    reset();
+  }
+  else if ( ( /image\/(?:png|jpe?g)/iu ).test( data.type ) ) {
+    const fr = new FileReader();
+    fr.addEventListener(
+      'load',
+      () => {
+        const id = randomId( 10 );
+        const { references } = arrs;
+        references.push( [ name, id ] );
+        references.sort( (
+          a, b
+        ) => {
+          const aText = a[ 0 ].toLowerCase();
+          const bText = b[ 0 ].toLowerCase();
+
+          return aText < bText
+            ? -1
+            : aText > bText
+              ? 1
+              : 0;
+        } );
+        const values = Object.fromEntries( arrs.values );
+        values[ id ] = fr.result;
+
+        GM_setValue(
+          'values',
+          values
+        );
+        GM_setValue(
+          'references',
+          references
+        );
+
+        reset();
+      }
+    );
+    fr.readAsDataURL( data );
+  }
+  else {
+    alert( 'Invalid file type' );
   }
 };
-/**
- * Adds a new remover to TM storage
- * @param {String} name Name of new remover
- * @returns {void}
- */
-const addRemover = ( name = required() ) => {
-  const removers = removeElement(
-    name,
-    false,
-    true
-  ).remove.concat( name );
-  removers.sort( (
-    a, b
-  ) => {
-    const aText = a.toLowerCase();
-    const bText = b.toLowerCase();
-    return aText < bText
-      ? -1
-      : aText > bText
-        ? 1
-        : 0;
-  } );
-  GM_setValue(
-    'remove',
-    removers
-  );
+
+const handleInput = () => {
+  const fileInput = document.getElementById( 'fileInput' );
+  const urlInput = document.getElementById( 'urlInput' );
+  const copyInput = document.getElementById( 'selectCopy' );
+
+  fileInput.nextSibling.disabled = fileInput.disabled
+    = urlInput.value !== '' || copyInput.value !== 'null';
+  urlInput.disabled = Boolean( fileInput.files[ 0 ] ) || copyInput.value !== 'null';
+  copyInput.disabled = Boolean( fileInput.files[ 0 ] ) || urlInput.value !== '';
 };
 
-/**
- * Get sidebar from any context
- * @param {Document} ctx Context where sidebar can be found
- * @returns {HTMLElement} Sidebar
- */
-const getSidebar = ctx => ctx.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' ) ?? ctx.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
+const handleSidebarClick = e => {
+  e.preventDefault();
+  e.stopPropagation();
+  if ( e.target.nodeName === 'I' && e.target.classList.contains( 'remove' ) ) {
+    removeElement( e.target.closest( 'a' ).title );
+  }
+  else if (
+    e.target.closest( 'li.type_course.depth_3.item_with_icon' ) !== null
+  ) {
+    addSelectedCourse( e.target.closest( 'li.type_course.depth_3.item_with_icon' ) );
+  }
+};
+const addSelectedCourse = e => {
+  const selectedCourseDiv = document
+    .getElementById( 'selectedCourseDiv' )
+    .clear();
 
-/**
- * Returns only values from origArr that aren't in compareTo
- * @param {Array} origArr Original Array
- * @param {Array} compareTo Array compared to
- * @returns {Array} Unique values in origArr
- */
-const compareReplacers = (
-  origArr, compareTo
-) => origArr.filter( curOrig => compareTo.every( curCompareTo => curOrig[ 0 ] !== curCompareTo[ 0 ] || curOrig[ 1 ] !== curCompareTo[ 1 ] ) );
+  const element = e.firstChild.cloneNode( true );
+  if ( element.getElementsByClassName( 'customIcon' )[ 0 ] !== undefined ) {
+    element.getElementsByClassName( 'customIcon' )[ 0 ].replaceWith( CustomElement(
+      'i',
+      {
+        class: 'icon fa fa-graduation-cap fa-fw navicon',
+        'aria-hidden': true,
+      }
+    ) );
+  }
+  element.getElementsByClassName( 'remove' ).remove();
+  selectedCourseDiv.append( element );
 
-/**
- * Update sidebar i.e. set names correctly, remove all elements that should be, sort or unsort
- * @param {String} name Name of TM Storage item
- * @param {*} [oldVal] Old value in storage
- * @param {*} [newVal] New value already in storage
- * @param {Boolean} [remote=true] Whether storage was updated in current or remote tab
- * @returns {void}
- */
-const refresh = (
-  name, oldVal, newVal, remote = true
+  selectedCourseDiv.dataset.selectedCourse = element.getElementsByTagName( 'a' )[ 0 ].title;
+
+  const selectCopy = document.getElementById( 'selectCopy' );
+  const selectCopyChildren = selectCopy.childNodes;
+  const references = Object.fromEntries( GM_getValue( 'references' ) );
+  for ( let i = 0; i < selectCopyChildren.length; i++ ) {
+    selectCopyChildren[ i ].disabled
+      = references[ selectCopyChildren[ i ].textContent ]
+      === references[ selectedCourseDiv.dataset.selectedCourse ];
+  }
+
+  scroll( {
+    top: 0,
+    behavior: 'smooth',
+  } );
+};
+
+const removeElement = (
+  name = required( 'Name' ), options = {}
 ) => {
+  if ( !Array.isArray( GM_getValue( 'references' ) ) ) {
+    GM_setValue(
+      'references',
+      []
+    );
+  }
+  const references = GM_getValue( 'references' );
+  for ( let i = 0; i < references.length; i++ ) {
+    if ( references[ i ][ 0 ] === name ) {
+      references.splice(
+        i--,
+        1
+      );
+    }
+  }
+  if ( typeof GM_getValue( 'values' ) !== 'object' ) {
+    GM_setValue(
+      'values',
+      {}
+    );
+  }
+  const values = Object.entries( GM_getValue( 'values' ) );
+  for ( let i = 0; i < values.length; i++ ) {
+    if ( references.every( reference => values[ i ][ 0 ] !== reference[ 1 ] ) ) {
+      values.splice(
+        i--,
+        1
+      );
+    }
+  }
+
+  if ( options.values !== false ) {
+    GM_setValue(
+      'values',
+      Object.fromEntries( values )
+    );
+  }
+  if ( options.references !== false ) {
+    GM_setValue(
+      'references',
+      references
+    );
+  }
+
+  if ( options.reset !== false ) {
+    reset();
+  }
+  return { values, references };
+};
+
+const handleRemove = e => {
+  if ( e.target.nodeName === 'BUTTON' ) {
+    removeElement( e.target.dataset.name );
+  }
+};
+
+const reset = () => {
+  console.log( 'Resetting...' );
+  const sidebar = getSidebar( document );
+  const sidebarChildren = sidebar.children;
+
+  for ( let i = 0; i < sidebarChildren.length; i++ ) {
+    const img = sidebarChildren[ i ].getElementsByTagName( 'img' )[ 0 ];
+
+    if ( img !== undefined ) {
+      if ( img.nextSibling !== null && img.nextSibling.nodeName === 'I' ) {
+        img.nextSibling.remove();
+      }
+      img.replaceWith( CustomElement(
+        'i',
+        {
+          class: 'icon fa fa-graduation-cap fa-fw navicon',
+          'aria-hidden': true,
+        }
+      ) );
+    }
+  }
+
+  run( true );
+  document.getElementById( 'fileInput' ).value = '';
+  document.getElementById( 'selectedCourseDiv' ).dataset.selectedCourse = null;
+  resetFile();
+
+  document.getElementById( 'form' ).reset();
+  document
+    .getElementById( 'selectedCourseDiv' )
+    .clear()
+    .append( 'Select course on left' );
+
+  const selectCopy = document.getElementById( 'selectCopy' );
+  selectCopy.clear();
+  selectCopy.add( CustomElement(
+    'option',
+    { value: null }
+  ) );
+
+  if ( !Array.isArray( GM_getValue( 'references' ) ) ) {
+    GM_setValue(
+      'references',
+      []
+    );
+  }
+  const references = GM_getValue( 'references' );
+  for ( let i = 0; i < references.length; i++ ) {
+    selectCopy.add( CustomElement(
+      'option',
+      {
+        value: references[ i ][ 1 ],
+        textContent: references[ i ][ 0 ],
+      }
+    ) );
+  }
+
+  handleInput();
+
+  const buttonsDiv = document.getElementById( 'buttonsDiv' ).clear();
+
+  for ( let i = 0; i < references.length; i++ ) {
+    const cur = references[ i ];
+
+    if ( sidebar.querySelector( `a[title="${ cur[ 0 ] }"]` ) === null ) {
+      buttonsDiv.append( CustomElement(
+        'button',
+        {
+          'data-name': cur[ 0 ],
+          class: 'courses-left-btn',
+          textContent: `Remove icon for ${ cur[ 0 ] }`,
+        }
+      ) );
+    }
+  }
+  buttonsDiv.closest( 'li' ).hidden = buttonsDiv.childNodes.length === 0;
+
+  document.getElementById( 'clearButton' ).closest( 'li' ).hidden
+    = references.length === 0;
+};
+
+const refresh = ( ...args ) => {
   if (
-    remote
+    args[ 3 ] // Remote
     && !( /^\/cleanmoodle/iu ).test( location.pathname )
     && !( /^\/customicons/iu ).test( location.pathname )
   ) {
-    const sidebar = getSidebar( document );
-    if ( name === 'replace' ) {
-      const oldDiff = compareReplacers(
-        oldVal,
-        newVal
-      );
-      for ( let i = 0; i < oldDiff.length; i++ ) {
-        const element = sidebar
-          .querySelector( `a[title="${ oldDiff[ i ][ 0 ] }` )
-          ?.closest( 'li' );
-        if ( element !== null && element !== undefined ) {
-          const liClassList = element.classList;
-          if ( liClassList.contains( 'item_with_icon' ) ) {
-            element.getElementsByTagName( 'span' )[ 0 ].textContent = element.getElementsByTagName( 'a' )[ 0 ].title;
-          }
-          else {
-            const anchor = element.getElementsByTagName( 'a' )[ 0 ];
-            anchor.textContent = anchor.title;
-          }
-        }
-      }
-      const newDiff = compareReplacers(
-        newVal,
-        oldVal
-      );
-      for ( let i = 0; i < newDiff.length; i++ ) {
-        replace(
-          ...newDiff[ i ],
-          sidebar
+    fetch( location.href )
+      .then( e => e.text() )
+      .then( e => {
+        const parsed = new DOMParser().parseFromString(
+          e,
+          'text/html'
         );
-      }
-      refresh( 'sort' );
-    }
-    else if ( name === 'sort' ) {
-      ( GM_getValue( 'sort' )
-        ? sort
-        : unsort )( sidebar );
-    }
-    else {
-      const oldDiff = oldVal.filter( e => newVal.indexOf( e ) === -1 );
-      if ( oldDiff.length === 0 ) {
-        const newDiff = newVal.filter( e => oldVal.indexOf( e ) === -1 );
-        for ( let i = 0; i < newDiff.length; i++ ) {
-          remove(
-            newDiff[ i ],
-            sidebar
-          );
-        }
-      }
-      else if ( sidebar === null ) {
-        location.reload();
-      }
-      else {
-        fetch( location.href )
-          .then( e => e.text() )
-          .then( e => {
-            const parsed = new DOMParser().parseFromString(
-              e,
-              'text/html'
-            );
-            sidebar.replaceWith( getSidebar( parsed ) );
-            dispatchEvent( new Event( 'cleanMoodleRewrite' ) );
-            dispatchEvent( new Event( 'customIconsRewrite' ) );
-            dispatchEvent( new Event( 'moreSidebarLinks' ) );
-          } )
-          .catch( () => location.reload() );
-      }
-    }
+
+        getSidebar( document ).replaceWith( getSidebar( parsed ) );
+
+        dispatchEvent( new Event( 'cleanMoodleRewrite' ) );
+        dispatchEvent( new Event( 'customIconsRewrite' ) );
+        dispatchEvent( new Event( 'moreSidebarLinks' ) );
+      } );
   }
 };
 
-/**
- * Adds fontAwesome's fa-check to element for toggling the visibility of an item
- * @param {String} name Name of link
- * @param {*} sidebar sidebar where element can be found
- * @returns {void}
- */
-const setupCustomRemove = (
-  name = required(), sidebar = required()
+const CustomElement = (
+  type, props = {}
 ) => {
-  const element = sidebar.querySelector( `a[title="${ name }"]` );
-  if ( element === null ) {
-    removeElement( name );
-    lang.nonExistant( name );
+  const element = document.createElement( type );
+  const propEntries = Object.entries( props );
+  for ( let i = 0; i < propEntries.length; i++ ) {
+    const [ key, val ] = propEntries[ i ];
+    switch ( key.toLowerCase() ) {
+      case 'textcontent':
+      case 'innerhtml':
+      case 'innertext':
+        element[ key ] = val;
+        break;
+      default:
+        element.setAttribute(
+          key,
+          val
+        );
+        break;
+    }
   }
-  else {
-    element
-      .getElementsByTagName( 'i' )[ 0 ]
-      .classList.replace(
-        'fa-check',
-        'fa-times'
-      );
-    element.style.color = 'red';
-  }
+  return element;
 };
 
-/**
- * Handles click of sidebar and calls various functions depending on the clicked element
- * @param {Object} e Eventobject
- * @returns {void}
- *
- * @listens Click
- */
-const sidebarClick = e => {
-  e.preventDefault();
-  e.stopPropagation();
-
-  if ( e.target.nodeName === 'I' ) {
-    const { classList } = e.target;
-    if ( classList.contains( 'fa-times' ) || classList.contains( 'fa-undo' ) ) {
-      removeElement( e.target.closest( 'a' ).title );
-    }
-    else if ( classList.contains( 'fa-check' ) ) {
-      addRemover( e.target.closest( 'a' ).title );
-
-      const selectedCourseDiv = document.getElementById( 'selectedCourseDiv' );
-      selectedCourseDiv.dataset.selectedCourse = null;
-      while ( selectedCourseDiv.lastChild ) {
-        selectedCourseDiv.removeChild( selectedCourseDiv.lastChild );
-      }
-      selectedCourseDiv.textContent = lang.selectCourse;
-    }
-    cleanSetup( false );
-  }
-  else if (
-    e.target.nodeName !== 'UL'
-    || e.target.getAttribute( 'role' ) !== 'group'
-  ) {
-    selectCourse( e );
+Element.prototype.remove = function () {
+  if ( this !== null ) {
+    this.parentNode.removeChild( this );
   }
 };
-
-/**
- * Copies link to main region for setting a replacer
- * @param {Object} e Eventobject
- * @returns {void}
- */
-const selectCourse = e => {
-  const p = ( e.target.nodeName === 'LI'
-    ? e.target.getElementsByTagName( 'p' )[ 0 ]
-    : e.target.closest( 'p' )
-  ).cloneNode( true );
-  if ( p ) {
-    const selectedCourseDiv = document.getElementById( 'selectedCourseDiv' );
-    const span = p.getElementsByTagName( 'span' )[ 0 ];
-    const anchor = p.getElementsByTagName( 'a' )[ 0 ];
-    const icon = p.getElementsByTagName( 'i' )[ 0 ];
-
-    if ( anchor.getElementsByClassName( 'fa-undo' )[ 0 ] ) {
-      anchor.removeChild( anchor.getElementsByClassName( 'fa-undo' )[ 0 ] );
-    }
-
-    const origAnchor = e.target.closest( 'li' ).getElementsByTagName( 'a' )[ 0 ];
-    if ( origAnchor.style.color === 'red' ) {
-      removeElement( anchor.title );
-      const origIcon = origAnchor.getElementsByTagName( 'i' )[ 0 ];
-      origAnchor.style.color = 'green';
-      origIcon.classList.remove( 'fa-times' );
-      origIcon.classList.add( 'fa-check' );
-    }
-
-    while ( selectedCourseDiv.lastChild ) {
-      selectedCourseDiv.lastChild.remove();
-    }
-    selectedCourseDiv.appendChild( p );
-    span.contentEditable = true;
-    span.id = 'spanEditable';
-    selectedCourseDiv.dataset.selectedCourse = p.getElementsByTagName( 'a' )[ 0 ].title;
-
-    p.addEventListener(
-      'keydown',
-      updateSelectedCourse
-    );
-
-    anchor.style.color = '';
-    icon.classList.remove(
-      'fa-check',
-      'fa-times'
-    );
-    icon.classList.add( 'fa-graduation-cap' );
-
-    selectSpan();
-
-    const style = document.getElementById( 'spanEditableStyle' );
-    style.textContent = `#spanEditable:empty::after{
-        content: '${ lang.spanAfter.replace(
-    '{{{s}}}',
-    anchor.title
-  ) }';
-    }`;
+NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
+  for ( let i = this.length - 1; i >= 0; i-- ) {
+    this[ i ].remove();
   }
 };
-
-/**
- * Adds replacer to TM storage
- * @param {Object} e Eventobject
- * @returns {void}
- * @listens Keydown
- * @listens Click
- */
-const updateSelectedCourse = e => {
-  if ( ( e.type === 'keydown' && e.key === 'Enter' ) || e.type === 'click' ) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const selectedCourse = document.getElementById( 'selectedCourseDiv' );
-
-    if ( selectedCourse.dataset.selectedCourse !== 'null' ) {
-      const replaceWith = document.getElementById( 'spanEditable' ).textContent;
-      const name = selectedCourse.dataset.selectedCourse;
-
-      addReplacer(
-        name,
-        replaceWith
-      );
-      selectedCourse.dataset.selectedCourse = null;
-      while ( selectedCourse.lastChild ) {
-        selectedCourse.removeChild( selectedCourse.lastChild );
-      }
-      selectedCourse.textContent = lang.selectCourse;
-
-      cleanSetup( false );
-    }
-  }
+Element.prototype.clear = function () {
+  this.childNodes.remove();
+  return this;
 };
 
-/**
- * Updates sorting in TM storage to checkbox value and sorts sidebar accordingly
- * @returns {void}
- */
-const updateSort = () => {
-  const checkbox = document.getElementById( 'sortCheckbox' );
-  GM_setValue(
-    'sort',
-    checkbox.checked
+if ( ( /^\/customiconsrewrite/iu ).test( location.pathname ) ) {
+  addEventListener(
+    'DOMContentLoaded',
+    setup
+  );
+}
+else if ( !( /^\/cleanmooddle/iu ).test( location.pathname ) ) {
+  addEventListener(
+    'DOMContentLoaded',
+    run
+  );
+  addEventListener(
+    'customIconsRewrite',
+    run
   );
 
-  document.querySelector( 'label[for="sortCheckbox"]' ).textContent
-    = lang.sorting[ checkbox.checked
-      ? 'sorting'
-      : 'not' ];
-
-  if ( checkbox.checked === false ) {
-    unsort( getSidebar( document ) );
-  }
-  cleanSetup( false );
-};
-
-/**
- * Cleans settings page and resets everything
- * To be used only on settings page
- * @param {Boolean} [isNewPage=true] If set to true adds event listener to sidebar
- * @returns {void}
- */
-const cleanSetup = ( isNewPage = true ) => {
-  /* Remove "Dashboard" */
-  const dashboard = document.querySelector( 'li[aria-labelledby="label_2_2"]' );
-  if ( dashboard !== null ) {
-    dashboard.parentNode.removeChild( dashboard );
-  }
-
-  /* Clean sidebar */
-  const sidebar = getSidebar( document );
-
-  /* Turn all icons into ticks ✓ and make text green*/
-  const icons = sidebar.getElementsByTagName( 'i' );
-  for ( let i = 0; i < icons.length; i++ ) {
-    icons[ i ].classList.remove(
-      'fa-graduation-cap',
-      'fa-times'
-    );
-    icons[ i ].classList.add( 'fa-check' );
-    icons[ i ].closest( 'a' ).style.color = 'green';
-  }
-
-  /* Reset all text and remove undo icons */
-  const span = sidebar.querySelectorAll( 'li span' );
-  for ( let i = 0; i < span.length; i++ ) {
-    span[ i ].textContent = span[ i ].closest( 'a' ).title.trim();
-
-    const icon = span[ i ].nextSibling;
-    if ( icon !== null ) {
-      icon.parentNode.removeChild( icon );
-    }
-  }
-
-  const replacers = GM_getValue( 'replace' );
-  if ( Array.isArray( replacers ) ) {
-    for ( let i = 0; i < replacers.length; i++ ) {
-      replace(
-        ...replacers[ i ],
-        sidebar,
-        true
-      );
-    }
-  }
-  else {
-    GM_setValue(
-      'replace',
-      []
-    );
-  }
-
-  const removers = GM_getValue( 'remove' );
-  if ( Array.isArray( removers ) ) {
-    for ( let i = 0; i < removers.length; i++ ) {
-      setupCustomRemove(
-        removers[ i ],
-        sidebar
-      );
-    }
-  }
-  else {
-    GM_setValue(
-      'remove',
-      []
-    );
-  }
-
-  sort( sidebar );
-
-  if ( isNewPage ) {
-    sidebar.addEventListener(
-      'click',
-      sidebarClick
-    );
-  }
-
-  /* Remove links */
-  const anchors = sidebar.getElementsByTagName( 'a' );
-  for ( let i = 0; i < anchors.length; i++ ) {
-    anchors[ i ].removeAttribute( 'href' );
-  }
-};
-
-/**
- * Generates settings page
- * @returns {void}
- */
-const setup = () => {
-  const icon = document.createElement( 'link' );
-  icon.rel = 'shortcut icon';
-  icon.href = '/theme/image.php/classic/theme/1588340020/favicon';
-  document.head.appendChild( icon );
-
-  const style = document.createElement( 'link' );
-  style.rel = 'stylesheet';
-  style.type = 'text/css';
-  style.href = '/theme/styles.php/classic/1588340020_1588339031/all';
-  document.head.appendChild( style );
-
-  GM_addStyle( `
-#page {
-  margin-top: auto !important;
-}
-@media (min-width: 768px) {
-  #page-content.blocks-pre.blocks-post .region-main {
-    flex-basis: 68%;
-    max-width: 68%;
-  }
-}
-
-@media (min-width: 992px) {
-  #page-content.blocks-pre.blocks-post .region-main {
-    flex-basis: 75%;
-    max-width: 75%;
-  }
-}
-@media (min-width: 1200px) {
-  #page-content.blocks-pre.blocks-post .region-main {
-    flex-basis: 80%;
-    max-width: 80%;
-  }
-}
-#page-content.blocks-pre.blocks-post .region-main {
-  padding-right: 1rem;
-}
-ul.section {
-  list-style: none;
-}
-button {
-  margin-top: 10px;
-}
-i.fa-undo {
-  margin-left: 3px !important;
-}
-` );
-
-  GM_addStyle( '#spanEditable:empty::after{content:"Reset to null"}' ).id
-    = 'spanEditableStyle';
-
-  history.replaceState(
-    {},
-    '',
-    '/cleanMoodleRewrite/'
-  );
-
-  document.title = lang.title;
-
-  while ( document.body.lastChild ) {
-    document.body.lastChild.remove();
-  }
-
-  fetch( '/' )
-    .then( e => e.text() )
-    .then( e => {
-      const parsed = new DOMParser().parseFromString(
-        e,
-        'text/html'
-      );
-
-      const sidebar = parsed.getElementById( 'inst4' );
-      const mainRegion = parsed.getElementById( 'region-main-box' );
-
-      /* Only direct path to elements */
-      let tempElement = sidebar.cloneNode( true );
-      let current = sidebar;
-      while ( current.parentNode.nodeName !== 'BODY' ) {
-        current = current.parentNode;
-
-        const temp = tempElement;
-        tempElement = current.cloneNode( false );
-        tempElement.appendChild( temp );
-      }
-      document.body.appendChild( tempElement );
-      document.getElementById( 'page-content' ).appendChild( mainRegion );
-    } )
-    .then( () => {
-      /* Clear main region */
-      const mainRegion = document
-        .getElementById( 'maincontent' )
-        .parentNode.querySelector( 'ul.section.img-text' );
-      while ( mainRegion.lastChild ) {
-        mainRegion.removeChild( mainRegion.lastChild );
-      }
-
-      cleanSetup( true );
-
-      const replaceLi = document.createElement( 'li' );
-
-      const replaceTitle = document.createElement( 'h2' );
-      replaceTitle.textContent = lang.renameTitle;
-      replaceTitle.style.userSelect = 'none';
-      replaceLi.appendChild( replaceTitle );
-
-      const course = document.createElement( 'div' );
-      course.textContent = lang.selectCourse;
-      course.style.userSelect = 'none';
-      course.dataset.selectedCourse = null;
-      course.id = 'selectedCourseDiv';
-      replaceLi.appendChild( course );
-
-      const saveButton = document.createElement( 'button' );
-      saveButton.textContent = lang.saveButton;
-      saveButton.style.userSelect = 'none';
-      saveButton.addEventListener(
-        'click',
-        updateSelectedCourse
-      );
-      replaceLi.appendChild( saveButton );
-
-      mainRegion.appendChild( replaceLi );
-
-      const sortLi = document.createElement( 'li' );
-
-      sortLi.appendChild( document.createElement( 'hr' ) );
-
-      const sortTitle = document.createElement( 'h2' );
-      sortTitle.textContent = lang.sortTitle;
-      sortLi.appendChild( sortTitle );
-
-      const inputDiv = document.createElement( 'div' );
-
-      const sortCheckbox = document.createElement( 'input' );
-      sortCheckbox.type = 'checkbox';
-      sortCheckbox.id = 'sortCheckbox';
-      sortCheckbox.checked = GM_getValue( 'sort' );
-      sortCheckbox.addEventListener(
-        'change',
-        updateSort
-      );
-      inputDiv.appendChild( sortCheckbox );
-
-      const label = document.createElement( 'label' );
-      label.textContent = lang.sorting[ GM_getValue( 'sort' )
-        ? 'sorting'
-        : 'not' ];
-      label.setAttribute(
-        'for',
-        'sortCheckbox'
-      );
-      label.style.marginLeft = '5px';
-      inputDiv.appendChild( label );
-
-      sortLi.appendChild( inputDiv );
-
-      mainRegion.appendChild( sortLi );
-    } );
-};
-
-/**
- * Adds a gear that links to settings
- * @param {HTMLElement} sidebar sidebar where settings gear should be added
- * @returns {void}
- */
-const settingsGear = ( sidebar = required() ) => {
-  const p = sidebar.previousSibling;
-
-  if ( p.lastChild.getAttribute( 'href' ) !== '/cleanMoodleRewrite/' ) {
-    const anchor = document.createElement( 'a' );
-    anchor.target = '_blank';
-    anchor.href = '/cleanMoodleRewrite/';
-    anchor.addEventListener(
-      'click',
-      e => {
-        e.stopPropagation();
-        e.preventDefault();
-        open(
-          '/cleanMoodleRewrite/',
-          '_blank'
-        );
-      }
-    );
-
-    const icon = document.createElement( 'i' );
-    icon.classList.add(
-      'icon',
-      'fa',
-      'fa-fw',
-      'navicon',
-      'fa-cogs'
-    );
-    icon.style.marginLeft = '5px';
-    anchor.appendChild( icon );
-    p.appendChild( anchor );
-  }
-};
-
-/**
- * Sets cursor at position
- * @param {Number} [position] Position of cursor, defaults to textlength
- * @returns {void}
- */
-const selectSpan = position => {
-  const span = document.getElementById( 'spanEditable' );
-  const range = new Range();
-  const sel = getSelection();
-  const start = typeof position === 'number'
-    ? position
-    : span.textContent.length;
-
-  span.focus();
-  range.setStart(
-    span.childNodes[ 0 ],
-    start
-  );
-  range.collapse( true );
-  sel.removeAllRanges();
-  sel.addRange( range );
-};
-
-addEventListener(
-  'cleanMoodleRewrite',
-  () => {
-    const sidebar = getSidebar( document );
-
-    if ( sidebar !== null ) {
-      const replacers = GM_getValue( 'replace' );
-      if ( Array.isArray( replacers ) ) {
-        for ( let i = 0; i < replacers.length; i++ ) {
-          replace(
-            ...replacers[ i ],
-            sidebar
-          );
-        }
-      }
-      else {
-        GM_setValue(
-          'replace',
-          []
-        );
-      }
-
-      const removers = GM_getValue( 'remove' );
-      if ( Array.isArray( removers ) ) {
-        for ( let i = 0; i < removers.length; i++ ) {
-          remove(
-            removers[ i ],
-            sidebar
-          );
-        }
-      }
-      else {
-        GM_setValue(
-          'remove',
-          []
-        );
-      }
-
-      sort( sidebar );
-
-      settingsGear( sidebar );
-    }
-  }
-);
-
-if ( ( /^\/cleanmoodlerewrite/iu ).test( location.pathname ) ) {
-  document.readyState === 'complete'
-    ? setup()
-    : addEventListener(
-      'DOMContentLoaded',
-      setup
-    );
-}
-else if ( !( /^\/customicons/iu ).test( location.pathname ) ) {
   GM_registerMenuCommand(
-    lang.openSettings,
+    'Open settings',
     () => {
-      open( 'https://moodle.ksasz.ch/cleanMoodleRewrite/' );
-    }
-  );
-  GM_registerMenuCommand(
-    lang.toggleSorting,
-    () => {
-      const val = GM_getValue( 'sort' );
-      GM_setValue(
-        'sort',
-        !val
-      );
-      refresh(
-        'sort',
-        val,
-        !val,
-        true
+      open(
+        'https://moodle.ksasz.ch/customIconsRewrite/',
+        '_blank'
       );
     }
   );
 
-  const cleanMoodleEvent = new Event( 'cleanMoodleRewrite' );
-
-  document.readyState === 'complete'
-    ? dispatchEvent( cleanMoodleEvent )
-    : addEventListener(
-      'DOMContentLoaded',
-      () => {
-        dispatchEvent( cleanMoodleEvent );
-      }
-    );
+  GM_addValueChangeListener(
+    'references',
+    refresh
+  );
 }
-
-GM_addValueChangeListener(
-  'replace',
-  refresh
-);
-GM_addValueChangeListener(
-  'remove',
-  refresh
-);
-GM_addValueChangeListener(
-  'sort',
-  refresh
-);
