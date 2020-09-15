@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Custom Icons Rewrite
-// @version      2020.09.14a
+// @version      2020.09.15a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -15,7 +15,8 @@
 // ==/UserScript==
 /* eslint-disable require-jsdoc */
 'use strict';
-const getSidebar = ctx => ctx.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' ) ?? ctx.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
+const getSidebar = ctx => ctx.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' )
+  ?? ctx.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
 
 const required = ( name = 'Variable' ) => new Error( `${ name } is not defined` );
 
@@ -105,7 +106,9 @@ const range = (
 ) => {
   function* generateRange() {
     let x = start - step;
-    while ( x < end - step ) { yield x += step; }
+    while ( x < end - step ) {
+      yield x += step;
+    }
   }
   return {
     [ Symbol.iterator ]: generateRange,
@@ -280,7 +283,6 @@ ul.section {
       li.append(
         CustomElement(
           'h2',
-          {},
           { textContent: 'Change, add or remove icons' }
         ),
         CustomElement(
@@ -289,8 +291,8 @@ ul.section {
             id: 'selectedCourseDiv',
             class: 'margin-top margin-bottom',
             'data-selected-course': null,
-          },
-          { textContent: 'Select course on left' }
+            textContent: 'Select course on left',
+          }
         )
       );
 
@@ -317,7 +319,6 @@ ul.section {
       urlDiv.append(
         CustomElement(
           'h3',
-          {},
           { textContent: 'Upload image from url' }
         ),
         urlInput
@@ -329,7 +330,6 @@ ul.section {
       );
       fileDiv.append( CustomElement(
         'h3',
-        {},
         { textContent: 'Upload image' }
       ) );
       const fileInput = CustomElement(
@@ -342,8 +342,10 @@ ul.section {
       );
       const resetFileButton = CustomElement(
         'button',
-        { class: 'input' },
-        { textContent: 'Reset file' }
+        {
+          class: 'input',
+          textContent: 'Reset file',
+        }
       );
       resetFileButton.addEventListener(
         'click',
@@ -371,14 +373,15 @@ ul.section {
       for ( let i = 0; i < references.length; i++ ) {
         selectCopy.add( CustomElement(
           'option',
-          { value: references[ i ][ 1 ] },
-          { textContent: references[ i ][ 0 ] }
+          {
+            value: references[ i ][ 1 ],
+            textContent: references[ i ][ 0 ],
+          }
         ) );
       }
       selectCopyDiv.append(
         CustomElement(
           'h3',
-          {},
           { textContent: 'Copy image from other element' }
         ),
         selectCopy
@@ -390,7 +393,6 @@ ul.section {
       );
       const saveButton = CustomElement(
         'button',
-        {},
         { textContent: 'Save' }
       );
       saveButton.addEventListener(
@@ -423,8 +425,9 @@ ul.section {
         CustomElement( 'hr' ),
         CustomElement(
           'h2',
-          {},
-          { textContent: "Remove icons for courses you've left" }
+          {
+            textContent: "Remove icons for courses you've left",
+          }
         )
       );
 
@@ -451,8 +454,11 @@ ul.section {
         if ( sidebar.querySelector( `a[title="${ cur[ 0 ] }"]` ) === null ) {
           buttonsDiv.append( CustomElement(
             'button',
-            { 'data-name': cur[ 0 ], class: 'courses-left-btn' },
-            { textContent: `Remove icon for ${ cur[ 0 ] }` }
+            {
+              'data-name': cur[ 0 ],
+              class: 'courses-left-btn',
+              textContent: `Remove icon for ${ cur[ 0 ] }`,
+            }
           ) );
         }
       }
@@ -470,14 +476,15 @@ ul.section {
         CustomElement( 'hr' ),
         CustomElement(
           'h2',
-          {},
           { textContent: 'Clear all icons' }
         )
       );
       const clearButton = CustomElement(
         'button',
-        { id: 'clearButton' },
-        { textContent: 'Clear all icons' }
+        {
+          id: 'clearButton',
+          textContent: 'Clear all icons',
+        }
       );
       clearButton.addEventListener(
         'click',
@@ -824,8 +831,10 @@ const reset = () => {
   for ( let i = 0; i < references.length; i++ ) {
     selectCopy.add( CustomElement(
       'option',
-      { value: references[ i ][ 1 ] },
-      { textContent: references[ i ][ 0 ] }
+      {
+        value: references[ i ][ 1 ],
+        textContent: references[ i ][ 0 ],
+      }
     ) );
   }
 
@@ -839,8 +848,11 @@ const reset = () => {
     if ( sidebar.querySelector( `a[title="${ cur[ 0 ] }"]` ) === null ) {
       buttonsDiv.append( CustomElement(
         'button',
-        { 'data-name': cur[ 0 ], class: 'courses-left-btn' },
-        { textContent: `Remove icon for ${ cur[ 0 ] }` }
+        {
+          'data-name': cur[ 0 ],
+          class: 'courses-left-btn',
+          textContent: `Remove icon for ${ cur[ 0 ] }`,
+        }
       ) );
     }
   }
