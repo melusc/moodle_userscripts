@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.14a
+// @version      2020.09.17a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -510,7 +510,10 @@ const selectCourse = e => {
     selectedCourseDiv.appendChild( p );
     span.contentEditable = true;
     span.id = 'spanEditable';
-    selectedCourseDiv.dataset.selectedCourse = p.getElementsByTagName( 'a' )[ 0 ].title;
+    span.setAttribute(
+      'original-name',
+      selectedCourseDiv.dataset.selectedCourse = p.getElementsByTagName( 'a' )[ 0 ].title
+    );
 
     p.addEventListener(
       'keydown',
@@ -525,14 +528,6 @@ const selectCourse = e => {
     icon.classList.add( 'fa-graduation-cap' );
 
     selectSpan();
-
-    const style = document.getElementById( 'spanEditableStyle' );
-    style.textContent = `#spanEditable:empty::after{
-        content: '${ lang.spanAfter.replace(
-    '{{{s}}}',
-    anchor.title
-  ) }';
-    }`;
   }
 };
 
@@ -704,6 +699,7 @@ const setup = () => {
     max-width: 68%;
   }
 }
+
 @media (min-width: 992px) {
   #page-content.blocks-pre.blocks-post .region-main {
     flex-basis: 75%;
@@ -728,10 +724,10 @@ button {
 i.fa-undo {
   margin-left: 3px !important;
 }
+#spanEditable:empty::after {
+  content: 'Reset to "' attr(original-name) '"';
+}
 ` );
-
-  GM_addStyle( '#spanEditable:empty::after{content:"Reset to null"}' ).id
-    = 'spanEditableStyle';
 
   history.replaceState(
     {},
