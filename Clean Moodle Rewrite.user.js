@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.19a
+// @version      2020.09.19b
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -70,15 +70,12 @@ const replace = (
     if ( liClassList.contains( 'item_with_icon' ) ) {
       element.getElementsByTagName( 'span' )[ 0 ].textContent = newName;
       if ( setupPage ) {
-        const icon = document.createElement( 'i' );
-        icon.classList.add(
-          'icon',
-          'fa',
-          'fa-fw',
-          'navicon',
-          'fa-undo'
-        );
-        element.getElementsByTagName( 'span' )[ 0 ].after( icon );
+        element.getElementsByTagName( 'span' )[ 0 ].after( CustomElement(
+          'i',
+          {
+            classname: 'icon fa fa-fw navicon fa-undo',
+          }
+        ) );
       }
     }
     else if (
@@ -87,15 +84,12 @@ const replace = (
     ) {
       element.textContent = newName;
       if ( setupPage ) {
-        const icon = document.createElement( 'i' );
-        icon.classList.add(
-          'icon',
-          'fa',
-          'fa-fw',
-          'navicon',
-          'fa-undo'
-        );
-        element.after( icon );
+        element.after( CustomElement(
+          'i',
+          {
+            classname: 'icon fa fa-fw navicon fa-undo',
+          }
+        ) );
       }
     }
   }
@@ -507,7 +501,7 @@ const selectCourse = e => {
     while ( selectedCourseDiv.lastChild ) {
       selectedCourseDiv.lastChild.remove();
     }
-    selectedCourseDiv.appendChild( p );
+    selectedCourseDiv.append( p );
     span.contentEditable = true;
     span.id = 'spanEditable';
     span.setAttribute(
@@ -678,16 +672,23 @@ const cleanSetup = ( isNewPage = true ) => {
  * @returns {void}
  */
 const setup = () => {
-  const icon = document.createElement( 'link' );
-  icon.rel = 'shortcut icon';
-  icon.href = '/theme/image.php/classic/theme/1588340020/favicon';
-  document.head.appendChild( icon );
-
-  const style = document.createElement( 'link' );
-  style.rel = 'stylesheet';
-  style.type = 'text/css';
-  style.href = '/theme/styles.php/classic/1588340020_1588339031/all';
-  document.head.appendChild( style );
+  document.head.append(
+    CustomElement(
+      'link',
+      {
+        rel: 'shortcut icon',
+        href: '/theme/image.php/classic/theme/1588340020/favicon',
+      }
+    ),
+    CustomElement(
+      'link',
+      {
+        rel: 'stylesheet',
+        type: 'text/css',
+        href: '/theme/styles.php/classic/1588340020_1588339031/all',
+      }
+    )
+  );
 
   GM_addStyle( `
 #page {
@@ -760,10 +761,10 @@ i.fa-undo {
 
         const temp = tempElement;
         tempElement = current.cloneNode( false );
-        tempElement.appendChild( temp );
+        tempElement.append( temp );
       }
-      document.body.appendChild( tempElement );
-      document.getElementById( 'page-content' ).appendChild( mainRegion );
+      document.body.append( tempElement );
+      document.getElementById( 'page-content' ).append( mainRegion );
     } )
     .then( () => {
       /* Clear main region */
@@ -776,65 +777,85 @@ i.fa-undo {
 
       cleanSetup( true );
 
-      const replaceLi = document.createElement( 'li' );
+      const replaceLi = CustomElement( 'li' );
 
-      const replaceTitle = document.createElement( 'h2' );
-      replaceTitle.textContent = lang.renameTitle;
-      replaceTitle.style.userSelect = 'none';
-      replaceLi.appendChild( replaceTitle );
+      replaceLi.append(
+        CustomElement(
+          'h2',
+          {
+            textContent: lang.renameTitle,
+            style: 'user-select: none',
+          }
+        ),
+        CustomElement(
+          'div',
+          {
+            textContent: lang.selectCourse,
+            style: 'user-select: none;',
+            'data-selected-course': null,
+            id: 'selectedCourseDiv',
+          }
+        )
+      );
 
-      const course = document.createElement( 'div' );
-      course.textContent = lang.selectCourse;
-      course.style.userSelect = 'none';
-      course.dataset.selectedCourse = null;
-      course.id = 'selectedCourseDiv';
-      replaceLi.appendChild( course );
-
-      const saveButton = document.createElement( 'button' );
-      saveButton.textContent = lang.saveButton;
-      saveButton.style.userSelect = 'none';
+      const saveButton = CustomElement(
+        'button',
+        {
+          textContent: lang.saveButton,
+          style: 'user-select: none;',
+        }
+      );
       saveButton.addEventListener(
         'click',
         updateSelectedCourse
       );
-      replaceLi.appendChild( saveButton );
+      replaceLi.append( saveButton );
 
-      mainRegion.appendChild( replaceLi );
+      mainRegion.append( replaceLi );
 
-      const sortLi = document.createElement( 'li' );
+      const sortLi = CustomElement( 'li' );
 
-      sortLi.appendChild( document.createElement( 'hr' ) );
+      sortLi.append(
+        CustomElement( 'hr' ),
+        CustomElement(
+          'h2',
+          {
+            textContent: lang.sortTitle,
+          }
+        )
+      );
 
-      const sortTitle = document.createElement( 'h2' );
-      sortTitle.textContent = lang.sortTitle;
-      sortLi.appendChild( sortTitle );
+      const inputDiv = CustomElement( 'div' );
 
-      const inputDiv = document.createElement( 'div' );
-
-      const sortCheckbox = document.createElement( 'input' );
-      sortCheckbox.type = 'checkbox';
-      sortCheckbox.id = 'sortCheckbox';
+      const sortCheckbox = CustomElement(
+        'input',
+        {
+          type: 'checkbox',
+          id: 'sortCheckbox',
+        }
+      );
       sortCheckbox.checked = GM_getValue( 'sort' );
       sortCheckbox.addEventListener(
         'change',
         updateSort
       );
-      inputDiv.appendChild( sortCheckbox );
-
-      const label = document.createElement( 'label' );
-      label.textContent = lang.sorting[ GM_getValue( 'sort' )
-        ? 'sorting'
-        : 'not' ];
-      label.setAttribute(
-        'for',
-        'sortCheckbox'
+      inputDiv.append(
+        sortCheckbox,
+        CustomElement(
+          'label',
+          {
+            textContent: lang.sorting[ GM_getValue( 'sort' )
+              ? 'sorting'
+              : 'not' ],
+            for: 'sortCheckbox',
+            style: 'margin-left: 5px;',
+          }
+        )
       );
-      label.style.marginLeft = '5px';
-      inputDiv.appendChild( label );
 
-      sortLi.appendChild( inputDiv );
+      sortLi.append( inputDiv );
 
-      mainRegion.appendChild( sortLi );
+      mainRegion.append( sortLi );
     } );
 };
 
@@ -847,26 +868,57 @@ const settingsGear = ( sidebar = required() ) => {
   const p = sidebar.previousSibling;
 
   if ( p.lastChild.getAttribute( 'href' ) !== '/cleanMoodleRewrite/' ) {
-    const anchor = document.createElement( 'a' );
-    anchor.target = '_blank';
-    anchor.href = '/cleanMoodleRewrite/';
+    const anchor = CustomElement(
+      'a',
+      {
+        target: '_blank',
+        href: '/cleanMoodleRewrite/',
+      }
+    );
     // Because otherwise it collapses "My courses"
     anchor.addEventListener(
       'click',
       e => e.stopPropagation()
     );
 
-    const icon = document.createElement( 'i' );
-    icon.classList.add(
-      'icon',
-      'fa',
-      'fa-fw',
-      'navicon',
-      'fa-cogs'
+    const svg = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'svg'
     );
-    icon.style.marginLeft = '5px';
-    anchor.appendChild( icon );
-    p.appendChild( anchor );
+    svg.setAttributeNS(
+      null,
+      'fill',
+      'none'
+    );
+    svg.setAttributeNS(
+      null,
+      'stroke',
+      'currentColor'
+    );
+    svg.setAttributeNS(
+      null,
+      'viewBox',
+      '0 0 24 24'
+    );
+    svg.style.height = '1.3em';
+    svg.setAttributeNS(
+      null,
+      'stroke-width',
+      1.5
+    );
+    const path = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'path'
+    );
+    path.setAttributeNS(
+      null,
+      'd',
+      'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM9 12a3 3 0 106 0 3 3 0 10-6 0'
+    );
+    svg.append( path );
+    anchor.append( svg );
+
+    p.append( anchor );
   }
 };
 
@@ -937,6 +989,36 @@ addEventListener(
     }
   }
 );
+
+/**
+ * Creates an HTMLElement
+ * @param {String} type Nodename
+ * @param {Object} [props={}] Attributes
+ * @returns {HTMLElement} HTMLElement
+ */
+const CustomElement = (
+  type, props = {}
+) => {
+  const element = document.createElement( type );
+  const propEntries = Object.entries( props );
+  for ( let i = 0; i < propEntries.length; i++ ) {
+    const [ key, val ] = propEntries[ i ];
+    switch ( key.toLowerCase() ) {
+      case 'textcontent':
+      case 'innerhtml':
+      case 'innertext':
+        element[ key ] = val;
+        break;
+      default:
+        element.setAttribute(
+          key,
+          val
+        );
+        break;
+    }
+  }
+  return element;
+};
 
 if ( ( /^\/cleanmoodlerewrite/iu ).test( location.pathname ) ) {
   document.readyState === 'complete'
