@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.17a
+// @version      2020.09.19a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -850,16 +850,10 @@ const settingsGear = ( sidebar = required() ) => {
     const anchor = document.createElement( 'a' );
     anchor.target = '_blank';
     anchor.href = '/cleanMoodleRewrite/';
+    // Because otherwise it collapses "My courses"
     anchor.addEventListener(
       'click',
-      e => {
-        e.stopPropagation();
-        e.preventDefault();
-        open(
-          '/cleanMoodleRewrite/',
-          '_blank'
-        );
-      }
+      e => e.stopPropagation()
     );
 
     const icon = document.createElement( 'i' );
