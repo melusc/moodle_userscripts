@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.19b
+// @version      2020.09.21a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -48,7 +48,7 @@ const required = ( e = 'Variable' ) => {
  * @param {string} name Name of link
  * @param {string} newName Name to replace it with
  * @param {HTMLElement} sidebar HTMLElement where link can be found
- * @param {Boolean} [setupPage=false] If set to true will add FontAwesome undo icon
+ * @param {boolean} [setupPage=false] If set to true will add FontAwesome undo icon
  * @returns {void}
  */
 const replace = (
@@ -97,7 +97,7 @@ const replace = (
 
 /**
  * Removes element with [title=name]
- * @param {String} name Name of link
+ * @param {string} name Name of link
  * @param {HTMLElement} sidebar HTMLElement where link can be found
  * @returns {void}
  */
@@ -131,7 +131,7 @@ const remove = (
  */
 const sort = ( sidebar = required() ) => {
   if ( GM_getValue( 'sort' ) === true ) {
-    const children = filterCourses( [ ...sidebar.children ] );
+    const children = filteredSidebarChildren( sidebar );
     children.sort( (
       a, b
     ) => {
@@ -155,10 +155,10 @@ const sort = ( sidebar = required() ) => {
 
 /**
  * Gets last digits
- * @param {HTMLElement} e HTMLElement from which the digits should taken
- * @returns {Number} Number from HTMLElement
+ * @param {HTMLElement} li HTMLElement from which the digits should taken
+ * @returns {number} Number from HTMLElement
  */
-const getNum = e => +e.getAttribute( 'aria-labelledby' ).match( /(?<num>\d+)$/u ).groups.num;
+const getNum = li => +li.getAttribute( 'aria-labelledby' ).match( /(?<num>\d+)$/u ).groups.num;
 
 /**
  * Undoes sorting by bringing it back to default sorting
@@ -166,7 +166,7 @@ const getNum = e => +e.getAttribute( 'aria-labelledby' ).match( /(?<num>\d+)$/u 
  * @returns {void}
  */
 const unsort = ( sidebar = required() ) => {
-  const children = filterCourses( [ ...sidebar.children ] ).sort( (
+  const children = filteredSidebarChildren( sidebar ).sort( (
     a, b
   ) => getNum( a ) - getNum( b ) );
   sidebar.prepend( ...children );
@@ -174,18 +174,18 @@ const unsort = ( sidebar = required() ) => {
 
 /**
  * Filters courses that don't have nodeName 'li' and don't have the className 'type_course'
- * @param {ArrayLike|Array} children Children that need to be filtered
+ * @param {HTMLElement} sidebar Sidebar of which the children shall be returned filtered
  * @returns {Array} Filtered children
  */
-const filterCourses = children => [ ...children ].filter( e => e.nodeName === 'LI' && e.classList.contains( 'type_course' ) );
+const filteredSidebarChildren = ( sidebar = required() ) => [ ...sidebar.children ].filter( e => e.nodeName === 'LI' && e.classList.contains( 'type_course' ) );
 
 /**
  * Remove element from TM storage
- * @param {String} name Exact string that needs to be removed from storage
- * @param {Boolean} [setRemove=true] Update storage for removers
- * @param {Boolean} [setReplace=true] Update storage for replacers
+ * @param {string} name Exact string that needs to be removed from storage
+ * @param {boolean} [setRemove=true] Update storage for removers
+ * @param {boolean} [setReplace=true] Update storage for replacers
  *
- * @returns {Object} newVals An object containing the new replacer- and remover values
+ * @returns {object} newVals An object containing the new replacer and remover values
  * @returns {Array} newVals.remove The new removers
  * @returns {Array} newVals.replace The new replacers
  */
@@ -238,8 +238,8 @@ const removeElement = (
 
 /**
  * Adds a new replacer to TM storage
- * @param {String} name Name of new replacer
- * @param {String} replaceWith String to replace old val with
+ * @param {string} name Name of new replacer
+ * @param {string} replaceWith String to replace old val with
  * @returns {void}
  */
 const addReplacer = (
@@ -278,7 +278,7 @@ const addReplacer = (
 };
 /**
  * Adds a new remover to TM storage
- * @param {String} name Name of new remover
+ * @param {string} name Name of new remover
  * @returns {void}
  */
 const addRemover = ( name = required() ) => {
@@ -306,10 +306,10 @@ const addRemover = ( name = required() ) => {
 
 /**
  * Get sidebar from any context
- * @param {Document} ctx Context where sidebar can be found
+ * @param {document} context Context where sidebar can be found
  * @returns {HTMLElement} Sidebar
  */
-const getSidebar = ctx => ctx.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' ) ?? ctx.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
+const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' ) ?? context.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
 
 /**
  * Returns only values from origArr that aren't in compareTo
@@ -323,10 +323,11 @@ const compareReplacers = (
 
 /**
  * Update sidebar i.e. set names correctly, remove all elements that should be, sort or unsort
- * @param {String} name Name of TM Storage item
+ * Most commonly called by Tampermonkey itself from GM_addValueChangeListener
+ * @param {string} name Name of TM Storage item
  * @param {*} [oldVal] Old value in storage
  * @param {*} [newVal] New value already in storage
- * @param {Boolean} [remote=true] Whether storage was updated in current or remote tab
+ * @param {boolean} [remote=true] Whether storage was updated in current or remote tab, defaults to true so only the name has to be given when called manually
  * @returns {void}
  */
 const refresh = (
@@ -410,7 +411,7 @@ const refresh = (
 
 /**
  * Adds fontAwesome's fa-check to element for toggling the visibility of an item
- * @param {String} name Name of link
+ * @param {string} name Name of link
  * @param {*} sidebar sidebar where element can be found
  * @returns {void}
  */
@@ -435,22 +436,22 @@ const setupCustomRemove = (
 
 /**
  * Handles click of sidebar and calls various functions depending on the clicked element
- * @param {Object} e Eventobject
+ * @param {object} event Eventobject
  * @returns {void}
  *
  * @listens Click
  */
-const sidebarClick = e => {
-  e.preventDefault();
-  e.stopPropagation();
+const sidebarClick = event => {
+  event.preventDefault();
+  event.stopPropagation();
 
-  if ( e.target.nodeName === 'I' ) {
-    const { classList } = e.target;
+  if ( event.target.nodeName === 'I' ) {
+    const { classList } = event.target;
     if ( classList.contains( 'fa-times' ) || classList.contains( 'fa-undo' ) ) {
-      removeElement( e.target.closest( 'a' ).title );
+      removeElement( event.target.closest( 'a' ).title );
     }
     else if ( classList.contains( 'fa-check' ) ) {
-      addRemover( e.target.closest( 'a' ).title );
+      addRemover( event.target.closest( 'a' ).title );
 
       const selectedCourseDiv = document.getElementById( 'selectedCourseDiv' );
       selectedCourseDiv.dataset.selectedCourse = null;
@@ -462,22 +463,22 @@ const sidebarClick = e => {
     cleanSetup( false );
   }
   else if (
-    e.target.nodeName !== 'UL'
-    || e.target.getAttribute( 'role' ) !== 'group'
+    event.target.nodeName !== 'UL'
+    || event.target.getAttribute( 'role' ) !== 'group'
   ) {
-    selectCourse( e );
+    selectCourse( event );
   }
 };
 
 /**
  * Copies link to main region for setting a replacer
- * @param {Object} e Eventobject
+ * @param {object} event Eventobject
  * @returns {void}
  */
-const selectCourse = e => {
-  const p = ( e.target.nodeName === 'LI'
-    ? e.target.getElementsByTagName( 'p' )[ 0 ]
-    : e.target.closest( 'p' )
+const selectCourse = event => {
+  const p = ( event.target.nodeName === 'LI'
+    ? event.target.getElementsByTagName( 'p' )[ 0 ]
+    : event.target.closest( 'p' )
   ).cloneNode( true );
   if ( p ) {
     const selectedCourseDiv = document.getElementById( 'selectedCourseDiv' );
@@ -489,7 +490,7 @@ const selectCourse = e => {
       anchor.removeChild( anchor.getElementsByClassName( 'fa-undo' )[ 0 ] );
     }
 
-    const origAnchor = e.target.closest( 'li' ).getElementsByTagName( 'a' )[ 0 ];
+    const origAnchor = event.target.closest( 'li' ).getElementsByTagName( 'a' )[ 0 ];
     if ( origAnchor.style.color === 'red' ) {
       removeElement( anchor.title );
       const origIcon = origAnchor.getElementsByTagName( 'i' )[ 0 ];
@@ -527,15 +528,15 @@ const selectCourse = e => {
 
 /**
  * Adds replacer to TM storage
- * @param {Object} e Eventobject
+ * @param {object} event Eventobject
  * @returns {void}
  * @listens Keydown
  * @listens Click
  */
-const updateSelectedCourse = e => {
-  if ( ( e.type === 'keydown' && e.key === 'Enter' ) || e.type === 'click' ) {
-    e.preventDefault();
-    e.stopPropagation();
+const updateSelectedCourse = event => {
+  if ( ( event.type === 'keydown' && event.key === 'Enter' ) || event.type === 'click' ) {
+    event.preventDefault();
+    event.stopPropagation();
 
     const selectedCourse = document.getElementById( 'selectedCourseDiv' );
 
@@ -583,10 +584,10 @@ const updateSort = () => {
 /**
  * Cleans settings page and resets everything
  * To be used only on settings page
- * @param {Boolean} [isNewPage=true] If set to true adds event listener to sidebar
+ * @param {boolean} [isNewPage=error] If set to true adds eventlistener to sidebar, throws error if not given
  * @returns {void}
  */
-const cleanSetup = ( isNewPage = true ) => {
+const cleanSetup = ( isNewPage = required() ) => {
   /* Remove "Dashboard" */
   const dashboard = document.querySelector( 'li[aria-labelledby="label_2_2"]' );
   if ( dashboard !== null ) {
@@ -924,7 +925,7 @@ const settingsGear = ( sidebar = required() ) => {
 
 /**
  * Sets cursor at position
- * @param {Number} [position] Position of cursor, defaults to textlength
+ * @param {number} [position] Position of cursor, defaults to textlength
  * @returns {void}
  */
 const selectSpan = position => {
@@ -992,14 +993,14 @@ addEventListener(
 
 /**
  * Creates an HTMLElement
- * @param {String} type Nodename
- * @param {Object} [props={}] Attributes
+ * @param {string} nodeName Nodename
+ * @param {object} [props={}] Attributes
  * @returns {HTMLElement} HTMLElement
  */
 const CustomElement = (
-  type, props = {}
+  nodeName, props = {}
 ) => {
-  const element = document.createElement( type );
+  const element = document.createElement( nodeName );
   const propEntries = Object.entries( props );
   for ( let i = 0; i < propEntries.length; i++ ) {
     const [ key, val ] = propEntries[ i ];
