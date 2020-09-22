@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.21a
+// @version      2020.09.22a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -430,7 +430,7 @@ const setupCustomRemove = (
         'fa-check',
         'fa-times'
       );
-    element.style.color = 'red';
+    element.style.color = '#ff4136';
   }
 };
 
@@ -491,10 +491,10 @@ const selectCourse = event => {
     }
 
     const origAnchor = event.target.closest( 'li' ).getElementsByTagName( 'a' )[ 0 ];
-    if ( origAnchor.style.color === 'red' ) {
+    if ( origAnchor.style.color === '#ff4136' ) {
       removeElement( anchor.title );
       const origIcon = origAnchor.getElementsByTagName( 'i' )[ 0 ];
-      origAnchor.style.color = 'green';
+      origAnchor.style.color = '#2ecc40';
       origIcon.classList.remove( 'fa-times' );
       origIcon.classList.add( 'fa-check' );
     }
@@ -605,7 +605,7 @@ const cleanSetup = ( isNewPage = required() ) => {
       'fa-times'
     );
     icons[ i ].classList.add( 'fa-check' );
-    icons[ i ].closest( 'a' ).style.color = 'green';
+    icons[ i ].closest( 'a' ).style.color = '#2ecc40';
   }
 
   /* Reset all text and remove undo icons */
