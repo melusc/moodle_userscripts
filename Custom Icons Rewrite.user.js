@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Custom Icons Rewrite
-// @version      2020.09.15a
+// @version      2020.09.23a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -74,9 +74,13 @@ const modIcon = (
             }
           ) );
         }
-        icon.onload = () => {
-          URL.revokeObjectURL( icon.src );
-        };
+        icon.addEventListener(
+          'load',
+          () => {
+            URL.revokeObjectURL( icon.src );
+          },
+          { once: true }
+        );
       }
       catch {}
     } );
@@ -90,7 +94,7 @@ const getBlob = ( dataURI = required( 'dataURI' ) ) => new Promise( resolve => {
   for ( let i = 0; i < byteString.length; i++ ) {
     uintArray[ i ] = byteString.charCodeAt( i );
   }
-  const mime = dataURI.match( /(?<=data:)\w+\/[\w.]+(?=;)/u )[ 0 ];
+  const { mime } = dataURI.match( /(?<=data:)(?<mime>\w+\/[\w.+]+)(?=;)/u ).groups;
   const blob = new Blob(
     [ uintArray ],
     {
@@ -101,55 +105,15 @@ const getBlob = ( dataURI = required( 'dataURI' ) ) => new Promise( resolve => {
   resolve( objectUrl );
 } );
 
-const range = (
-  end, start = 0, step = 1
-) => {
-  function* generateRange() {
-    let x = start - step;
-    while ( x < end - step ) {
-      yield x += step;
-    }
-  }
-  return {
-    [ Symbol.iterator ]: generateRange,
-  };
-};
-
-const randomId = ( length = 10 ) => {
-  const str = String.fromCharCode(
-    ...range(
-      58,
-      48
-    ), // 0-9
-    ...range(
-      91,
-      65
-    ), // A-Z
-    ...range(
-      123,
-      97
-    ), // A-z
-    45, // '-'
-    95 // '_'
+/* eslint-disable */
+// source: https://gist.github.com/jed/982883
+const uuidv4 = () => {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
   );
-
-  if ( !Array.isArray( GM_getValue( 'references' ) ) ) {
-    GM_setValue(
-      'references',
-      []
-    );
-  }
-  const allIDs = GM_getValue( 'references' ).map( e => e[ 1 ] );
-
-  const returnVal = [];
-
-  while ( returnVal.length < length ) {
-    returnVal.push( str.charAt( Math.random() * ( str.length + 1 ) ) );
-  }
-  return allIDs.indexOf( returnVal.join( '' ) ) === -1
-    ? returnVal.join( '' )
-    : randomId( length );
-};
+}
+/* eslint-enable */
+/* eslint-disable require-jsdoc */
 
 const setup = () => {
   document.title = 'Custom Icons Rewrite Setup';
@@ -622,12 +586,12 @@ const addToStorage = (
     );
     reset();
   }
-  else if ( ( /image\/(?:png|jpe?g)/iu ).test( data.type ) ) {
+  else if ( ( /image\/(?:png|jpe?g|svg)/iu ).test( data.type ) ) {
     const fr = new FileReader();
     fr.addEventListener(
       'load',
       () => {
-        const id = randomId( 10 );
+        const id = uuidv4();
         const { references } = arrs;
         references.push( [ name, id ] );
         references.sort( (
@@ -909,11 +873,6 @@ const CustomElement = (
   return element;
 };
 
-Element.prototype.remove = function () {
-  if ( this !== null ) {
-    this.parentNode.removeChild( this );
-  }
-};
 NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
   for ( let i = this.length - 1; i >= 0; i-- ) {
     this[ i ].remove();
@@ -930,7 +889,7 @@ if ( ( /^\/customiconsrewrite/iu ).test( location.pathname ) ) {
     setup
   );
 }
-else if ( !( /^\/cleanmooddle/iu ).test( location.pathname ) ) {
+else if ( !( /^\/cleanmoodle/iu ).test( location.pathname ) ) {
   addEventListener(
     'DOMContentLoaded',
     run
