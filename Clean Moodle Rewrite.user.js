@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.22a
+// @version      2020.09.23a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -31,6 +31,10 @@ const lang = {
   openSettings: 'Open settings',
   toggleSorting: 'Toggle sorting',
   spanAfter: 'Reset to "{{{s}}}"',
+};
+const colors = {
+  red: '#ff4136',
+  green: '#2ecc40',
 };
 
 /**
@@ -73,7 +77,7 @@ const replace = (
         element.getElementsByTagName( 'span' )[ 0 ].after( CustomElement(
           'i',
           {
-            classname: 'icon fa fa-fw navicon fa-undo',
+            class: 'icon fa fa-fw navicon fa-undo',
           }
         ) );
       }
@@ -87,7 +91,7 @@ const replace = (
         element.after( CustomElement(
           'i',
           {
-            classname: 'icon fa fa-fw navicon fa-undo',
+            class: 'icon fa fa-fw navicon fa-undo',
           }
         ) );
       }
@@ -430,7 +434,7 @@ const setupCustomRemove = (
         'fa-check',
         'fa-times'
       );
-    element.style.color = '#ff4136';
+    element.style.color = colors.red;
   }
 };
 
@@ -479,8 +483,8 @@ const selectCourse = event => {
   const p = ( event.target.nodeName === 'LI'
     ? event.target.getElementsByTagName( 'p' )[ 0 ]
     : event.target.closest( 'p' )
-  ).cloneNode( true );
-  if ( p ) {
+  )?.cloneNode( true );
+  if ( p !== null && p !== undefined ) {
     const selectedCourseDiv = document.getElementById( 'selectedCourseDiv' );
     const span = p.getElementsByTagName( 'span' )[ 0 ];
     const anchor = p.getElementsByTagName( 'a' )[ 0 ];
@@ -491,12 +495,15 @@ const selectCourse = event => {
     }
 
     const origAnchor = event.target.closest( 'li' ).getElementsByTagName( 'a' )[ 0 ];
-    if ( origAnchor.style.color === '#ff4136' ) {
+    const origIcon = origAnchor.firstElementChild;
+    if ( origIcon.classList.contains( 'fa-times' ) ) {
       removeElement( anchor.title );
       const origIcon = origAnchor.getElementsByTagName( 'i' )[ 0 ];
-      origAnchor.style.color = '#2ecc40';
-      origIcon.classList.remove( 'fa-times' );
-      origIcon.classList.add( 'fa-check' );
+      origAnchor.style.color = colors.green;
+      origIcon.classList.replace(
+        'fa-times',
+        'fa-check'
+      );
     }
 
     while ( selectedCourseDiv.lastChild ) {
@@ -605,7 +612,7 @@ const cleanSetup = ( isNewPage = required() ) => {
       'fa-times'
     );
     icons[ i ].classList.add( 'fa-check' );
-    icons[ i ].closest( 'a' ).style.color = '#2ecc40';
+    icons[ i ].closest( 'a' ).style.color = colors.green;
   }
 
   /* Reset all text and remove undo icons */
