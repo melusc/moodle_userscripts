@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.23a
+// @version      2020.09.25a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -62,12 +62,8 @@ const replace = (
   setupPage = false
 ) => {
   const element = sidebar.querySelector( `a[title="${ name }"]` );
-  if ( element === null ) {
-    removeElement(
-      name,
-      true
-    );
-    lang.nonExistant( name );
+  if ( element === null || element === undefined ) {
+    testRemovedCourse( name );
   }
   else {
     const liClassList = element.closest( 'li' ).classList;
@@ -110,12 +106,8 @@ const remove = (
   sidebar = required( 'sidebar' )
 ) => {
   const element = sidebar.querySelector( `a[title="${ name }"]` );
-  if ( element === null ) {
-    removeElement(
-      name,
-      true
-    );
-    lang.nonExistant( name );
+  if ( element === null || element === undefined ) {
+    testRemovedCourse( name );
   }
   else {
     const liClassList = element.closest( 'li' ).classList;
@@ -391,7 +383,7 @@ const refresh = (
           );
         }
       }
-      else if ( sidebar === null ) {
+      else if ( sidebar === null || sidebar === undefined ) {
         location.reload();
       }
       else {
@@ -423,9 +415,8 @@ const setupCustomRemove = (
   name = required(), sidebar = required()
 ) => {
   const element = sidebar.querySelector( `a[title="${ name }"]` );
-  if ( element === null ) {
-    removeElement( name );
-    lang.nonExistant( name );
+  if ( element === null || element === undefined ) {
+    testRemovedCourse( name );
   }
   else {
     element
@@ -928,6 +919,27 @@ const settingsGear = ( sidebar = required() ) => {
 
     p.append( anchor );
   }
+};
+
+/**
+ * Tests if user is still in course by name or not and if not removes that element from storage
+ * @param {string} name Name of course to test
+ * @returns {void}
+ */
+const testRemovedCourse = ( name = required() ) => {
+  fetch( '/' )
+    .then( response => response.text() )
+    .then( responseText => {
+      const parsed = new DOMParser().parseFromString(
+        responseText,
+        'text/html'
+      );
+      const sidebar = getSidebar( parsed );
+      const course = sidebar.querySelector( `a[title="${ name }"]` );
+      if ( course === null || course === undefined ) {
+        lang.nonExistant( name );
+      }
+    } );
 };
 
 /**
