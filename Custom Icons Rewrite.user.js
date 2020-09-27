@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Custom Icons Rewrite
-// @version      2020.09.23a
+// @version      2020.09.27a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -24,7 +24,7 @@ const run = ( addRemoveIcon = false ) => {
   const sidebar = getSidebar( document );
   const references = GM_getValue( 'references' );
   if ( Array.isArray( references ) ) {
-    if ( sidebar !== null ) {
+    if ( sidebar !== null && sidebar !== undefined ) {
       for ( let i = 0; i < references.length; i++ ) {
         modIcon(
           references[ i ],
@@ -219,7 +219,7 @@ ul.section {
         'fa-fw',
         'navicon'
       ) )[ 0 ];
-      if ( dashboard !== undefined ) {
+      if ( dashboard !== undefined && dashboard !== null ) {
         dashboard.closest( 'li' ).remove();
       }
 
@@ -475,7 +475,7 @@ ul.section {
 };
 
 const resetFile = e => {
-  if ( e !== undefined ) {
+  if ( e !== undefined && e !== null ) {
     e.preventDefault();
     e.stopPropagation();
   }
@@ -490,7 +490,7 @@ const resetFile = e => {
 };
 
 const saveValues = e => {
-  if ( e !== undefined ) {
+  if ( e !== undefined && e !== null ) {
     e.preventDefault();
     e.stopPropagation();
   }
@@ -642,13 +642,12 @@ const handleInput = () => {
 const handleSidebarClick = e => {
   e.preventDefault();
   e.stopPropagation();
+  const li = e.target.closest( 'li.type_course.depth_3.item_with_icon' );
   if ( e.target.nodeName === 'I' && e.target.classList.contains( 'remove' ) ) {
     removeElement( e.target.closest( 'a' ).title );
   }
-  else if (
-    e.target.closest( 'li.type_course.depth_3.item_with_icon' ) !== null
-  ) {
-    addSelectedCourse( e.target.closest( 'li.type_course.depth_3.item_with_icon' ) );
+  else if ( li !== null && li !== undefined ) {
+    addSelectedCourse( li );
   }
 };
 const addSelectedCourse = e => {
@@ -657,8 +656,9 @@ const addSelectedCourse = e => {
     .clear();
 
   const element = e.firstChild.cloneNode( true );
-  if ( element.getElementsByClassName( 'customIcon' )[ 0 ] !== undefined ) {
-    element.getElementsByClassName( 'customIcon' )[ 0 ].replaceWith( CustomElement(
+  const customIcon = element.getElementsByClassName( 'customIcon' )[ 0 ];
+  if ( customIcon !== undefined && customIcon !== null ) {
+    customIcon.replaceWith( CustomElement(
       'i',
       {
         class: 'icon fa fa-graduation-cap fa-fw navicon',
@@ -753,7 +753,7 @@ const reset = () => {
   for ( let i = 0; i < sidebarChildren.length; i++ ) {
     const img = sidebarChildren[ i ].getElementsByTagName( 'img' )[ 0 ];
 
-    if ( img !== undefined ) {
+    if ( img !== undefined && img !== null ) {
       if ( img.nextSibling !== null && img.nextSibling.nodeName === 'I' ) {
         img.nextSibling.remove();
       }

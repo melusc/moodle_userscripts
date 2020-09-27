@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.25a
+// @version      2020.09.27a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -588,7 +588,7 @@ const updateSort = () => {
 const cleanSetup = ( isNewPage = required() ) => {
   /* Remove "Dashboard" */
   const dashboard = document.querySelector( 'li[aria-labelledby="label_2_2"]' );
-  if ( dashboard !== null ) {
+  if ( dashboard !== null && dashboard !== undefined ) {
     dashboard.parentNode.removeChild( dashboard );
   }
 
@@ -612,7 +612,7 @@ const cleanSetup = ( isNewPage = required() ) => {
     span[ i ].textContent = span[ i ].closest( 'a' ).title.trim();
 
     const icon = span[ i ].nextSibling;
-    if ( icon !== null ) {
+    if ( icon !== null && icon !== undefined ) {
       icon.parentNode.removeChild( icon );
     }
   }
@@ -970,7 +970,7 @@ addEventListener(
   () => {
     const sidebar = getSidebar( document );
 
-    if ( sidebar !== null ) {
+    if ( sidebar !== null && sidebar !== undefined ) {
       const replacers = GM_getValue( 'replace' );
       if ( Array.isArray( replacers ) ) {
         for ( let i = 0; i < replacers.length; i++ ) {
