@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle Rewrite
-// @version      2020.09.27a
+// @version      2020.10.05a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @grant        GM_setValue
@@ -30,7 +30,6 @@ const lang = {
   title: 'Clean Moodle Rewrite Setup',
   openSettings: 'Open settings',
   toggleSorting: 'Toggle sorting',
-  spanAfter: 'Reset to "{{{s}}}"',
 };
 const colors = {
   red: '#ff4136',
@@ -899,7 +898,11 @@ const settingsGear = ( sidebar = required() ) => {
       'viewBox',
       '0 0 24 24'
     );
-    svg.style.height = '1.3em';
+    svg.setAttributeNS(
+      null,
+      'height',
+      '1.3em'
+    );
     svg.setAttributeNS(
       null,
       'stroke-width',
