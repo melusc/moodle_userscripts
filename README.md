@@ -5,7 +5,7 @@ Feel free to use them anyway.
 
 On https://melusc.github.io/ I have random things I made for fun.
 
-Also check out the [extension](https://github.com/melusc/schulNetz-extension/) I made for Firefox, it calculates your marks to check if you're passing grade-wise.
+Also check out the [extension](https://github.com/melusc/schulNetz-extension/) I made for Firefox, it calculates your marks to check if you're passing.
 
 [Install `Clean Moodle.user.js`](https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20Rewrite.user.js)
 
