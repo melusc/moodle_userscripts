@@ -1,6 +1,6 @@
 Below are some Userscripts I made to mainly improve Moodle.
 
-Most are out of date and not very efficient or well-designed (source code wise) so I have improved them or rewritten them entirely but am not really releasing them anymore.
+Most are out of date and not very efficient or well-designed (regarding decisions code-wise) so I have improved them or rewritten them entirely but am not really releasing them anymore.
 Feel free to use them anyway.
 
 On https://melusc.github.io/ I have random things I made for fun.
