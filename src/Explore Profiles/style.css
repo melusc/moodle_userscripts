@@ -1,0 +1,61 @@
+.epr_buttons {
+  display: flex;
+}
+.epr_buttons > button {
+  margin-left: 4px;
+  margin-right: 4px;
+  border-radius: 2px;
+  padding: 4px 8px;
+}
+
+.epr_notification {
+  width: 100%;
+  height: 100%;
+  z-index: 10001;
+  user-select: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.epr_notification .epr_centered {
+  border: 2px solid #444;
+  background-color: #e5e5e5;
+  border-radius: 3px;
+  padding: 2% 4%;
+}
+.epr_notification .epr_notificiationText {
+  color: #444;
+  text-align: center;
+  font-size: 1.5em;
+}
+.epr_notification .epr_small {
+  font-size: 16px;
+}
+.epr_notification .epr_loadingDots::after {
+  content: "";
+  animation-duration: 4s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-name: epr_loadingDots;
+}
+
+@keyframes epr_loadingDots {
+  0% {
+    content: "...";
+  }
+  33.3% {
+    content: "..";
+  }
+  66.6% {
+    content: ".";
+  }
+  100% {
+    content: "";
+  }
+}
+
+/*# sourceMappingURL=style.css.map */
