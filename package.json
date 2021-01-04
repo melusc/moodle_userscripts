@@ -1,0 +1,33 @@
+{
+  "name": "preact_userscript",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "sass:w": "sass src:src --watch",
+    "sass": "sass src:src",
+    "babel:w": "babel src -d dist -w",
+    "babel": "babel src -d dist",
+    "csso": "csso -i dist/style.css -o dist/style.min.css --stat",
+    "serve": "serve dist"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/eslint-parser": "^7.12.1",
+    "@babel/eslint-plugin": "^7.12.1",
+    "@babel/plugin-syntax-class-properties": "^7.12.1",
+    "babel-plugin-htm": "^3.0.0",
+    "eslint": "^7.17.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-csso": "^4.0.1",
+    "gulp-svgmin": "^3.0.0",
+    "npm": "^6.14.10",
+    "prettier": "^2.2.1",
+    "sass": "^1.32.0"
+  },
+  "dependencies": {}
+}
