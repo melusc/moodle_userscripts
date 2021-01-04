@@ -1,0 +1,240 @@
+@use 'sass:color';
+@import 'sanitize';
+
+$red: #ff4126;
+$black: #111;
+$font-size: 20px;
+$line-height: $font-size / 2 * 3;
+$green: green;
+$background-color: #06090f;
+$text: #f0f6fcb3;
+$border-look: 2px solid;
+$border-color: #30363d;
+$border-radius: 2px;
+
+body {
+  padding-top: 0.3em;
+  width: 100%;
+  min-height: 100vh;
+  font: $font-size sans-serif;
+  color: $text;
+  background-color: $background-color;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.table-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  // width: max-content;
+  // min-width: 60%;
+  width: 70%;
+}
+
+.main-table {
+  width: 100%;
+  margin-top: 0.5em;
+}
+.table-cell.remove-row {
+  color: $text;
+}
+.table-row {
+  display: flex;
+  width: 100%;
+  // align-items: center;
+  margin-bottom: 0.3em;
+}
+.table-cell {
+  width: 50%;
+  padding: 0.3em 1em;
+  box-sizing: border-box;
+  border: $border-look $border-color;
+  // flex: 1 1 0;
+  // border-radius: $border-radius;
+
+  &.time {
+    // display: flex;
+    /* because this way the time inputs
+    are as wide as possible */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    border-top-left-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.entry {
+    border-top-right-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
+    display: flex;
+    width: 50%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    > * {
+      width: 100%;
+    }
+
+    [data-type='content']:empty::before {
+      content: 'Content';
+      color: #8b949e;
+    }
+    [data-type='id']:empty::before {
+      content: 'Course id';
+      color: #8b949e;
+    }
+  }
+
+  &.remove-row {
+    width: 1.5em;
+    // height: 1.5em;
+    border: none;
+    cursor: pointer;
+    padding-left: 0;
+    padding-right: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.time-input {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+
+  &.time-from {
+    text-align: right;
+  }
+  &.time-to {
+    text-align: left;
+  }
+}
+[contenteditable] {
+  cursor: text;
+}
+.grid-buttons {
+  display: grid;
+  grid-template-columns: 0.3fr auto 0.3fr;
+  justify-items: center;
+  column-gap: 5px;
+  width: 100%;
+  margin-bottom: 0.3em;
+  margin-top: 0.3em;
+}
+.day-controls {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  grid-column-start: 2;
+  user-select: none;
+  margin-right: 1.5em;
+}
+.caret-back,
+.caret-forward {
+  width: 1.5em;
+  height: 1.5em;
+  cursor: pointer;
+}
+.save-button {
+  cursor: pointer;
+  margin-left: auto;
+  background: none;
+  color: $text;
+  border: $border-look $border-color;
+  border-radius: 2px;
+  padding: 0.2em 1.3em;
+  font-size: 90%;
+}
+
+.icon-add-row {
+  width: 1.5em;
+  height: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 1.5em; // width of remove row buttons
+}
+
+.row-icon-add-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.table-hidden {
+  display: none;
+}
+.invalid-input {
+  color: $red;
+}
+.invalid-id {
+  border-bottom-color: $red;
+}
+.suggestions {
+  position: absolute;
+  z-index: 1;
+  background-color: #0d1117;
+  border: $border-look $border-color;
+  border-radius: $border-radius;
+  padding: 12px 20px;
+  max-width: calc(35% - 2.7em);
+
+  .emphasised {
+    font-weight: bold;
+  }
+
+  &:empty {
+    display: none;
+  }
+
+  .suggestion {
+    display: flex;
+    width: 100%;
+
+    &:hover {
+      // background-color: #21262d;
+      text-decoration: underline;
+    }
+  }
+}
+.suggestion-name {
+  padding: 2px 4px;
+  border-radius: $border-radius;
+  cursor: pointer;
+  flex: 0 0 80%;
+}
+.suggestion-id {
+  flex: 0 0 20%;
+  text-align: end;
+}
+
+.save-failed {
+  animation: 3s ease-in-out save-failed;
+}
+.save-successful {
+  animation: 3s ease-in-out save-successful;
+}
+
+@keyframes save-failed {
+  from {
+    border-color: $red;
+  }
+  to {
+    border-color: $border-color;
+  }
+}
+@keyframes save-successful {
+  from {
+    border-color: $green;
+  }
+  to {
+    border-color: $border-color;
+  }
+}

@@ -1,0 +1,479 @@
+/* Document
+ * ========================================================================== */
+/**
+ * Add border box sizing in all browsers (opinionated).
+ */
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+/**
+ * 1. Add text decoration inheritance in all browsers (opinionated).
+ * 2. Add vertical alignment inheritance in all browsers (opinionated).
+ */
+::before,
+::after {
+  text-decoration: inherit;
+  /* 1 */
+  vertical-align: inherit;
+  /* 2 */
+}
+
+/**
+ * 1. Use the default cursor in all browsers (opinionated).
+ * 2. Change the line height in all browsers (opinionated).
+ * 3. Use a 4-space tab width in all browsers (opinionated).
+ * 4. Remove the grey highlight on links in iOS (opinionated).
+ * 5. Prevent adjustments of font size after orientation changes in
+ *    IE on Windows Phone and in iOS.
+ * 6. Breaks words to prevent overflow in all browsers (opinionated).
+ */
+html {
+  cursor: default;
+  /* 1 */
+  line-height: 1.5;
+  /* 2 */
+  -moz-tab-size: 4;
+  /* 3 */
+  tab-size: 4;
+  /* 3 */
+  -webkit-tap-highlight-color: transparent;
+  -ms-text-size-adjust: 100%;
+  /* 5 */
+  -webkit-text-size-adjust: 100%;
+  /* 5 */
+  word-break: break-word;
+  /* 6 */
+}
+
+/* Sections
+ * ========================================================================== */
+/**
+ * Remove the margin in all browsers (opinionated).
+ */
+body {
+  margin: 0;
+}
+
+/**
+ * Correct the font size and margin on `h1` elements within `section` and
+ * `article` contexts in Chrome, Edge, Firefox, and Safari.
+ */
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+/**
+ * Remove the margin on nested lists in Edge 18- and IE.
+ */
+ol ol,
+ol ul,
+ul ol,
+ul ul {
+  margin: 0;
+}
+
+/**
+ * 1. Add the correct sizing in Firefox.
+ * 2. Show the overflow in Edge 18- and IE.
+ */
+hr {
+  height: 0;
+  /* 1 */
+  overflow: visible;
+  /* 2 */
+}
+
+/* Text-level semantics
+ * ========================================================================== */
+/**
+ * Remove the gray background on active links in IE 10.
+ */
+a {
+  background-color: transparent;
+}
+
+/* Embedded content
+ * ========================================================================== */
+/*
+ * Change the alignment on media elements in all browsers (opinionated).
+ */
+img,
+svg {
+  vertical-align: middle;
+}
+
+/**
+ * Remove the border on images within links in IE 10-.
+ */
+img {
+  border-style: none;
+}
+
+/**
+ * Change the fill color to match the text color in all browsers (opinionated).
+ */
+svg:not([fill]) {
+  fill: currentColor;
+}
+
+/**
+ * Hide the overflow in IE.
+ */
+svg:not(:root) {
+  overflow: hidden;
+}
+
+/* Forms
+ * ========================================================================== */
+/**
+ * Remove the margin on controls in Safari.
+ */
+button,
+input,
+select {
+  margin: 0;
+}
+
+/**
+ * 1. Show the overflow in IE.
+ * 2. Remove the inheritance of text transform in Edge 18-, Firefox, and IE.
+ */
+button {
+  overflow: visible;
+  /* 1 */
+  text-transform: none;
+  /* 2 */
+}
+
+/**
+ * Correct the inability to style buttons in iOS and Safari.
+ */
+button,
+[type=button],
+[type=reset],
+[type=submit] {
+  -webkit-appearance: button;
+}
+
+/**
+ * Show the overflow in Edge 18- and IE.
+ */
+input {
+  overflow: visible;
+}
+
+/**
+ * 1. Correct the odd appearance in Chrome, Edge, and Safari.
+ * 2. Correct the outline style in Safari.
+ */
+[type=search] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/**
+ * Correct the text style of placeholders in Chrome, Edge, and Safari.
+ */
+::-webkit-input-placeholder {
+  color: inherit;
+  opacity: 0.54;
+}
+
+/**
+ * Remove the inner padding in Chrome, Edge, and Safari on macOS.
+ */
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/**
+ * 1. Correct the inability to style upload buttons in iOS and Safari.
+ * 2. Change font properties to `inherit` in Safari.
+ */
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/**
+ * Remove the inner border and padding of focus outlines in Firefox.
+ */
+::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+/**
+ * Restore the focus outline styles unset by the previous rule in Firefox.
+ */
+:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+/**
+ * Remove the additional :invalid styles in Firefox.
+ */
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/* User interaction
+ * ========================================================================== */
+/*
+ * 1. Remove the tapping delay in IE 10.
+ * 2. Remove the tapping delay on clickable elements
+      in all browsers (opinionated).
+ */
+a,
+button,
+input,
+label,
+select,
+[tabindex] {
+  -ms-touch-action: manipulation;
+  /* 1 */
+  touch-action: manipulation;
+  /* 2 */
+}
+
+/**
+ * Add the correct display in IE 10-.
+ */
+[hidden] {
+  display: none;
+}
+
+body {
+  padding-top: 0.3em;
+  width: 100%;
+  min-height: 100vh;
+  font: 20px sans-serif;
+  color: #f0f6fcb3;
+  background-color: #06090f;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.table-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70%;
+}
+
+.main-table {
+  width: 100%;
+  margin-top: 0.5em;
+}
+
+.table-cell.remove-row {
+  color: #f0f6fcb3;
+}
+
+.table-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0.3em;
+}
+
+.table-cell {
+  width: 50%;
+  padding: 0.3em 1em;
+  box-sizing: border-box;
+  border: 2px solid #30363d;
+}
+.table-cell.time {
+  /* because this way the time inputs
+  are as wide as possible */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  align-items: center;
+  justify-content: center;
+}
+.table-cell.entry {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  display: flex;
+  width: 50%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.table-cell.entry > * {
+  width: 100%;
+}
+.table-cell.entry [data-type=content]:empty::before {
+  content: "Content";
+  color: #8b949e;
+}
+.table-cell.entry [data-type=id]:empty::before {
+  content: "Course id";
+  color: #8b949e;
+}
+.table-cell.remove-row {
+  width: 1.5em;
+  border: none;
+  cursor: pointer;
+  padding-left: 0;
+  padding-right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.time-input {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+.time-input.time-from {
+  text-align: right;
+}
+.time-input.time-to {
+  text-align: left;
+}
+
+[contenteditable] {
+  cursor: text;
+}
+
+.grid-buttons {
+  display: grid;
+  grid-template-columns: 0.3fr auto 0.3fr;
+  justify-items: center;
+  column-gap: 5px;
+  width: 100%;
+  margin-bottom: 0.3em;
+  margin-top: 0.3em;
+}
+
+.day-controls {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  grid-column-start: 2;
+  user-select: none;
+  margin-right: 1.5em;
+}
+
+.caret-back,
+.caret-forward {
+  width: 1.5em;
+  height: 1.5em;
+  cursor: pointer;
+}
+
+.save-button {
+  cursor: pointer;
+  margin-left: auto;
+  background: none;
+  color: #f0f6fcb3;
+  border: 2px solid #30363d;
+  border-radius: 2px;
+  padding: 0.2em 1.3em;
+  font-size: 90%;
+}
+
+.icon-add-row {
+  width: 1.5em;
+  height: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 1.5em;
+}
+
+.row-icon-add-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-hidden {
+  display: none;
+}
+
+.invalid-input {
+  color: #ff4126;
+}
+
+.invalid-id {
+  border-bottom-color: #ff4126;
+}
+
+.suggestions {
+  position: absolute;
+  z-index: 1;
+  background-color: #0d1117;
+  border: 2px solid #30363d;
+  border-radius: 2px;
+  padding: 12px 20px;
+  max-width: calc(35% - 2.7em);
+}
+.suggestions .emphasised {
+  font-weight: bold;
+}
+.suggestions:empty {
+  display: none;
+}
+.suggestions .suggestion {
+  display: flex;
+  width: 100%;
+}
+.suggestions .suggestion:hover {
+  text-decoration: underline;
+}
+
+.suggestion-name {
+  padding: 2px 4px;
+  border-radius: 2px;
+  cursor: pointer;
+  flex: 0 0 80%;
+}
+
+.suggestion-id {
+  flex: 0 0 20%;
+  text-align: end;
+}
+
+.save-failed {
+  animation: 3s ease-in-out save-failed;
+}
+
+.save-successful {
+  animation: 3s ease-in-out save-successful;
+}
+
+@keyframes save-failed {
+  from {
+    border-color: #ff4126;
+  }
+  to {
+    border-color: #30363d;
+  }
+}
+@keyframes save-successful {
+  from {
+    border-color: green;
+  }
+  to {
+    border-color: #30363d;
+  }
+}
+
+/*# sourceMappingURL=settingspage.css.map */
