@@ -2,7 +2,7 @@
 // @name         Moodle explore profiles rest
 // @version      2021.01.04a
 // @author       lusc
-// @updateURL    https://github.com/melusc/moodle_userscripts/blob/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
+// @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
 // @grant        GM_addStyle
 // @grant        GM_setValue
