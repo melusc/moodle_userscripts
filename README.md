@@ -1,18 +1,17 @@
-Below are some Userscripts I made to mainly improve Moodle.
+Here you can find some useful userscripts for moodle. I have only ever tested them on my school's moodle, though.
 
-Most are out of date and not very efficient or well-designed (regarding decisions code-wise) so I have improved them or rewritten them entirely but am not really releasing them anymore.
-Feel free to use them anyway.
+To run these you need to have tampermonkey, greasymonkey or similar installed.
 
-On https://melusc.github.io/ I have random things I made for fun.
+# Quick Installation
 
-Also check out the [extension](https://github.com/melusc/schulNetz-extension/) I made for Firefox, it calculates your marks to check if you're passing.
+[Clean Moodle](https://github.com/melusc/moodle_userscriptsblob/master/src/Clean%20Moodle%20Preact.user.js)
 
-[Install `Clean Moodle.user.js`](https://github.com/melusc/lusc/raw/master/Clean%20Moodle%20Rewrite.user.js)
+[Custom Icons](https://github.com/melusc/moodle_userscripts/blob/master/src/Custom%20Icons%20Preact.user.js)
 
-[Install `Custom Icons.user.js`](https://github.com/melusc/lusc/raw/master/Custom%20Icons%20Rewrite.user.js)
+[Timetable in Moodle](https://github.com/melusc/moodle_userscripts/blob/master/src/Timetable%20v5.user.js)
 
-[Install `Explore profiles.user.js`](https://github.com/melusc/lusc/raw/master/Explore%20profiles.user.js)
+[Explore Profiles](https://github.com/melusc/moodle_userscripts/blob/master/src/Explore%20profiles.user.js)
 
-[Install `Timetable in Moodle.user.js`](https://github.com/melusc/lusc/raw/master/Timetable%20in%20Moodle.user.js)
+# About
 
-[Install `schulNetz Marks.user.js`](https://github.com/melusc/lusc/raw/master/schulNetz%20Marks.user.js)
+Currently, all these userscripts are written using es6 and [preact](https://github.com/preactjs/preact) or preact and [htm](https://github.com/developit/htm).
