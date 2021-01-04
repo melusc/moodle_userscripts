@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Custom Icons Preact
-// @version      2021.01.04a
+// @version      2021.01.04b
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include      *://moodle.ksasz.ch/*
@@ -12,20 +12,17 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @run-at       document-start
-// _@require     https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
-// @require      https://cdn.jsdelivr.net/npm/preact@10.5.7/dist/preact.min.js
+// @require      https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
 // ==/UserScript==
-// to switch forth and back between htmPreact and preact
-// const { render, Component, html } = htmPreact;
-// /* globals htmPreact: false */
 
-/* globals preact: false, html: false */
+/* globals htmPreact: false */
 const {
   render,
   Component,
+  html,
   // eslint-disable-next-line no-unused-vars
   h
-} = preact;
+} = htmPreact;
 const errors = {
   error: Error('An error occured'),
   timeout: Error('Request timed out'),
