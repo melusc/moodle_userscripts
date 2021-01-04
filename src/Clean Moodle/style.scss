@@ -1,0 +1,158 @@
+@import 'normalize';
+@import 'sanitize';
+
+$background: #15202b;
+$border: 1.5px solid white;
+$border-radius: 4px;
+$red: #ff4136;
+$green: #2ecc40;
+
+@mixin media($min-width) {
+  @media (min-width: $min-width) {
+    :root {
+      @content;
+    }
+  }
+}
+
+html {
+  background: $background;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.5;
+
+  user-select: none;
+}
+body {
+  padding: 1%;
+}
+
+@include media(0px) {
+  --sidebar-flex: 0 0 100%;
+  --main-flex: 0 0 100%;
+  --padding-horizontal: 0;
+  --padding-vertical: 0.5%;
+}
+@include media(768px) {
+  --sidebar-flex: 0 0 32%;
+  --main-flex: 0 0 68%;
+  --padding-horizontal: 0.5%;
+  --padding-vertical: 0;
+}
+
+@include media(992px) {
+  --sidebar-flex: 0 0 25%;
+  --main-flex: 0 0 75%;
+}
+@include media(1200px) {
+  --sidebar-flex: 0 0 20%;
+  --main-flex: 0 0 80%;
+}
+
+.outerSidebar {
+  flex: var(--sidebar-flex);
+  padding-right: var(--padding-horizontal);
+  padding-bottom: var(--padding-vertical);
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 15px;
+    border: $border;
+    border-radius: $border-radius;
+  }
+
+  .row {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &[data-removed='false'] {
+      color: $green;
+    }
+    &[data-removed='true'] {
+      color: $red;
+    }
+  }
+}
+.btn-save {
+  outline: none;
+  border: $border;
+  background: none;
+  color: inherit;
+  padding: 5px 15px;
+  border-radius: $border-radius / 2;
+  font-size: 1.05em;
+  // margin-top: 10px;
+
+  &:not([disabled]) {
+    cursor: pointer;
+  }
+}
+
+.icon {
+  height: 1.5em;
+  width: 1.5em;
+}
+
+.section-title {
+  font-size: 30px;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+.svg-icon-check {
+  color: $green;
+}
+.svg-icon-x {
+  color: $red;
+}
+
+.outerMain {
+  flex: var(--main-flex);
+  padding-left: var(--padding-horizontal);
+  padding-top: var(--padding-vertical);
+}
+.main {
+  padding: 3% 2% 5% 2%;
+  border: $border;
+  border-radius: $border-radius;
+}
+
+.replace-flex-inputs {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+
+  * {
+    align-self: flex-start;
+    margin-bottom: 10px;
+  }
+}
+
+.replace-input {
+  background: none;
+  box-shadow: none;
+  border: $border;
+  color: inherit;
+  border-radius: $border-radius / 2;
+  padding: 5px 15px;
+  width: 220px;
+  max-width: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  height: max-content;
+}
