@@ -7,8 +7,7 @@
     "sass": "sass src:src",
     "babel:w": "babel src -d dist -w",
     "babel": "babel src -d dist",
-    "csso": "csso -i dist/style.css -o dist/style.min.css --stat",
-    "serve": "serve dist"
+    "serve": "serve src"
   },
   "author": "",
   "license": "ISC",
