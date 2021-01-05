@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Custom Icons Preact
-// @version      2021.01.04b
+// @version      2021.01.05a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include      *://moodle.ksasz.ch/*
@@ -74,14 +74,14 @@ const applyIcon = (id, sidebar) => {
         const span = document.createElement('span');
         span.className = 'icon navicon';
         span.style.display = 'inline-block';
-        span.style.color = 'var(--svg-fill, black)';
+        span.style.color = 'var(--svg-fill, inherit)';
         render(html([blobURLObj.rawXML]), span);
         anchor.firstElementChild.replaceWith(span);
       } else {
         const img = document.createElement('img');
         img.classList.add('icon', 'navicon');
         img.setAttribute('aria-hidden', true);
-        img.style = 'fill: var(--svg-fill, black);stroke: var(--svg-fill, black);-moz-context-properties: fill, stroke;';
+        img.style = 'fill: var(--svg-fill, inherit);stroke: var(--svg-fill, inherit);-moz-context-properties: fill, stroke;';
         img.tabIndex = -1;
         img.src = blobURLObj.blobURL;
         img.addEventListener('load', () => {
