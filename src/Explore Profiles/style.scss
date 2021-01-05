@@ -1,65 +1,67 @@
-.epr_buttons {
-  display: flex;
+// prefix all with epr to avoid clashes with other things on page
 
-  > button {
-    margin-left: 4px;
-    margin-right: 4px;
-    border-radius: 2px;
-    padding: 4px 8px;
-  }
-}
-
-.epr_notification {
+.epr-notification {
   width: 100%;
   height: 100%;
   z-index: 10001;
   user-select: none;
 
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
 
-  .epr_centered {
-    border: 2px solid #444;
-    background-color: #e5e5e5;
+  .epr-centered {
+    border: 2px solid #ced4da;
+    background-color: #fff;
     border-radius: 3px;
     padding: 2% 4%;
   }
 
-  .epr_notificiationText {
-    color: #444;
+  .epr-text-center {
     text-align: center;
-    font-size: 1.5em;
-  }
-
-  .epr_small {
-    font-size: 16px;
-  }
-
-  .epr_loadingDots::after {
-    content: '';
-    animation-duration: 4s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-    animation-name: epr_loadingDots;
   }
 }
 
-@keyframes epr_loadingDots {
-  0% {
-    content: '...';
+.epr-coloured {
+  color: #0d6efd;
+}
+
+// https://codepen.io/AnoNewb/pen/JwypRN
+.epr-spinner {
+  width: 100%;
+  text-align: center;
+
+  > div {
+    width: 18px;
+    height: 18px;
+    background-color: currentColor;
+
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: epr-bounce 1.4s infinite ease-in-out both;
+    animation: epr-bounce 1.4s infinite ease-in-out both;
   }
-  33.3% {
-    content: '..';
+
+  .bounce1 {
+    animation-delay: -0.32s;
   }
-  66.6% {
-    content: '.';
+  .bounce2 {
+    animation-delay: -0.16s;
   }
+}
+
+@keyframes epr-bounce {
+  0%,
+  80%,
   100% {
-    content: '';
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  }
+  40% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
   }
 }

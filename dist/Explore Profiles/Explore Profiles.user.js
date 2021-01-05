@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles rest
-// @version      2021.01.04a
+// @version      2021.01.05a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
@@ -20,8 +20,8 @@ dayjs: false
 dayjs_plugin_relativeTime: false
 M: false */
 dayjs.extend(dayjs_plugin_relativeTime); // to switch forth and back between htmPreact and preact
-// const { render, Component, html } = htmPreact;
 // /* globals htmPreact: false */
+// const { render, Component, html } = htmPreact;
 
 /* globals preact: false, html: false */
 
@@ -294,19 +294,30 @@ const runOnce = () => {
   GM_getValue('highest') ?? GM_setValue('highest', 1946 // highest + 10 at time of creation
   // this number only really matters for rand anyway
   );
-  GM_addStyle("@keyframes epr_loadingDots{0%{content:'...'}33.3%{content:'..'}66.6%{content:'.'}to{content:''}}.epr_buttons{display:flex}.epr_buttons>button{margin-left:4px;margin-right:4px;border-radius:2px;padding:4px 8px}.epr_notification{width:100%;height:100%;z-index:10001;user-select:none;position:fixed;top:0;left:0;display:flex;justify-content:center;align-items:center}.epr_notification .epr_centered{border:2px solid #444;background-color:#e5e5e5;border-radius:3px;padding:2% 4%}.epr_notification .epr_notificiationText{color:#444;text-align:center;font-size:1.5em}.epr_notification .epr_small{font-size:16px}.epr_notification .epr_loadingDots::after{content:'';animation-duration:4s;animation-timing-function:linear;animation-iteration-count:infinite;animation-direction:alternate;animation-name:epr_loadingDots}");
+  /* render(
+    html`<link href="http://localhost:5000/Explore%20Profiles/style.css"
+    type=text/css rel=stylesheet/>`,
+    document.head
+  ); */
+
+  GM_addStyle('@keyframes epr-bounce{0%,80%,to{-webkit-transform:scale(0);transform:scale(0)}40%{-webkit-transform:scale(1);transform:scale(1)}}.epr-notification{width:100%;height:100%;z-index:10001;user-select:none;position:fixed;top:0;left:0;display:flex;justify-content:center;align-items:center}.epr-notification .epr-centered{border:2px solid #ced4da;background-color:#fff;border-radius:3px;padding:2% 4%}.epr-notification .epr-text-center{text-align:center}.epr-coloured{color:#0d6efd}.epr-spinner{width:100%;text-align:center}.epr-spinner>div{width:18px;height:18px;background-color:currentColor;border-radius:100%;display:inline-block;-webkit-animation:epr-bounce 1.4s infinite ease-in-out both;animation:epr-bounce 1.4s infinite ease-in-out both}.epr-spinner .bounce1{animation-delay:-.32s}.epr-spinner .bounce2{animation-delay:-.16s}');
   const buttons = document.createElement('div');
-  buttons.className = 'epr_buttons';
+  buttons.classList.add('btn-group');
   render([h("button", {
-    "data-action": "-1"
+    "data-action": "-1",
+    "class": "btn btn-secondary"
   }, "Previous profile"), h("button", {
-    "data-action": "1"
+    "data-action": "1",
+    "class": "btn btn-secondary"
   }, "Next profile"), h("button", {
-    "data-action": "rand"
+    "data-action": "rand",
+    "class": "btn btn-secondary"
   }, "Random profile"), h("button", {
-    "data-action": "-10"
+    "data-action": "-10",
+    "class": "btn btn-secondary"
   }, "-10 profiles"), h("button", {
-    "data-action": "10"
+    "data-action": "10",
+    "class": "btn btn-secondary"
   }, "+10 profiles")], buttons);
   buttons.addEventListener('click', fetchNewProfile);
   document.querySelector('ul.navbar-nav.d-none.d-md-flex').after(buttons);
@@ -345,17 +356,21 @@ class Notification extends Component {
   render = (_props, {
     from,
     to
-  }) => notNullOrUndef(from) && h("div", {
-    "class": "epr_notification"
+  }) => from !== null && h("div", {
+    "class": "epr-notification"
   }, h("div", {
-    "class": "epr_centered"
+    "class": "epr-centered"
   }, h("div", {
-    "class": "epr_notificiationText"
-  }, h("i", {
-    "class": "icon fa fa-circle-o-notch fa-spin fa-fw"
-  }), "Loading"), h("div", {
-    "class": "epr_notificiationText epr_small epr_loadingDots"
-  }, `Checking ${from}`, " ", notNullOrUndef(to) && ` to ${to}`)));
+    "class": "epr-spinner"
+  }, h("div", {
+    "class": "bounce1"
+  }), h("div", {
+    "class": "bounce2"
+  }), h("div", {
+    "class": "bounce3"
+  })), h("div", {
+    "class": "epr-text-center"
+  }, `Checking ${to === null ? from : Math.min(to, from)}`, to !== null && ` to ${Math.max(to, from)}`)));
 }
 
 class Header extends Component {
@@ -400,15 +415,11 @@ class Header extends Component {
   }))), h("div", {
     "class": "page-header-headings"
   }, h("h1", null, fullname), h("h5", null, 'First accessed Moodle: ', h("span", {
-    style: {
-      color: 'var(--links)'
-    }
+    "class": "epr-coloured"
   }, dayjs.unix(firstaccess).format('ddd, D MMM YYYY HH:mm:ss'))), h("h5", null, 'Last accessed Moodle '
   /* for the trailing space*/
   , h("span", {
-    style: {
-      color: 'var(--links)'
-    }
+    "class": "epr-coloured"
   }, dayjs.unix(lastaccess).fromNow(false)), ' ago'
   /* for the leading space */
   )), h("div", {
