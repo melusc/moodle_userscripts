@@ -13,8 +13,8 @@ const paths = {
 };
 
 function build() {
-  minJS();
-  minSvg( );
+  compJS();
+  minSvg();
 
   return compSCSS()
     .then( () => {
@@ -27,7 +27,7 @@ function buildWatch() {
     watch(
       [ paths.js, paths.css, paths.svg ],
       () => {
-        minJS();
+        compJS();
         minSvg();
         return minCSS();
       }
@@ -49,7 +49,7 @@ function compSCSS( cb ) {
   } );
 }
 
-function minJS( ) {
+function compJS( ) {
   return src( paths.js )
     .pipe( babel() )
     .pipe( dest( './dist' ) );
@@ -103,7 +103,7 @@ function minSvg() {
 exports.default = exports.build = build;
 exports.minSvg = minSvg;
 exports.minCSS = minCSS;
-exports.minJS = minJS;
+exports.minJS = compJS;
 exports.compSCSS = compSCSS;
 
 // eslint-disable-next-line camelcase
