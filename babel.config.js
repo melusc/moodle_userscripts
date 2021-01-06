@@ -11,6 +11,5 @@ module.exports = {
   /* generatorOpts: {
     minified: true,
     shouldPrintComment: val => ( /^\s*==\/?UserScript==|^\s*@[\w-]/u ).test( val ),
-    // shouldPrintComment: val => ( /^#__PURE__$/ ).test( val ) === false,
   }, */
 };

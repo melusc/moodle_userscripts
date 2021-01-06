@@ -5,6 +5,7 @@ const csso = require( 'gulp-csso' );
 const npm = require( 'npm' );
 const babel = require( 'gulp-babel' );
 const svgmin = require( 'gulp-svgmin' );
+const { argv } = require( 'yargs' );
 const paths = {
   js: './src/**/*.js',
   css: './src/**/*.css',
@@ -13,7 +14,12 @@ const paths = {
 };
 
 function build() {
-  compJS();
+  if ( argv.production ) {
+    minJS();
+  }
+  else {
+    compJS();
+  }
   minSvg();
 
   return compSCSS()
@@ -52,6 +58,17 @@ function compSCSS( cb ) {
 function compJS( ) {
   return src( paths.js )
     .pipe( babel() )
+    .pipe( dest( './dist' ) );
+}
+
+function minJS() {
+  return src( paths.js )
+    .pipe( babel( {
+      generatorOpts: {
+        minified: true,
+        shouldPrintComment: val => ( /^\s*==\/?UserScript==|^\s*@[\w-]/u ).test( val ),
+      },
+    } ) )
     .pipe( dest( './dist' ) );
 }
 
@@ -103,7 +120,8 @@ function minSvg() {
 exports.default = exports.build = build;
 exports.minSvg = minSvg;
 exports.minCSS = minCSS;
-exports.minJS = compJS;
+exports.compJS = compJS;
+exports.minJS = minJS;
 exports.compSCSS = compSCSS;
 
 // eslint-disable-next-line camelcase
