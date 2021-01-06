@@ -168,14 +168,12 @@ body {
   cursor: pointer;
   display: flex;
   align-items: center;
+  color: #2ecc40;
 }
 .outerSidebar .row:hover {
   text-decoration: underline;
 }
-.outerSidebar .row[data-removed=false] {
-  color: #2ecc40;
-}
-.outerSidebar .row[data-removed=true] {
+.outerSidebar .row.removed {
   color: #ff4136;
 }
 

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.04a
+// @version      2021.01.06a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -62,8 +62,8 @@ const initFrontPage = () => {
   if (typeof replaceObj === 'object') {
     const replaceEntries = Object.entries(replaceObj);
 
-    for (let i = 0; i < replaceEntries.length; ++i) {
-      replace(...replaceEntries[i], sidebar);
+    for (const item of replaceEntries) {
+      replace(...item, sidebar);
     }
   } else {
     GM_setValue('replace', {});
@@ -72,8 +72,8 @@ const initFrontPage = () => {
   const removeArr = GM_getValue('remove');
 
   if (Array.isArray(removeArr)) {
-    for (let i = 0; i < removeArr.length; ++i) {
-      remove(removeArr[i], sidebar);
+    for (const id of removeArr) {
+      remove(id, sidebar);
     }
   } else {
     GM_setValue('remove', []);
@@ -242,25 +242,24 @@ const refresh = (() => {
       } = testDiff(oldValue, newValue);
 
       if (name === 'replace') {
-        for (let i = 0; i < removedVals.length; ++i) {
-          resetReplaced(removedVals[i], sidebar);
+        for (const item of removedVals) {
+          resetReplaced(item, sidebar);
         }
 
-        for (let i = 0; i < addedOrChanged.length; ++i) {
-          replace(addedOrChanged[i], newValue[addedOrChanged[i]], sidebar);
+        for (const item of addedOrChanged) {
+          replace(item, newValue[item], sidebar);
         }
 
         sort(sidebar); // adding anchors leavers the sidebar potentially (slightly) unsorted
       } else if (name === 'remove') {
-        for (let i = 0; i < addedOrChanged.length; ++i) {
-          remove(addedOrChanged[i], sidebar);
+        for (const item of addedOrChanged) {
+          remove(item, sidebar);
         } // removing anchors leaves the sidebar still sorted
 
 
         if (removedVals.length > 0) {
           getCourses().then(coursesObj => {
-            for (let i = 0; i < removedVals.length; ++i) {
-              const id = removedVals[i];
+            for (const id of removedVals) {
               const fullname = coursesObj[id];
 
               if (!getElem(id, sidebar)) {
@@ -327,11 +326,10 @@ const getCourses = (() => {
         const data = JSON.parse(responseJSON.responses[0].data);
         const coursesObj = {};
 
-        for (let i = 0, l = data.length; i < l; ++i) {
-          const {
-            id,
-            fullname
-          } = data[i];
+        for (const {
+          id,
+          fullname
+        } of data) {
           coursesObj[id] = fullname;
         }
 
@@ -460,7 +458,7 @@ const initSettingsPage = () => {
   link.rel = 'shortcut icon';
   link.href = '/theme/image.php/classic/theme/1588340020/favicon';
   document.head.append(link);
-  GM_addStyle('html{cursor:default;-moz-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;word-break:break-word;background:#15202b;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:.9375rem;font-weight:400;line-height:1.5;user-select:none}img{border-style:none}button{overflow:visible}button,input{font-family:inherit;font-size:100%;line-height:1.15}button::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}*,::after,::before{box-sizing:border-box}::after,::before{text-decoration:inherit;vertical-align:inherit}body,button,input{margin:0}svg{vertical-align:middle}svg:not([fill]){fill:currentColor}svg:not(:root){overflow:hidden}button{-webkit-appearance:button;text-transform:none}input{overflow:visible}::-webkit-input-placeholder{color:inherit;opacity:.54}::-moz-focus-inner{border-style:none;padding:0}button,input{-ms-touch-action:manipulation;touch-action:manipulation}body{padding:1%}@media (min-width:0px){:root{--sidebar-flex: 0 0 100%;--main-flex: 0 0 100%;--padding-horizontal: 0;--padding-vertical: 0.5%}}@media (min-width:768px){:root{--sidebar-flex: 0 0 32%;--main-flex: 0 0 68%;--padding-horizontal: 0.5%;--padding-vertical: 0}}@media (min-width:992px){:root{--sidebar-flex: 0 0 25%;--main-flex: 0 0 75%}}@media (min-width:1200px){:root{--sidebar-flex: 0 0 20%;--main-flex: 0 0 80%}}.outerSidebar{flex:var(--sidebar-flex);padding-right:var(--padding-horizontal);padding-bottom:var(--padding-vertical)}.outerSidebar .sidebar{display:flex;flex-direction:column;padding:10px 15px;border:1.5px solid #fff;border-radius:4px}.outerSidebar .row{cursor:pointer;display:flex;align-items:center}.outerSidebar .row:hover{text-decoration:underline}.outerSidebar .row[data-removed=false]{color:#2ecc40}.outerSidebar .row[data-removed=true]{color:#ff4136}.btn-save{outline:0;border:1.5px solid #fff;background:0 0;color:inherit;padding:5px 15px;border-radius:2px;font-size:1.05em}.btn-save:not([disabled]){cursor:pointer}.icon{height:1.5em;width:1.5em}.section-title{font-size:30px;font-weight:300;-webkit-font-smoothing:antialiased}.svg-icon-check{color:#2ecc40}.svg-icon-x{color:#ff4136}.outerMain{flex:var(--main-flex);padding-left:var(--padding-horizontal);padding-top:var(--padding-vertical)}.main{padding:3% 2% 5%;border:1.5px solid #fff;border-radius:4px}.replace-flex-inputs{display:flex;flex-direction:column;margin-top:10px}.replace-flex-inputs *{align-self:flex-start;margin-bottom:10px}.replace-input{background:0 0;box-shadow:none;border:1.5px solid #fff;color:inherit;border-radius:2px;padding:5px 15px;width:220px;max-width:100%}.container{display:flex;flex-direction:row;flex-wrap:wrap;width:100%;height:max-content}');
+  GM_addStyle('html{cursor:default;-moz-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;word-break:break-word;background:#15202b;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:.9375rem;font-weight:400;line-height:1.5;user-select:none}img{border-style:none}button{overflow:visible}button,input{font-family:inherit;font-size:100%;line-height:1.15}button::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}*,::after,::before{box-sizing:border-box}::after,::before{text-decoration:inherit;vertical-align:inherit}body,button,input{margin:0}svg{vertical-align:middle}svg:not([fill]){fill:currentColor}svg:not(:root){overflow:hidden}button{-webkit-appearance:button;text-transform:none}input{overflow:visible}::-webkit-input-placeholder{color:inherit;opacity:.54}::-moz-focus-inner{border-style:none;padding:0}button,input{-ms-touch-action:manipulation;touch-action:manipulation}body{padding:1%}@media (min-width:0px){:root{--sidebar-flex:0 0 100%;--main-flex:0 0 100%;--padding-horizontal:0;--padding-vertical:0.5%}}@media (min-width:768px){:root{--sidebar-flex:0 0 32%;--main-flex:0 0 68%;--padding-horizontal:0.5%;--padding-vertical:0}}@media (min-width:992px){:root{--sidebar-flex:0 0 25%;--main-flex:0 0 75%}}@media (min-width:1200px){:root{--sidebar-flex:0 0 20%;--main-flex:0 0 80%}}.outerSidebar{flex:var(--sidebar-flex);padding-right:var(--padding-horizontal);padding-bottom:var(--padding-vertical)}.outerSidebar .sidebar{display:flex;flex-direction:column;padding:10px 15px;border:1.5px solid #fff;border-radius:4px}.outerSidebar .row{cursor:pointer;display:flex;align-items:center;color:#2ecc40}.outerSidebar .row:hover{text-decoration:underline}.outerSidebar .row.removed{color:#ff4136}.btn-save{outline:0;border:1.5px solid #fff;background:0 0;color:inherit;padding:5px 15px;border-radius:2px;font-size:1.05em}.btn-save:not([disabled]){cursor:pointer}.icon{height:1.5em;width:1.5em}.section-title{font-size:30px;font-weight:300;-webkit-font-smoothing:antialiased}.svg-icon-check{color:#2ecc40}.svg-icon-x{color:#ff4136}.outerMain{flex:var(--main-flex);padding-left:var(--padding-horizontal);padding-top:var(--padding-vertical)}.main{padding:3% 2% 5%;border:1.5px solid #fff;border-radius:4px}.replace-flex-inputs{display:flex;flex-direction:column;margin-top:10px}.replace-flex-inputs *{align-self:flex-start;margin-bottom:10px}.replace-input{background:0 0;box-shadow:none;border:1.5px solid #fff;color:inherit;border-radius:2px;padding:5px 15px;width:220px;max-width:100%}.container{display:flex;flex-direction:row;flex-wrap:wrap;width:100%;height:max-content}');
 };
 
 const SvgCheck = () => h("svg", {
@@ -502,29 +500,29 @@ const SvgArrowBack = () => h("svg", {
 const Sidebar = ({
   handleClick,
   courses
-}) => h("div", {
+}) => [" ", h("div", {
   "class": "outerSidebar"
 }, h("div", {
-  "class": "sidebar",
-  onClick: handleClick
+  "class": "sidebar"
 }, courses.map(({
   id,
   name,
   isReplaced,
   isRemoved
-}) => h("div", {
+}) => [" ", h("div", {
   key: id,
-  "class": "row",
-  "data-removed": `${isRemoved}`,
-  "data-id": id
-}, h("span", null, isRemoved ? h(SvgX, null) : h(SvgCheck, null), isReplaced === false ? name : isReplaced, isReplaced !== false && h(SvgArrowBack, null))))));
+  "class": `row${isRemoved ? ' removed' : ''}`,
+  onClick: e => {
+    handleClick(e, id);
+  }
+}, h("span", null, isRemoved ? h(SvgX, null) : h(SvgCheck, null), isReplaced === false ? name : isReplaced, isReplaced !== false && h(SvgArrowBack, null)))])))];
 
 const Main = ({
   selected,
   handleInput,
   handleKeyDown,
   handleBtnClick,
-  refInput
+  inputRef
 }) => {
   const {
     replacedText
@@ -538,14 +536,13 @@ const Main = ({
   }, "Rename course"), h("div", {
     "class": "replace-flex-inputs"
   }, h("div", null, typeof selected.text === 'string' ? `Selected: ${selected.text}` : 'Select course to the left'), h("input", {
-    placeholder: replacedText === '' ? `Reset text to ${selected.text}` : isNullOrUndef(replacedText) ? 'Select course to the left' : undefined,
-    contentEditable: true,
+    placeholder: isNullOrUndef(replacedText) ? 'Select course to the left' : `Reset text to ${selected.text}`,
     "class": "replace-input",
     onInput: handleInput,
     onKeyDown: handleKeyDown,
     value: replacedText,
     disabled: isNullOrUndef(selected.id),
-    ref: refInput
+    ref: inputRef
   }), h("button", {
     disabled: isNullOrUndef(selected.id),
     onClick: handleBtnClick,
@@ -558,8 +555,8 @@ class SettingsPage extends Component {
     courses: [],
     selected: {}
   };
-  input = a => {
-    this._input = a;
+  inputRef = a => {
+    this.input = a;
   };
   render = (_unused, {
     selected,
@@ -570,7 +567,7 @@ class SettingsPage extends Component {
     handleClick: this.handleSidebarClick,
     courses: courses
   }), h(Main, {
-    refInput: this.input,
+    inputRef: this.inputRef,
     selected: selected,
     handleBtnClick: this.handleBtnClick,
     handleInput: this.handleInput,
@@ -606,7 +603,7 @@ class SettingsPage extends Component {
     } = this.state.selected;
     setReplace(id, replacedText, text);
     this.updateCourses(id);
-    this._input.value = '';
+    this.input.value = '';
     this.setState({
       selected: {}
     });
@@ -629,15 +626,12 @@ class SettingsPage extends Component {
       courses
     });
   };
-  handleSidebarClick = e => {
+  handleSidebarClick = (e, id) => {
     const {
       target
     } = e;
     const svg = target.closest('svg');
     const row = target.closest('.row');
-    const {
-      id
-    } = row.dataset;
 
     if (notNullOrUndef(row)) {
       if (isNullOrUndef(svg)) {
@@ -661,7 +655,9 @@ class SettingsPage extends Component {
             replacedText
           }
         }, () => {
-          const input = this._input;
+          const {
+            input
+          } = this;
 
           if (input) {
             input.focus();
@@ -681,12 +677,13 @@ class SettingsPage extends Component {
 
         if (svgCl.contains('svg-icon-check') || svgCl.contains('svg-icon-x')) {
           const isRemoved = checkIsRemoved(id);
-          setRemove(id, !isRemoved);
+          setRemove(id, !isRemoved // toggle between removed and not
+          );
           this.setState(state => {
             const selectedId = state.selected.id;
 
             if (selectedId === id) {
-              this._input.value = '';
+              this.input.value = '';
               return {
                 selected: {}
               };
@@ -725,29 +722,19 @@ const checkIsReplaced = id => {
   return typeof replaceObj[id] === 'string' && replaceObj[id];
 };
 
-const removeElementFromStorage = (id, setValue) => {
-  const assignedSetValue = {
-    remove: true,
-    replace: true,
-    ...setValue
-  };
-  const removeArr = GM_getValue('remove') ?? [];
+const removeElementFromStorage = (id, {
+  replace: updateReplaceStorage = true,
+  remove: updateRemoveStorage = true
+} = {}) => {
   const replaceObj = GM_getValue('replace') ?? {};
-
-  for (let i = 0; i < removeArr.length; ++i) {
-    if (removeArr[i] === id) {
-      removeArr.splice(i--, // post-increment intended
-      1);
-    }
-  }
-
+  const removeArr = (GM_getValue('remove') ?? []).filter(e => e !== id);
   delete replaceObj[id];
 
-  if (assignedSetValue.replace === true) {
+  if (updateReplaceStorage) {
     GM_setValue('replace', replaceObj);
   }
 
-  if (assignedSetValue.remove === true) {
+  if (updateRemoveStorage) {
     GM_setValue('remove', removeArr);
   }
 
@@ -757,12 +744,18 @@ const removeElementFromStorage = (id, setValue) => {
   };
 };
 
-const setRemove = (id, shouldBeRemoved) => {
+const setRemove = (id, addToRemovers) => {
   const removeArr = removeElementFromStorage(id, {
-    remove: !shouldBeRemoved
-  }).remove;
+    remove: !addToRemovers
+  }
+  /* if it should be added to the removers
+    and for whatever reason already in the removers
+    removeElementFromStorage will remove it from that array
+    but not update the storage, which this function will,
+    avoids unnecessary updates to refresh() */
+  ).remove;
 
-  if (shouldBeRemoved) {
+  if (addToRemovers) {
     removeArr.push(id);
     sortRemoveArr(removeArr);
     GM_setValue('remove', removeArr);

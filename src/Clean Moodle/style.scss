@@ -70,15 +70,13 @@ body {
     cursor: pointer;
     display: flex;
     align-items: center;
+    color: $green;
 
     &:hover {
       text-decoration: underline;
     }
 
-    &[data-removed='false'] {
-      color: $green;
-    }
-    &[data-removed='true'] {
+    &.removed {
       color: $red;
     }
   }

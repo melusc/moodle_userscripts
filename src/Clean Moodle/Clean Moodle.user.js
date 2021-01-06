@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.04a
+// @version      2021.01.06a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -80,9 +80,9 @@ const initFrontPage = () => {
   const replaceObj = GM_getValue( 'replace' );
   if ( typeof replaceObj === 'object' ) {
     const replaceEntries = Object.entries( replaceObj );
-    for ( let i = 0; i < replaceEntries.length; ++i ) {
+    for ( const item of replaceEntries ) {
       replace(
-        ...replaceEntries[ i ],
+        ...item,
         sidebar
       );
     }
@@ -96,9 +96,9 @@ const initFrontPage = () => {
 
   const removeArr = GM_getValue( 'remove' );
   if ( Array.isArray( removeArr ) ) {
-    for ( let i = 0; i < removeArr.length; ++i ) {
+    for ( const id of removeArr ) {
       remove(
-        removeArr[ i ],
+        id,
         sidebar
       );
     }
@@ -329,17 +329,17 @@ const refresh = ( () => {
       );
 
       if ( name === 'replace' ) {
-        for ( let i = 0; i < removedVals.length; ++i ) {
+        for ( const item of removedVals ) {
           resetReplaced(
-            removedVals[ i ],
+            item,
             sidebar
           );
         }
 
-        for ( let i = 0; i < addedOrChanged.length; ++i ) {
+        for ( const item of addedOrChanged ) {
           replace(
-            addedOrChanged[ i ],
-            newValue[ addedOrChanged[ i ] ],
+            item,
+            newValue[ item ],
             sidebar
           );
         }
@@ -347,9 +347,9 @@ const refresh = ( () => {
         // adding anchors leavers the sidebar potentially (slightly) unsorted
       }
       else if ( name === 'remove' ) {
-        for ( let i = 0; i < addedOrChanged.length; ++i ) {
+        for ( const item of addedOrChanged ) {
           remove(
-            addedOrChanged[ i ],
+            item,
             sidebar
           );
         }
@@ -357,8 +357,7 @@ const refresh = ( () => {
 
         if ( removedVals.length > 0 ) {
           getCourses().then( coursesObj => {
-            for ( let i = 0; i < removedVals.length; ++i ) {
-              const id = removedVals[ i ];
+            for ( const id of removedVals ) {
               const fullname = coursesObj[ id ];
 
               if ( !getElem(
@@ -373,22 +372,22 @@ const refresh = ( () => {
                 render(
                   html`<p
                     class="tree_item hasicon"
-                    role=treeitem
+                    role="treeitem"
                     id=${ `expandable_branch_20_${ id }` }
-                    tabindex=-1
-                    aria-selected=false
+                    tabindex="-1"
+                    aria-selected="false"
                   >
                     <a
-                      tabindex=-1
+                      tabindex="-1"
                       title=${ fullname }
                       href=${ `https://moodle.ksasz.ch/course/view.php?id=${ id }` }
                     >
                       <i
                         class="icon fa fa-graduation-cap fa-fw navicon"
-                        aria-hidden=true
-                        tabindex=-1
+                        aria-hidden="true"
+                        tabindex="-1"
                       />
-                      <span class=item-content-wrap tabindex=-1>
+                      <span class="item-content-wrap" tabindex="-1">
                         ${ fullname }
                       </span>
                     </a>
@@ -458,8 +457,7 @@ const getCourses = ( () => {
 
           const coursesObj = {};
 
-          for ( let i = 0, l = data.length; i < l; ++i ) {
-            const { id, fullname } = data[ i ];
+          for ( const { id, fullname } of data ) {
             coursesObj[ id ] = fullname;
           }
 
@@ -524,7 +522,8 @@ const login = ( () => {
 
     const storedToken = GM_getValue( 'token' );
     const lastValidated = GM_getValue( 'lastValidatedToken' );
-    if ( !cachedToken
+    if (
+      !cachedToken
       && storedToken
       && new Date().getTime() - lastValidated < 18000000
     ) {
@@ -650,62 +649,66 @@ const initSettingsPage = () => {
   link.href = '/theme/image.php/classic/theme/1588340020/favicon';
   document.head.append( link );
 
-  GM_addStyle( 'html{cursor:default;-moz-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;word-break:break-word;background:#15202b;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:.9375rem;font-weight:400;line-height:1.5;user-select:none}img{border-style:none}button{overflow:visible}button,input{font-family:inherit;font-size:100%;line-height:1.15}button::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}*,::after,::before{box-sizing:border-box}::after,::before{text-decoration:inherit;vertical-align:inherit}body,button,input{margin:0}svg{vertical-align:middle}svg:not([fill]){fill:currentColor}svg:not(:root){overflow:hidden}button{-webkit-appearance:button;text-transform:none}input{overflow:visible}::-webkit-input-placeholder{color:inherit;opacity:.54}::-moz-focus-inner{border-style:none;padding:0}button,input{-ms-touch-action:manipulation;touch-action:manipulation}body{padding:1%}@media (min-width:0px){:root{--sidebar-flex: 0 0 100%;--main-flex: 0 0 100%;--padding-horizontal: 0;--padding-vertical: 0.5%}}@media (min-width:768px){:root{--sidebar-flex: 0 0 32%;--main-flex: 0 0 68%;--padding-horizontal: 0.5%;--padding-vertical: 0}}@media (min-width:992px){:root{--sidebar-flex: 0 0 25%;--main-flex: 0 0 75%}}@media (min-width:1200px){:root{--sidebar-flex: 0 0 20%;--main-flex: 0 0 80%}}.outerSidebar{flex:var(--sidebar-flex);padding-right:var(--padding-horizontal);padding-bottom:var(--padding-vertical)}.outerSidebar .sidebar{display:flex;flex-direction:column;padding:10px 15px;border:1.5px solid #fff;border-radius:4px}.outerSidebar .row{cursor:pointer;display:flex;align-items:center}.outerSidebar .row:hover{text-decoration:underline}.outerSidebar .row[data-removed=false]{color:#2ecc40}.outerSidebar .row[data-removed=true]{color:#ff4136}.btn-save{outline:0;border:1.5px solid #fff;background:0 0;color:inherit;padding:5px 15px;border-radius:2px;font-size:1.05em}.btn-save:not([disabled]){cursor:pointer}.icon{height:1.5em;width:1.5em}.section-title{font-size:30px;font-weight:300;-webkit-font-smoothing:antialiased}.svg-icon-check{color:#2ecc40}.svg-icon-x{color:#ff4136}.outerMain{flex:var(--main-flex);padding-left:var(--padding-horizontal);padding-top:var(--padding-vertical)}.main{padding:3% 2% 5%;border:1.5px solid #fff;border-radius:4px}.replace-flex-inputs{display:flex;flex-direction:column;margin-top:10px}.replace-flex-inputs *{align-self:flex-start;margin-bottom:10px}.replace-input{background:0 0;box-shadow:none;border:1.5px solid #fff;color:inherit;border-radius:2px;padding:5px 15px;width:220px;max-width:100%}.container{display:flex;flex-direction:row;flex-wrap:wrap;width:100%;height:max-content}' );
+  GM_addStyle( 'html{cursor:default;-moz-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;word-break:break-word;background:#15202b;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:.9375rem;font-weight:400;line-height:1.5;user-select:none}img{border-style:none}button{overflow:visible}button,input{font-family:inherit;font-size:100%;line-height:1.15}button::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}*,::after,::before{box-sizing:border-box}::after,::before{text-decoration:inherit;vertical-align:inherit}body,button,input{margin:0}svg{vertical-align:middle}svg:not([fill]){fill:currentColor}svg:not(:root){overflow:hidden}button{-webkit-appearance:button;text-transform:none}input{overflow:visible}::-webkit-input-placeholder{color:inherit;opacity:.54}::-moz-focus-inner{border-style:none;padding:0}button,input{-ms-touch-action:manipulation;touch-action:manipulation}body{padding:1%}@media (min-width:0px){:root{--sidebar-flex:0 0 100%;--main-flex:0 0 100%;--padding-horizontal:0;--padding-vertical:0.5%}}@media (min-width:768px){:root{--sidebar-flex:0 0 32%;--main-flex:0 0 68%;--padding-horizontal:0.5%;--padding-vertical:0}}@media (min-width:992px){:root{--sidebar-flex:0 0 25%;--main-flex:0 0 75%}}@media (min-width:1200px){:root{--sidebar-flex:0 0 20%;--main-flex:0 0 80%}}.outerSidebar{flex:var(--sidebar-flex);padding-right:var(--padding-horizontal);padding-bottom:var(--padding-vertical)}.outerSidebar .sidebar{display:flex;flex-direction:column;padding:10px 15px;border:1.5px solid #fff;border-radius:4px}.outerSidebar .row{cursor:pointer;display:flex;align-items:center;color:#2ecc40}.outerSidebar .row:hover{text-decoration:underline}.outerSidebar .row.removed{color:#ff4136}.btn-save{outline:0;border:1.5px solid #fff;background:0 0;color:inherit;padding:5px 15px;border-radius:2px;font-size:1.05em}.btn-save:not([disabled]){cursor:pointer}.icon{height:1.5em;width:1.5em}.section-title{font-size:30px;font-weight:300;-webkit-font-smoothing:antialiased}.svg-icon-check{color:#2ecc40}.svg-icon-x{color:#ff4136}.outerMain{flex:var(--main-flex);padding-left:var(--padding-horizontal);padding-top:var(--padding-vertical)}.main{padding:3% 2% 5%;border:1.5px solid #fff;border-radius:4px}.replace-flex-inputs{display:flex;flex-direction:column;margin-top:10px}.replace-flex-inputs *{align-self:flex-start;margin-bottom:10px}.replace-input{background:0 0;box-shadow:none;border:1.5px solid #fff;color:inherit;border-radius:2px;padding:5px 15px;width:220px;max-width:100%}.container{display:flex;flex-direction:row;flex-wrap:wrap;width:100%;height:max-content}' );
 };
 
 const SvgCheck = () => html`<svg
-  fill=none
-  stroke=currentColor
-  stroke-linecap=round
-  stroke-linejoin=round
-  stroke-width=2
+  fill="none"
+  stroke="currentColor"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  stroke-width="2"
   class="icon svg-icon-check"
   viewBox="0 0 24 24"
 >
   <path d="M5 12l5 5L20 7" />
 </svg>`;
 const SvgX = () => html`<svg
-  fill=none
-  stroke=currentColor
-  stroke-linecap=round
-  stroke-linejoin=round
-  stroke-width=2
+  fill="none"
+  stroke="currentColor"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  stroke-width="2"
   class="icon svg-icon-x"
   viewBox="0 0 24 24"
 >
   <path d="M18 6L6 18M6 6l12 12" />
 </svg>`;
 const SvgArrowBack = () => html`<svg
-  fill=none
-  stroke=currentColor
-  stroke-linecap=round
-  stroke-linejoin=round
-  stroke-width=2
+  fill="none"
+  stroke="currentColor"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  stroke-width="2"
   class="icon svg-icon-arrow-back"
   viewBox="0 0 24 24"
 >
   <path d="M9 11l-4 4 4 4m-4-4h11a4 4 0 000-8h-1" />
 </svg>`;
-const Sidebar = ( { handleClick, courses } ) => html`
-<div class=outerSidebar>
-  <div class=sidebar onClick=${ handleClick }>
-    ${ courses.map( ( { id, name, isReplaced, isRemoved } ) => html`
-    <div
-      key=${ id }
-      class=row
-      data-removed=${ `${ isRemoved }` }
-      data-id=${ id }
-    >
-      <span>
-        ${ isRemoved
+const Sidebar = ( { handleClick, courses } ) => html` <div class="outerSidebar">
+  <div class="sidebar">
+    ${ courses.map( ( { id, name, isReplaced, isRemoved } ) => html` <div
+        key=${ id }
+        class=${ `row${ isRemoved
+    ? ' removed'
+    : '' }` }
+        onClick=${ e => {
+    handleClick(
+      e,
+      id
+    );
+  } }
+      >
+        <span>
+          ${ isRemoved
     ? html`<${ SvgX } />`
     : html`<${ SvgCheck } />` }
-        ${ isReplaced === false
+          ${ isReplaced === false
     ? name
     : isReplaced }
-        ${ isReplaced !== false && html`<${ SvgArrowBack } />` }
-      </span>
-    </div>` ) }
+          ${ isReplaced !== false && html`<${ SvgArrowBack } />` }
+        </span>
+      </div>` ) }
   </div>
 </div>`;
 const Main = ( {
@@ -713,46 +716,40 @@ const Main = ( {
   handleInput,
   handleKeyDown,
   handleBtnClick,
-  refInput,
+  inputRef,
 } ) => {
   const { replacedText } = selected;
-  return (
-    html`<div class=outerMain>
-      <div class=main>
-        <div class=section-title>Rename course</div>
-        <div class=replace-flex-inputs>
-          <div>
-            ${ typeof selected.text === 'string'
-      ? `Selected: ${ selected.text }`
-      : 'Select course to the left' }
-          </div>
-
-          <input
-            placeholder=${ replacedText === ''
-      ? `Reset text to ${ selected.text }`
-      : isNullOrUndef( replacedText )
-        ? 'Select course to the left'
-        : undefined
-    }
-            contentEditable
-            class=replace-input
-            onInput=${ handleInput }
-            onKeyDown=${ handleKeyDown }
-            value=${ replacedText }
-            disabled=${ isNullOrUndef( selected.id ) }
-            ref=${ refInput }
-          />
-          <button
-            disabled=${ isNullOrUndef( selected.id ) }
-            onClick=${ handleBtnClick }
-            class=btn-save
-          >
-            Save
-          </button>
+  return html`<div class="outerMain">
+    <div class="main">
+      <div class="section-title">Rename course</div>
+      <div class="replace-flex-inputs">
+        <div>
+          ${ typeof selected.text === 'string'
+    ? `Selected: ${ selected.text }`
+    : 'Select course to the left' }
         </div>
+
+        <input
+          placeholder=${ isNullOrUndef( replacedText )
+    ? 'Select course to the left'
+    : `Reset text to ${ selected.text }` }
+          class="replace-input"
+          onInput=${ handleInput }
+          onKeyDown=${ handleKeyDown }
+          value=${ replacedText }
+          disabled=${ isNullOrUndef( selected.id ) }
+          ref=${ inputRef }
+        />
+        <button
+          disabled=${ isNullOrUndef( selected.id ) }
+          onClick=${ handleBtnClick }
+          class="btn-save"
+        >
+          Save
+        </button>
       </div>
-    </div>`
-  );
+    </div>
+  </div>`;
 };
 
 class SettingsPage extends Component {
@@ -762,14 +759,16 @@ class SettingsPage extends Component {
     selected: {},
   };
 
-  input = a => { this._input = a; };
+  inputRef = a => {
+    this.input = a;
+  };
 
   render = (
     _unused, { selected, courses }
   ) => html`<div class="container">
     <${ Sidebar } handleClick=${ this.handleSidebarClick } courses=${ courses } />
     <${ Main }
-      refInput=${ this.input }
+      inputRef=${ this.inputRef }
       selected=${ selected }
       handleBtnClick=${ this.handleBtnClick }
       handleInput=${ this.handleInput }
@@ -807,7 +806,7 @@ class SettingsPage extends Component {
 
     this.updateCourses( id );
 
-    this._input.value = '';
+    this.input.value = '';
 
     this.setState( {
       selected: {},
@@ -829,11 +828,12 @@ class SettingsPage extends Component {
     this.setState( { courses } );
   };
 
-  handleSidebarClick = e => {
+  handleSidebarClick = (
+    e, id
+  ) => {
     const { target } = e;
     const svg = target.closest( 'svg' );
     const row = target.closest( '.row' );
-    const { id } = row.dataset;
     if ( notNullOrUndef( row ) ) {
       if ( isNullOrUndef( svg ) ) {
         const { courses } = this.state;
@@ -856,7 +856,7 @@ class SettingsPage extends Component {
             },
           },
           () => {
-            const input = this._input;
+            const { input } = this;
             if ( input ) {
               input.focus();
               input.scrollIntoView( {
@@ -880,13 +880,13 @@ class SettingsPage extends Component {
           const isRemoved = checkIsRemoved( id );
           setRemove(
             id,
-            !isRemoved
+            !isRemoved // toggle between removed and not
           );
 
           this.setState( state => {
             const selectedId = state.selected.id;
             if ( selectedId === id ) {
-              this._input.value = '';
+              this.input.value = '';
               return {
                 selected: {},
               };
@@ -926,35 +926,24 @@ const checkIsReplaced = id => {
 };
 
 const removeElementFromStorage = (
-  id, setValue
+  id,
+  {
+    replace: updateReplaceStorage = true,
+    remove: updateRemoveStorage = true,
+  } = {}
 ) => {
-  const assignedSetValue = {
-    remove: true,
-    replace: true,
-    ...setValue,
-  };
-
-  const removeArr = GM_getValue( 'remove' ) ?? [];
   const replaceObj = GM_getValue( 'replace' ) ?? {};
-
-  for ( let i = 0; i < removeArr.length; ++i ) {
-    if ( removeArr[ i ] === id ) {
-      removeArr.splice(
-        i--, // post-increment intended
-        1
-      );
-    }
-  }
+  const removeArr = ( GM_getValue( 'remove' ) ?? [] ).filter( e => e !== id );
 
   delete replaceObj[ id ];
 
-  if ( assignedSetValue.replace === true ) {
+  if ( updateReplaceStorage ) {
     GM_setValue(
       'replace',
       replaceObj
     );
   }
-  if ( assignedSetValue.remove === true ) {
+  if ( updateRemoveStorage ) {
     GM_setValue(
       'remove',
       removeArr
@@ -967,15 +956,19 @@ const removeElementFromStorage = (
 };
 
 const setRemove = (
-  id, shouldBeRemoved
+  id, addToRemovers
 ) => {
   const removeArr = removeElementFromStorage(
     id,
-    { remove: !shouldBeRemoved }
-  )
-    .remove;
+    { remove: !addToRemovers }
+    /* if it should be added to the removers
+      and for whatever reason already in the removers
+      removeElementFromStorage will remove it from that array
+      but not update the storage, which this function will,
+      avoids unnecessary updates to refresh() */
+  ).remove;
 
-  if ( shouldBeRemoved ) {
+  if ( addToRemovers ) {
     removeArr.push( id );
     sortRemoveArr( removeArr );
     GM_setValue(
