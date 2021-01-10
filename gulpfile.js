@@ -2,87 +2,65 @@
 
 const { src, dest, watch } = require( 'gulp' );
 const csso = require( 'gulp-csso' );
-const npm = require( 'npm' );
 const babel = require( 'gulp-babel' );
 const svgmin = require( 'gulp-svgmin' );
+const rename = require( 'gulp-rename' );
 const { argv } = require( 'yargs' );
-const paths = {
-  js: './src/**/*.js',
-  css: './src/**/*.css',
-  cssNot: './src/**/_*.css',
-  svg: './src/**/*.svg',
+const sass = require( 'gulp-sass' );
+const PATHS = {
+  JS: [ './src/**/*.js' ],
+  SCSS: [ './src/**/*.scss' ],
+  SVG: [ './src/**/*.svg', '!./src/**/*.min.svg' ],
+  HTML: [ './src/**/*.html' ],
+  DEST: './dist',
+  SVG_DEST: './src',
 };
 
+sass.compiler = require( 'sass' );
+
 function build() {
-  if ( argv.production ) {
-    minJS();
-  }
-  else {
-    compJS();
-  }
+  compJS();
   minSvg();
-
-  return compSCSS()
-    .then( () => {
-      minCSS();
-    } );
+  return compSCSS();
 }
 
-function buildWatch() {
-  build().then( () => {
-    watch(
-      [ paths.js, paths.css, paths.svg ],
-      () => {
-        compJS();
-        minSvg();
-        return minCSS();
-      }
-    );
-  } );
+function start() {
+  build();
+
+  watch(
+    PATHS.JS,
+    compJS
+  );
+  watch(
+    PATHS.SCSS,
+    compSCSS
+  );
+  watch(
+    PATHS.SVG,
+    minSvg
+  );
 }
 
-function compSCSS( cb ) {
-  return new Promise( resolve => {
-    npm.load( () => {
-      npm.run(
-        'sass',
-        () => {
-          if ( cb ) { cb(); }
-          resolve();
-        }
-      );
-    } );
-  } );
+function compSCSS() {
+  const progress = src( PATHS.SCSS )
+    .pipe( sass() );
+
+  if ( argv.production ) {
+    progress.pipe( csso() );
+  }
+
+  return progress
+    .pipe( dest( PATHS.DEST ) );
 }
 
-function compJS( ) {
-  return src( paths.js )
+function compJS() {
+  return src( PATHS.JS )
     .pipe( babel() )
-    .pipe( dest( './dist' ) );
-}
-
-function minJS() {
-  return src( paths.js )
-    .pipe( babel( {
-      generatorOpts: {
-        minified: true,
-        shouldPrintComment: val => ( /^\s*==\/?UserScript==|^\s*@[\w-]/u ).test( val ),
-      },
-    } ) )
-    .pipe( dest( './dist' ) );
-}
-
-function minCSS() {
-  return src(
-    paths.css,
-    { ignore: paths.cssNot }
-  )
-    .pipe( csso() )
-    .pipe( dest( './dist' ) );
+    .pipe( dest( PATHS.DEST ) );
 }
 
 function minSvg() {
-  return src( paths.svg )
+  src( PATHS.SVG )
     .pipe( svgmin( {
       multipass: true,
       precision: 3,
@@ -112,17 +90,19 @@ function minSvg() {
         },
         { removeScriptElement: true },
         { removeDimensions: true },
+        { removeAttrs: {
+          attrs: [ 'class' ],
+        } },
       ],
     } ) )
-    .pipe( dest( './dist' ) );
+    .pipe( rename( path => {
+      path.extname = '.min.svg';
+    } ) )
+    .pipe( dest( PATHS.SVG_DEST ) );
 }
 
 exports.default = exports.build = build;
 exports.minSvg = minSvg;
-exports.minCSS = minCSS;
 exports.compJS = compJS;
-exports.minJS = minJS;
 exports.compSCSS = compSCSS;
-
-// eslint-disable-next-line camelcase
-exports.build_watch = buildWatch;
+exports.start = start;
