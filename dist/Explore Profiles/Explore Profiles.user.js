@@ -574,7 +574,7 @@ class Main extends Component {
     id: "maincontent"
   }), h("div", {
     "class": "userprofile"
-  }, notNullOrUndef(description) && description !== '' && h("div", {
+  }, typeof description !== 'undefined' && description !== '' && h("div", {
     "class": "description",
     dangerouslySetInnerHTML: {
       __html: description
@@ -586,26 +586,26 @@ class Main extends Component {
     "data-droptarget": "1"
   }), h("div", {
     "class": "profile_tree"
-  }, [email, country, city, url, interests].some(notNullOrUndef) && h("section", {
+  }, [email, country, city, url, interests].some(e => typeof e !== 'undefined') && h("section", {
     "class": "node_category card d-inline-block w-100 mb-3"
   }, h("div", {
     "class": "card-body"
   }, h("h3", {
     "class": "lead"
-  }, "User details"), h("ul", null, notNullOrUndef(email) && h("li", {
+  }, "User details"), h("ul", null, typeof email !== 'undefined' && h("li", {
     "class": "contentnode"
   }, h("dl", null, h("dt", null, "Email address"), h("dd", null, h("a", {
     href: `mailto:${encodeURIComponent(email)}`
-  }, email)))), notNullOrUndef(country) && h("li", {
+  }, email)))), typeof country !== 'undefined' && h("li", {
     "class": "contentnode"
-  }, h("dl", null, h("dt", null, "Country"), h("dd", null, country))), notNullOrUndef(city) && h("li", {
+  }, h("dl", null, h("dt", null, "Country"), h("dd", null, country))), typeof city !== 'undefined' && h("li", {
     "class": "contentnode"
-  }, h("dl", null, h("dt", null, "City/town"), h("dd", null, city))), notNullOrUndef(url) && h("li", {
+  }, h("dl", null, h("dt", null, "City/town"), h("dd", null, city))), typeof url !== 'undefined' && h("li", {
     "class": "contentnode"
   }, h("dl", null, h("dt", null, "Web page"), h("dd", null, h("a", {
     href: url,
     rel: "noopener noreferrer"
-  }, url)))), notNullOrUndef(interests) && h("li", {
+  }, url)))), typeof interests !== 'undefined' && h("li", {
     "class": "contentnode"
   }, h("dl", null, h("dt", null, "Interests"), h("dd", null, h("div", {
     "class": "tag_list hideoverlimit "
@@ -656,9 +656,9 @@ class Main extends Component {
     "class": "card-body"
   }, h("h3", {
     "class": "lead"
-  }, "Login activity"), h("ul", null, notNullOrUndef(firstaccess) && h("li", {
+  }, "Login activity"), h("ul", null, typeof firstaccess !== 'undefined' && h("li", {
     "class": "contentnode"
-  }, h("dl", null, h("dt", null, "First access to site"), h("dd", null, dayjs.unix(firstaccess).format('dddd, D MMMM YYYY, H:mm'), ' (', dayjs.unix(firstaccess).fromNow(false), ")"))), notNullOrUndef(lastaccess) && h("li", {
+  }, h("dl", null, h("dt", null, "First access to site"), h("dd", null, dayjs.unix(firstaccess).format('dddd, D MMMM YYYY, H:mm'), ' (', dayjs.unix(firstaccess).fromNow(false), ")"))), typeof lastaccess !== 'undefined' && h("li", {
     "class": "contentnode"
   }, h("dl", null, h("dt", null, "Last access to site"), h("dd", null, dayjs.unix(lastaccess).format('dddd, D MMMM YYYY, H:mm'), ' (', dayjs.unix(lastaccess).fromNow(false), ")"))))))))));
 }
@@ -836,7 +836,7 @@ const fetchNewProfile = async e => {
       id
     }) => id === origNewId);
 
-    if (isNullOrUndef(profile)) {
+    if (!profile) {
       if (isNegative) {
         profile = profiles.pop();
       } else {
@@ -870,7 +870,7 @@ const fetchNewProfile = async e => {
   });
   document.title = `${profile.fullname}: Public profile`;
 
-  if (isNullOrUndef(CONTACTS)) {
+  if (typeof CONTACTS === 'undefined') {
     CONTACTS = (await fetch('https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_message_get_user_contacts', {
       headers: {
         'content-type': 'application/x-www-form-urlencoded'
@@ -934,16 +934,16 @@ const fetchNewProfile = async e => {
     clearNode(regionMainBox);
     render(h(Main, null), regionMainBox);
     render(h(Header, null), pageHeader);
-    let li = document.querySelector('li[aria-labelledby="label_2_34"]');
+    let li = document.querySelector('li[aria-labelledby="label_2_34"]') ?? document.querySelector('li[aria-labelledby="label_2_31"]');
 
-    if (isNullOrUndef(li)) {
+    if (li) {
+      clearNode(li);
+    } else {
       li = document.createElement('li');
       li.className = 'type_system depth_2 contains_branch';
       li.setAttribute('aria-labelledby', 'label_2_34');
       li.tabIndex = -1;
       document.querySelector('li[aria-labelledby="label_2_4"]').after(li);
-    } else {
-      clearNode(li);
     }
 
     render(h(Sidebar, null), li);
@@ -995,7 +995,7 @@ const login = async () => {
   const tmToken = GM_getValue('token');
   const last = GM_getValue('lastValidatedToken');
 
-  if (notNullOrUndef(tmToken) && new Date().getTime() - last < 1000 * 60 * 60 * 3) {
+  if (typeof tmToken !== 'undefined' && new Date().getTime() - last < 1000 * 60 * 60 * 3) {
     // 3 hours
     return tmToken;
   }
@@ -1035,7 +1035,7 @@ const logout = removeCredentials => {
 const getVal = (valName, promptMsg) => {
   const tmVal = GM_getValue(valName);
 
-  if (notNullOrUndef(tmVal)) {
+  if (typeof tmVal !== 'undefined') {
     return tmVal;
   }
 
@@ -1047,10 +1047,6 @@ const getVal = (valName, promptMsg) => {
 const unescapeHTML = val => `${val}`.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;|&apos;/g, // second one just in case
 //                   because i don't know how moodle escapes apostrophies
 "'");
-
-const notNullOrUndef = val => val !== null && val !== void 0;
-
-const isNullOrUndef = val => val === null || val === void 0;
 
 document.readyState === 'complete' ? runOnce() : addEventListener('DOMContentLoaded', runOnce, {
   once: true

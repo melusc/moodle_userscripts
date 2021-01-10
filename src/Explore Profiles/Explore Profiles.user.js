@@ -46,7 +46,9 @@ const runOnce = () => {
   );
   document.body.append( notification );
 
-  USER_ID = +new URLSearchParams( document.querySelector( '.logininfo > a[href^="https://moodle.ksasz.ch/user/profile.php?id="]' ).search.slice( 1 ) ).get( 'id' );
+  USER_ID = +new URLSearchParams( document
+    .querySelector( '.logininfo > a[href^="https://moodle.ksasz.ch/user/profile.php?id="]' )
+    .search.slice( 1 ) ).get( 'id' );
 
   GM_getValue( 'highest' )
     ?? GM_setValue(
@@ -374,7 +376,7 @@ class Main extends Component {
     <div role="main">
       <span id="maincontent" />
       <div class="userprofile">
-        ${ notNullOrUndef( description )
+        ${ typeof description !== 'undefined'
         && description !== ''
         && html`<div
           class="description"
@@ -389,12 +391,12 @@ class Main extends Component {
           data-droptarget="1"
         />
         <div class="profile_tree">
-          ${ [ email, country, city, url, interests ].some( notNullOrUndef )
+          ${ [ email, country, city, url, interests ].some( e => typeof e !== 'undefined' )
           && html`<section class="node_category card d-inline-block w-100 mb-3">
             <div class="card-body">
               <h3 class="lead">User details</h3>
               <ul>
-                ${ notNullOrUndef( email )
+                ${ typeof email !== 'undefined'
                 && html`<li class="contentnode">
                   <dl>
                     <dt>Email address</dt>
@@ -405,21 +407,21 @@ class Main extends Component {
                     </dd>
                   </dl>
                 </li>` }
-                ${ notNullOrUndef( country )
+                ${ typeof country !== 'undefined'
                 && html`<li class="contentnode">
                   <dl>
                     <dt>Country</dt>
                     <dd>${ country }</dd>
                   </dl>
                 </li>` }
-                ${ notNullOrUndef( city )
+                ${ typeof city !== 'undefined'
                 && html`<li class="contentnode">
                   <dl>
                     <dt>City/town</dt>
                     <dd>${ city }</dd>
                   </dl>
                 </li>` }
-                ${ notNullOrUndef( url )
+                ${ typeof url !== 'undefined'
                 && html`<li class="contentnode">
                   <dl>
                     <dt>Web page</dt>
@@ -428,7 +430,7 @@ class Main extends Component {
                     </dd>
                   </dl>
                 </li>` }
-                ${ notNullOrUndef( interests )
+                ${ typeof interests !== 'undefined'
                 && html`<li class="contentnode">
                   <dl>
                     <dt>Interests</dt>
@@ -540,7 +542,7 @@ class Main extends Component {
             <div class="card-body">
               <h3 class="lead">Login activity</h3>
               <ul>
-                ${ notNullOrUndef( firstaccess )
+                ${ typeof firstaccess !== 'undefined'
                 && html`<li class="contentnode">
                   <dl>
                     <dt>First access to site</dt>
@@ -552,7 +554,7 @@ class Main extends Component {
                     </dd>
                   </dl>
                 </li>` }
-                ${ notNullOrUndef( lastaccess )
+                ${ typeof lastaccess !== 'undefined'
                 && html`<li class="contentnode">
                   <dl>
                     <dt>Last access to site</dt>
@@ -768,7 +770,7 @@ const fetchNewProfile = async e => {
 
     profile = profiles.find( ( { id } ) => id === origNewId );
 
-    if ( isNullOrUndef( profile ) ) {
+    if ( !profile ) {
       if ( isNegative ) {
         profile = profiles.pop();
       }
@@ -812,7 +814,7 @@ const fetchNewProfile = async e => {
 
   document.title = `${ profile.fullname }: Public profile`;
 
-  if ( isNullOrUndef( CONTACTS ) ) {
+  if ( typeof CONTACTS === 'undefined' ) {
     CONTACTS = (
       await fetch(
         'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_message_get_user_contacts',
@@ -886,9 +888,13 @@ const fetchNewProfile = async e => {
       html`<${ Header } />`,
       pageHeader
     );
-    let li = document.querySelector( 'li[aria-labelledby="label_2_34"]' );
+    let li = document.querySelector( 'li[aria-labelledby="label_2_34"]' )
+      ?? document.querySelector( 'li[aria-labelledby="label_2_31"]' );
 
-    if ( isNullOrUndef( li ) ) {
+    if ( li ) {
+      clearNode( li );
+    }
+    else {
       li = document.createElement( 'li' );
 
       li.className = 'type_system depth_2 contains_branch';
@@ -899,9 +905,6 @@ const fetchNewProfile = async e => {
       li.tabIndex = -1;
 
       document.querySelector( 'li[aria-labelledby="label_2_4"]' ).after( li );
-    }
-    else {
-      clearNode( li );
     }
     render(
       html`<${ Sidebar } />`,
@@ -978,7 +981,7 @@ const login = async () => {
   const last = GM_getValue( 'lastValidatedToken' );
 
   if (
-    notNullOrUndef( tmToken )
+    typeof tmToken !== 'undefined'
     && new Date().getTime() - last < 1000 * 60 * 60 * 3
   ) {
     // 3 hours
@@ -1049,7 +1052,7 @@ const getVal = (
 ) => {
   const tmVal = GM_getValue( valName );
 
-  if ( notNullOrUndef( tmVal ) ) {
+  if ( typeof tmVal !== 'undefined' ) {
     return tmVal;
   }
 
@@ -1084,9 +1087,6 @@ const unescapeHTML = val => `${ val }`
     //                   because i don't know how moodle escapes apostrophies
     "'"
   );
-
-const notNullOrUndef = val => val !== null && val !== void 0;
-const isNullOrUndef = val => val === null || val === void 0;
 
 document.readyState === 'complete'
   ? runOnce()
