@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle open folders inline preact
-// @version      2021.01.10a
+// @version      2021.01.10b
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
@@ -35,7 +35,7 @@ const handleClick = (() => {
     const folder = anchor?.closest('li.activity.folder');
     const subFolder = e.target.closest('div.fp-filename-icon');
 
-    if (notNullOrUndef(subFolder)) {
+    if (subFolder) {
       const subFolderContent = subFolder.nextElementSibling;
       subFolderContent.hidden = !subFolderContent.hidden;
       const caretIcon = subFolder.getElementsByClassName('folders-inline-caret')[0];
@@ -50,12 +50,12 @@ const handleClick = (() => {
       e.preventDefault();
       e.stopPropagation();
       folder.lastElementChild.remove();
-      pageContent = null;
+      pageContent = undefined;
       anchor.click();
       return;
     }
 
-    if (notNullOrUndef(anchor) && anchor.pathname === '/mod/folder/view.php') {
+    if (anchor?.pathname === '/mod/folder/view.php') {
       if (e.ctrlKey === true) {
         return;
       }
@@ -91,7 +91,7 @@ const handleClick = (() => {
         requestParams.set('options[0][value]', 1);
         requestParams.set('wstoken', token);
 
-        if (isNullOrUndef(pageContent)) {
+        if (typeof pageContent === 'undefined') {
           pageContent = fetch('/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_course_get_contents', {
             method: 'POST',
             headers: {
@@ -159,7 +159,7 @@ const generateImageURL = (() => {
        got them from there */
 
   };
-  return (mimetype, defaultVal) => notNullOrUndef(imageURLs[mimetype]) ? `/theme/image.php/classic/core/1601902087/f/${imageURLs[mimetype]}` : defaultVal;
+  return (mimetype, defaultVal) => imageURLs.hasOwnProperty(mimetype) ? `/theme/image.php/classic/core/1601902087/f/${imageURLs[mimetype]}` : defaultVal;
 })();
 
 const GenerateFolder = ({
@@ -284,7 +284,7 @@ const login = (() => {
 const getVal = (storageName, promptMsg) => {
   const storageVal = GM_getValue(storageName);
 
-  if (notNullOrUndef(storageVal)) {
+  if (typeof storageVal !== 'undefined') {
     return storageVal;
   }
 
@@ -300,10 +300,6 @@ const logout = (removeCredentials = false) => {
     ['username', 'password'].map(GM_deleteValue);
   }
 };
-
-const isNullOrUndef = val => val === undefined || val === null;
-
-const notNullOrUndef = val => val !== undefined && val !== null;
 
 document.readyState === 'complete' ? init() : addEventListener('DOMContentLoaded', init, {
   once: true
