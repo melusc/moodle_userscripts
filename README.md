@@ -1,6 +1,6 @@
 Here you can find some useful userscripts for moodle. I have only ever tested them on my school's moodle, though.
 
-To run these you need to have tampermonkey, greasymonkey or similar installed.
+To run these you need to have tampermonkey, greasemonkey or similar installed.
 
 # Quick Installation
 
@@ -12,8 +12,10 @@ To run these you need to have tampermonkey, greasymonkey or similar installed.
 
 [Explore Profiles](https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js)
 
+[Open folders inline](https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js)
+
 # About
 
-Currently, all these userscripts are written in es6, using preact and [htm](https://github.com/developit/htm).
+Currently, all these userscripts are written in es6, using [preact](https://github.com/preactjs/preact) and [htm](https://github.com/developit/htm).
 
 If settings are required for use, they are accessible by clicking "Open settings" in menu.
