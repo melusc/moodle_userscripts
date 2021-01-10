@@ -42,14 +42,9 @@ function start() {
 }
 
 function compSCSS() {
-  const progress = src( PATHS.SCSS )
-    .pipe( sass() );
-
-  if ( argv.production ) {
-    progress.pipe( csso() );
-  }
-
-  return progress
+  return src( PATHS.SCSS )
+    .pipe( sass() )
+    .pipe( csso() )
     .pipe( dest( PATHS.DEST ) );
 }
 
