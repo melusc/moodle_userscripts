@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles rest
-// @version      2021.01.06a
+// @version      2021.01.10a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
@@ -290,7 +290,7 @@ const runOnce = () => {
   const notification = document.createElement('div');
   render(h(Notification, null), notification);
   document.body.append(notification);
-  USER_ID = +new URLSearchParams(document.querySelector('a[title="View profile"]').search.slice(1)).get('id');
+  USER_ID = +new URLSearchParams(document.querySelector('.logininfo > a[href^="https://moodle.ksasz.ch/user/profile.php?id="]').search.slice(1)).get('id');
   GM_getValue('highest') ?? GM_setValue('highest', 1946 // highest + 10 at time of creation
   // this number only really matters for rand anyway
   );
@@ -452,11 +452,11 @@ class Header extends Component {
     "class": "icon fa fa-user-times fa-fw iconsmall",
     title: "Remove from contacts",
     "aria-label": "Remove from contacts"
-  }) : [" ", h("i", {
+  }) : h("i", {
     "class": "icon fa fa-address-card fa-fw iconsmall",
     title: "Add to contacts",
     "aria-label": "Add to contacts"
-  })], h("span", {
+  }), h("span", {
     "class": "header-button-title"
   }, isContact ? 'Remove from contacts' : 'Add to contacts')), h("span", {
     "class": "loading-icon icon-no-margin"
@@ -488,7 +488,7 @@ class Header extends Component {
     "aria-current": "page"
   }, fullname))))), h("div", {
     "class": "ml-auto d-flex"
-  }, isUserProfile && [" ", h("div", {
+  }, isUserProfile && [h("div", {
     "class": "singlebutton"
   }, h("form", {
     method: "post",
@@ -596,27 +596,27 @@ class Main extends Component {
     "class": "contentnode"
   }, h("dl", null, h("dt", null, "Email address"), h("dd", null, h("a", {
     href: `mailto:${encodeURIComponent(email)}`
-  }, email)))), notNullOrUndef(country) && [" ", h("li", {
+  }, email)))), notNullOrUndef(country) && h("li", {
     "class": "contentnode"
-  }, h("dl", null, h("dt", null, "Country"), h("dd", null, country)))], notNullOrUndef(city) && h("li", {
+  }, h("dl", null, h("dt", null, "Country"), h("dd", null, country))), notNullOrUndef(city) && h("li", {
     "class": "contentnode"
   }, h("dl", null, h("dt", null, "City/town"), h("dd", null, city))), notNullOrUndef(url) && h("li", {
     "class": "contentnode"
   }, h("dl", null, h("dt", null, "Web page"), h("dd", null, h("a", {
     href: url,
     rel: "noopener noreferrer"
-  }, " ", url, " ")))), notNullOrUndef(interests) && [" ", h("li", {
+  }, url)))), notNullOrUndef(interests) && h("li", {
     "class": "contentnode"
   }, h("dl", null, h("dt", null, "Interests"), h("dd", null, h("div", {
     "class": "tag_list hideoverlimit "
   }, h("ul", {
     "class": "inline-list"
-  }, interests.map((e, i) => [" ", h("li", {
+  }, interests.map((e, i) => h("li", {
     key: i
   }, h("a", {
     href: `https://moodle.ksasz.ch/tag/index.php?tag=${encodeURIComponent(e)}`,
     "class": "badge badge-info"
-  }, e))]))))))]))), Array.isArray(courses) && courses.length > 0 && h("section", {
+  }, e))))))))))), Array.isArray(courses) && courses.length > 0 && h("section", {
     "class": "node_category card d-inline-block w-100 mb-3"
   }, h("div", {
     "class": "card-body"
@@ -658,9 +658,9 @@ class Main extends Component {
     "class": "lead"
   }, "Login activity"), h("ul", null, notNullOrUndef(firstaccess) && h("li", {
     "class": "contentnode"
-  }, h("dl", null, h("dt", null, "First access to site"), h("dd", null, dayjs.unix(firstaccess).format('dddd, D MMMM YYYY, H:mm'), ' (', " ", dayjs.unix(firstaccess).fromNow(false), " )"))), notNullOrUndef(lastaccess) && h("li", {
+  }, h("dl", null, h("dt", null, "First access to site"), h("dd", null, dayjs.unix(firstaccess).format('dddd, D MMMM YYYY, H:mm'), ' (', dayjs.unix(firstaccess).fromNow(false), ")"))), notNullOrUndef(lastaccess) && h("li", {
     "class": "contentnode"
-  }, h("dl", null, h("dt", null, "Last access to site"), h("dd", null, dayjs.unix(lastaccess).format('dddd, D MMMM YYYY, H:mm'), ' (', " ", dayjs.unix(lastaccess).fromNow(false), " )"))))))))));
+  }, h("dl", null, h("dt", null, "Last access to site"), h("dd", null, dayjs.unix(lastaccess).format('dddd, D MMMM YYYY, H:mm'), ' (', dayjs.unix(lastaccess).fromNow(false), ")"))))))))));
 }
 
 class Sidebar extends Component {
@@ -679,7 +679,7 @@ class Sidebar extends Component {
       return undefined;
     }
 
-    return [" ", h("p", {
+    return [h("p", {
       "class": "tree_item branch",
       role: "treeitem",
       "aria-expanded": "true",
@@ -689,7 +689,7 @@ class Sidebar extends Component {
     }, h("span", {
       tabIndex: "-1",
       id: "label_2_34"
-    }, " Users ")), h("ul", {
+    }, "Users")), h("ul", {
       role: "group",
       tabindex: "-1"
     }, h("li", {
@@ -724,7 +724,7 @@ class Sidebar extends Component {
     }, h("span", {
       tabIndex: "-1",
       id: "label_4_36"
-    }, " Blogs ")), h("ul", {
+    }, "Blogs")), h("ul", {
       role: "group",
       "aria-hidden": "true",
       tabindex: "-1"

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles rest
-// @version      2021.01.06a
+// @version      2021.01.10a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
@@ -46,7 +46,7 @@ const runOnce = () => {
   );
   document.body.append( notification );
 
-  USER_ID = +new URLSearchParams( document.querySelector( 'a[title="View profile"]' ).search.slice( 1 ) ).get( 'id' );
+  USER_ID = +new URLSearchParams( document.querySelector( '.logininfo > a[href^="https://moodle.ksasz.ch/user/profile.php?id="]' ).search.slice( 1 ) ).get( 'id' );
 
   GM_getValue( 'highest' )
     ?? GM_setValue(
@@ -245,7 +245,7 @@ class Header extends Component {
                           title="Remove from contacts"
                           aria-label="Remove from contacts"
                         />`
-                    : html` <i
+                    : html`<i
                           class="icon fa fa-address-card fa-fw iconsmall"
                           title="Add to contacts"
                           aria-label="Add to contacts"
@@ -295,7 +295,7 @@ class Header extends Component {
           </div>
           <div class="ml-auto d-flex">
             ${ isUserProfile
-            && html` <div class="singlebutton">
+            && html`<div class="singlebutton">
                 <form
                   method="post"
                   action="https://moodle.ksasz.ch/user/profile.php"
@@ -406,7 +406,7 @@ class Main extends Component {
                   </dl>
                 </li>` }
                 ${ notNullOrUndef( country )
-                && html` <li class="contentnode">
+                && html`<li class="contentnode">
                   <dl>
                     <dt>Country</dt>
                     <dd>${ country }</dd>
@@ -424,12 +424,12 @@ class Main extends Component {
                   <dl>
                     <dt>Web page</dt>
                     <dd>
-                      <a href=${ url } rel="noopener noreferrer"> ${ url } </a>
+                      <a href=${ url } rel="noopener noreferrer">${ url }</a>
                     </dd>
                   </dl>
                 </li>` }
                 ${ notNullOrUndef( interests )
-                && html` <li class="contentnode">
+                && html`<li class="contentnode">
                   <dl>
                     <dt>Interests</dt>
                     <dd>
@@ -437,7 +437,7 @@ class Main extends Component {
                         <ul class="inline-list">
                           ${ interests.map( (
                   e, i
-                ) => html` <li key=${ i }>
+                ) => html`<li key=${ i }>
                               <a
                                 href=${ `https://moodle.ksasz.ch/tag/index.php?tag=${ encodeURIComponent( e ) }` }
                                 class="badge badge-info"
@@ -548,7 +548,7 @@ class Main extends Component {
                       ${ dayjs
                   .unix( firstaccess )
                   .format( 'dddd, D MMMM YYYY, H:mm' ) }
-                      ${ ' (' } ${ dayjs.unix( firstaccess ).fromNow( false ) } )
+                      ${ ' (' }${ dayjs.unix( firstaccess ).fromNow( false ) })
                     </dd>
                   </dl>
                 </li>` }
@@ -560,7 +560,7 @@ class Main extends Component {
                       ${ dayjs
                   .unix( lastaccess )
                   .format( 'dddd, D MMMM YYYY, H:mm' ) }
-                      ${ ' (' } ${ dayjs.unix( lastaccess ).fromNow( false ) } )
+                      ${ ' (' }${ dayjs.unix( lastaccess ).fromNow( false ) })
                     </dd>
                   </dl>
                 </li>` }
@@ -588,7 +588,7 @@ class Sidebar extends Component {
     if ( isUserProfile ) {
       return undefined;
     }
-    return html` <p
+    return html`<p
         class="tree_item branch"
         role="treeitem"
         aria-expanded="true"
@@ -596,7 +596,7 @@ class Sidebar extends Component {
         tabindex="-1"
         aria-selected="false"
       >
-        <span tabIndex="-1" id="label_2_34"> Users </span>
+        <span tabIndex="-1" id="label_2_34">Users</span>
       </p>
       <ul role="group" tabindex="-1">
         <li
@@ -634,7 +634,7 @@ class Sidebar extends Component {
                 tabindex="-1"
                 aria-selected="false"
               >
-                <span tabIndex="-1" id="label_4_36"> Blogs </span>
+                <span tabIndex="-1" id="label_4_36">Blogs</span>
               </p>
               <ul role="group" aria-hidden="true" tabindex="-1">
                 <li
