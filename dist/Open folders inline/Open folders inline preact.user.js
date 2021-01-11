@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle open folders inline preact
-// @version      2021.01.10b
+// @version      2021.01.11a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
@@ -191,16 +191,16 @@ const GenerateFolder = ({
   }, h("i", {
     "class": "icon fa fa-caret-right fa-fw navicon folders-inline-caret"
   }), h("img", {
-    "class": "icon",
+    "class": "iconlarge activityicon",
     alt: base,
+    role: "presentation",
     title: base,
+    "aria-hidden": "true",
     src: "/theme/image.php/classic/core/1601902087/f/folder-128"
   })), h("span", {
     "class": "fp-filename"
   }, base)), h("ul", {
-    style: {
-      listStyle: 'none'
-    },
+    style: "list-style: none;",
     hidden: Boolean(base)
   }, entries.map(([key, val]) => h("li", null, h(GenerateFolder, {
     contents: val,
