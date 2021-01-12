@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v5
-// @version      2021.01.04a
+// @version      2021.01.12a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js
 // @include      *://moodle.ksasz.ch/
@@ -848,7 +848,7 @@ class Table extends Component {
       fromvalid,
       tovalid,
       uuid
-    }) => [" ", h("div", {
+    }) => h("div", {
       key: uuid,
       "class": "table-row"
     }, h("div", {
@@ -873,7 +873,7 @@ class Table extends Component {
       "data-type": "id"
     }, id)), h("div", {
       "class": "table-cell remove-row"
-    }, h(SvgIconX, null)))]));
+    }, h(SvgIconX, null)))));
   }
 
 }
@@ -945,12 +945,12 @@ const FrontPage = (() => {
       if (curTimeInMinutes < totalFrom) {
         this.setState({
           type: BEFORELESSONS,
-          tableRows: [currentVals[0]]
+          tableRows: [undefined, currentVals[0]]
         });
-        const nextDate = new Date();
         const nextInMinutesSinceMidnight = currentVals[0].from;
         const nextMinutes = nextInMinutesSinceMidnight % 60;
         const nextHours = Math.floor(nextInMinutesSinceMidnight / 60);
+        const nextDate = new Date();
         nextDate.setHours(nextHours, nextMinutes, 0, 0);
         this.clearTimeout();
         this.timeout = setTimeout(() => {
@@ -990,9 +990,9 @@ const FrontPage = (() => {
         }
 
         const nextInMinutesSinceMidnight = currentVals[curIndex].to;
-        const nextDate = new Date();
         const nextHours = Math.floor(nextInMinutesSinceMidnight / 60);
         const nextMinutes = nextInMinutesSinceMidnight % 60;
+        const nextDate = new Date();
         nextDate.setHours(nextHours, nextMinutes, 0, 0);
         this.clearTimeout();
         this.timeout = setTimeout(() => {
@@ -1023,18 +1023,19 @@ const FrontPage = (() => {
       }, !isWeekend && isHoliday === false && type === BEFORELESSONS && h(TimetableRow, {
         values: {
           content: 'No lesson'
-        }
+        },
+        isNow: true
       }), !isWeekend && isHoliday === false && type === AFTERLESSONS && h("div", {
         "class": "tt-title"
       }, "No school anymore"), isWeekend && isHoliday === false && h("div", {
         "class": "tt-title"
       }, "Weekend"), isHoliday && h("div", {
         "class": "tt-title"
-      }, "Holiday"), !isWeekend && isEmpty === false && isHoliday === false && type === DURINGLESSONS && tableRows?.map((curVal, idx) => curVal && h(TimetableRow, {
+      }, "Holiday"), !isWeekend && isEmpty === false && isHoliday === false && (type === BEFORELESSONS || type === DURINGLESSONS) && tableRows?.map((curVal, idx) => curVal && h(TimetableRow, {
         key: curVal.uuid,
         values: curVal,
         isNow: idx === 0
-      })), isEmpty && !isWeekend && [" Todays timetable is empty, you can update it", h("a", {
+      })), isEmpty && !isWeekend && ["Today's timetable is empty, you can update it", h("a", {
         href: "/timetable/v5",
         rel: "noreferrer",
         target: "_blank"
@@ -1048,17 +1049,25 @@ class TimetableRow extends Component {
   render = ({
     values,
     isNow
-  }) => notNullOrUndef(values) && h("div", {
-    "class": "tt-tr"
-  }, h("div", {
-    "class": "tt-th"
-  }, isNow ? 'Now ' : 'Next ', notNullOrUndef(values.from) && `(${parseTimeToString(values.from)} - ${parseTimeToString(values.to)})`, ":"), h("div", {
-    "class": "tt-td"
-  }, values.hasOwnProperty('id') && values.id !== '' ? h("a", {
-    href: `/course/view.php?id=${values.id}`,
-    target: "_blank",
-    rel: "noreferrer"
-  }, values.content) : values.content ?? 'Free lesson'));
+  }) => {
+    const {
+      from,
+      to,
+      id,
+      content
+    } = values ?? {};
+    return typeof values === 'object' && h("div", {
+      "class": "tt-tr"
+    }, h("div", {
+      "class": "tt-th"
+    }, isNow ? 'Now' : 'Next', from && to && ` (${parseTimeToString(from)} - ${parseTimeToString(to)})`, ":"), h("div", {
+      "class": "tt-td"
+    }, typeof id === 'string' ? h("a", {
+      href: `/course/view.php?id=${id}`,
+      target: "_blank",
+      rel: "noreferrer"
+    }, content) : content ?? 'Free lesson'));
+  };
 }
 
 const notNullOrUndef = val => val !== null && val !== undefined;

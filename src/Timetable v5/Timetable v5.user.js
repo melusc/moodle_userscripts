@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v5
-// @version      2021.01.04a
+// @version      2021.01.12a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js
 // @include      *://moodle.ksasz.ch/
@@ -952,7 +952,7 @@ const SvgIconAdd = () => html`<svg viewBox="0 0 512 512">
 class Table extends Component {
   render() {
     return html`<div class="table" onFocus=${ this.props.handleFocus }>
-      ${ this.props.content?.map( ( { from, to, content, id, fromvalid, tovalid, uuid } ) => html` <div
+      ${ this.props.content?.map( ( { from, to, content, id, fromvalid, tovalid, uuid } ) => html`<div
           key=${ uuid }
           class="table-row"
         >
@@ -1093,14 +1093,14 @@ const FrontPage = ( () => {
       if ( curTimeInMinutes < totalFrom ) {
         this.setState( {
           type: BEFORELESSONS,
-          tableRows: [ currentVals[ 0 ] ],
+          tableRows: [ undefined, currentVals[ 0 ] ],
         } );
 
-        const nextDate = new Date();
         const nextInMinutesSinceMidnight = currentVals[ 0 ].from;
         const nextMinutes = nextInMinutesSinceMidnight % 60;
         const nextHours = Math.floor( nextInMinutesSinceMidnight / 60 );
 
+        const nextDate = new Date();
         nextDate.setHours(
           nextHours,
           nextMinutes,
@@ -1156,10 +1156,10 @@ const FrontPage = ( () => {
         }
 
         const nextInMinutesSinceMidnight = currentVals[ curIndex ].to;
-        const nextDate = new Date();
         const nextHours = Math.floor( nextInMinutesSinceMidnight / 60 );
         const nextMinutes = nextInMinutesSinceMidnight % 60;
 
+        const nextDate = new Date();
         nextDate.setHours(
           nextHours,
           nextMinutes,
@@ -1196,6 +1196,7 @@ const FrontPage = ( () => {
                     && type === BEFORELESSONS
                     && html`<${ TimetableRow }
                       values=${ { content: 'No lesson' } }
+                      isNow=${ true }
                     />` }
                     ${ !isWeekend
                     && isHoliday === false
@@ -1208,7 +1209,7 @@ const FrontPage = ( () => {
                     ${ !isWeekend
                     && isEmpty === false
                     && isHoliday === false
-                    && type === DURINGLESSONS
+                    && ( type === BEFORELESSONS || type === DURINGLESSONS )
                     && tableRows?.map( (
                       curVal, idx
                     ) => curVal
@@ -1219,7 +1220,7 @@ const FrontPage = ( () => {
                         />` ) }
                     ${ isEmpty
                     && !isWeekend
-                    && html` Todays timetable is empty, you can update it
+                    && html`Today's timetable is empty, you can update it
                       <a href="/timetable/v5" rel="noreferrer" target="_blank">
                         here
                       </a>` }
@@ -1236,28 +1237,31 @@ const FrontPage = ( () => {
 } )();
 
 class TimetableRow extends Component {
-  render = ( { values, isNow } ) => notNullOrUndef( values )
-    && html`<div class="tt-tr">
-      <div class="tt-th">
-        ${ isNow
-      ? 'Now '
-      : 'Next ' }
-        ${ notNullOrUndef( values.from )
-        && `(${ parseTimeToString( values.from ) } - ${ parseTimeToString( values.to ) })` }
-        :
-      </div>
-      <div class="tt-td">
-        ${ values.hasOwnProperty( 'id' ) && values.id !== ''
-          ? html`<a
-              href=${ `/course/view.php?id=${ values.id }` }
-              target="_blank"
-              rel="noreferrer"
-            >
-              ${ values.content }
-            </a>`
-          : values.content ?? 'Free lesson' }
-      </div>
-    </div>`;
+  render = ( { values, isNow } ) => {
+    const { from, to, id, content } = values ?? {};
+    return typeof values === 'object'
+      && html`<div class="tt-tr">
+        <div class="tt-th">
+          ${ isNow
+        ? 'Now'
+        : 'Next' }
+          ${ from
+          && to
+          && ` (${ parseTimeToString( from ) } - ${ parseTimeToString( to ) })` }:
+        </div>
+        <div class="tt-td">
+          ${ typeof id === 'string'
+            ? html`<a
+                href=${ `/course/view.php?id=${ id }` }
+                target="_blank"
+                rel="noreferrer"
+              >
+                ${ content }
+              </a>`
+            : content ?? 'Free lesson' }
+        </div>
+      </div>`;
+  };
 }
 const notNullOrUndef = val => val !== null && val !== undefined;
 const isNullOrUndef = val => val === null || val === undefined;
