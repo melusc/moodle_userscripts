@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v5
-// @version      2021.01.12a
+// @version      2021.01.12b
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js
 // @include      *://moodle.ksasz.ch/
@@ -15,7 +15,7 @@
 // @grant        GM_notification
 // @run-at       document-start
 // _@require     https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
-// @require      https://cdn.jsdelivr.net/npm/preact@10.5.7/dist/preact.min.js
+// @require      https://cdn.jsdelivr.net/npm/preact@10.5.9/dist/preact.min.js
 // ==/UserScript==
 
 // to switch forth and back between htmPreact and preact

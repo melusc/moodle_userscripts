@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle open folders inline preact
-// @version      2021.01.11a
+// @version      2021.01.12a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
@@ -9,7 +9,7 @@
 // @grant        GM_addStyle
 // @run-at       document-start
 // _@require     https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
-// @require      https://cdn.jsdelivr.net/npm/preact@10.5.7/dist/preact.min.js
+// @require      https://cdn.jsdelivr.net/npm/preact@10.5.9/dist/preact.min.js
 // ==/UserScript==
 
 // to switch forth and back between htmPreact and preact
