@@ -5,7 +5,7 @@
   "scripts": {
     "sass:w": "sass src:src --watch",
     "sass": "sass src:src",
-    "serve": "serve src",
+    "serve": "serve dist",
     "build": "gulp build --production",
     "start": "gulp start"
   },

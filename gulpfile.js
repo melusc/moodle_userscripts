@@ -55,7 +55,7 @@ function compJS() {
 }
 
 function minSvg() {
-  src( PATHS.SVG )
+  return src( PATHS.SVG )
     .pipe( svgmin( {
       multipass: true,
       precision: 3,
