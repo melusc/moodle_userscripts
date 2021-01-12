@@ -14,6 +14,8 @@ To run these you need to have tampermonkey, greasemonkey or similar installed.
 
 [Open folders inline](https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js)
 
+[Unconfirmed Marks](https://github.com/melusc/moodle_userscripts/raw/master/dist/Unconfirmed%20Marks/Unconfirmed%20Marks%20Preact.user.js)
+
 # About
 
 Currently, all these userscripts are written in es6, using [preact](https://github.com/preactjs/preact) and [htm](https://github.com/developit/htm).
