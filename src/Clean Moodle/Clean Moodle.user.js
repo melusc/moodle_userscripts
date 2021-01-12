@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.12a
+// @version      2021.01.12b
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -532,75 +532,152 @@ const login = ( () => {
     }
 
     if ( noCache || !cachedToken ) {
-      const username = getVal(
-        'username',
-        'Username'
-      );
-      const password = getVal(
-        'password',
-        'Password'
-      );
+      cachedToken = getCredentials().then( ( { username, password } ) => {
+        const loginParams = new URLSearchParams();
 
-      const loginParams = new URLSearchParams();
-
-      loginParams.set(
-        'username',
-        username
-      );
-      loginParams.set(
-        'password',
-        password
-      );
-      loginParams.set(
-        'service',
-        'moodle_mobile_app'
-      );
-      cachedToken = fetch(
-        '/login/token.php',
-        {
-          method: 'POST',
-          body: loginParams.toString(),
-          headers: {
-            'content-type': 'application/x-www-form-urlencoded',
-          },
-        }
-      )
-        .then( e => e.json() )
-        .then( response => {
-          if ( response.hasOwnProperty( 'errorcode' ) ) {
-            logout( true );
-            return login( true );
+        loginParams.set(
+          'username',
+          username
+        );
+        loginParams.set(
+          'password',
+          password
+        );
+        loginParams.set(
+          'service',
+          'moodle_mobile_app'
+        );
+        return fetch(
+          '/login/token.php',
+          {
+            method: 'POST',
+            body: loginParams.toString(),
+            headers: {
+              'content-type': 'application/x-www-form-urlencoded',
+            },
           }
+        )
+          .then( e => e.json() )
+          .then( response => {
+            if ( response.hasOwnProperty( 'errorcode' ) ) {
+              logout( true );
+              return login( true );
+            }
 
-          GM_setValue(
-            'token',
-            response.token
-          );
-          setLastValidatedToken();
+            GM_setValue(
+              'token',
+              response.token
+            );
+            setLastValidatedToken();
 
-          return response.token;
-        } );
+            return response.token;
+          } );
+      } );
     }
 
     return cachedToken;
   };
 } )();
 
-const getVal = (
-  storageName, promptMsg
-) => {
-  const storageVal = GM_getValue( storageName );
-  if ( notNullOrUndef( storageVal ) ) {
-    return storageVal;
+const getCredentials = () => new Promise( resolve => {
+  const state = {
+    active: true,
+    callback: resolve,
+  };
+
+  console.log(
+    'getCredentials',
+    isFrontpage
+  );
+
+  const login = GM_getValue( 'login' );
+  const password = GM_getValue( 'password' );
+  if ( login && password ) {
+    resolve( { username: login, password } );
   }
 
-  const newVal = prompt( promptMsg );
-  GM_setValue(
-    storageName,
-    newVal
-  );
-  return newVal;
-};
+  if ( isFrontpage ) {
+    if ( typeof frontPageLoginSetState === 'function' ) {
+      frontPageLoginSetState( state );
+    }
+    else {
+      frontPageDefaultLoginState = state;
+      const div = document.createElement( 'div' );
+      div.className = 'clean-moodle';
+      document.body.append( div );
+      render(
+        html`<${ FrontPageLogin } />`,
+        div
+      );
+
+      GM_addStyle( '.clean-moodle .vertical-horizontal-center{width:100%;height:100%;position:fixed;z-index:100000000;top:0;left:0;display:flex;align-items:center;justify-content:center;pointer-events:none}.clean-moodle .card{pointer-events:auto}' );
+    }
+  }
+  else {
+    settingsPageSetState( { loggedOut: true, loggedOutCallback: resolve } );
+  }
+} );
+
+let frontPageLoginSetState;
+let frontPageDefaultLoginState = {};
+
+class FrontPageLogin extends Component {
+  state = frontPageDefaultLoginState;
+
+  inputs = {};
+
+  render = (
+    _props, { active }
+  ) => active
+    && html`
+      <div class="vertical-horizontal-center">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Clean Moodle Login</h5>
+            <input
+              placeholder="Username"
+              required
+              class="input-group-text"
+              ref=${ e => {
+      this.inputs.login = e;
+    } }
+            />
+            <input
+              placeholder="Password"
+              required
+              class="input-group-text"
+              ref=${ e => {
+      this.inputs.password = e;
+    } }
+              type="password"
+            />
+          </div>
+          <button class="btn btn-primary" onClick=${ this.handleClick }>
+            Login
+          </button>
+        </div>
+      </div>
+    `;
+
+  handleClick = () => {
+    const login = this.inputs.login.value.trim();
+    const password = this.inputs.password.value;
+
+    if ( login && password ) {
+      this.setState( { active: false } );
+      this.state.callback( {
+        username: login,
+        password,
+      } );
+    }
+  };
+
+  componentDidMount = () => {
+    this.frontPageLoginState = state => {
+      this.setState( state );
+    };
+  };
+}
 
 const logout = ( removeCredentials = false ) => {
   [ 'token', 'lastValidatedToken' ].map( GM_deleteValue );
@@ -649,7 +726,13 @@ const initSettingsPage = () => {
   link.href = '/theme/image.php/classic/theme/1588340020/favicon';
   document.head.append( link );
 
-  GM_addStyle( 'html{cursor:default;-moz-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;word-break:break-word;background:#15202b;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:.9375rem;font-weight:400;line-height:1.5;user-select:none}img{border-style:none}button{overflow:visible}button,input{font-family:inherit;font-size:100%;line-height:1.15}button::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}*,::after,::before{box-sizing:border-box}::after,::before{text-decoration:inherit;vertical-align:inherit}body,button,input{margin:0}svg{vertical-align:middle}svg:not([fill]){fill:currentColor}svg:not(:root){overflow:hidden}button{-webkit-appearance:button;text-transform:none}input{overflow:visible}::-webkit-input-placeholder{color:inherit;opacity:.54}::-moz-focus-inner{border-style:none;padding:0}button,input{-ms-touch-action:manipulation;touch-action:manipulation}body{padding:1%}@media (min-width:0px){:root{--sidebar-flex:0 0 100%;--main-flex:0 0 100%;--padding-horizontal:0;--padding-vertical:0.5%}}@media (min-width:768px){:root{--sidebar-flex:0 0 32%;--main-flex:0 0 68%;--padding-horizontal:0.5%;--padding-vertical:0}}@media (min-width:992px){:root{--sidebar-flex:0 0 25%;--main-flex:0 0 75%}}@media (min-width:1200px){:root{--sidebar-flex:0 0 20%;--main-flex:0 0 80%}}.outerSidebar{flex:var(--sidebar-flex);padding-right:var(--padding-horizontal);padding-bottom:var(--padding-vertical)}.outerSidebar .sidebar{display:flex;flex-direction:column;padding:10px 15px;border:1.5px solid #fff;border-radius:4px}.outerSidebar .row{cursor:pointer;display:flex;align-items:center;color:#2ecc40}.outerSidebar .row:hover{text-decoration:underline}.outerSidebar .row.removed{color:#ff4136}.btn-save{outline:0;border:1.5px solid #fff;background:0 0;color:inherit;padding:5px 15px;border-radius:2px;font-size:1.05em}.btn-save:not([disabled]){cursor:pointer}.icon{height:1.5em;width:1.5em}.section-title{font-size:30px;font-weight:300;-webkit-font-smoothing:antialiased}.svg-icon-check{color:#2ecc40}.svg-icon-x{color:#ff4136}.outerMain{flex:var(--main-flex);padding-left:var(--padding-horizontal);padding-top:var(--padding-vertical)}.main{padding:3% 2% 5%;border:1.5px solid #fff;border-radius:4px}.replace-flex-inputs{display:flex;flex-direction:column;margin-top:10px}.replace-flex-inputs *{align-self:flex-start;margin-bottom:10px}.replace-input{background:0 0;box-shadow:none;border:1.5px solid #fff;color:inherit;border-radius:2px;padding:5px 15px;width:220px;max-width:100%}.container{display:flex;flex-direction:row;flex-wrap:wrap;width:100%;height:max-content}' );
+  GM_addStyle( 'html{cursor:default;-moz-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;word-break:break-word;background:#202020;color:#ccc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:.9375rem;font-weight:400;line-height:1.5;user-select:none}img{border-style:none}button{overflow:visible}button,input{font-family:inherit;font-size:100%}button::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}*,::after,::before{box-sizing:border-box}::after,::before{text-decoration:inherit;vertical-align:inherit}body,button,input{margin:0}svg{vertical-align:middle}svg:not([fill]){fill:currentColor}svg:not(:root){overflow:hidden}button{-webkit-appearance:button;text-transform:none}input{overflow:visible}::-webkit-input-placeholder{color:inherit;opacity:.54}::-moz-focus-inner{border-style:none;padding:0}button,input{-ms-touch-action:manipulation;touch-action:manipulation}body{padding:1%}@media (min-width:0px){:root{--sidebar-flex:0 0 100%;--main-flex:0 0 100%;--padding-horizontal:0;--padding-vertical:0.5%}}@media (min-width:768px){:root{--sidebar-flex:0 0 32%;--main-flex:0 0 68%;--padding-horizontal:0.5%;--padding-vertical:0}}@media (min-width:992px){:root{--sidebar-flex:0 0 25%;--main-flex:0 0 75%}}@media (min-width:1200px){:root{--sidebar-flex:0 0 20%;--main-flex:0 0 80%}}.outerSidebar{flex:var(--sidebar-flex);padding-right:var(--padding-horizontal);padding-bottom:var(--padding-vertical)}.outerSidebar .sidebar{display:flex;flex-direction:column;padding:10px 15px;border:1.5px solid #343434;border-radius:4px;background-color:#141414}.outerSidebar .row{cursor:pointer;display:flex;align-items:center;color:#198754}.outerSidebar .row:hover{text-decoration:underline}.outerSidebar .row.removed{color:#dc3545}.btn-save:not([disabled]){cursor:pointer}h5{font-size:18.75px;font-weight:300;margin:0 0 12px}.icon{height:1.5em;width:1.5em}.section-title{font-size:30px;font-weight:300;-webkit-font-smoothing:antialiased}.svg-icon-check{color:#198754}.svg-icon-x{color:#dc3545}.outerMain{flex:var(--main-flex);padding-left:var(--padding-horizontal);padding-top:var(--padding-vertical)}.main{padding:3% 2% 5%;border:1.5px solid #343434;border-radius:4px;background-color:#141414}.replace-flex-inputs{display:flex;flex-direction:column;margin-top:10px}.replace-flex-inputs *{align-self:flex-start;margin-bottom:10px}button,input{display:flex;align-items:center;padding:.375rem .75rem;font-size:.9375rem;font-weight:400;line-height:1.5;color:#495057;text-align:center;white-space:nowrap;background-color:#e9ecef;border:1px solid #8f959e;border-radius:.25rem}button{background-color:#1177d1;color:#ccc;margin-top:10px}.container{display:flex;flex-direction:row;flex-wrap:wrap;width:100%;height:max-content}' );
+
+  /* const style = document.createElement( 'link' );
+  style.rel = 'stylesheet';
+  style.type = 'text/css';
+  style.href = 'http://localhost:5000/Clean%20Moodle/settingspage.css';
+  document.head.append( style ); */
 };
 
 const SvgCheck = () => html`<svg
@@ -685,9 +768,9 @@ const SvgArrowBack = () => html`<svg
 >
   <path d="M9 11l-4 4 4 4m-4-4h11a4 4 0 000-8h-1" />
 </svg>`;
-const Sidebar = ( { handleClick, courses } ) => html` <div class="outerSidebar">
+const Sidebar = ( { handleClick, courses } ) => html`<div class="outerSidebar">
   <div class="sidebar">
-    ${ courses.map( ( { id, name, isReplaced, isRemoved } ) => html` <div
+    ${ courses.map( ( { id, name, isReplaced, isRemoved } ) => html`<div
         key=${ id }
         class=${ `row${ isRemoved
     ? ' removed'
@@ -711,52 +794,93 @@ const Sidebar = ( { handleClick, courses } ) => html` <div class="outerSidebar">
       </div>` ) }
   </div>
 </div>`;
-const Main = ( {
-  selected,
-  handleInput,
-  handleKeyDown,
-  handleBtnClick,
-  inputRef,
-} ) => {
-  const { replacedText } = selected;
-  return html`<div class="outerMain">
-    <div class="main">
-      <div class="section-title">Rename course</div>
-      <div class="replace-flex-inputs">
-        <div>
-          ${ typeof selected.text === 'string'
-    ? `Selected: ${ selected.text }`
-    : 'Select course to the left' }
-        </div>
 
-        <input
-          placeholder=${ isNullOrUndef( replacedText )
-    ? 'Select course to the left'
-    : `Reset text to ${ selected.text }` }
-          class="replace-input"
-          onInput=${ handleInput }
-          onKeyDown=${ handleKeyDown }
-          value=${ replacedText }
-          disabled=${ isNullOrUndef( selected.id ) }
-          ref=${ inputRef }
-        />
-        <button
-          disabled=${ isNullOrUndef( selected.id ) }
-          onClick=${ handleBtnClick }
-          class="btn-save"
-        >
-          Save
-        </button>
+class Main extends Component {
+  inputs = {};
+
+  render = ( {
+    selected,
+    handleInput,
+    handleKeyDown,
+    handleBtnClick,
+    inputRef,
+    loggedOut,
+  } ) => {
+    const { replacedText } = selected;
+    return html`<div class="outerMain">
+      <div class="main">
+        ${ !loggedOut
+        && html`<div class="section-title">Rename course</div>
+          <div class="replace-flex-inputs">
+            <div>
+              ${ typeof selected.text === 'string'
+          ? `Selected: ${ selected.text }`
+          : 'Select course to the left' }
+            </div>
+
+            <input
+              placeholder=${ isNullOrUndef( replacedText )
+            ? 'Select course to the left'
+            : `Reset text to ${ selected.text }` }
+              class="replace-input"
+              onInput=${ handleInput }
+              onKeyDown=${ handleKeyDown }
+              value=${ replacedText }
+              disabled=${ isNullOrUndef( selected.id ) }
+              ref=${ inputRef }
+            />
+            <button
+              disabled=${ isNullOrUndef( selected.id ) }
+              onClick=${ handleBtnClick }
+              class="btn-save"
+            >
+              Save
+            </button>
+          </div>` }
+        ${ loggedOut
+        && html`<div class="replace-flex-input">
+          <h5>Login</h5>
+          <input
+            placeholder="Username"
+            ref=${ e => {
+          this.inputs.login = e;
+        } }
+          />
+          <input
+            placeholder="Password"
+            ref=${ e => {
+          this.inputs.password = e;
+        } }
+            type="password"
+          />
+          <button class="btn-save" onClick=${ this.handleLoggedOutBtnClick }>
+            Login
+          </button>
+        </div>` }
       </div>
-    </div>
-  </div>`;
-};
+    </div>`;
+  };
+
+  handleLoggedOutBtnClick = () => {
+    const login = this.inputs.login.value.trim();
+    const password = this.inputs.password.value;
+
+    if ( login && password ) {
+      this.props.loggedOutCallback( { username: login, password } );
+    }
+  };
+}
+
+let settingsPageSetState;
 
 class SettingsPage extends Component {
   state = {
     courses: [],
 
     selected: {},
+
+    loggedOut: false,
+    loggedOutCallback: null,
   };
 
   inputRef = a => {
@@ -764,8 +888,10 @@ class SettingsPage extends Component {
   };
 
   render = (
-    _unused, { selected, courses }
-  ) => html`<div class="container">
+    _props, { selected, courses, loggedOut }
+  ) => html`<div
+    class="container"
+  >
     <${ Sidebar } handleClick=${ this.handleSidebarClick } courses=${ courses } />
     <${ Main }
       inputRef=${ this.inputRef }
@@ -773,8 +899,15 @@ class SettingsPage extends Component {
       handleBtnClick=${ this.handleBtnClick }
       handleInput=${ this.handleInput }
       handleKeyDown=${ this.handleKeyDown }
+      loggedOut=${ loggedOut }
+      loggedOutCallback=${ this.loggedOutCallbackHandler }
     />
   </div>`;
+
+  loggedOutCallbackHandler = vals => {
+    this.setState( { loggedOut: false, loggedOutCallback: null } );
+    this.state.loggedOutCallback( vals );
+  };
 
   handleInput = e => {
     const { target } = e;
@@ -904,6 +1037,10 @@ class SettingsPage extends Component {
   };
 
   componentDidMount = () => {
+    settingsPageSetState = state => {
+      this.setState( state );
+    };
+
     getCourses().then( coursesObj => {
       const courses = Object.entries( coursesObj ).map( ( [ id, fullname ] ) => ( {
         id,
@@ -1044,9 +1181,11 @@ const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_
   }
 }
 
+let isFrontpage = true;
+
 if ( !( /^\/customicons/iu ).test( location.pathname ) ) {
   const functionToRun = ( /^\/cleanmoodlepreact/iu ).test( location.pathname )
-    ? initSettingsPage
+    ? ( isFrontpage = false, initSettingsPage )
     : runOnlyOnceOnFrontpage;
 
   document.readyState === 'complete'
