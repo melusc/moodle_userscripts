@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.13a
+// @version      2021.01.13b
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -399,7 +399,7 @@ const login = (() => {
         }).then(e => e.json()).then(response => {
           if (response.hasOwnProperty('errorcode')) {
             logout(true);
-            return username(true);
+            return login(true);
           }
 
           GM_setValue('token', response.token);
@@ -498,7 +498,7 @@ class FrontPageLogin extends Component {
 
     if (username && password) {
       this.setState({
-        active: false
+        loggedOut: false
       });
       this.state.loggedOutCallback({
         username,
@@ -507,7 +507,7 @@ class FrontPageLogin extends Component {
     }
   };
   componentDidMount = () => {
-    this.frontPageLoginState = state => {
+    frontPageLoginSetState = state => {
       this.setState(state);
     };
   };
