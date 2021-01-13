@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Custom Icons Preact
-// @version      2021.01.05a
+// @version      2021.01.13a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include      *://moodle.ksasz.ch/*
@@ -227,7 +227,6 @@ class SettingsPage extends Component {
   };
   inputRefs = {};
   handleSidebarClick = e => {
-    console.log(e);
     const {
       target
     } = e;
@@ -241,7 +240,6 @@ class SettingsPage extends Component {
     if (notNullOrUndef(svg) && svgCL.contains('svg-icon-x')) {
       deleteVal(id);
       const courses = [...this.state.courses];
-      console.log(courses);
 
       for (let i = 0; i < courses.length; i++) {
         if (courses[i].id === id) {
@@ -254,7 +252,6 @@ class SettingsPage extends Component {
         }
       }
 
-      console.log(courses);
       this.setState({
         selectedCourse: null,
         courses
@@ -373,8 +370,7 @@ class SettingsPage extends Component {
       const type = inputStates.current;
 
       if (notNullOrUndef(type)) {
-        const dataURI = this.saveHandlers[type](inputStates);
-        dataURI.then(() => {
+        this.saveHandlers[type](inputStates).then(() => {
           const {
             id
           } = this.state.selectedCourse;
@@ -385,16 +381,14 @@ class SettingsPage extends Component {
               if (courses[i].id === id) {
                 const iconObj = getDataURI(id);
 
-                if (iconObj.isXML) {
+                if (courses[i].isXML = iconObj.isXML) {
                   courses[i].rawXML = iconObj.rawXML;
-                  courses[i].isXML = true;
                 } else {
                   const {
                     mediaType,
                     rawByteString
                   } = iconObj;
                   courses[i].dataURI = `data:${mediaType};base64,${rawByteString}`;
-                  courses[i].isXML = false;
                 }
 
                 break;
@@ -778,7 +772,7 @@ class Main extends Component {
       "class": "icon"
     })), h("span", null, notNullOrUndef(name) ? name : 'Select course on left')), h("h3", null, "Upload image from URL"), h("input", {
       type: "url",
-      placeholder: "Image",
+      placeholder: "Image url",
       URL: true,
       "data-input-type": "url",
       ref: e => {
@@ -812,10 +806,11 @@ class Main extends Component {
     }, "Select course to copy icon from"), courses?.map(({
       id: curId,
       name: curName,
-      dataURI
-    }) => notNullOrUndef(dataURI) && h("option", {
+      dataURI,
+      rawXML
+    }) => (dataURI || rawXML) && h("option", {
       key: id,
-      value: id,
+      value: curId,
       disabled: curId === id
     }, curName))), h("button", {
       onClick: handleSave,

@@ -146,7 +146,8 @@
       "all",
       {
         "nestedBinaryExpressions": false,
-        "returnAssign": true
+        "returnAssign": true,
+        "conditionalAssign": false
       }
     ],
     "no-floating-decimal": "error",
