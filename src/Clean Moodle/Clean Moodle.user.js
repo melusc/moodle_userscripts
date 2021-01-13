@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.13b
+// @version      2021.01.13c
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -597,31 +597,32 @@ const getCredentials = () => new Promise( resolve => {
   if ( username && password ) {
     resolve( { username, password } );
   }
+  else {
+    const state = {
+      loggedOut: true,
+      loggedOutCallback: callback,
+    };
 
-  const state = {
-    loggedOut: true,
-    loggedOutCallback: callback,
-  };
+    if ( isFrontpage ) {
+      if ( typeof frontPageLoginSetState === 'function' ) {
+        frontPageLoginSetState( state );
+      }
+      else {
+        frontPageDefaultLoginState = state;
+        const div = document.createElement( 'div' );
+        div.className = 'clean-moodle';
+        document.body.append( div );
+        render(
+          html`<${ FrontPageLogin } />`,
+          div
+        );
 
-  if ( isFrontpage ) {
-    if ( typeof frontPageLoginSetState === 'function' ) {
-      frontPageLoginSetState( state );
+        GM_addStyle( '.clean-moodle .vertical-horizontal-center{width:100%;height:100%;position:fixed;z-index:100000000;top:0;left:0;display:flex;align-items:center;justify-content:center;pointer-events:none}.clean-moodle .card{pointer-events:auto}' );
+      }
     }
     else {
-      frontPageDefaultLoginState = state;
-      const div = document.createElement( 'div' );
-      div.className = 'clean-moodle';
-      document.body.append( div );
-      render(
-        html`<${ FrontPageLogin } />`,
-        div
-      );
-
-      GM_addStyle( '.clean-moodle .vertical-horizontal-center{width:100%;height:100%;position:fixed;z-index:100000000;top:0;left:0;display:flex;align-items:center;justify-content:center;pointer-events:none}.clean-moodle .card{pointer-events:auto}' );
+      settingsPageSetState( state );
     }
-  }
-  else {
-    settingsPageSetState( state );
   }
 } );
 
