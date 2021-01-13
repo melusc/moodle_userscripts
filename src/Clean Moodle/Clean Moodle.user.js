@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.12b
+// @version      2021.01.13a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -580,21 +580,28 @@ const login = ( () => {
 } )();
 
 const getCredentials = () => new Promise( resolve => {
-  const state = {
-    active: true,
-    callback: resolve,
+  const callback = ( { username, password } ) => {
+    GM_setValue(
+      'username',
+      username
+    );
+    GM_setValue(
+      'password',
+      password
+    );
+    resolve( { username, password } );
   };
 
-  console.log(
-    'getCredentials',
-    isFrontpage
-  );
-
-  const login = GM_getValue( 'login' );
+  const username = GM_getValue( 'username' );
   const password = GM_getValue( 'password' );
-  if ( login && password ) {
-    resolve( { username: login, password } );
+  if ( username && password ) {
+    resolve( { username, password } );
   }
+
+  const state = {
+    loggedOut: true,
+    loggedOutCallback: callback,
+  };
 
   if ( isFrontpage ) {
     if ( typeof frontPageLoginSetState === 'function' ) {
@@ -614,7 +621,7 @@ const getCredentials = () => new Promise( resolve => {
     }
   }
   else {
-    settingsPageSetState( { loggedOut: true, loggedOutCallback: resolve } );
+    settingsPageSetState( state );
   }
 } );
 
@@ -627,8 +634,8 @@ class FrontPageLogin extends Component {
   inputs = {};
 
   render = (
-    _props, { active }
-  ) => active
+    _props, { loggedOut }
+  ) => loggedOut
     && html`
       <div class="vertical-horizontal-center">
         <div class="card">
@@ -639,7 +646,7 @@ class FrontPageLogin extends Component {
               required
               class="input-group-text"
               ref=${ e => {
-      this.inputs.login = e;
+      this.inputs.username = e;
     } }
             />
             <input
@@ -660,13 +667,13 @@ class FrontPageLogin extends Component {
     `;
 
   handleClick = () => {
-    const login = this.inputs.login.value.trim();
+    const username = this.inputs.username.value.trim();
     const password = this.inputs.password.value;
 
-    if ( login && password ) {
+    if ( username && password ) {
       this.setState( { active: false } );
-      this.state.callback( {
-        username: login,
+      this.state.loggedOutCallback( {
+        username,
         password,
       } );
     }
@@ -843,7 +850,7 @@ class Main extends Component {
           <input
             placeholder="Username"
             ref=${ e => {
-          this.inputs.login = e;
+          this.inputs.username = e;
         } }
           />
           <input
@@ -862,11 +869,11 @@ class Main extends Component {
   };
 
   handleLoggedOutBtnClick = () => {
-    const login = this.inputs.login.value.trim();
+    const username = this.inputs.username.value.trim();
     const password = this.inputs.password.value;
 
-    if ( login && password ) {
-      this.props.loggedOutCallback( { username: login, password } );
+    if ( username && password ) {
+      this.props.loggedOutCallback( { username, password } );
     }
   };
 }

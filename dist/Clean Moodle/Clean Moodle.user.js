@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.12b
+// @version      2021.01.13a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -399,7 +399,7 @@ const login = (() => {
         }).then(e => e.json()).then(response => {
           if (response.hasOwnProperty('errorcode')) {
             logout(true);
-            return login(true);
+            return username(true);
           }
 
           GM_setValue('token', response.token);
@@ -414,20 +414,32 @@ const login = (() => {
 })();
 
 const getCredentials = () => new Promise(resolve => {
-  const state = {
-    active: true,
-    callback: resolve
+  const callback = ({
+    username,
+    password
+  }) => {
+    GM_setValue('username', username);
+    GM_setValue('password', password);
+    resolve({
+      username,
+      password
+    });
   };
-  console.log('getCredentials', isFrontpage);
-  const login = GM_getValue('login');
+
+  const username = GM_getValue('username');
   const password = GM_getValue('password');
 
-  if (login && password) {
+  if (username && password) {
     resolve({
-      username: login,
+      username,
       password
     });
   }
+
+  const state = {
+    loggedOut: true,
+    loggedOutCallback: callback
+  };
 
   if (isFrontpage) {
     if (typeof frontPageLoginSetState === 'function') {
@@ -441,10 +453,7 @@ const getCredentials = () => new Promise(resolve => {
       GM_addStyle('.clean-moodle .vertical-horizontal-center{width:100%;height:100%;position:fixed;z-index:100000000;top:0;left:0;display:flex;align-items:center;justify-content:center;pointer-events:none}.clean-moodle .card{pointer-events:auto}');
     }
   } else {
-    settingsPageSetState({
-      loggedOut: true,
-      loggedOutCallback: resolve
-    });
+    settingsPageSetState(state);
   }
 });
 
@@ -455,8 +464,8 @@ class FrontPageLogin extends Component {
   state = frontPageDefaultLoginState;
   inputs = {};
   render = (_props, {
-    active
-  }) => active && h("div", {
+    loggedOut
+  }) => loggedOut && h("div", {
     "class": "vertical-horizontal-center"
   }, h("div", {
     "class": "card"
@@ -469,7 +478,7 @@ class FrontPageLogin extends Component {
     required: true,
     "class": "input-group-text",
     ref: e => {
-      this.inputs.login = e;
+      this.inputs.username = e;
     }
   }), h("input", {
     placeholder: "Password",
@@ -484,15 +493,15 @@ class FrontPageLogin extends Component {
     onClick: this.handleClick
   }, "Login")));
   handleClick = () => {
-    const login = this.inputs.login.value.trim();
+    const username = this.inputs.username.value.trim();
     const password = this.inputs.password.value;
 
-    if (login && password) {
+    if (username && password) {
       this.setState({
         active: false
       });
-      this.state.callback({
-        username: login,
+      this.state.loggedOutCallback({
+        username,
         password
       });
     }
@@ -642,7 +651,7 @@ class Main extends Component {
     }, h("h5", null, "Login"), h("input", {
       placeholder: "Username",
       ref: e => {
-        this.inputs.login = e;
+        this.inputs.username = e;
       }
     }), h("input", {
       placeholder: "Password",
@@ -656,12 +665,12 @@ class Main extends Component {
     }, "Login"))));
   };
   handleLoggedOutBtnClick = () => {
-    const login = this.inputs.login.value.trim();
+    const username = this.inputs.username.value.trim();
     const password = this.inputs.password.value;
 
-    if (login && password) {
+    if (username && password) {
       this.props.loggedOutCallback({
-        username: login,
+        username,
         password
       });
     }
