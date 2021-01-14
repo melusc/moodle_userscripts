@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle open folders inline preact
-// @version      2021.01.12a
+// @version      2021.01.14a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
@@ -24,7 +24,7 @@ const {
   h,
 } = preact;
 
-GM_addStyle( '.svg-refresh{margin-left:5px}div.folders-inline-icon{cursor:pointer;user-select:none}div.folders-inline-icon-div{display:inline}' );
+GM_addStyle( '<INJECT_FILE path="Open folders inline/style.css"/>' );
 
 const init = () => {
   document

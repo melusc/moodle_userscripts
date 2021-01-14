@@ -10,6 +10,16 @@
     "GM_addValueChangeListener": true,
     "GM_notification": true
   },
+  "overrides": [
+    {
+      "files": ["./*.js"], // root level js files are config files and as such run in node
+      "env": {
+        "es2020": true,
+        "node": true
+      }
+    }
+  ],
+
   "parserOptions": {
     "ecmaVersion": 11
   },

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles rest
-// @version      2021.01.12a
+// @version      2021.01.14a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
@@ -300,7 +300,7 @@ const runOnce = () => {
     document.head
   ); */
 
-  GM_addStyle('@keyframes epr-bounce{0%,80%,to{-webkit-transform:scale(0);transform:scale(0)}40%{-webkit-transform:scale(1);transform:scale(1)}}.epr-notification{width:100%;height:100%;z-index:10001;user-select:none;position:fixed;top:0;left:0;display:flex;justify-content:center;align-items:center}.epr-notification .epr-centered{border:2px solid #ced4da;background-color:#fff;border-radius:3px;padding:2% 4%}.epr-notification .epr-text-center{text-align:center}.epr-coloured{color:#1177d1}.epr-spinner{width:100%;text-align:center}.epr-spinner>div{width:18px;height:18px;background-color:currentColor;border-radius:100%;display:inline-block;-webkit-animation:epr-bounce 1.4s infinite ease-in-out both;animation:epr-bounce 1.4s infinite ease-in-out both}.epr-spinner .bounce1{animation-delay:-.32s}.epr-spinner .bounce2{animation-delay:-.16s}');
+  GM_addStyle(`@keyframes epr-bounce{0%,80%,to{-webkit-transform:scale(0);transform:scale(0)}40%{-webkit-transform:scale(1);transform:scale(1)}}.epr-notification{width:100%;height:100%;z-index:10001;user-select:none;position:fixed;top:0;left:0;display:flex;justify-content:center;align-items:center}.epr-notification .epr-centered{border:2px solid #ced4da;background-color:#fff;border-radius:3px;padding:2% 4%}.epr-notification .epr-text-center{text-align:center}.epr-coloured{color:#1177d1}.epr-spinner{width:100%;text-align:center}.epr-spinner>div{width:18px;height:18px;background-color:currentColor;border-radius:100%;display:inline-block;-webkit-animation:epr-bounce 1.4s infinite ease-in-out both;animation:epr-bounce 1.4s infinite ease-in-out both}.epr-spinner .bounce1{animation-delay:-.32s}.epr-spinner .bounce2{animation-delay:-.16s}`);
   const buttons = document.createElement('div');
   buttons.classList.add('btn-group');
   render([h("button", {

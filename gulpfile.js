@@ -1,10 +1,10 @@
-/* globals exports: false, require: false */
-
-const { src, dest, watch } = require( 'gulp' );
+const { src, dest, watch, series, parallel } = require( 'gulp' );
 const csso = require( 'gulp-csso' );
 const babel = require( 'gulp-babel' );
 const svgmin = require( 'gulp-svgmin' );
 const rename = require( 'gulp-rename' );
+const replace = require( 'gulp-replace' );
+const fs = require( 'fs' );
 const { argv } = require( 'yargs' );
 const sass = require( 'gulp-sass' );
 const PATHS = {
@@ -18,23 +18,25 @@ const PATHS = {
 
 sass.compiler = require( 'sass' );
 
-function build() {
-  compJS();
-  minSvg();
-  return compSCSS();
-}
+const build = parallel(
+  minSvg,
+  series(
+    compSCSS,
+    compJS
+  )
+);
 
 function start() {
   build();
 
   watch(
-    PATHS.JS,
-    compJS
+    [ ...PATHS.JS, ...PATHS.SCSS ],
+    series(
+      compSCSS,
+      compJS
+    )
   );
-  watch(
-    PATHS.SCSS,
-    compSCSS
-  );
+
   watch(
     PATHS.SVG,
     minSvg
@@ -51,6 +53,25 @@ function compSCSS() {
 function compJS() {
   return src( PATHS.JS )
     .pipe( babel() )
+    .pipe( replace(
+      /'<INJECT_FILE path="(?<path>.+)" ?\/>'/g,
+      (
+        match, ...args
+      ) => {
+        const { path } = args.pop();
+
+        try {
+          return `\`${ fs.readFileSync(
+            `${ __dirname }\\dist\\${ path }`,
+            'utf8'
+          ) }\``;
+        }
+        catch {
+          console.error( `"/dist/${ path }" doesn't exist.` );
+          return match;
+        }
+      }
+    ) )
     .pipe( dest( PATHS.DEST ) );
 }
 
