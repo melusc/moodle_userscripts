@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v5
-// @version      2021.01.12b
+// @version      2021.01.14a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js
 // @include      *://moodle.ksasz.ch/
@@ -90,7 +90,7 @@ const initSettingsPage = () => {
   icon.rel = 'shortcut icon';
   icon.href = MOODLE_ICON;
 
-  GM_addStyle( '@keyframes save-failed{0%{border-color:#ff4126}to{border-color:#30363d}}@keyframes save-successful{0%{border-color:green}to{border-color:#30363d}}*,::after,::before{box-sizing:border-box}::after,::before{text-decoration:inherit;vertical-align:inherit}html{cursor:default;line-height:1.5;-moz-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;word-break:break-word}body,button,input,ol ol,ol ul,select,ul ol,ul ul{margin:0}h1{font-size:2em;margin:.67em 0}hr{height:0;overflow:visible}a{background-color:transparent}img,svg{vertical-align:middle}img{border-style:none}svg:not([fill]){fill:currentColor}svg:not(:root){overflow:hidden}button{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}button,input{overflow:visible}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-input-placeholder{color:inherit;opacity:.54}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring{outline:1px dotted ButtonText}:-moz-ui-invalid{box-shadow:none}[tabindex],a,button,input,label,select{-ms-touch-action:manipulation;touch-action:manipulation}[hidden]{display:none}body{padding-top:.3em;width:100%;min-height:100vh;font:20px sans-serif;background-color:#06090f}.container,.table-center{display:flex;flex-direction:column;align-items:center}.table-center{width:70%}.main-table{width:100%;margin-top:.5em}.table-cell.remove-row,body{color:#f0f6fcb3}.table-row{display:flex;width:100%;margin-bottom:.3em}.table-cell{width:50%;padding:.3em 1em;box-sizing:border-box;border:2px solid #30363d}.table-cell.entry,.table-cell.time{justify-content:center;align-items:center}.table-cell.time{display:grid;grid-template-columns:1fr auto 1fr;border-top-left-radius:2px;border-bottom-left-radius:2px}.table-cell.entry{border-top-right-radius:2px;border-bottom-right-radius:2px;display:flex;width:50%;flex-direction:column}.table-cell.entry>*{width:100%}.table-cell.entry [data-type=content]:empty::before{content:"Content";color:#8b949e}.table-cell.entry [data-type=id]:empty::before{content:"Course id";color:#8b949e}.table-cell.remove-row{width:1.5em;border:0;cursor:pointer;padding-left:0;padding-right:0;display:flex;align-items:center;justify-content:center}.time-input{margin-left:.5em;margin-right:.5em}.time-input.time-from{text-align:right}.time-input.time-to{text-align:left}[contenteditable]{cursor:text}.grid-buttons{display:grid;grid-template-columns:.3fr auto .3fr;justify-items:center;column-gap:5px;width:100%;margin-bottom:.3em;margin-top:.3em}.day-controls{display:flex;justify-content:space-evenly;align-items:center;grid-column-start:2;user-select:none;margin-right:1.5em}.caret-back,.caret-forward{width:1.5em;height:1.5em;cursor:pointer}.save-button{cursor:pointer;margin-left:auto;background:0 0;color:#f0f6fcb3;border:2px solid #30363d;border-radius:2px;padding:.2em 1.3em;font-size:90%}.icon-add-row,.row-icon-add-row{display:flex;justify-content:center;align-items:center}.icon-add-row{width:1.5em;height:1.5em;cursor:pointer;margin-right:1.5em}.row-icon-add-row{width:100%}.table-hidden{display:none}.invalid-input{color:#ff4126}.invalid-id{border-bottom-color:#ff4126}.suggestions{position:absolute;z-index:1;background-color:#0d1117;border:2px solid #30363d;border-radius:2px;padding:12px 20px;max-width:calc(35% - 2.7em)}.suggestions .emphasised{font-weight:700}.suggestions:empty{display:none}.suggestions .suggestion{display:flex;width:100%}.suggestions .suggestion:hover{text-decoration:underline}.suggestion-name{padding:2px 4px;border-radius:2px;cursor:pointer;flex:0 0 80%}.suggestion-id{flex:0 0 20%;text-align:end}.save-failed{animation:3s ease-in-out save-failed}.save-successful{animation:3s ease-in-out save-successful}' );
+  GM_addStyle( '@keyframes save-failed{0%{border-color:#ff4126}to{border-color:#30363d}}@keyframes save-successful{0%{border-color:green}to{border-color:#30363d}}*,::after,::before{box-sizing:border-box}::after,::before{text-decoration:inherit;vertical-align:inherit}html{cursor:default;line-height:1.5;-moz-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;word-break:break-word}body,button,input,ol ol,ol ul,select,ul ol,ul ul{margin:0}h1{font-size:2em;margin:.67em 0}hr{height:0;overflow:visible}a{background-color:transparent}img,svg{vertical-align:middle}img{border-style:none}svg:not([fill]){fill:currentColor}svg:not(:root){overflow:hidden}button{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}button,input{overflow:visible}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-input-placeholder{color:inherit;opacity:.54}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring{outline:1px dotted ButtonText}:-moz-ui-invalid{box-shadow:none}[tabindex],a,button,input,label,select{-ms-touch-action:manipulation;touch-action:manipulation}[hidden]{display:none}body{padding-top:.3em;width:100%;min-height:100vh;font:20px sans-serif;background-color:#06090f}.container,.table-center{display:flex;flex-direction:column;align-items:center}.table-center{width:70%}.main-table{width:100%;margin-top:.5em}.table-cell.remove-row,body{color:#f0f6fcb3}.table-row{display:flex;width:100%;margin-bottom:.3em}.table-cell{width:50%;padding:.3em 1em;box-sizing:border-box;border:2px solid #30363d}.table-cell.entry,.table-cell.time{justify-content:center;align-items:center}.table-cell.time{display:grid;grid-template-columns:1fr auto 1fr;border-top-left-radius:2px;border-bottom-left-radius:2px}.table-cell.entry{border-top-right-radius:2px;border-bottom-right-radius:2px;display:flex;width:50%;flex-direction:column}.table-cell.entry>*{width:100%}.table-cell.entry [data-type=content]:empty::before{content:"Content";color:#8b949e}.table-cell.entry [data-type=id]:empty::before{content:"Course id";color:#8b949e}.table-cell.remove-row{width:1.5em;border:0;cursor:pointer;padding-left:0;padding-right:0;display:flex;align-items:center;justify-content:center}.time-input{margin-left:.5em;margin-right:.5em}.time-input.time-from{text-align:right}.time-input.time-to{text-align:left}[contenteditable]{cursor:text}.grid-buttons{display:grid;grid-template-columns:.3fr auto .3fr;justify-items:center;column-gap:5px;width:100%;margin-bottom:.3em;margin-top:.3em}.day-controls{display:flex;justify-content:space-evenly;align-items:center;grid-column-start:2;user-select:none;margin-right:1.5em}.caret-back,.caret-forward{width:1.5em;height:1.5em;cursor:pointer}.save-button{cursor:pointer;margin-left:auto;background:0 0;color:#f0f6fcb3;border:2px solid #30363d;border-radius:2px;padding:.2em 1.3em;font-size:90%}.icon-add-row,.row-icon-add-row{display:flex;justify-content:center;align-items:center}.icon-add-row{width:1.5em;height:1.5em;cursor:pointer;margin-right:1.5em}.row-icon-add-row{width:100%}.table-hidden{display:none}.invalid-input{color:#ff4126}.invalid-id{border-bottom-color:#ff4126}.suggestions{position:absolute;top:0;left:0;z-index:1;background-color:#0d1117;border:2px solid #30363d;border-radius:2px;padding:12px 20px;max-width:calc(35% - 2.7em)}.suggestions .emphasised{font-weight:700}.suggestions:empty{display:none}.suggestions .suggestion{display:flex;width:100%}.suggestions .suggestion:hover{text-decoration:underline}.suggestion-name{padding:2px 4px;border-radius:2px;cursor:pointer;flex:0 0 80%}.suggestion-id{flex:0 0 20%;text-align:end}.save-failed{animation:3s ease-in-out save-failed}.save-successful{animation:3s ease-in-out save-successful}' );
 
   /* const style = document.createElement( 'link' );
 
@@ -177,21 +177,21 @@ const SettingsPage = ( () => {
       this.saveButton = a;
     };
 
-    render() {
-      const {
-        top,
-        left,
-        height,
-        inputText,
-        // idInput,
-      } = this.state.focusedElement;
-
+    render(
+      _props,
+      {
+        activeDay,
+        tables,
+        courses,
+        focusedElement: { top, left, height, inputText } = {},
+      }
+    ) {
       return html`
         <div class="container">
           <div class="table-center">
             <div class="grid-buttons">
               <${ ButtonGrid }
-                day=${ DAYS[ this.state.activeDay ] }
+                day=${ DAYS[ activeDay ] }
                 handleSave=${ this.handleSave }
                 saveButtonRef=${ this.saveButtonRef }
                 handleClick=${ this.handleCaretClick }
@@ -204,7 +204,7 @@ const SettingsPage = ( () => {
               onClick=${ this.handleTableClick }
             >
               <${ Table }
-                content=${ this.state.tables[ this.state.activeDay ] }
+                content=${ tables[ activeDay ] }
                 handleFocus=${ this.handleTableFocus }
               />
               <div class="row-icon-add-row">
@@ -219,11 +219,11 @@ const SettingsPage = ( () => {
         // && idInput.textContent.trim() === ''
         && html`<div
           class="suggestions"
-          style=${ { left, top: top + height } }
+          style=${ { transform: `translate(${ left }px, ${ top + height }px)` } }
           onClick=${ this.handleSuggestionsClick }
         >
           ${ this.filterCourses(
-    this.state.courses,
+    courses,
     inputText
   ).map( ( { id, name } ) => {
     const index = name.toLowerCase().indexOf( inputText );
@@ -235,18 +235,18 @@ const SettingsPage = ( () => {
     const after = name.slice( index + inputText.length );
 
     return html`<div key=${ id } class="suggestion" data-id=${ id }>
-                <div class="suggestion-name">
-                  ${ before }
-                  <span class="emphasised">
-                    ${ name.slice(
+              <div class="suggestion-name">
+                ${ before }
+                <span class="emphasised">
+                  ${ name.slice(
     index,
     index + inputText.length
   ) }
-                  </span>
-                  ${ after }
-                </div>
-                <div class="suggestion-id">${ id }</div>
-              </div>`;
+                </span>
+                ${ after }
+              </div>
+              <div class="suggestion-id">${ id }</div>
+            </div>`;
   } ) }
         </div>` }
       `;
@@ -658,6 +658,8 @@ const SettingsPage = ( () => {
             }
             else if ( target.dataset.type === 'content' ) {
               obj.content = target.textContent;
+              target.textContent = ''; /* this fixes an issue where preact doesn't
+              properly delete a text node and which causes duplicate text */
             }
             return { tables: state.tables };
           },
@@ -887,21 +889,21 @@ const setLastValidatedToken = () => GM_setValue(
 );
 
 class ButtonGrid extends Component {
-  render() {
+  render( { handleClick, handleSave, saveButtonRef, day } ) {
     return html`
-      <div class="day-controls" onClick=${ this.props.handleClick }>
+      <div class="day-controls" onClick=${ handleClick }>
         <div class="caret-input caret-back">
           <${ SvgIconCaretBack } />
         </div>
-        <div>${ this.props.day }</div>
+        <div>${ day }</div>
         <div class="caret-input caret-forward">
           <${ SvgIconCaretForward } />
         </div>
       </div>
       <button
         class="save-button"
-        onClick=${ this.props.handleSave }
-        ref=${ this.props.saveButtonRef }
+        onClick=${ handleSave }
+        ref=${ saveButtonRef }
         onAnimationEnd=${ this.removeAnimation }
       >
         Save
@@ -950,9 +952,9 @@ const SvgIconAdd = () => html`<svg viewBox="0 0 512 512">
 </svg>`;
 
 class Table extends Component {
-  render() {
-    return html`<div class="table" onFocus=${ this.props.handleFocus }>
-      ${ this.props.content?.map( ( { from, to, content, id, fromvalid, tovalid, uuid } ) => html`<div
+  render( { content, handleFocus } ) {
+    return html`<div class="table" onFocus=${ handleFocus }>
+      ${ content?.map( ( { from, to, content, id, fromvalid, tovalid, uuid } ) => html`<div
           key=${ uuid }
           class="table-row"
         >
@@ -963,7 +965,6 @@ class Table extends Component {
       ? ''
       : ' invalid-input'
   }` }
-              suppressContentEditableWarning=${ true }
               contentEditable
             >
               ${ from }
@@ -975,28 +976,15 @@ class Table extends Component {
       ? ''
       : ' invalid-input'
   }` }
-              suppressContentEditableWarning=${ true }
               contentEditable
             >
               ${ to }
             </span>
           </div>
           <div class="table-cell entry">
-            <span
-              suppressContentEditableWarning=${ true }
-              contentEditable
-              data-type="content"
-            >
-              ${ content }
-            </span>
+            <span contentEditable data-type="content"> ${ content } </span>
             <hr />
-            <span
-              suppressContentEditableWarning=${ true }
-              contentEditable
-              data-type="id"
-            >
-              ${ id }
-            </span>
+            <span contentEditable data-type="id"> ${ id } </span>
           </div>
           <div class="table-cell remove-row">
             <${ SvgIconX } />
@@ -1221,7 +1209,7 @@ const FrontPage = ( () => {
                     ${ isEmpty
                     && !isWeekend
                     && html`Today's timetable is empty, you can update it
-                      <a href="/timetable/v5" rel="noreferrer" target="_blank">
+                      <a href="/timetable/v5" rel="noopener noreferrer" target="_blank">
                         here
                       </a>` }
                   </div>
@@ -1239,7 +1227,8 @@ const FrontPage = ( () => {
 class TimetableRow extends Component {
   render = ( { values, isNow } ) => {
     const { from, to, id, content } = values ?? {};
-    return typeof values === 'object'
+    return (
+      typeof values === 'object'
       && html`<div class="tt-tr">
         <div class="tt-th">
           ${ isNow
@@ -1254,13 +1243,14 @@ class TimetableRow extends Component {
             ? html`<a
                 href=${ `/course/view.php?id=${ id }` }
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 ${ content }
               </a>`
             : content ?? 'Free lesson' }
         </div>
-      </div>`;
+      </div>`
+    );
   };
 }
 const notNullOrUndef = val => val !== null && val !== undefined;
