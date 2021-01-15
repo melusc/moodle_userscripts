@@ -12,7 +12,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @run-at       document-start
-// @require      https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
+// @require      __htmPreact_jsd
 // ==/UserScript==
 
 /* globals htmPreact: false */

@@ -11,8 +11,8 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_addValueChangeListener
 // @run-at       document-start
-// _@require     https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
-// @require      https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js
+// _@require     __htmPreact_jsd
+// @require      __preact_jsd
 // ==/UserScript==
 
 // to switch forth and back between htmPreact and preact

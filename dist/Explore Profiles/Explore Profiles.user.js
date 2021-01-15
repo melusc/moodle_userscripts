@@ -9,8 +9,8 @@
 // @grant        GM_getValue
 // @grant        GM_deleteValue
 // @run-at       document-start
-// @require      https://cdn.jsdelivr.net/npm/dayjs@1.9.7/dayjs.min.js
-// @require      https://cdn.jsdelivr.net/npm/dayjs@1.9.7/plugin/relativeTime.js
+// @require      https://cdn.jsdelivr.net/npm/dayjs@1.10.3/dayjs.min.js
+// @require      https://cdn.jsdelivr.net/npm/dayjs@1.10.3/plugin/relativeTime.js
 // _@require     https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
 // @require      https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js
 // ==/UserScript==

@@ -16,6 +16,34 @@ const PATHS = {
   SVG_DEST: './src',
 };
 
+const JS_VARS = [
+  [ /'<INJECT_FILE path="(?<path>.+)" ?\/>'/g,
+    (
+      match, ...args
+    ) => {
+      const { path } = args.pop();
+
+      try {
+        return `\`${ fs.readFileSync(
+          `${ __dirname }\\dist\\${ path }`,
+          'utf8'
+        ) }\``;
+      }
+      catch {
+        console.error( `"/dist/${ path }" doesn't exist.` );
+        return match;
+      }
+    } ],
+  [ '__preact_jsd',
+    'https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js' ],
+  [ '__htmPreact_jsd',
+    'https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js' ],
+  [ '__dayjs_jsd',
+    'https://cdn.jsdelivr.net/npm/dayjs@1.10.3/dayjs.min.js' ],
+  [ '__dayjs_relativeTime_jsd',
+    'https://cdn.jsdelivr.net/npm/dayjs@1.10.3/plugin/relativeTime.js' ],
+];
+
 sass.compiler = require( 'sass' );
 
 const build = parallel(
@@ -51,27 +79,17 @@ function compSCSS() {
 }
 
 function compJS() {
-  return src( PATHS.JS )
-    .pipe( babel() )
-    .pipe( replace(
-      /'<INJECT_FILE path="(?<path>.+)" ?\/>'/g,
-      (
-        match, ...args
-      ) => {
-        const { path } = args.pop();
+  const progress = src( PATHS.JS )
+    .pipe( babel() );
 
-        try {
-          return `\`${ fs.readFileSync(
-            `${ __dirname }\\dist\\${ path }`,
-            'utf8'
-          ) }\``;
-        }
-        catch {
-          console.error( `"/dist/${ path }" doesn't exist.` );
-          return match;
-        }
-      }
-    ) )
+  for ( const [ replacer, replacement ] of JS_VARS ) {
+    progress.pipe( replace(
+      replacer,
+      replacement
+    ) );
+  }
+
+  return progress
     .pipe( dest( PATHS.DEST ) );
 }
 
