@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.14a
+// @version      2021.01.15a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -12,7 +12,7 @@
 // @grant        GM_addValueChangeListener
 // @run-at       document-start
 // _@require     https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
-// @require      https://cdn.jsdelivr.net/npm/preact@10.5.9/dist/preact.min.js
+// @require      https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js
 // ==/UserScript==
 
 // to switch forth and back between htmPreact and preact
