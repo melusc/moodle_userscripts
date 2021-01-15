@@ -6,8 +6,9 @@
     "sass:w": "sass src:src --watch",
     "sass": "sass src:src",
     "serve": "serve dist",
-    "build": "gulp build --production",
-    "start": "gulp start"
+    "build": "gulp clean && gulp build --production",
+    "start": "gulp start",
+    "clean": "gulp clean"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +20,7 @@
     "@babel/eslint-plugin": "^7.12.1",
     "@babel/plugin-syntax-class-properties": "^7.12.1",
     "babel-plugin-htm": "^3.0.0",
+    "del": "^6.0.0",
     "eslint": "^7.17.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",

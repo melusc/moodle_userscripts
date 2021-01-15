@@ -5,6 +5,7 @@ const svgmin = require( 'gulp-svgmin' );
 const rename = require( 'gulp-rename' );
 const replace = require( 'gulp-replace' );
 const fs = require( 'fs' );
+const del = require( 'del' );
 const { argv } = require( 'yargs' );
 const sass = require( 'gulp-sass' );
 const PATHS = {
@@ -45,6 +46,13 @@ const JS_VARS = [
 ];
 
 sass.compiler = require( 'sass' );
+
+function clean() {
+  return del(
+    [ 'dist/**', '!dist' ],
+    { force: true }
+  );
+}
 
 const build = parallel(
   minSvg,
@@ -124,9 +132,11 @@ function minSvg() {
         },
         { removeScriptElement: true },
         { removeDimensions: true },
-        { removeAttrs: {
-          attrs: [ 'class' ],
-        } },
+        {
+          removeAttrs: {
+            attrs: [ 'class' ],
+          },
+        },
       ],
     } ) )
     .pipe( rename( path => {
@@ -140,3 +150,4 @@ exports.minSvg = minSvg;
 exports.compJS = compJS;
 exports.compSCSS = compSCSS;
 exports.start = start;
+exports.clean = clean;
