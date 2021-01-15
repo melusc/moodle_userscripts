@@ -4,46 +4,12 @@ const babel = require( 'gulp-babel' );
 const svgmin = require( 'gulp-svgmin' );
 const rename = require( 'gulp-rename' );
 const replace = require( 'gulp-replace' );
-const fs = require( 'fs' );
-const del = require( 'del' );
-const { argv } = require( 'yargs' );
+const cache = require( 'gulp-cached' );
 const sass = require( 'gulp-sass' );
-const PATHS = {
-  JS: [ './src/**/*.js' ],
-  SCSS: [ './src/**/*.scss' ],
-  SVG: [ './src/**/*.svg', '!./src/**/*.min.svg' ],
-  HTML: [ './src/**/*.html' ],
-  DEST: './dist',
-  SVG_DEST: './src',
-};
 
-const JS_VARS = [
-  [ /'<INJECT_FILE path="(?<path>.+)" ?\/>'/g,
-    (
-      match, ...args
-    ) => {
-      const { path } = args.pop();
+const del = require( 'del' );
 
-      try {
-        return `\`${ fs.readFileSync(
-          `${ __dirname }\\dist\\${ path }`,
-          'utf8'
-        ) }\``;
-      }
-      catch {
-        console.error( `"/dist/${ path }" doesn't exist.` );
-        return match;
-      }
-    } ],
-  [ '__preact_jsd',
-    'https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js' ],
-  [ '__htmPreact_jsd',
-    'https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js' ],
-  [ '__dayjs_jsd',
-    'https://cdn.jsdelivr.net/npm/dayjs@1.10.3/dayjs.min.js' ],
-  [ '__dayjs_relativeTime_jsd',
-    'https://cdn.jsdelivr.net/npm/dayjs@1.10.3/plugin/relativeTime.js' ],
-];
+const { paths, dynamicVars } = require( './gulp-config' );
 
 sass.compiler = require( 'sass' );
 
@@ -66,7 +32,7 @@ function start() {
   build();
 
   watch(
-    [ ...PATHS.JS, ...PATHS.SCSS ],
+    [ ...paths.js, ...paths.scss ],
     series(
       compSCSS,
       compJS
@@ -74,23 +40,25 @@ function start() {
   );
 
   watch(
-    PATHS.SVG,
+    paths.svg,
     minSvg
   );
 }
 
 function compSCSS() {
-  return src( PATHS.SCSS )
+  return src( paths.scss )
+    .pipe( cache( 'scss' ) )
     .pipe( sass() )
     .pipe( csso() )
-    .pipe( dest( PATHS.DEST ) );
+    .pipe( dest( paths.dest ) );
 }
 
 function compJS() {
-  const progress = src( PATHS.JS )
+  const progress = src( paths.js )
+    .pipe( cache( 'javascript' ) )
     .pipe( babel() );
 
-  for ( const [ replacer, replacement ] of JS_VARS ) {
+  for ( const [ replacer, replacement ] of dynamicVars ) {
     progress.pipe( replace(
       replacer,
       replacement
@@ -98,11 +66,12 @@ function compJS() {
   }
 
   return progress
-    .pipe( dest( PATHS.DEST ) );
+    .pipe( dest( paths.dest ) );
 }
 
 function minSvg() {
-  return src( PATHS.SVG )
+  return src( paths.svg )
+    .pipe( cache( 'svg' ) )
     .pipe( svgmin( {
       multipass: true,
       precision: 3,
@@ -142,7 +111,7 @@ function minSvg() {
     .pipe( rename( path => {
       path.extname = '.min.svg';
     } ) )
-    .pipe( dest( PATHS.SVG_DEST ) );
+    .pipe( dest( paths.svgDest ) );
 }
 
 exports.default = exports.build = build;

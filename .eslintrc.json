@@ -16,7 +16,8 @@
       "env": {
         "es2020": true,
         "node": true
-      }
+      },
+      "rules": { "camelcase": "off" }
     }
   ],
 
