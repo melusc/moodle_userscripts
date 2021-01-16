@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Download Course's Content
-// @version      2021.01.16b
+// @version      2021.01.16c
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js
@@ -8,7 +8,9 @@
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_addStyle
+// @grant        GM_xmlhttpRequest
 // @run-at       document-start
+// @connect      *
 // @require      __preact_jsd
 // @require      __JSZip_jsd
 // @require      __FileSaver_jsd
@@ -134,11 +136,31 @@ const initDownload = (
               }
             }
             else if ( modname === 'url' ) {
-              const { url } = module;
+              const url = new URL( module.url );
+              const defaultFile = `[InternetShortcut]\nURL=${ url.href }`;
+
+              url.searchParams.set(
+                'redirect',
+                1
+              );
 
               zipFile.file(
                 `${ sectionName }/${ module.name }.url`,
-                `[InternetShortcut]\nURL=${ url }`
+                new Promise( resolve => {
+                  GM_xmlhttpRequest( {
+                    url,
+                    method: 'HEAD',
+                    onerror() {
+                      resolve( defaultFile );
+                    },
+                    ontimeout() {
+                      resolve( defaultFile );
+                    },
+                    onload( { finalUrl } ) {
+                      resolve( `[InternetShortcut]\nURL=${ finalUrl }` );
+                    },
+                  } );
+                } )
               );
             }
           }
