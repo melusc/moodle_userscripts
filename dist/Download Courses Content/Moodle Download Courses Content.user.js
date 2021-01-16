@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Download Course's Content
-// @version      2021.01.16c
+// @version      2021.01.16d
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js
@@ -143,6 +143,10 @@ const initDownload = (event, noChache = false) => {
         }
       }
 
+      const date = new Date();
+
+      const padStart = d => `${d}`.padStart(2, '0');
+
       zipFile.generateAsync({
         type: 'blob',
         compression: 'DEFLATE',
@@ -155,7 +159,7 @@ const initDownload = (event, noChache = false) => {
       }) => {
         target.textContent = `${percent.toFixed(2)}%`;
       }).then(blob => {
-        saveAs(blob, `course-content-${courseId}.zip`);
+        saveAs(blob, `course-${courseId}_${date.getFullYear()}${padStart(date.getMonth() + 1)}${padStart(date.getDate())}-${padStart(date.getHours())}${padStart(date.getMinutes())}${padStart(date.getSeconds())}.zip`);
         target.disabled = false;
         target.textContent = 'Save contents to zip';
       });
