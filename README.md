@@ -16,6 +16,8 @@ To run these you need to have tampermonkey, greasemonkey or similar installed.
 
 [Unconfirmed Marks](https://github.com/melusc/moodle_userscripts/raw/master/dist/Unconfirmed%20Marks/Unconfirmed%20Marks%20Preact.user.js)
 
+[Download Course's Content](https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js)
+
 # About
 
 Currently, all these userscripts are written in es6 and jsx using [preact](https://github.com/preactjs/preact).

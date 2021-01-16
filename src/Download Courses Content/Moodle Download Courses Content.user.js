@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name         Moodle Download Course's Content
-// @version      2021.01.16a
+// @version      2021.01.16b
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
+// @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
@@ -21,7 +22,7 @@ const init = () => {
   if ( !document.querySelector( '#region-main div.errorbox.alert.alert-danger' ) ) {
     const saveButton = document.createElement( 'button' );
     saveButton.textContent = 'Save contents to zip';
-    saveButton.className = 'dcc-button';
+    saveButton.className = 'btn btn-secondary';
     document
       .querySelector( '#page-header div.card > div.card-body > div.d-flex' )
       ?.append( saveButton );
@@ -33,7 +34,20 @@ const init = () => {
   }
 };
 
-const initDownload = ( noChache = false ) => {
+const initDownload = (
+  event, noChache = false
+) => {
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const { target } = event;
+
+  if ( target.disabled ) {
+    return;
+  }
+
+  target.disabled = true;
+  target.textContent = '0.00%';
+
   login( noChache ).then( token => {
     const courseId = new URLSearchParams( location.search ).get( 'id' );
     const requestParams = new URLSearchParams();
@@ -68,10 +82,12 @@ const initDownload = ( noChache = false ) => {
       .then( jsonPageContent => {
         if ( jsonPageContent.hasOwnProperty( 'exception' ) ) {
           logout();
-          return initDownload( true );
+          return initDownload(
+            event,
+            true
+          );
         }
         setLastValidatedToken();
-        console.log( jsonPageContent );
 
         const body = `wstoken=${ token }`;
 
@@ -86,14 +102,23 @@ const initDownload = ( noChache = false ) => {
             const { modname } = module;
             if ( modname === 'resource' || modname === 'folder' ) {
               const { contents } = module;
+              const folderName = module.name;
 
               for ( let k = 0; k < contents.length; ++k ) {
                 const content = contents[ k ];
                 const { fileurl, filename, filepath } = content;
                 const date = new Date( content.timemodified * 1000 );
 
+                let zipFileName;
+                if ( modname === 'resource' ) {
+                  zipFileName = `${ sectionName }/${ filename }`;
+                }
+                else {
+                  zipFileName = `${ sectionName }/${ folderName }${ filepath }${ filename }`;
+                }
+
                 zipFile.file(
-                  `${ sectionName }${ filepath }${ filename }`,
+                  zipFileName,
                   fetch(
                     fileurl,
                     {
@@ -107,42 +132,38 @@ const initDownload = ( noChache = false ) => {
                   { date }
                 );
               }
-
-              /* const { url } = module;
-              const resourceName = module.contents[ 0 ].filename;
-              const date = new Date( module.contentsinfo.lastmodified * 1000 );
-              console.log( module );
+            }
+            else if ( modname === 'url' ) {
+              const { url } = module;
 
               zipFile.file(
-                `${ sectionName }/${ resourceName }`,
-                fetch(
-                  url,
-                  {
-                    body: body.toString(),
-                    method: 'POST',
-                    headers: {
-                      'content-type': 'application/x-www-form-urlencoded',
-                    },
-                  }
-                ).then( e => e.blob() ),
-                { date }
-              ); */
+                `${ sectionName }/${ module.name }.url`,
+                `[InternetShortcut]\nURL=${ url }`
+              );
             }
           }
         }
 
-        zipFile.generateAsync( {
-          type: 'blob',
-          compression: 'DEFLATE',
-          compressionOptions: {
-            level: 9,
+        zipFile.generateAsync(
+          {
+            type: 'blob',
+            compression: 'DEFLATE',
+            compressionOptions: {
+              level: 9,
+            },
+            comment: 'https://github.com/melusc/moodle_userscripts',
           },
-          comment: 'https://github.com/melusc/moodle_userscripts',
-        } ).then( blob => {
+          ( { percent } ) => {
+            target.textContent = `${ percent.toFixed( 2 ) }%`;
+          }
+        ).then( blob => {
           saveAs(
             blob,
             `course-content-${ courseId }.zip`
           );
+
+          target.disabled = false;
+          target.textContent = 'Save contents to zip';
         } );
 
         return undefined;
