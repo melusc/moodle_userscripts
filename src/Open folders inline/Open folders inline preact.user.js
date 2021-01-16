@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle open folders inline preact
-// @version      2021.01.15a
+// @version      2021.01.16a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
@@ -8,23 +8,16 @@
 // @grant        GM_getValue
 // @grant        GM_addStyle
 // @run-at       document-start
-// _@require     __htmPreact_jsd
 // @require      __preact_jsd
 // ==/UserScript==
 
-// to switch forth and back between htmPreact and preact
-
-// const { render, Component, html } = htmPreact;
-// /* globals htmPreact: false */
-
-/* globals preact: false, html: false */
+/* globals preact: false */
 const {
   render,
-  // eslint-disable-next-line no-unused-vars
   h,
 } = preact;
 
-GM_addStyle( '<INJECT_FILE path="Open folders inline/style.css"/>' );
+GM_addStyle( '<INJECT_FILE {"path": "dist/Open folders inline/style.css", "quotes": true} />' );
 
 const init = () => {
   document
@@ -82,7 +75,7 @@ const handleClick = ( () => {
       if ( !icon ) {
         const refresh = document.createElement( 'span' );
         render(
-          html`<svg
+          <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
             aria-hidden="true"
@@ -92,7 +85,7 @@ const handleClick = ( () => {
             <path
               d="M370.72 133.28C339.458 104.008 298.888 87.962 255.848 88c-77.458.068-144.328 53.178-162.791 126.85-1.344 5.363-6.122 9.15-11.651 9.15H24.103c-7.498 0-13.194-6.807-11.807-14.176C33.933 94.924 134.813 8 256 8c66.448 0 126.791 26.136 171.315 68.685L463.03 40.97C478.149 25.851 504 36.559 504 57.941V192c0 13.255-10.745 24-24 24H345.941c-21.382 0-32.09-25.851-16.971-40.971l41.75-41.749zM32 296h134.059c21.382 0 32.09 25.851 16.971 40.971l-41.75 41.75c31.262 29.273 71.835 45.319 114.876 45.28 77.418-.07 144.315-53.144 162.787-126.849 1.344-5.363 6.122-9.15 11.651-9.15h57.304c7.498 0 13.194 6.807 11.807 14.176C478.067 417.076 377.187 504 256 504c-66.448 0-126.791-26.136-171.315-68.685L48.97 471.03C33.851 486.149 8 475.441 8 454.059V320c0-13.255 10.745-24 24-24z"
             />
-          </svg>`,
+          </svg>,
           refresh
         );
         anchor.append( refresh );
@@ -157,7 +150,7 @@ const handleClick = ( () => {
           const frag = document.createDocumentFragment();
 
           render(
-            html`<${ GenerateFolder } contents=${ contents } />`,
+            <GenerateFolder contents={ contents } />,
             frag
           );
 
@@ -231,66 +224,65 @@ const GenerateFolder = ( { contents, base, directoryDepth = 0 } ) => {
         : 0;
   } );
 
-  return html`
-    ${ typeof base === 'string'
-    && html`
-      <div class="fp-filename-icon folders-inline-icon">
-        <div class="folders-inline-icon-div">
-          <i
-            class="icon fa fa-caret-right fa-fw navicon folders-inline-caret"
-          />
-          <img class="iconlarge activityicon" alt=${ base } role="presentation"
-          title=${ base } aria-hidden="true"
-          src=/theme/image.php/classic/core/1601902087/f/folder-128 />
-        </div>
-        <span class="fp-filename">${ base }</span>
+  return (
+    <>
+      { typeof base === 'string'
+    && <div class="fp-filename-icon folders-inline-icon">
+      <div class="folders-inline-icon-div">
+        <i
+          class="icon fa fa-caret-right fa-fw navicon folders-inline-caret"
+        />
+        <img class="iconlarge activityicon" alt={ base } role="presentation"
+          title={ base } aria-hidden="true"
+          src="/theme/image.php/classic/core/1601902087/f/folder-128" />
       </div>
-    ` }
+      <span class="fp-filename">{ base }</span>
+    </div>
+      }
 
-    <ul style="list-style: none;" hidden=${ Boolean( base ) }>
-      ${ entries.map( ( [ key, val ] ) => html`<li>
-          <${ GenerateFolder }
-            contents=${ val }
-            base=${ key }
-            directoryDepth=${ directoryDepth + 1 }
+      <ul style="list-style: none;" hidden={ Boolean( base ) }>
+        { entries.map( ( [ key, val ] ) => <li>
+          <GenerateFolder
+            contents={ val }
+            base={ key }
+            directoryDepth={ directoryDepth + 1 }
           />
-        </li>` ) }
-      ${ root.map( ( { fileurl, mimetype, filename } ) => {
-    const fileURL = new URL( fileurl );
-    fileURL.pathname = fileURL.pathname.replace(
-      /^\/webservice/,
-      ''
-    );
+        </li> ) }
+        { root.map( ( { fileurl, mimetype, filename } ) => {
+          const fileURL = new URL( fileurl );
+          fileURL.pathname = fileURL.pathname.replace(
+            /^\/webservice/,
+            ''
+          );
 
-    const imgPath = new URL( fileURL );
+          const imgPath = new URL( fileURL );
 
-    if ( !mimetype.startsWith( 'image' ) ) {
-      imgPath.searchParams.set(
-        'preview',
-        1
-      );
-    }
+          if ( !mimetype.startsWith( 'image' ) ) {
+            imgPath.searchParams.set(
+              'preview',
+              1
+            );
+          }
 
-    return html`
-          <span class="fp-filename-icon">
-            <a href=${ fileURL.href }>
+          return <span class="fp-filename-icon">
+            <a href={ fileURL.href }>
               <span class="fp-icon">
                 <img
-                  alt=${ filename }
-                  title=${ filename }
-                  src=${ generateImageURL(
-    mimetype,
-    imgPath.href
-  ) }
+                  alt={ filename }
+                  title={ filename }
+                  src={ generateImageURL(
+                    mimetype,
+                    imgPath.href
+                  ) }
                 />
               </span>
-              <span class="fp-filename">${ filename }</span>
+              <span class="fp-filename">{ filename }</span>
             </a>
-          </span>
-        `;
-  } ) }
-    </ul>
-  `;
+          </span>;
+        } ) }
+      </ul>
+    </>
+  );
 };
 
 const setLastValidatedToken = () => GM_setValue(

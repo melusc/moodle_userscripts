@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.15a
+// @version      2021.01.16a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -11,20 +11,14 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_addValueChangeListener
 // @run-at       document-start
-// _@require     __htmPreact_jsd
 // @require      __preact_jsd
 // ==/UserScript==
 
-// to switch forth and back between htmPreact and preact
-
-// const { render, Component, html } = htmPreact;
-// /* globals htmPreact: false */
-
-/* globals preact: false, html: false */
+/* globals preact: false */
 const {
   render,
   Component,
-  // eslint-disable-next-line no-unused-vars
+  Fragment,
   h,
 } = preact;
 
@@ -65,7 +59,7 @@ const runOnlyOnceOnFrontpage = () => {
   const span = document.createElement( 'span' );
   p.append( span );
   render(
-    html`<${ SvgSettingsGear } />`,
+    <SvgSettingsGear />,
     span
   );
 };
@@ -113,23 +107,23 @@ const initFrontPage = () => {
   sort( sidebar );
 };
 
-const SvgSettingsGear = () => html`<a
-  href=/cleanMoodlePreact/
-  target=_blank
+const SvgSettingsGear = () => <a
+  href="/cleanMoodlePreact/"
+  target="_blank"
   rel="noreferrer noopener"
-  onClick=${ e => {
+  onClick={e => {
     e.stopPropagation();
-  } }
+  }}
 >
   <svg
-    style=${ { marginLeft: '0.2em' } }
-    fill=currentColor
+    style={{ marginLeft: '0.2em' }}
+    fill="currentColor"
     class="icon svg-icon-gear"
     viewBox="0 0 16 16"
   >
     <path d="M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 014.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 01-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 011.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 012.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 012.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 011.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 01-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 018.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 001.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 00.52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 00-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 00-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 00-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 00-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 00.52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 001.255-.52l.094-.319zM8 5.754a2.246 2.246 0 100 4.492 2.246 2.246 0 000-4.492zM4.754 8a3.246 3.246 0 116.492 0 3.246 3.246 0 01-6.492 0z" />
   </svg>
-</a>`;
+</a>;
 const replace = (
   id, newVal, sidebar
 ) => {
@@ -370,17 +364,17 @@ const refresh = ( () => {
                 sidebar.prepend( li );
 
                 render(
-                  html`<p
+                  <p
                     class="tree_item hasicon"
                     role="treeitem"
-                    id=${ `expandable_branch_20_${ id }` }
+                    id={`expandable_branch_20_${ id }`}
                     tabindex="-1"
                     aria-selected="false"
                   >
                     <a
                       tabindex="-1"
-                      title=${ fullname }
-                      href=${ `https://moodle.ksasz.ch/course/view.php?id=${ id }` }
+                      title={fullname}
+                      href={`https://moodle.ksasz.ch/course/view.php?id=${ id }`}
                     >
                       <i
                         class="icon fa fa-graduation-cap fa-fw navicon"
@@ -388,10 +382,10 @@ const refresh = ( () => {
                         tabindex="-1"
                       />
                       <span class="item-content-wrap" tabindex="-1">
-                        ${ fullname }
+                        {fullname}
                       </span>
                     </a>
-                  </p>`,
+                  </p>,
                   li
                 );
               }
@@ -613,11 +607,11 @@ const getCredentials = () => new Promise( resolve => {
         div.className = 'clean-moodle';
         document.body.append( div );
         render(
-          html`<${ FrontPageLogin } />`,
+          <FrontPageLogin />,
           div
         );
 
-        GM_addStyle( '<INJECT_FILE path="Clean Moodle/frontpage.css" />' );
+        GM_addStyle( '<INJECT_FILE {"path": "dist/Clean Moodle/frontpage.css", "quotes": true} />' );
       }
     }
     else {
@@ -637,8 +631,7 @@ class FrontPageLogin extends Component {
   render = (
     _props, { loggedOut }
   ) => loggedOut
-    && html`
-      <div class="vertical-horizontal-center">
+      && <div class="vertical-horizontal-center">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Clean Moodle Login</h5>
@@ -646,26 +639,26 @@ class FrontPageLogin extends Component {
               placeholder="Username"
               required
               class="input-group-text"
-              ref=${ e => {
-      this.inputs.username = e;
-    } }
+              ref={e => {
+                this.inputs.username = e;
+              }}
             />
             <input
               placeholder="Password"
               required
               class="input-group-text"
-              ref=${ e => {
-      this.inputs.password = e;
-    } }
+              ref={e => {
+                this.inputs.password = e;
+              }}
               type="password"
             />
           </div>
-          <button class="btn btn-primary" onClick=${ this.handleClick }>
+          <button class="btn btn-primary" onClick={this.handleClick}>
             Login
           </button>
         </div>
       </div>
-    `;
+    ;
 
   handleClick = () => {
     const username = this.inputs.username.value.trim();
@@ -719,7 +712,7 @@ const initSettingsPage = () => {
   );
 
   render(
-    html`<${ SettingsPage } />`,
+    <SettingsPage />,
     document.body
   );
 
@@ -734,7 +727,7 @@ const initSettingsPage = () => {
   link.href = '/theme/image.php/classic/theme/1588340020/favicon';
   document.head.append( link );
 
-  GM_addStyle( '<INJECT_FILE path="Clean Moodle/settingspage.css"/>' );
+  GM_addStyle( '<INJECT_FILE {"path": "dist/Clean Moodle/settingspage.css", "quotes": true} />' );
 
   /* const style = document.createElement( 'link' );
   style.rel = 'stylesheet';
@@ -743,7 +736,7 @@ const initSettingsPage = () => {
   document.head.append( style ); */
 };
 
-const SvgCheck = () => html`<svg
+const SvgCheck = () => <svg
   fill="none"
   stroke="currentColor"
   stroke-linecap="round"
@@ -753,8 +746,8 @@ const SvgCheck = () => html`<svg
   viewBox="0 0 24 24"
 >
   <path d="M5 12l5 5L20 7" />
-</svg>`;
-const SvgX = () => html`<svg
+</svg>;
+const SvgX = () => <svg
   fill="none"
   stroke="currentColor"
   stroke-linecap="round"
@@ -764,8 +757,8 @@ const SvgX = () => html`<svg
   viewBox="0 0 24 24"
 >
   <path d="M18 6L6 18M6 6l12 12" />
-</svg>`;
-const SvgArrowBack = () => html`<svg
+</svg>;
+const SvgArrowBack = () => <svg
   fill="none"
   stroke="currentColor"
   stroke-linecap="round"
@@ -775,34 +768,33 @@ const SvgArrowBack = () => html`<svg
   viewBox="0 0 24 24"
 >
   <path d="M9 11l-4 4 4 4m-4-4h11a4 4 0 000-8h-1" />
-</svg>`;
-const Sidebar = ( { handleClick, courses } ) => html`<div class="outerSidebar">
+</svg>;
+const Sidebar = ( { handleClick, courses } ) => <div class="outerSidebar">
   <div class="sidebar">
-    ${ courses.map( ( { id, name, isReplaced, isRemoved } ) => html`<div
-        key=${ id }
-        class=${ `row${ isRemoved
-    ? ' removed'
-    : '' }` }
-        onClick=${ e => {
-    handleClick(
-      e,
-      id
-    );
-  } }
-      >
-        <span>
-          ${ isRemoved
-    ? html`<${ SvgX } />`
-    : html`<${ SvgCheck } />` }
-          ${ isReplaced === false
-    ? name
-    : isReplaced }
-          ${ isReplaced !== false && html`<${ SvgArrowBack } />` }
-        </span>
-      </div>` ) }
+    {courses.map( ( { id, name, isReplaced, isRemoved } ) => <div
+      key={id}
+      class={`row${ isRemoved
+        ? ' removed'
+        : '' }`}
+      onClick={e => {
+        handleClick(
+          e,
+          id
+        );
+      }}
+    >
+      <span>
+        {isRemoved
+          ? <SvgX />
+          : <SvgCheck />}
+        {isReplaced === false
+          ? name
+          : isReplaced}
+        {isReplaced !== false && <SvgArrowBack />}
+      </span>
+    </div> )}
   </div>
-</div>`;
-
+</div>;
 class Main extends Component {
   inputs = {};
 
@@ -815,58 +807,69 @@ class Main extends Component {
     loggedOut,
   } ) => {
     const { replacedText } = selected;
-    return html`<div class="outerMain">
-      <div class="main">
-        ${ !loggedOut
-        && html`<div class="section-title">Rename course</div>
-          <div class="replace-flex-inputs">
-            <div>
-              ${ typeof selected.text === 'string'
-          ? `Selected: ${ selected.text }`
-          : 'Select course to the left' }
-            </div>
+    return (
+      <div class="outerMain">
+        <div class="main">
+          {!loggedOut
+            && <>
+              <div class="section-title">Rename course</div>
+              <div class="replace-flex-inputs">
+                <div>
+                  {typeof selected.text === 'string'
+                    ? `Selected: ${ selected.text }`
+                    : 'Select course to the left'}
+                </div>
 
-            <input
-              placeholder=${ isNullOrUndef( replacedText )
-            ? 'Select course to the left'
-            : `Reset text to ${ selected.text }` }
-              class="replace-input"
-              onInput=${ handleInput }
-              onKeyDown=${ handleKeyDown }
-              value=${ replacedText }
-              disabled=${ isNullOrUndef( selected.id ) }
-              ref=${ inputRef }
-            />
-            <button
-              disabled=${ isNullOrUndef( selected.id ) }
-              onClick=${ handleBtnClick }
-              class="btn-save"
-            >
-              Save
-            </button>
-          </div>` }
-        ${ loggedOut
-        && html`<div class="replace-flex-input">
-          <h5>Login</h5>
-          <input
-            placeholder="Username"
-            ref=${ e => {
-          this.inputs.username = e;
-        } }
-          />
-          <input
-            placeholder="Password"
-            ref=${ e => {
-          this.inputs.password = e;
-        } }
-            type="password"
-          />
-          <button class="btn-save" onClick=${ this.handleLoggedOutBtnClick }>
-            Login
-          </button>
-        </div>` }
+                <input
+                  placeholder={
+                    isNullOrUndef( replacedText )
+                      ? 'Select course to the left'
+                      : `Reset text to ${ selected.text }`
+                  }
+                  class="replace-input"
+                  onInput={handleInput}
+                  onKeyDown={handleKeyDown}
+                  value={replacedText}
+                  disabled={isNullOrUndef( selected.id )}
+                  ref={inputRef}
+                />
+                <button
+                  disabled={isNullOrUndef( selected.id )}
+                  onClick={handleBtnClick}
+                  class="btn-save"
+                >
+                  Save
+                </button>
+              </div>
+            </>
+          }
+
+          {loggedOut
+            && <>
+              <div class="replace-flex-input">
+                <h5>Login</h5>
+                <input
+                  placeholder="Username"
+                  ref={e => {
+                    this.inputs.username = e;
+                  }}
+                />
+                <input
+                  placeholder="Password"
+                  ref={e => {
+                    this.inputs.password = e;
+                  }}
+                  type="password"
+                />
+                <button class="btn-save" onClick={this.handleLoggedOutBtnClick}>
+                  Login
+                </button>
+              </div>
+            </>
+          }
+        </div>
       </div>
-    </div>`;
+    );
   };
 
   handleLoggedOutBtnClick = () => {
@@ -897,20 +900,19 @@ class SettingsPage extends Component {
 
   render = (
     _props, { selected, courses, loggedOut }
-  ) => html`<div
-    class="container"
-  >
-    <${ Sidebar } handleClick=${ this.handleSidebarClick } courses=${ courses } />
-    <${ Main }
-      inputRef=${ this.inputRef }
-      selected=${ selected }
-      handleBtnClick=${ this.handleBtnClick }
-      handleInput=${ this.handleInput }
-      handleKeyDown=${ this.handleKeyDown }
-      loggedOut=${ loggedOut }
-      loggedOutCallback=${ this.loggedOutCallbackHandler }
+  ) => <div class="container">
+    <Sidebar handleClick={this.handleSidebarClick} courses={courses} />
+    <Main
+      inputRef={this.inputRef}
+      selected={selected}
+      handleBtnClick={this.handleBtnClick}
+      handleInput={this.handleInput}
+      handleKeyDown={this.handleKeyDown}
+      loggedOut={loggedOut}
+      loggedOutCallback={this.loggedOutCallbackHandler}
     />
-  </div>`;
+  </div>
+  ;
 
   loggedOutCallbackHandler = vals => {
     this.setState( { loggedOut: false, loggedOutCallback: null } );

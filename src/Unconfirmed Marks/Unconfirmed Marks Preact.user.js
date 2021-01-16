@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Unconfirmed Marks Preact
-// @version      2021.01.15a
+// @version      2021.01.16a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/
 // @include      *://moodle.ksasz.ch/?*
@@ -12,20 +12,13 @@
 // @grant        GM_deleteValue
 // @run-at       document-start
 // @connect      www.schul-netz.com
-// _@require     __htmPreact_jsd
 // @require      __preact_jsd
 // ==/UserScript==
 
-// to switch forth and back between htmPreact and preact
-
-// const { render, Component, html } = htmPreact;
-// /* globals htmPreact: false */
-
-/* globals preact: false, html: false */
+/* globals preact: false */
 const {
   render,
   Component,
-  // eslint-disable-next-line no-unused-vars
   h,
 } = preact;
 
@@ -42,14 +35,14 @@ const init = () => {
     : main.prepend( li );
 
   render(
-    html`<${ SchulNetzMarks } />`,
+    <SchulNetzMarks />,
     li
   );
 
-  GM_addStyle( '<INJECT_FILE path="Unconfirmed Marks/style.css"/>' );
+  GM_addStyle( '<INJECT_FILE {"path": "dist/Unconfirmed Marks/style.css", "quotes": true} />' );
 };
 
-const SvgCircleNotch = () => html`<svg
+const SvgCircleNotch = () => <svg
   aria-hidden="true"
   class="ucmr-circle-notch ucmr-spin"
   viewBox="0 0 512 512"
@@ -58,7 +51,7 @@ const SvgCircleNotch = () => html`<svg
     fill="currentColor"
     d="M288 39.056v16.659c0 10.804 7.281 20.159 17.686 23.066C383.204 100.434 440 171.518 440 256c0 101.689-82.295 184-184 184-101.689 0-184-82.295-184-184 0-84.47 56.786-155.564 134.312-177.219C216.719 75.874 224 66.517 224 55.712V39.064c0-15.709-14.834-27.153-30.046-23.234C86.603 43.482 7.394 141.206 8.003 257.332c.72 137.052 111.477 246.956 248.531 246.667C393.255 503.711 504 392.788 504 256c0-115.633-79.14-212.779-186.211-240.236C302.678 11.889 288 23.456 288 39.056z"
   />
-</svg>`;
+</svg>;
 
 class SchulNetzMarks extends Component {
   state = {
@@ -77,71 +70,71 @@ class SchulNetzMarks extends Component {
 
   render = (
     _props, { marks, loading, error, errorMsg, loggedOut }
-  ) => html`<div
+  ) => <div
     class="mod-indent-outer"
   >
     <div class="contentwithoutlink">
-      <!--link rel=stylesheet type=text/css
-      href=http://localhost:5000/Unconfirmed%20Marks/style.css /-->
+      {/* <link rel=stylesheet type=text/css
+      href=http://localhost:5000/Unconfirmed%20Marks/style.css /> */}
 
       <div class="ucmr-title">Unconfirmed Marks</div>
 
-      ${ loading && !error && html`<${ SvgCircleNotch } />` }
-      ${ !loggedOut
+      { loading && !error && <SvgCircleNotch /> }
+      { !loggedOut
       && !error
       && Array.isArray( marks )
-      && html`<div>
-        ${ Array.isArray( marks )
-        && marks.map( ( { key, course, name, date, mark } ) => html`<div
-            key=${ key }
-            class="ucmr-row"
-          >
-            <div class="ucmr-course">${ course }</div>
-            <div class="ucmr-name">${ name }</div>
-            <div class="ucmr-date">${ date }</div>
-            <div class="ucmr-mark">${ mark }</div>
-          </div>` ) }
-      </div>` }
-      ${ loggedOut
-      && html`<div class="login">
+      && <div>
+        { Array.isArray( marks )
+        && marks.map( ( { key, course, name, date, mark } ) => <div
+          key={ key }
+          class="ucmr-row"
+        >
+          <div class="ucmr-course">{ course }</div>
+          <div class="ucmr-name">{ name }</div>
+          <div class="ucmr-date">{ date }</div>
+          <div class="ucmr-mark">{ mark }</div>
+        </div> ) }
+      </div> }
+      { loggedOut
+      && <div class="login">
         <input
           class="form-control"
           required
-          ref=${ e => {
-        this.inputs.login = e;
-      } }
+          ref={ e => {
+            this.inputs.login = e;
+          } }
           placeholder="Username"
           type="text"
         />
         <input
           class="form-control"
           required
-          ref=${ e => {
-        this.inputs.password = e;
-      } }
+          ref={ e => {
+            this.inputs.password = e;
+          } }
           placeholder="Password"
           type="password"
         />
         <input
           class="form-control"
           required
-          ref=${ e => {
-        this.inputs.page = e;
-      } }
+          ref={ e => {
+            this.inputs.page = e;
+          } }
           placeholder="Page (ausserschwyz, einsiedeln...)"
           type="text"
         />
-        <button class="btn btn-primary" onclick=${ this.handleLogin }>
+        <button class="btn btn-primary" onclick={ this.handleLogin }>
           Save
         </button>
-      </div>` }
-      ${ !loggedOut
+      </div> }
+      { !loggedOut
       && marks === false
-      && html`<div>Sie haben alle Noten bestätigt.</div>` }
-      ${ error
-      && html`<div class="ucmr-error">${ errorMsg ?? 'Something went wrong' }</div>` }
+      && <div>Sie haben alle Noten bestätigt.</div> }
+      { error
+      && <div class="ucmr-error">{ errorMsg ?? 'Something went wrong' }</div> }
     </div>
-  </div>`;
+  </div>;
 
   handleLogin = () => {
     const login = this.inputs.login.value;
@@ -169,6 +162,10 @@ class SchulNetzMarks extends Component {
   };
 
   componentDidMount() {
+    this.checkCredentials();
+  }
+
+  checkCredentials() {
     const login = GM_getValue( 'login' );
     const password = GM_getValue( 'password' );
     const page = GM_getValue( 'page' );

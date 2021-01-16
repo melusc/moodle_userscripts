@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Custom Icons Preact
-// @version      2021.01.14a
+// @version      2021.01.16a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include      *://moodle.ksasz.ch/*
@@ -20,7 +20,7 @@ const {
   render,
   Component,
   html,
-  // eslint-disable-next-line no-unused-vars
+  Fragment,
   h,
 } = htmPreact;
 
@@ -238,7 +238,7 @@ const initSettingspage = () => {
 
   document.title = 'Custom Icons Preact Setup';
 
-  GM_addStyle( '<INJECT_FILE path="Custom Icons/style.css"/>' );
+  GM_addStyle( '<INJECT_FILE {"path": "dist/Custom Icons/style.css", "quotes": true} />' );
 
   const icon = document.createElement( 'link' );
 
@@ -252,7 +252,7 @@ const initSettingspage = () => {
   }
 
   render(
-    html`<${ SettingsPage } />`,
+    <SettingsPage />,
     document.body
   );
 };
@@ -261,27 +261,27 @@ class SettingsPage extends Component {
   render = (
     _props,
     { courses, selectedCourse, inputStates, notificationString }
-  ) => html`<div class="container">
-    <${ Sidebar }
-      courses=${ courses }
-      handleClick=${ this.handleSidebarClick }
-      blur=${ `${ notNullOrUndef( notificationString ) }` }
+  ) => <div class="container">
+    <Sidebar
+      courses={ courses }
+      handleClick={ this.handleSidebarClick }
+      blur={ `${ notNullOrUndef( notificationString ) }` }
     />
-    <${ Main }
-      selectedCourse=${ selectedCourse }
-      courses=${ courses }
-      handleInput=${ this.handleMainInput }
-      inputStates=${ inputStates }
-      handleSave=${ this.handleSave }
-      inputRefs=${ this.inputRefs }
-      blur=${ `${ notNullOrUndef( notificationString ) }` }
+    <Main
+      selectedCourse={ selectedCourse }
+      courses={ courses }
+      handleInput={ this.handleMainInput }
+      inputStates={ inputStates }
+      handleSave={ this.handleSave }
+      inputRefs={ this.inputRefs }
+      blur={ `${ notNullOrUndef( notificationString ) }` }
     />
-    ${ notNullOrUndef( notificationString )
-    && html`<${ Notification }
-      handleClick=${ this.handleNotificationClick }
-      notificationString=${ notificationString }
-    />` }
-  </div>`;
+    { notificationString
+    && <Notification
+      handleClick={ this.handleNotificationClick }
+      notificationString={ notificationString }
+    /> }
+  </div>;
 
   state = {
     courses: [],
@@ -851,39 +851,39 @@ const logout = ( removeCredentials = false ) => {
   }
 };
 
-class Sidebar extends Component {
-  render = ( { blur, courses, handleClick } ) => html`<div
-    data-blur=${ blur }
-    class="outer-sidebar"
-    onClick=${ handleClick }
-  >
-    <div class="sidebar">
-      ${ courses?.map( ( { id, dataURI, name, isXML, rawXML } ) => html` <div
-          class="row"
-          data-id=${ id }
-          key=${ id }
-        >
-          ${ typeof isXML === 'boolean'
-          && html` ${ isXML
-            ? html`<span class="icon">${ html( [ rawXML ] ) }</span>`
-            : html`<img class="icon" src=${ dataURI } />` }
-            <${ SvgX } type="del-icon" />` }
-          <span>${ name }</span>
-        </div>` ) }
-    </div>
-  </div>`;
-}
+const Sidebar = ( { blur, courses, handleClick } ) => <div
+  data-blur={ blur }
+  class="outer-sidebar"
+  onClick={ handleClick }
+>
+  <div class="sidebar">
+    { courses?.map( ( { id, dataURI, name, isXML, rawXML } ) => <div
+      class="row"
+      data-id={ id }
+      key={ id }
+    >
+      { typeof isXML === 'boolean'
+          && <>
+            {isXML
+              ? <span class="icon">{ html( [ rawXML ] ) }</span>
+              : <img class="icon" src={ dataURI } />
+            }
+            <SvgX type="del-icon" /></> }
+      <span>{ name }</span>
+    </div> ) }
+  </div>
+</div>;
 
 class Notification extends Component {
-  render = ( { handleClick, notificationString } ) => html` <div
-    onClick=${ handleClick }
+  render = ( { handleClick, notificationString } ) => <div
+    onClick={ handleClick }
     class="outer-notification"
   >
     <div class="inner-notification">
-      <${ SvgX } type="close" />
-      <div class="notification-string">${ notificationString }</div>
+      <SvgX type="close" />
+      <div class="notification-string">{ notificationString }</div>
     </div>
-  </div>`;
+  </div>;
 
   componentDidMount() {
     scroll( {
@@ -894,19 +894,19 @@ class Notification extends Component {
   }
 }
 
-const SvgX = props => html`<svg
+const SvgX = props => <svg
   fill="none"
   stroke="currentColor"
   stroke-linecap="round"
   stroke-linejoin="round"
   stroke-width="2"
-  data-svg-type=${ props.type }
+  data-svg-type={ props.type }
   class="svg-icon svg-icon-x"
   viewBox="0 0 24 24"
-  onClick=${ props.handleClick }
+  onClick={ props.handleClick }
 >
   <path d="M24 0L0 24M0 0l24 24" />
-</svg>`;
+</svg>;
 
 class Main extends Component {
   render = ( {
@@ -940,17 +940,15 @@ class Main extends Component {
     const id = selectedCourse?.id;
     const { fileVal } = inputStates;
 
-    return html`<div class="outer-main" data-blur=${ blur }>
-      <div class="main" onInput=${ handleInput }>
+    return <div class="outer-main" data-blur={ blur }>
+      <div class="main" onInput={ handleInput }>
         <h2>Modify existing or add an icon</h2>
         <div>
-          ${ notNullOrUndef( dataURI )
+          { dataURI
           && ( isXML
             ? html( [ rawXML ] )
-            : html`<img src=${ dataURI } class="icon" />` ) }
-          <span>${ notNullOrUndef( name )
-              ? name
-              : 'Select course on left' }</span>
+            : <img src={ dataURI } class="icon" /> ) }
+          <span>{ name ?? 'Select course on left' }</span>
         </div>
 
         <h3>Upload image from URL</h3>
@@ -959,10 +957,10 @@ class Main extends Component {
           placeholder="Image url"
           URL
           data-input-type="url"
-          ref=${ e => {
-                inputRefs.url = e;
-              } }
-          disabled=${ inputStates.current !== null
+          ref={ e => {
+            inputRefs.url = e;
+          } }
+          disabled={ inputStates.current !== null
           && inputStates.current !== 'url' }
         />
 
@@ -971,29 +969,29 @@ class Main extends Component {
           data-input-type="file"
           type="file"
           hidden
-          ref=${ e => {
+          ref={ e => {
             inputRefs.file = e;
           } }
         />
         <button
-          disabled=${ inputStates.current !== null
+          disabled={ inputStates.current !== null
           && inputStates.current !== 'file' }
-          onClick=${ () => {
+          onClick={ () => {
             inputRefs.file.click();
           } }
         >
-          ${ notNullOrUndef( fileVal )
+          { notNullOrUndef( fileVal )
             ? fileVal.name
             : 'Upload file' }
-          ${ notNullOrUndef( fileVal )
-          && html`<${ SvgX } type="clear" handleClick=${ this.clearFile } />` }
+          { notNullOrUndef( fileVal )
+          && <SvgX type="clear" handleClick={ this.clearFile } /> }
         </button>
 
         <h3>Copy image from other course</h3>
         <select
-          disabled=${ inputStates.current !== null
+          disabled={ inputStates.current !== null
           && inputStates.current !== 'copy' }
-          ref=${ e => {
+          ref={ e => {
             inputRefs.copy = e;
           } }
           data-input-type="copy"
@@ -1001,15 +999,15 @@ class Main extends Component {
           <option value="null" defaultValue>
             Select course to copy icon from
           </option>
-          ${ courses?.map( ( { id: curId, name: curName, dataURI, rawXML } ) => ( dataURI || rawXML )
-              && html`<option key=${ id } value=${ curId } disabled=${ curId === id }>
-                ${ curName }
-              </option>` ) }
+          { courses?.map( ( { id: curId, name: curName, dataURI, rawXML } ) => ( dataURI || rawXML )
+              && <option key={ id } value={ curId } disabled={ curId === id }>
+                { curName }
+              </option> ) }
         </select>
 
-        <button onClick=${ handleSave } class="btn-save">Save</button>
+        <button onClick={ handleSave } class="btn-save">Save</button>
       </div>
-    </div>`;
+    </div>;
   };
 
   clearFile = e => {

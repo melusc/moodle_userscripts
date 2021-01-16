@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v5
-// @version      2021.01.15a
+// @version      2021.01.16a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js
 // @include      *://moodle.ksasz.ch/
@@ -14,20 +14,14 @@
 // @grant        GM_addStyle
 // @grant        GM_notification
 // @run-at       document-start
-// _@require     __htmPreact_jsd
 // @require      __preact_jsd
 // ==/UserScript==
 
-// to switch forth and back between htmPreact and preact
-
-// const { render, Component, html } = htmPreact;
-// /* globals htmPreact: false */
-
-/* globals preact: false, html: false */
+/* globals preact: false */
 const {
   render,
   Component,
-  // eslint-disable-next-line no-unused-vars
+  Fragment,
   h,
 } = preact;
 
@@ -56,7 +50,7 @@ const initFrontpage = () => {
     }
   );
 
-  GM_addStyle( '<INJECT_FILE path="Timetable v5/frontpage.css"/>' );
+  GM_addStyle( '<INJECT_FILE {"path": "dist/Timetable v5/frontpage.css", "quotes": true} />' );
 
   const main = document.querySelector( '#region-main-box ul.section' );
   const li = document.createElement( 'li' );
@@ -66,7 +60,7 @@ const initFrontpage = () => {
   main.prepend( li );
 
   render(
-    html`<${ FrontPage } />`,
+    <FrontPage />,
     li
   );
 };
@@ -90,7 +84,7 @@ const initSettingsPage = () => {
   icon.rel = 'shortcut icon';
   icon.href = MOODLE_ICON;
 
-  GM_addStyle( '<INJECT_FILE path="Timetable v5/settingspage.css"/>' );
+  GM_addStyle( '<INJECT_FILE {"path": "dist/Timetable v5/settingspage.css", "quotes": true} />' );
 
   /* const style = document.createElement( 'link' );
 
@@ -107,7 +101,7 @@ const initSettingsPage = () => {
   document.body.append( root );
 
   render(
-    html`<${ SettingsPage } />`,
+    <SettingsPage />,
     root
   );
 };
@@ -186,70 +180,74 @@ const SettingsPage = ( () => {
         focusedElement: { top, left, height, inputText } = {},
       }
     ) {
-      return html`
-        <div class="container">
-          <div class="table-center">
-            <div class="grid-buttons">
-              <${ ButtonGrid }
-                day=${ DAYS[ activeDay ] }
-                handleSave=${ this.handleSave }
-                saveButtonRef=${ this.saveButtonRef }
-                handleClick=${ this.handleCaretClick }
-              />
-            </div>
-            <div
-              class="main-table"
-              onKeyDown=${ this.handleTableKeyDown }
-              onInput=${ this.handleTableInput }
-              onClick=${ this.handleTableClick }
-            >
-              <${ Table }
-                content=${ tables[ activeDay ] }
-                handleFocus=${ this.handleTableFocus }
-              />
-              <div class="row-icon-add-row">
-                <div class="icon-add-row" onClick=${ this.createRow }>
-                  <${ SvgIconAdd } />
+      return (
+        <>
+          <div class="container">
+            <div class="table-center">
+              <div class="grid-buttons">
+                <ButtonGrid
+                  day={DAYS[ activeDay ]}
+                  handleSave={this.handleSave}
+                  saveButtonRef={this.saveButtonRef}
+                  handleClick={this.handleCaretClick}
+                />
+              </div>
+              <div
+                class="main-table"
+                onKeyDown={this.handleTableKeyDown}
+                onInput={this.handleTableInput}
+                onClick={this.handleTableClick}
+              >
+                <Table
+                  content={tables[ activeDay ]}
+                  handleFocus={this.handleTableFocus}
+                />
+                <div class="row-gicon-add-row">
+                  <div class="icon-add-row" onClick={this.createRow}>
+                    <SvgIconAdd />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        ${ notNullOrUndef( top ) // if top isn't null none are
-        // && idInput.textContent.trim() === ''
-        && html`<div
-          class="suggestions"
-          style=${ { transform: `translate(${ left }px, ${ top + height }px)` } }
-          onClick=${ this.handleSuggestionsClick }
-        >
-          ${ this.filterCourses(
-    courses,
-    inputText
-  ).map( ( { id, name } ) => {
-    const index = name.toLowerCase().indexOf( inputText );
-    const before = name.slice(
-      0,
-      index
-    );
+          {typeof top === 'number' // if top is type num all are
+            && <div
+              class="suggestions"
+              style={{ transform: `translate(${ left }px, ${ top + height }px)` }}
+              onClick={this.handleSuggestionsClick}
+            >
+              {this.filterCourses(
+                courses,
+                inputText
+              ).map( ( { id, name } ) => {
+                const index = name.toLowerCase().indexOf( inputText );
+                const before = name.slice(
+                  0,
+                  index
+                );
 
-    const after = name.slice( index + inputText.length );
+                const after = name.slice( index + inputText.length );
 
-    return html`<div key=${ id } class="suggestion" data-id=${ id }>
-              <div class="suggestion-name">
-                ${ before }
-                <span class="emphasised">
-                  ${ name.slice(
-    index,
-    index + inputText.length
-  ) }
-                </span>
-                ${ after }
-              </div>
-              <div class="suggestion-id">${ id }</div>
-            </div>`;
-  } ) }
-        </div>` }
-      `;
+                return (
+                  <div key={id} class="suggestion" data-id={id}>
+                    <div class="suggestion-name">
+                      {before}
+                      <span class="emphasised">
+                        {name.slice(
+                          index,
+                          index + inputText.length
+                        )}
+                      </span>
+                      {after}
+                    </div>
+                    <div class="suggestion-id">{id}</div>
+                  </div>
+                );
+              } )}
+            </div>
+          }
+        </>
+      );
     }
 
     handleSuggestionsClick = e => {
@@ -279,66 +277,70 @@ const SettingsPage = ( () => {
       }
     };
 
-    componentDidMount = async () => {
+    fetchCourses() {
+      Promise.all( [ getUserId(), login() ] ).then( ( [ userid, token ] ) => {
+        const bodyParams = new URLSearchParams();
+
+        bodyParams.set(
+          'requests[0][function]',
+          'core_enrol_get_users_courses'
+        );
+        bodyParams.set(
+          'requests[0][arguments]',
+          `{"userid":"${ userid }","returnusercount":false}`
+        );
+        bodyParams.set(
+          'wsfunction',
+          'tool_mobile_call_external_functions'
+        );
+        bodyParams.set(
+          'wstoken',
+          token
+        );
+
+        fetch(
+          '/webservice/rest/server.php?moodlewsrestformat=json',
+          {
+            method: 'POST',
+            body: bodyParams.toString(),
+            headers: {
+              'content-type': 'application/x-www-form-urlencoded',
+            },
+          }
+        )
+          .then( e => e.json() )
+          .then( responseJSON => {
+            if ( responseJSON.hasOwnProperty( 'exception' ) ) {
+              return this.componentDidMount();
+            }
+
+            const data = JSON.parse( responseJSON.responses[ 0 ].data );
+            const courses = [];
+
+            for ( let i = 0, l = data.length; i < l; ++i ) {
+              courses[ i ] = {
+                id: data[ i ].id,
+                name: data[ i ].fullname,
+                uuid: generateUUIDv4(),
+              };
+            }
+
+            this.setState( { courses } );
+
+            return undefined;
+          } );
+      } );
+    }
+
+    componentDidMount = () => {
       addEventListener(
         'click',
         this.handleTableFocus
       );
-
-      const userid = await getUserId();
-      const token = await login();
-
-      const bodyParams = new URLSearchParams();
-
-      bodyParams.set(
-        'requests[0][function]',
-        'core_enrol_get_users_courses'
-      );
-      bodyParams.set(
-        'requests[0][arguments]',
-        `{"userid":"${ userid }","returnusercount":false}`
-      );
-      bodyParams.set(
-        'wsfunction',
-        'tool_mobile_call_external_functions'
-      );
-      bodyParams.set(
-        'wstoken',
-        token
-      );
-
-      const responseJSON = await fetch(
-        '/webservice/rest/server.php?moodlewsrestformat=json',
-        {
-          method: 'POST',
-          body: bodyParams.toString(),
-          headers: {
-            'content-type': 'application/x-www-form-urlencoded',
-          },
-        }
-      ).then( e => e.json() );
-
-      if ( responseJSON.hasOwnProperty( 'exception' ) ) {
-        return this.componentDidMount();
-      }
-
-      const data = JSON.parse( responseJSON.responses[ 0 ].data );
-      const courses = [];
-
-      for ( let i = 0, l = data.length; i < l; ++i ) {
-        courses[ i ] = {
-          id: data[ i ].id,
-          name: data[ i ].fullname,
-          uuid: generateUUIDv4(),
-        };
-      }
-
-      this.setState( { courses } );
-
       addEventListener(
         'keydown',
         e => {
-          if ( e.ctrlKey && e.keyCode === 83 ) {
+          if ( e.ctrlKey && e.key === 's' ) {
             e.preventDefault();
             e.stopImmediatePropagation();
 
@@ -347,7 +349,7 @@ const SettingsPage = ( () => {
         }
       );
 
-      return undefined;
+      this.fetchCourses();
     };
 
     filterCourses = (
@@ -658,7 +660,8 @@ const SettingsPage = ( () => {
             }
             else if ( target.dataset.type === 'content' ) {
               obj.content = target.textContent;
-              target.textContent = ''; /* this fixes an issue where preact doesn't
+              target.textContent
+                = ''; /* this fixes an issue where preact doesn't
               properly delete a text node and which causes duplicate text */
             }
             return { tables: state.tables };
@@ -890,25 +893,27 @@ const setLastValidatedToken = () => GM_setValue(
 
 class ButtonGrid extends Component {
   render( { handleClick, handleSave, saveButtonRef, day } ) {
-    return html`
-      <div class="day-controls" onClick=${ handleClick }>
-        <div class="caret-input caret-back">
-          <${ SvgIconCaretBack } />
+    return (
+      <>
+        <div class="day-controls" onClick={handleClick}>
+          <div class="caret-input caret-back">
+            <SvgIconCaretBack />
+          </div>
+          <div>{day}</div>
+          <div class="caret-input caret-forward">
+            <SvgIconCaretForward />
+          </div>
         </div>
-        <div>${ day }</div>
-        <div class="caret-input caret-forward">
-          <${ SvgIconCaretForward } />
-        </div>
-      </div>
-      <button
-        class="save-button"
-        onClick=${ handleSave }
-        ref=${ saveButtonRef }
-        onAnimationEnd=${ this.removeAnimation }
-      >
-        Save
-      </button>
-    `;
+        <button
+          class="save-button"
+          onClick={handleSave}
+          ref={saveButtonRef}
+          onAnimationEnd={this.removeAnimation}
+        >
+          Save
+        </button>
+      </>
+    );
   }
 
   removeAnimation = ( { target } ) => {
@@ -919,81 +924,69 @@ class ButtonGrid extends Component {
   };
 }
 
-const SvgIconX = () => html`<svg viewBox="0 0 512 512">
+const SvgIconX = () => <svg viewBox="0 0 512 512">
   <path
     stroke="currentColor"
     stroke-linecap="round"
     stroke-width="32"
     d="M368 368L144 144m224 0L144 368"
   />
-</svg>`;
-
-const SvgIconCaretBack = () => html`<svg viewBox="0 0 512 512">
+</svg>;
+const SvgIconCaretBack = () => <svg viewBox="0 0 512 512">
   <path
     fill="currentColor"
     d="M321.94 98L158.82 237.78a24 24 0 000 36.44L321.94 414c15.57 13.34 39.62 2.28 39.62-18.22v-279.6c0-20.5-24.05-31.56-39.62-18.18z"
   />
-</svg>`;
-
-const SvgIconCaretForward = () => html`<svg viewBox="0 0 512 512">
+</svg>;
+const SvgIconCaretForward = () => <svg viewBox="0 0 512 512">
   <path
     fill="currentColor"
     d="M190.06 414l163.12-139.78a24 24 0 000-36.44L190.06 98c-15.57-13.34-39.62-2.28-39.62 18.22v279.6c0 20.5 24.05 31.56 39.62 18.18z"
   />
-</svg>`;
-
-const SvgIconAdd = () => html`<svg viewBox="0 0 512 512">
+</svg>;
+const SvgIconAdd = () => <svg viewBox="0 0 512 512">
   <path
     stroke="currentColor"
     stroke-linecap="round"
     stroke-width="32"
     d="M256 112v288m144-144H112"
   />
-</svg>`;
-
-class Table extends Component {
-  render( { content, handleFocus } ) {
-    return html`<div class="table" onFocus=${ handleFocus }>
-      ${ content?.map( ( { from, to, content, id, fromvalid, tovalid, uuid } ) => html`<div
-          key=${ uuid }
-          class="table-row"
-        >
-          <div class="table-cell time">
-            <span
-              class=${ `time-input time-from${
-    timeStringIsValid( from ) && fromvalid !== false
-      ? ''
-      : ' invalid-input'
-  }` }
-              contentEditable
-            >
-              ${ from }
-            </span>
-            -
-            <span
-              class=${ `time-input time-to${
-    timeStringIsValid( to ) && tovalid !== false
-      ? ''
-      : ' invalid-input'
-  }` }
-              contentEditable
-            >
-              ${ to }
-            </span>
-          </div>
-          <div class="table-cell entry">
-            <span contentEditable data-type="content"> ${ content } </span>
-            <hr />
-            <span contentEditable data-type="id"> ${ id } </span>
-          </div>
-          <div class="table-cell remove-row">
-            <${ SvgIconX } />
-          </div>
-        </div>` ) }
-    </div>`;
-  }
-}
-
+</svg>;
+const Table = ( { content, handleFocus } ) => <div class="table" onFocus={handleFocus}>
+  {content?.map( ( { from, to, content, id, fromvalid, tovalid, uuid } ) => <div key={uuid} class="table-row">
+    <div class="table-cell time">
+      <span
+        class={`time-input time-from${
+          timeStringIsValid( from ) && fromvalid !== false
+            ? ''
+            : ' invalid-input'
+        }`}
+        contentEditable
+      >
+        {from}
+      </span>
+          -
+      <span
+        class={`time-input time-to${
+          timeStringIsValid( to ) && tovalid !== false
+            ? ''
+            : ' invalid-input'
+        }`}
+        contentEditable
+      >
+        {to}
+      </span>
+    </div>
+    <div class="table-cell entry">
+      <span contentEditable data-type="content">{content}</span>
+      <hr />
+      <span contentEditable data-type="id">{id}</span>
+    </div>
+    <div class="table-cell remove-row">
+      <SvgIconX />
+    </div>
+  </div> )}
+</div>;
 const generateUUIDv4 = a => a
   ? ( a ^ ( ( Math.random() * 16 ) >> ( a / 4 ) ) ).toString( 16 )
   : ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace(
@@ -1170,89 +1163,101 @@ const FrontPage = ( () => {
     ) {
       const isWeekend = currentDay === 0 || currentDay === 6;
 
-      return html`<div>
-        <div class="mod-indent-outer">
-          <div class="contentwithoutlink">
-            <div class="no-overflow">
-              <hr />
-              <div>
-                <div class="tt-title">Timetable</div>
-                <div class="tt-table">
-                  <div class="tt-tbody">
-                    ${ !isWeekend
-                    && isHoliday === false
-                    && type === BEFORELESSONS
-                    && html`<${ TimetableRow }
-                      values=${ { content: 'No lesson' } }
-                      isNow=${ true }
-                    />` }
-                    ${ !isWeekend
-                    && isHoliday === false
-                    && type === AFTERLESSONS
-                    && html`<div class="tt-title">No school anymore</div>` }
-                    ${ isWeekend
-                    && isHoliday === false
-                    && html`<div class="tt-title">Weekend</div>` }
-                    ${ isHoliday && html`<div class="tt-title">Holiday</div>` }
-                    ${ !isWeekend
-                    && isEmpty === false
-                    && isHoliday === false
-                    && ( type === BEFORELESSONS || type === DURINGLESSONS )
-                    && tableRows?.map( (
-                      curVal, idx
-                    ) => curVal
-                        && html`<${ TimetableRow }
-                          key=${ curVal.uuid }
-                          values=${ curVal }
-                          isNow=${ idx === 0 }
-                        />` ) }
-                    ${ isEmpty
-                    && !isWeekend
-                    && html`Today's timetable is empty, you can update it
-                      <a href="/timetable/v5" rel="noopener noreferrer" target="_blank">
-                        here
-                      </a>` }
+      return (
+        <div>
+          <div class="mod-indent-outer">
+            <div class="contentwithoutlink">
+              <div class="no-overflow">
+                <hr />
+                <div>
+                  <div class="tt-title">Timetable</div>
+                  <div class="tt-table">
+                    <div class="tt-tbody">
+                      {!isWeekend
+                        && isHoliday === false
+                        && type === BEFORELESSONS
+                          && <TimetableRow
+                            values={{ content: 'No lesson' }}
+                            isNow={true}
+                          />
+                      }
+                      {!isWeekend
+                        && isHoliday === false
+                        && type === AFTERLESSONS
+                          && <div class="tt-title">No school anymore</div>
+                      }
+                      {isWeekend && isHoliday === false
+                        && <div class="tt-title">Weekend</div>
+                      }
+                      {isHoliday && <div class="tt-title">Holiday</div>}
+                      {!isWeekend
+                        && isEmpty === false
+                        && isHoliday === false
+                        && ( type === BEFORELESSONS || type === DURINGLESSONS )
+                        && tableRows?.map( (
+                          curVal, idx
+                        ) => curVal
+                              && <TimetableRow
+                                key={curVal.uuid}
+                                values={curVal}
+                                isNow={idx === 0}
+                              /> )}
+                      {isEmpty && !isWeekend
+                        && <>
+                          Today's timetable is empty, you can update it
+                          <a
+                            href="/timetable/v5"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            here
+                          </a>
+                        </>
+                      }
+                    </div>
                   </div>
                 </div>
+                <hr />
               </div>
-              <hr />
             </div>
           </div>
         </div>
-      </div>`;
+      );
     }
   };
 } )();
 
-class TimetableRow extends Component {
-  render = ( { values, isNow } ) => {
-    const { from, to, id, content } = values ?? {};
-    return (
-      typeof values === 'object'
-      && html`<div class="tt-tr">
+const TimetableRow = ( { values, isNow } ) => {
+  const { from, to, id, content } = values ?? {};
+  return (
+    typeof values === 'object'
+      && <div class="tt-tr">
         <div class="tt-th">
-          ${ isNow
-        ? 'Now'
-        : 'Next' }
-          ${ from
-          && to
-          && ` (${ parseTimeToString( from ) } - ${ parseTimeToString( to ) })` }:
+          {isNow
+            ? 'Now'
+            : 'Next'}
+          {from
+            && to
+            && ` (${ parseTimeToString( from ) } - ${ parseTimeToString( to ) })`}
+          :
         </div>
         <div class="tt-td">
-          ${ typeof id === 'string'
-            ? html`<a
-                href=${ `/course/view.php?id=${ id }` }
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                ${ content }
-              </a>`
-            : content ?? 'Free lesson' }
+          {typeof id === 'string'
+            ? <a
+              href={`/course/view.php?id=${ id }`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {content}
+            </a>
+            : content ?? 'Free lesson'
+          }
         </div>
-      </div>`
-    );
-  };
-}
+      </div>
+
+  );
+};
+
 const notNullOrUndef = val => val !== null && val !== undefined;
 const isNullOrUndef = val => val === null || val === undefined;
 const parseTimeToString = int => {

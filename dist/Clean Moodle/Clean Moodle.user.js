@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.15a
+// @version      2021.01.16a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -11,18 +11,14 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_addValueChangeListener
 // @run-at       document-start
-// _@require     https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
 // @require      https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js
 // ==/UserScript==
-// to switch forth and back between htmPreact and preact
-// const { render, Component, html } = htmPreact;
-// /* globals htmPreact: false */
 
-/* globals preact: false, html: false */
+/* globals preact: false */
 const {
   render,
   Component,
-  // eslint-disable-next-line no-unused-vars
+  Fragment,
   h
 } = preact;
 
@@ -94,7 +90,7 @@ const SvgSettingsGear = () => h("a", {
     marginLeft: '0.2em'
   },
   fill: "currentColor",
-  "class": "icon svg-icon-gear",
+  class: "icon svg-icon-gear",
   viewBox: "0 0 16 16"
 }, h("path", {
   d: "M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 014.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 01-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 011.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 012.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 012.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 011.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 01-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 018.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 001.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 00.52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 00-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 00-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 00-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 00-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 00.52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 001.255-.52l.094-.319zM8 5.754a2.246 2.246 0 100 4.492 2.246 2.246 0 000-4.492zM4.754 8a3.246 3.246 0 116.492 0 3.246 3.246 0 01-6.492 0z"
@@ -268,7 +264,7 @@ const refresh = (() => {
                 li.tabIndex = -1;
                 sidebar.prepend(li);
                 render(h("p", {
-                  "class": "tree_item hasicon",
+                  class: "tree_item hasicon",
                   role: "treeitem",
                   id: `expandable_branch_20_${id}`,
                   tabindex: "-1",
@@ -278,11 +274,11 @@ const refresh = (() => {
                   title: fullname,
                   href: `https://moodle.ksasz.ch/course/view.php?id=${id}`
                 }, h("i", {
-                  "class": "icon fa fa-graduation-cap fa-fw navicon",
+                  class: "icon fa fa-graduation-cap fa-fw navicon",
                   "aria-hidden": "true",
                   tabindex: "-1"
                 }), h("span", {
-                  "class": "item-content-wrap",
+                  class: "item-content-wrap",
                   tabindex: "-1"
                 }, fullname))), li);
               }
@@ -466,30 +462,30 @@ class FrontPageLogin extends Component {
   render = (_props, {
     loggedOut
   }) => loggedOut && h("div", {
-    "class": "vertical-horizontal-center"
+    class: "vertical-horizontal-center"
   }, h("div", {
-    "class": "card"
+    class: "card"
   }, h("div", {
-    "class": "card-body"
+    class: "card-body"
   }, h("h5", {
-    "class": "card-title"
+    class: "card-title"
   }, "Clean Moodle Login"), h("input", {
     placeholder: "Username",
     required: true,
-    "class": "input-group-text",
+    class: "input-group-text",
     ref: e => {
       this.inputs.username = e;
     }
   }), h("input", {
     placeholder: "Password",
     required: true,
-    "class": "input-group-text",
+    class: "input-group-text",
     ref: e => {
       this.inputs.password = e;
     },
     type: "password"
   })), h("button", {
-    "class": "btn btn-primary",
+    class: "btn btn-primary",
     onClick: this.handleClick
   }, "Login")));
   handleClick = () => {
@@ -563,7 +559,7 @@ const SvgCheck = () => h("svg", {
   "stroke-linecap": "round",
   "stroke-linejoin": "round",
   "stroke-width": "2",
-  "class": "icon svg-icon-check",
+  class: "icon svg-icon-check",
   viewBox: "0 0 24 24"
 }, h("path", {
   d: "M5 12l5 5L20 7"
@@ -575,7 +571,7 @@ const SvgX = () => h("svg", {
   "stroke-linecap": "round",
   "stroke-linejoin": "round",
   "stroke-width": "2",
-  "class": "icon svg-icon-x",
+  class: "icon svg-icon-x",
   viewBox: "0 0 24 24"
 }, h("path", {
   d: "M18 6L6 18M6 6l12 12"
@@ -587,7 +583,7 @@ const SvgArrowBack = () => h("svg", {
   "stroke-linecap": "round",
   "stroke-linejoin": "round",
   "stroke-width": "2",
-  "class": "icon svg-icon-arrow-back",
+  class: "icon svg-icon-arrow-back",
   viewBox: "0 0 24 24"
 }, h("path", {
   d: "M9 11l-4 4 4 4m-4-4h11a4 4 0 000-8h-1"
@@ -597,9 +593,9 @@ const Sidebar = ({
   handleClick,
   courses
 }) => h("div", {
-  "class": "outerSidebar"
+  class: "outerSidebar"
 }, h("div", {
-  "class": "sidebar"
+  class: "sidebar"
 }, courses.map(({
   id,
   name,
@@ -607,7 +603,7 @@ const Sidebar = ({
   isRemoved
 }) => h("div", {
   key: id,
-  "class": `row${isRemoved ? ' removed' : ''}`,
+  class: `row${isRemoved ? ' removed' : ''}`,
   onClick: e => {
     handleClick(e, id);
   }
@@ -627,16 +623,16 @@ class Main extends Component {
       replacedText
     } = selected;
     return h("div", {
-      "class": "outerMain"
+      class: "outerMain"
     }, h("div", {
-      "class": "main"
-    }, !loggedOut && [h("div", {
-      "class": "section-title"
+      class: "main"
+    }, !loggedOut && h(Fragment, null, h("div", {
+      class: "section-title"
     }, "Rename course"), h("div", {
-      "class": "replace-flex-inputs"
+      class: "replace-flex-inputs"
     }, h("div", null, typeof selected.text === 'string' ? `Selected: ${selected.text}` : 'Select course to the left'), h("input", {
       placeholder: isNullOrUndef(replacedText) ? 'Select course to the left' : `Reset text to ${selected.text}`,
-      "class": "replace-input",
+      class: "replace-input",
       onInput: handleInput,
       onKeyDown: handleKeyDown,
       value: replacedText,
@@ -645,9 +641,9 @@ class Main extends Component {
     }), h("button", {
       disabled: isNullOrUndef(selected.id),
       onClick: handleBtnClick,
-      "class": "btn-save"
-    }, "Save"))], loggedOut && h("div", {
-      "class": "replace-flex-input"
+      class: "btn-save"
+    }, "Save"))), loggedOut && h(Fragment, null, h("div", {
+      class: "replace-flex-input"
     }, h("h5", null, "Login"), h("input", {
       placeholder: "Username",
       ref: e => {
@@ -660,9 +656,9 @@ class Main extends Component {
       },
       type: "password"
     }), h("button", {
-      "class": "btn-save",
+      class: "btn-save",
       onClick: this.handleLoggedOutBtnClick
-    }, "Login"))));
+    }, "Login")))));
   };
   handleLoggedOutBtnClick = () => {
     const username = this.inputs.username.value.trim();
@@ -694,7 +690,7 @@ class SettingsPage extends Component {
     courses,
     loggedOut
   }) => h("div", {
-    "class": "container"
+    class: "container"
   }, h(Sidebar, {
     handleClick: this.handleSidebarClick,
     courses: courses

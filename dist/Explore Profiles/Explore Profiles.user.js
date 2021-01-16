@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles rest
-// @version      2021.01.15a
+// @version      2021.01.16a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
@@ -11,24 +11,22 @@
 // @run-at       document-start
 // @require      https://cdn.jsdelivr.net/npm/dayjs@1.10.3/dayjs.min.js
 // @require      https://cdn.jsdelivr.net/npm/dayjs@1.10.3/plugin/relativeTime.js
-// _@require     https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
 // @require      https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js
+// @require      https://cdn.jsdelivr.net/npm/dompurify@2.2.6/dist/purify.min.js
 // ==/UserScript==
 
 /* globals
-dayjs: false
-dayjs_plugin_relativeTime: false
-M: false */
-dayjs.extend(dayjs_plugin_relativeTime); // to switch forth and back between htmPreact and preact
-// /* globals htmPreact: false */
-// const { render, Component, html } = htmPreact;
-
-/* globals preact: false, html: false */
-
+  preact: false
+  dayjs: false
+  dayjs_plugin_relativeTime: false
+  DOMPurify: false
+  M: false
+*/
+dayjs.extend(dayjs_plugin_relativeTime);
 const {
   render,
   Component,
-  // eslint-disable-next-line no-unused-vars
+  Fragment,
   h
 } = preact;
 let USER_ID;
@@ -303,22 +301,22 @@ const runOnce = () => {
   GM_addStyle(`@keyframes epr-bounce{0%,80%,to{-webkit-transform:scale(0);transform:scale(0)}40%{-webkit-transform:scale(1);transform:scale(1)}}.epr-notification{width:100%;height:100%;z-index:10001;user-select:none;position:fixed;top:0;left:0;display:flex;justify-content:center;align-items:center}.epr-notification .epr-centered{border:2px solid #ced4da;background-color:#fff;border-radius:3px;padding:2% 4%}.epr-notification .epr-text-center{text-align:center}.epr-coloured{color:#1177d1}.epr-spinner{width:100%;text-align:center}.epr-spinner>div{width:18px;height:18px;background-color:currentColor;border-radius:100%;display:inline-block;-webkit-animation:epr-bounce 1.4s infinite ease-in-out both;animation:epr-bounce 1.4s infinite ease-in-out both}.epr-spinner .bounce1{animation-delay:-.32s}.epr-spinner .bounce2{animation-delay:-.16s}`);
   const buttons = document.createElement('div');
   buttons.classList.add('btn-group');
-  render([h("button", {
+  render(h(Fragment, null, h("button", {
     "data-action": "-1",
-    "class": "btn btn-secondary"
+    class: "btn btn-secondary"
   }, "Previous profile"), h("button", {
     "data-action": "1",
-    "class": "btn btn-secondary"
+    class: "btn btn-secondary"
   }, "Next profile"), h("button", {
     "data-action": "rand",
-    "class": "btn btn-secondary"
+    class: "btn btn-secondary"
   }, "Random profile"), h("button", {
     "data-action": "-10",
-    "class": "btn btn-secondary"
+    class: "btn btn-secondary"
   }, "-10 profiles"), h("button", {
     "data-action": "10",
-    "class": "btn btn-secondary"
-  }, "+10 profiles")], buttons);
+    class: "btn btn-secondary"
+  }, "+10 profiles")), buttons);
   buttons.addEventListener('click', fetchNewProfile);
   document.querySelector('ul.navbar-nav.d-none.d-md-flex').after(buttons);
   addEventListener('popstate', fetchNewProfile);
@@ -357,19 +355,19 @@ class Notification extends Component {
     from,
     to
   }) => from !== null && h("div", {
-    "class": "epr-notification"
+    class: "epr-notification"
   }, h("div", {
-    "class": "epr-centered"
+    class: "epr-centered"
   }, h("div", {
-    "class": "epr-spinner"
+    class: "epr-spinner"
   }, h("div", {
-    "class": "bounce1"
+    class: "bounce1"
   }), h("div", {
-    "class": "bounce2"
+    class: "bounce2"
   }), h("div", {
-    "class": "bounce3"
+    class: "bounce3"
   })), h("div", {
-    "class": "epr-text-center"
+    class: "epr-text-center"
   }, `Checking ${to === null ? from : Math.min(to, from)}`, to !== null && ` to ${Math.max(to, from)}`)));
 }
 
@@ -389,56 +387,56 @@ class Header extends Component {
     isContact,
     isUserProfile
   }) => h("div", {
-    "class": "col-12 pt-3 pb-3"
+    class: "col-12 pt-3 pb-3"
   }, h("div", {
-    "class": "card "
+    class: "card "
   }, h("div", {
-    "class": "card-body "
+    class: "card-body "
   }, h("div", {
-    "class": "d-flex align-items-center"
+    class: "d-flex align-items-center"
   }, h("div", {
-    "class": "mr-auto"
+    class: "mr-auto"
   }, h("div", {
-    "class": "page-context-header"
+    class: "page-context-header"
   }, h("div", {
-    "class": "page-header-image"
+    class: "page-header-image"
   }, h("a", {
     href: `https://moodle.ksasz.ch/user/profile.php?id=${id}`,
-    "class": "d-inline-block aabtn"
+    class: "d-inline-block aabtn"
   }, h("img", {
     src: image,
-    "class": "userpicture defaultuserpic",
+    class: "userpicture defaultuserpic",
     alt: `Picture of ${fullname}`,
     title: `Picture of ${fullname}`,
     width: "100",
     height: "100"
   }))), h("div", {
-    "class": "page-header-headings"
+    class: "page-header-headings"
   }, h("h1", null, fullname), h("h5", null, 'First accessed Moodle: ', h("span", {
-    "class": "epr-coloured"
+    class: "epr-coloured"
   }, dayjs.unix(firstaccess).format('ddd, D MMM YYYY HH:mm:ss'))), h("h5", null, 'Last accessed Moodle '
   /* for the trailing space*/
   , h("span", {
-    "class": "epr-coloured"
+    class: "epr-coloured"
   }, dayjs.unix(lastaccess).fromNow(false)), ' ago'
   /* for the leading space */
   )), h("div", {
-    "class": "btn-group header-button-group"
+    class: "btn-group header-button-group"
   }, h("a", {
     id: "message-user-button",
     role: "button",
     "data-conversationid": "0",
     "data-userid": id,
-    "class": "btn",
+    class: "btn",
     href: `https://moodle.ksasz.ch/message/index.php?id=${id}`
   }, h("span", null, h("i", {
-    "class": "icon fa fa-comment fa-fw iconsmall",
+    class: "icon fa fa-comment fa-fw iconsmall",
     title: "Message",
     "aria-label": "Message"
   }), h("span", {
-    "class": "header-button-title"
+    class: "header-button-title"
   }, "Message"))), h("span", {
-    "class": "sr-only sr-only-focusable",
+    class: "sr-only sr-only-focusable",
     "data-region": "jumpto",
     tabIndex: "-1"
   }), isUserProfile === false && h("a", {
@@ -446,50 +444,50 @@ class Header extends Component {
     "data-is-contact": isContact ? 1 : 0,
     id: "toggle-contact-button",
     role: "button",
-    "class": "ajax-contact-button btn",
+    class: "ajax-contact-button btn",
     href: `https://moodle.ksasz.ch/message/index.php?user1=${USER_ID}&user2=${id}&${isContact ? 'removecontact' : 'addcontact'}=${id}&sesskey=${M.cfg.sesskey}`
   }, h("span", null, isContact ? h("i", {
-    "class": "icon fa fa-user-times fa-fw iconsmall",
+    class: "icon fa fa-user-times fa-fw iconsmall",
     title: "Remove from contacts",
     "aria-label": "Remove from contacts"
   }) : h("i", {
-    "class": "icon fa fa-address-card fa-fw iconsmall",
+    class: "icon fa fa-address-card fa-fw iconsmall",
     title: "Add to contacts",
     "aria-label": "Add to contacts"
   }), h("span", {
-    "class": "header-button-title"
+    class: "header-button-title"
   }, isContact ? 'Remove from contacts' : 'Add to contacts')), h("span", {
-    "class": "loading-icon icon-no-margin"
+    class: "loading-icon icon-no-margin"
   }, h("i", {
-    "class": "icon fa fa-circle-o-notch fa-spin fa-fw ",
+    class: "icon fa fa-circle-o-notch fa-spin fa-fw ",
     title: "Loading",
     "aria-label": "Loading"
   })))))), h("div", {
-    "class": "header-actions-container flex-shrink-0",
+    class: "header-actions-container flex-shrink-0",
     "data-region": "header-actions-container"
   })), h("div", {
-    "class": "d-flex flex-wrap"
+    class: "d-flex flex-wrap"
   }, h("div", {
     id: "page-navbar"
   }, h("nav", {
     "aria-label": "Navigation bar"
   }, h("ol", {
-    "class": "breadcrumb"
+    class: "breadcrumb"
   }, h("li", {
-    "class": "breadcrumb-item"
+    class: "breadcrumb-item"
   }, h("a", {
     href: "https://moodle.ksasz.ch/"
   }, "Home")), h("li", {
-    "class": "breadcrumb-item"
+    class: "breadcrumb-item"
   }, "Users"), h("li", {
-    "class": "breadcrumb-item"
+    class: "breadcrumb-item"
   }, h("a", {
     href: `https://moodle.ksasz.ch/user/profile.php?id=${id}`,
     "aria-current": "page"
   }, fullname))))), h("div", {
-    "class": "ml-auto d-flex"
-  }, isUserProfile && [h("div", {
-    "class": "singlebutton"
+    class: "ml-auto d-flex"
+  }, isUserProfile && h(Fragment, null, h("div", {
+    class: "singlebutton"
   }, h("form", {
     method: "post",
     action: "https://moodle.ksasz.ch/user/profile.php"
@@ -511,11 +509,11 @@ class Header extends Component {
     value: M.cfg.sesskey
   }), h("button", {
     type: "submit",
-    "class": "btn btn-secondary",
+    class: "btn btn-secondary",
     id: "single_button5fcba57352eb71",
     title: ""
   }, "Reset page to default"))), h("div", {
-    "class": "singlebutton"
+    class: "singlebutton"
   }, h("form", {
     method: "post",
     action: "https://moodle.ksasz.ch/user/profile.php"
@@ -533,10 +531,10 @@ class Header extends Component {
     value: M.cfg.sesskey
   }), h("button", {
     type: "submit",
-    "class": "btn btn-secondary",
+    class: "btn btn-secondary",
     id: "single_button5fcba57352eb72",
     title: ""
-  }, "Customise this page")))]), h("div", {
+  }, "Customise this page"))))), h("div", {
     id: "course-header"
   })))));
 }
@@ -563,77 +561,78 @@ class Main extends Component {
     isUserProfile
   }) => h("section", {
     id: "region-main",
-    "class": "region-main-content",
+    class: "region-main-content",
     "aria-label": "Content"
   }, h("span", {
-    "class": "notifications",
+    class: "notifications",
     id: "user-notifications"
   }), h("div", {
     role: "main"
   }, h("span", {
     id: "maincontent"
   }), h("div", {
-    "class": "userprofile"
+    class: "userprofile"
   }, typeof description !== 'undefined' && description !== '' && h("div", {
-    "class": "description",
+    class: "description",
     dangerouslySetInnerHTML: {
-      __html: description
+      // eslint-disable-line react/no-danger
+      __html: DOMPurify.sanitize(description)
     }
   }), h("aside", {
     id: "block-region-content",
-    "class": "block-region",
+    class: "block-region",
     "data-blockregion": "content",
     "data-droptarget": "1"
   }), h("div", {
-    "class": "profile_tree"
+    class: "profile_tree"
   }, [email, country, city, url, interests].some(e => typeof e !== 'undefined') && h("section", {
-    "class": "node_category card d-inline-block w-100 mb-3"
+    class: "node_category card d-inline-block w-100 mb-3"
   }, h("div", {
-    "class": "card-body"
+    class: "card-body"
   }, h("h3", {
-    "class": "lead"
+    class: "lead"
   }, "User details"), h("ul", null, typeof email !== 'undefined' && h("li", {
-    "class": "contentnode"
+    class: "contentnode"
   }, h("dl", null, h("dt", null, "Email address"), h("dd", null, h("a", {
     href: `mailto:${encodeURIComponent(email)}`
   }, email)))), typeof country !== 'undefined' && h("li", {
-    "class": "contentnode"
+    class: "contentnode"
   }, h("dl", null, h("dt", null, "Country"), h("dd", null, country))), typeof city !== 'undefined' && h("li", {
-    "class": "contentnode"
+    class: "contentnode"
   }, h("dl", null, h("dt", null, "City/town"), h("dd", null, city))), typeof url !== 'undefined' && h("li", {
-    "class": "contentnode"
+    class: "contentnode"
   }, h("dl", null, h("dt", null, "Web page"), h("dd", null, h("a", {
     href: url,
     rel: "noopener noreferrer"
   }, url)))), typeof interests !== 'undefined' && h("li", {
-    "class": "contentnode"
+    class: "contentnode"
   }, h("dl", null, h("dt", null, "Interests"), h("dd", null, h("div", {
-    "class": "tag_list hideoverlimit "
+    class: "tag_list hideoverlimit "
   }, h("ul", {
-    "class": "inline-list"
-  }, interests.map((e, i) => h("li", {
-    key: i
+    class: "inline-list"
+  }, interests.map((interest, idx) => h("li", {
+    key: idx
   }, h("a", {
-    href: `https://moodle.ksasz.ch/tag/index.php?tag=${encodeURIComponent(e)}`,
-    "class": "badge badge-info"
-  }, e))))))))))), Array.isArray(courses) && courses.length > 0 && h("section", {
-    "class": "node_category card d-inline-block w-100 mb-3"
+    href: `https://moodle.ksasz.ch/tag/index.php?tag=${encodeURIComponent(interest)}`,
+    class: "badge badge-info"
+  }, interest))))))))))), Array.isArray(courses) && courses.length > 0 && h("section", {
+    class: "node_category card d-inline-block w-100 mb-3"
   }, h("div", {
-    "class": "card-body"
+    class: "card-body"
   }, h("h3", {
-    "class": "lead"
+    class: "lead"
   }, "Course details"), h("ul", null, h("li", {
-    "class": "contentnode"
+    class: "contentnode"
   }, h("dl", null, h("dt", null, "Course profiles"), h("dd", null, h("ul", null, courses.map(e => h("li", {
     key: e.id
   }, h("a", {
     href: `/user/view.php?id=${id}&course=${e.id}`
   }, e.coursename)))))))))), h("section", {
-    "class": "node_category card d-inline-block w-100 mb-3"
+    class: "node_category card d-inline-block w-100 mb-3"
   }, h("div", {
-    "class": "card-body"
+    class: "card-body"
   }, h("h3", {
-    "class": "lead"
+    class: "lead"
   }, "Miscellaneous"), h("ul", null, h("li", null, h("span", null, h("a", {
     href: `https://moodle.ksasz.ch/blog/index.php?userid=${id}`
   }, "View all blog entries"))), h("li", null, h("span", null, h("a", {
@@ -641,25 +640,25 @@ class Main extends Component {
   }, "Forum posts"))), h("li", null, h("span", null, h("a", {
     href: `https://moodle.ksasz.ch/mod/forum/user.php?id=${id}&mode=discussions`
   }, "Forum discussions")))))), isUserProfile && h("section", {
-    "class": "node_category card d-inline-block w-100 mb-3"
+    class: "node_category card d-inline-block w-100 mb-3"
   }, h("div", {
-    "class": "card-body"
+    class: "card-body"
   }, h("h3", {
-    "class": "lead"
+    class: "lead"
   }, "Reports"), h("ul", null, h("li", null, h("span", null, h("a", {
     href: "https://moodle.ksasz.ch/report/usersessions/user.php"
   }, "Browser sessions"))), h("li", null, h("span", null, h("a", {
     href: `https://moodle.ksasz.ch/grade/report/overview/index.php?userid=${USER_ID}&id=1`
   }, "Grades overview")))))), h("section", {
-    "class": "node_category card d-inline-block w-100 mb-3"
+    class: "node_category card d-inline-block w-100 mb-3"
   }, h("div", {
-    "class": "card-body"
+    class: "card-body"
   }, h("h3", {
-    "class": "lead"
+    class: "lead"
   }, "Login activity"), h("ul", null, typeof firstaccess !== 'undefined' && h("li", {
-    "class": "contentnode"
+    class: "contentnode"
   }, h("dl", null, h("dt", null, "First access to site"), h("dd", null, dayjs.unix(firstaccess).format('dddd, D MMMM YYYY, H:mm'), ' (', dayjs.unix(firstaccess).fromNow(false), ")"))), typeof lastaccess !== 'undefined' && h("li", {
-    "class": "contentnode"
+    class: "contentnode"
   }, h("dl", null, h("dt", null, "Last access to site"), h("dd", null, dayjs.unix(lastaccess).format('dddd, D MMMM YYYY, H:mm'), ' (', dayjs.unix(lastaccess).fromNow(false), ")"))))))))));
 }
 
@@ -679,8 +678,8 @@ class Sidebar extends Component {
       return undefined;
     }
 
-    return [h("p", {
-      "class": "tree_item branch",
+    return h(Fragment, null, h("p", {
+      class: "tree_item branch",
       role: "treeitem",
       "aria-expanded": "true",
       "aria-owns": "random5fcb9ae3999e64_group",
@@ -693,11 +692,11 @@ class Sidebar extends Component {
       role: "group",
       tabindex: "-1"
     }, h("li", {
-      "class": "type_user depth_3 contains_branch current_branch",
+      class: "type_user depth_3 contains_branch current_branch",
       "aria-labelledby": "label_3_35",
       tabindex: "-1"
     }, h("p", {
-      "class": "tree_item branch active_tree_node",
+      class: "tree_item branch active_tree_node",
       role: "treeitem",
       "aria-expanded": "true",
       "aria-owns": "random5fcb9ae3999e65_group",
@@ -711,11 +710,11 @@ class Sidebar extends Component {
       role: "group",
       tabindex: "-1"
     }, h("li", {
-      "class": "type_container depth_4 contains_branch",
+      class: "type_container depth_4 contains_branch",
       "aria-labelledby": "label_4_36",
       tabindex: "-1"
     }, h("p", {
-      "class": "tree_item branch",
+      class: "tree_item branch",
       role: "treeitem",
       "aria-expanded": "false",
       "aria-owns": "random5fcb9ae3999e66_group",
@@ -729,11 +728,11 @@ class Sidebar extends Component {
       "aria-hidden": "true",
       tabindex: "-1"
     }, h("li", {
-      "class": "type_custom depth_5 item_with_icon",
+      class: "type_custom depth_5 item_with_icon",
       "aria-labelledby": "label_5_37",
       tabindex: "-1"
     }, h("p", {
-      "class": "tree_item hasicon",
+      class: "tree_item hasicon",
       role: "treeitem",
       tabindex: "-1",
       "aria-selected": "false"
@@ -742,18 +741,18 @@ class Sidebar extends Component {
       id: "label_5_37",
       href: `https://moodle.ksasz.ch/blog/index.php?userid=${id}`
     }, h("i", {
-      "class": "icon fa fa-square fa-fw navicon",
+      class: "icon fa fa-square fa-fw navicon",
       "aria-hidden": "true",
       tabIndex: "-1"
     }), h("span", {
-      "class": "item-content-wrap",
+      class: "item-content-wrap",
       tabIndex: "-1"
     }, "View all entries by ", fullname)))))), h("li", {
-      "class": "type_setting depth_4 item_with_icon",
+      class: "type_setting depth_4 item_with_icon",
       "aria-labelledby": "label_4_38",
       tabindex: "-1"
     }, h("p", {
-      "class": "tree_item hasicon",
+      class: "tree_item hasicon",
       role: "treeitem",
       tabindex: "-1",
       "aria-selected": "false"
@@ -762,13 +761,13 @@ class Sidebar extends Component {
       id: "label_4_38",
       href: `https://moodle.ksasz.ch/message/index.php?user1=${USER_ID}&user2=${id}`
     }, h("i", {
-      "class": "icon fa fa-square fa-fw navicon",
+      class: "icon fa fa-square fa-fw navicon",
       "aria-hidden": "true",
       tabIndex: "-1"
     }), h("span", {
-      "class": "item-content-wrap",
+      class: "item-content-wrap",
       tabIndex: "-1"
-    }, "Messages")))))))];
+    }, "Messages"))))))));
   };
 }
 

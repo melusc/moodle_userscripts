@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v5
-// @version      2021.01.15a
+// @version      2021.01.16a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js
 // @include      *://moodle.ksasz.ch/
@@ -14,18 +14,14 @@
 // @grant        GM_addStyle
 // @grant        GM_notification
 // @run-at       document-start
-// _@require     https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
 // @require      https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js
 // ==/UserScript==
-// to switch forth and back between htmPreact and preact
-// const { render, Component, html } = htmPreact;
-// /* globals htmPreact: false */
 
-/* globals preact: false, html: false */
+/* globals preact: false */
 const {
   render,
   Component,
-  // eslint-disable-next-line no-unused-vars
+  Fragment,
   h
 } = preact;
 const MOODLE_ICON = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2074%2051%22%3E%3Cpath%20fill%3D%22%23f98012%22%20d%3D%22M61.9%2050.3V27.4c0-4.8-2-7.2-5.9-7.2-4%200-5.9%202.4-5.9%207.2v22.9H38.4V27.4c0-4.8-1.9-7.2-5.8-7.2-4%200-5.9%202.4-5.9%207.2v22.9H15V26.1c0-5%201.7-8.8%205.2-11.3%203-2.3%207.2-3.4%2012.4-3.4%205.3%200%209.2%201.4%2011.6%204.1%202.2-2.7%206.1-4.1%2011.8-4.1%205.2%200%209.3%201.1%2012.4%203.4%203.5%202.6%205.2%206.3%205.2%2011.3v24.3H61.9z%22%2F%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M37.6%209.5L49.2%201%2049%20.6C28.1%203.1%2018.6%204.9.7%2015.4l.2.5h1.4c-.1%201.4-.4%205-.1%2010.4-2%205.8%200%209.7%201.8%2014%20.3-4.4.3-9.3-1.1-14.1-.3-5.3%200-8.8.1-10.2h11.9s-.1%203.6.4%207c10.7%203.7%2021.4%200%2027.1-9.2-1.7-1.9-4.8-4.3-4.8-4.3z%22%2F%3E%3C%2Fsvg%3E';
@@ -195,19 +191,19 @@ const SettingsPage = (() => {
         inputText
       } = {}
     }) {
-      return [h("div", {
-        "class": "container"
+      return h(Fragment, null, h("div", {
+        class: "container"
       }, h("div", {
-        "class": "table-center"
+        class: "table-center"
       }, h("div", {
-        "class": "grid-buttons"
+        class: "grid-buttons"
       }, h(ButtonGrid, {
         day: DAYS[activeDay],
         handleSave: this.handleSave,
         saveButtonRef: this.saveButtonRef,
         handleClick: this.handleCaretClick
       })), h("div", {
-        "class": "main-table",
+        class: "main-table",
         onKeyDown: this.handleTableKeyDown,
         onInput: this.handleTableInput,
         onClick: this.handleTableClick
@@ -215,14 +211,13 @@ const SettingsPage = (() => {
         content: tables[activeDay],
         handleFocus: this.handleTableFocus
       }), h("div", {
-        "class": "row-icon-add-row"
+        class: "row-gicon-add-row"
       }, h("div", {
-        "class": "icon-add-row",
+        class: "icon-add-row",
         onClick: this.createRow
-      }, h(SvgIconAdd, null)))))), notNullOrUndef(top) // if top isn't null none are
-      // && idInput.textContent.trim() === ''
+      }, h(SvgIconAdd, null)))))), typeof top === 'number' // if top is type num all are
       && h("div", {
-        "class": "suggestions",
+        class: "suggestions",
         style: {
           transform: `translate(${left}px, ${top + height}px)`
         },
@@ -236,16 +231,16 @@ const SettingsPage = (() => {
         const after = name.slice(index + inputText.length);
         return h("div", {
           key: id,
-          "class": "suggestion",
+          class: "suggestion",
           "data-id": id
         }, h("div", {
-          "class": "suggestion-name"
+          class: "suggestion-name"
         }, before, h("span", {
-          "class": "emphasised"
+          class: "emphasised"
         }, name.slice(index, index + inputText.length)), after), h("div", {
-          "class": "suggestion-id"
+          class: "suggestion-id"
         }, id));
-      }))];
+      })));
     }
 
     handleSuggestionsClick = e => {
@@ -276,49 +271,54 @@ const SettingsPage = (() => {
         });
       }
     };
-    componentDidMount = async () => {
-      addEventListener('click', this.handleTableFocus);
-      const userid = await getUserId();
-      const token = await login();
-      const bodyParams = new URLSearchParams();
-      bodyParams.set('requests[0][function]', 'core_enrol_get_users_courses');
-      bodyParams.set('requests[0][arguments]', `{"userid":"${userid}","returnusercount":false}`);
-      bodyParams.set('wsfunction', 'tool_mobile_call_external_functions');
-      bodyParams.set('wstoken', token);
-      const responseJSON = await fetch('/webservice/rest/server.php?moodlewsrestformat=json', {
-        method: 'POST',
-        body: bodyParams.toString(),
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded'
-        }
-      }).then(e => e.json());
 
-      if (responseJSON.hasOwnProperty('exception')) {
-        return this.componentDidMount();
-      }
+    fetchCourses() {
+      Promise.all([getUserId(), login()]).then(([userid, token]) => {
+        const bodyParams = new URLSearchParams();
+        bodyParams.set('requests[0][function]', 'core_enrol_get_users_courses');
+        bodyParams.set('requests[0][arguments]', `{"userid":"${userid}","returnusercount":false}`);
+        bodyParams.set('wsfunction', 'tool_mobile_call_external_functions');
+        bodyParams.set('wstoken', token);
+        fetch('/webservice/rest/server.php?moodlewsrestformat=json', {
+          method: 'POST',
+          body: bodyParams.toString(),
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded'
+          }
+        }).then(e => e.json()).then(responseJSON => {
+          if (responseJSON.hasOwnProperty('exception')) {
+            return this.componentDidMount();
+          }
 
-      const data = JSON.parse(responseJSON.responses[0].data);
-      const courses = [];
+          const data = JSON.parse(responseJSON.responses[0].data);
+          const courses = [];
 
-      for (let i = 0, l = data.length; i < l; ++i) {
-        courses[i] = {
-          id: data[i].id,
-          name: data[i].fullname,
-          uuid: generateUUIDv4()
-        };
-      }
+          for (let i = 0, l = data.length; i < l; ++i) {
+            courses[i] = {
+              id: data[i].id,
+              name: data[i].fullname,
+              uuid: generateUUIDv4()
+            };
+          }
 
-      this.setState({
-        courses
+          this.setState({
+            courses
+          });
+          return undefined;
+        });
       });
+    }
+
+    componentDidMount = () => {
+      addEventListener('click', this.handleTableFocus);
       addEventListener('keydown', e => {
-        if (e.ctrlKey && e.keyCode === 83) {
+        if (e.ctrlKey && e.key === 's') {
           e.preventDefault();
           e.stopImmediatePropagation();
           this.handleSave();
         }
       });
-      return undefined;
+      this.fetchCourses();
     };
     filterCourses = (arr, inputText) => {
       const returnArr = [];
@@ -791,19 +791,19 @@ class ButtonGrid extends Component {
     saveButtonRef,
     day
   }) {
-    return [h("div", {
-      "class": "day-controls",
+    return h(Fragment, null, h("div", {
+      class: "day-controls",
       onClick: handleClick
     }, h("div", {
-      "class": "caret-input caret-back"
+      class: "caret-input caret-back"
     }, h(SvgIconCaretBack, null)), h("div", null, day), h("div", {
-      "class": "caret-input caret-forward"
+      class: "caret-input caret-forward"
     }, h(SvgIconCaretForward, null))), h("button", {
-      "class": "save-button",
+      class: "save-button",
       onClick: handleSave,
       ref: saveButtonRef,
       onAnimationEnd: this.removeAnimation
-    }, "Save")];
+    }, "Save"));
   }
 
   removeAnimation = ({
@@ -845,47 +845,42 @@ const SvgIconAdd = () => h("svg", {
   d: "M256 112v288m144-144H112"
 }));
 
-class Table extends Component {
-  render({
-    content,
-    handleFocus
-  }) {
-    return h("div", {
-      "class": "table",
-      onFocus: handleFocus
-    }, content?.map(({
-      from,
-      to,
-      content,
-      id,
-      fromvalid,
-      tovalid,
-      uuid
-    }) => h("div", {
-      key: uuid,
-      "class": "table-row"
-    }, h("div", {
-      "class": "table-cell time"
-    }, h("span", {
-      "class": `time-input time-from${timeStringIsValid(from) && fromvalid !== false ? '' : ' invalid-input'}`,
-      contentEditable: true
-    }, from), "-", h("span", {
-      "class": `time-input time-to${timeStringIsValid(to) && tovalid !== false ? '' : ' invalid-input'}`,
-      contentEditable: true
-    }, to)), h("div", {
-      "class": "table-cell entry"
-    }, h("span", {
-      contentEditable: true,
-      "data-type": "content"
-    }, " ", content, " "), h("hr", null), h("span", {
-      contentEditable: true,
-      "data-type": "id"
-    }, " ", id, " ")), h("div", {
-      "class": "table-cell remove-row"
-    }, h(SvgIconX, null)))));
-  }
-
-}
+const Table = ({
+  content,
+  handleFocus
+}) => h("div", {
+  class: "table",
+  onFocus: handleFocus
+}, content?.map(({
+  from,
+  to,
+  content,
+  id,
+  fromvalid,
+  tovalid,
+  uuid
+}) => h("div", {
+  key: uuid,
+  class: "table-row"
+}, h("div", {
+  class: "table-cell time"
+}, h("span", {
+  class: `time-input time-from${timeStringIsValid(from) && fromvalid !== false ? '' : ' invalid-input'}`,
+  contentEditable: true
+}, from), "-", h("span", {
+  class: `time-input time-to${timeStringIsValid(to) && tovalid !== false ? '' : ' invalid-input'}`,
+  contentEditable: true
+}, to)), h("div", {
+  class: "table-cell entry"
+}, h("span", {
+  contentEditable: true,
+  "data-type": "content"
+}, content), h("hr", null), h("span", {
+  contentEditable: true,
+  "data-type": "id"
+}, id)), h("div", {
+  class: "table-cell remove-row"
+}, h(SvgIconX, null)))));
 
 const generateUUIDv4 = a => a ? (a ^ Math.random() * 16 >> a / 4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, generateUUIDv4);
 
@@ -1018,66 +1013,64 @@ const FrontPage = (() => {
     }) {
       const isWeekend = currentDay === 0 || currentDay === 6;
       return h("div", null, h("div", {
-        "class": "mod-indent-outer"
+        class: "mod-indent-outer"
       }, h("div", {
-        "class": "contentwithoutlink"
+        class: "contentwithoutlink"
       }, h("div", {
-        "class": "no-overflow"
+        class: "no-overflow"
       }, h("hr", null), h("div", null, h("div", {
-        "class": "tt-title"
+        class: "tt-title"
       }, "Timetable"), h("div", {
-        "class": "tt-table"
+        class: "tt-table"
       }, h("div", {
-        "class": "tt-tbody"
+        class: "tt-tbody"
       }, !isWeekend && isHoliday === false && type === BEFORELESSONS && h(TimetableRow, {
         values: {
           content: 'No lesson'
         },
         isNow: true
       }), !isWeekend && isHoliday === false && type === AFTERLESSONS && h("div", {
-        "class": "tt-title"
+        class: "tt-title"
       }, "No school anymore"), isWeekend && isHoliday === false && h("div", {
-        "class": "tt-title"
+        class: "tt-title"
       }, "Weekend"), isHoliday && h("div", {
-        "class": "tt-title"
+        class: "tt-title"
       }, "Holiday"), !isWeekend && isEmpty === false && isHoliday === false && (type === BEFORELESSONS || type === DURINGLESSONS) && tableRows?.map((curVal, idx) => curVal && h(TimetableRow, {
         key: curVal.uuid,
         values: curVal,
         isNow: idx === 0
-      })), isEmpty && !isWeekend && ["Today's timetable is empty, you can update it", h("a", {
+      })), isEmpty && !isWeekend && h(Fragment, null, "Today's timetable is empty, you can update it", h("a", {
         href: "/timetable/v5",
         rel: "noopener noreferrer",
         target: "_blank"
-      }, "here")]))), h("hr", null)))));
+      }, "here"))))), h("hr", null)))));
     }
 
   };
 })();
 
-class TimetableRow extends Component {
-  render = ({
-    values,
-    isNow
-  }) => {
-    const {
-      from,
-      to,
-      id,
-      content
-    } = values ?? {};
-    return typeof values === 'object' && h("div", {
-      "class": "tt-tr"
-    }, h("div", {
-      "class": "tt-th"
-    }, isNow ? 'Now' : 'Next', from && to && ` (${parseTimeToString(from)} - ${parseTimeToString(to)})`, ":"), h("div", {
-      "class": "tt-td"
-    }, typeof id === 'string' ? h("a", {
-      href: `/course/view.php?id=${id}`,
-      target: "_blank",
-      rel: "noopener noreferrer"
-    }, content) : content ?? 'Free lesson'));
-  };
-}
+const TimetableRow = ({
+  values,
+  isNow
+}) => {
+  const {
+    from,
+    to,
+    id,
+    content
+  } = values ?? {};
+  return typeof values === 'object' && h("div", {
+    class: "tt-tr"
+  }, h("div", {
+    class: "tt-th"
+  }, isNow ? 'Now' : 'Next', from && to && ` (${parseTimeToString(from)} - ${parseTimeToString(to)})`, ":"), h("div", {
+    class: "tt-td"
+  }, typeof id === 'string' ? h("a", {
+    href: `/course/view.php?id=${id}`,
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, content) : content ?? 'Free lesson'));
+};
 
 const notNullOrUndef = val => val !== null && val !== undefined;
 

@@ -18,6 +18,6 @@ To run these you need to have tampermonkey, greasemonkey or similar installed.
 
 # About
 
-Currently, all these userscripts are written in es6, using [preact](https://github.com/preactjs/preact) and [htm](https://github.com/developit/htm).
+Currently, all these userscripts are written in es6 and jsx using [preact](https://github.com/preactjs/preact).
 
 If settings are required for use, they are accessible by clicking "Open settings" in menu.

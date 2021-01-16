@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Custom Icons Preact
-// @version      2021.01.14a
+// @version      2021.01.16a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include      *://moodle.ksasz.ch/*
@@ -20,7 +20,7 @@ const {
   render,
   Component,
   html,
-  // eslint-disable-next-line no-unused-vars
+  Fragment,
   h
 } = htmPreact;
 const errors = {
@@ -198,7 +198,7 @@ class SettingsPage extends Component {
     inputStates,
     notificationString
   }) => h("div", {
-    "class": "container"
+    class: "container"
   }, h(Sidebar, {
     courses: courses,
     handleClick: this.handleSidebarClick,
@@ -211,7 +211,7 @@ class SettingsPage extends Component {
     handleSave: this.handleSave,
     inputRefs: this.inputRefs,
     blur: `${notNullOrUndef(notificationString)}`
-  }), notNullOrUndef(notificationString) && h(Notification, {
+  }), notificationString && h(Notification, {
     handleClick: this.handleNotificationClick,
     notificationString: notificationString
   }));
@@ -653,51 +653,49 @@ const logout = (removeCredentials = false) => {
   }
 };
 
-class Sidebar extends Component {
-  render = ({
-    blur,
-    courses,
-    handleClick
-  }) => h("div", {
-    "data-blur": blur,
-    "class": "outer-sidebar",
-    onClick: handleClick
-  }, h("div", {
-    "class": "sidebar"
-  }, courses?.map(({
-    id,
-    dataURI,
-    name,
-    isXML,
-    rawXML
-  }) => [" ", h("div", {
-    "class": "row",
-    "data-id": id,
-    key: id
-  }, typeof isXML === 'boolean' && [" ", isXML ? h("span", {
-    "class": "icon"
-  }, html([rawXML])) : h("img", {
-    "class": "icon",
-    src: dataURI
-  }), h(SvgX, {
-    type: "del-icon"
-  })], h("span", null, name))])));
-}
+const Sidebar = ({
+  blur,
+  courses,
+  handleClick
+}) => h("div", {
+  "data-blur": blur,
+  class: "outer-sidebar",
+  onClick: handleClick
+}, h("div", {
+  class: "sidebar"
+}, courses?.map(({
+  id,
+  dataURI,
+  name,
+  isXML,
+  rawXML
+}) => h("div", {
+  class: "row",
+  "data-id": id,
+  key: id
+}, typeof isXML === 'boolean' && h(Fragment, null, isXML ? h("span", {
+  class: "icon"
+}, html([rawXML])) : h("img", {
+  class: "icon",
+  src: dataURI
+}), h(SvgX, {
+  type: "del-icon"
+})), h("span", null, name)))));
 
 class Notification extends Component {
   render = ({
     handleClick,
     notificationString
-  }) => [" ", h("div", {
+  }) => h("div", {
     onClick: handleClick,
-    "class": "outer-notification"
+    class: "outer-notification"
   }, h("div", {
-    "class": "inner-notification"
+    class: "inner-notification"
   }, h(SvgX, {
     type: "close"
   }), h("div", {
-    "class": "notification-string"
-  }, notificationString)))];
+    class: "notification-string"
+  }, notificationString)));
 
   componentDidMount() {
     scroll({
@@ -716,7 +714,7 @@ const SvgX = props => h("svg", {
   "stroke-linejoin": "round",
   "stroke-width": "2",
   "data-svg-type": props.type,
-  "class": "svg-icon svg-icon-x",
+  class: "svg-icon svg-icon-x",
   viewBox: "0 0 24 24",
   onClick: props.handleClick
 }, h("path", {
@@ -762,15 +760,15 @@ class Main extends Component {
       fileVal
     } = inputStates;
     return h("div", {
-      "class": "outer-main",
+      class: "outer-main",
       "data-blur": blur
     }, h("div", {
-      "class": "main",
+      class: "main",
       onInput: handleInput
-    }, h("h2", null, "Modify existing or add an icon"), h("div", null, notNullOrUndef(dataURI) && (isXML ? html([rawXML]) : h("img", {
+    }, h("h2", null, "Modify existing or add an icon"), h("div", null, dataURI && (isXML ? html([rawXML]) : h("img", {
       src: dataURI,
-      "class": "icon"
-    })), h("span", null, notNullOrUndef(name) ? name : 'Select course on left')), h("h3", null, "Upload image from URL"), h("input", {
+      class: "icon"
+    })), h("span", null, name ?? 'Select course on left')), h("h3", null, "Upload image from URL"), h("input", {
       type: "url",
       placeholder: "Image url",
       URL: true,
@@ -814,7 +812,7 @@ class Main extends Component {
       disabled: curId === id
     }, curName))), h("button", {
       onClick: handleSave,
-      "class": "btn-save"
+      class: "btn-save"
     }, "Save")));
   };
   clearFile = e => {

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Unconfirmed Marks Preact
-// @version      2021.01.15a
+// @version      2021.01.16a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/
 // @include      *://moodle.ksasz.ch/?*
@@ -12,18 +12,13 @@
 // @grant        GM_deleteValue
 // @run-at       document-start
 // @connect      www.schul-netz.com
-// _@require     https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js
 // @require      https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js
 // ==/UserScript==
-// to switch forth and back between htmPreact and preact
-// const { render, Component, html } = htmPreact;
-// /* globals htmPreact: false */
 
-/* globals preact: false, html: false */
+/* globals preact: false */
 const {
   render,
   Component,
-  // eslint-disable-next-line no-unused-vars
   h
 } = preact;
 
@@ -40,7 +35,7 @@ const init = () => {
 
 const SvgCircleNotch = () => h("svg", {
   "aria-hidden": "true",
-  "class": "ucmr-circle-notch ucmr-spin",
+  class: "ucmr-circle-notch ucmr-spin",
   viewBox: "0 0 512 512"
 }, h("path", {
   fill: "currentColor",
@@ -67,11 +62,11 @@ class SchulNetzMarks extends Component {
     errorMsg,
     loggedOut
   }) => h("div", {
-    "class": "mod-indent-outer"
+    class: "mod-indent-outer"
   }, h("div", {
-    "class": "contentwithoutlink"
+    class: "contentwithoutlink"
   }, h("div", {
-    "class": "ucmr-title"
+    class: "ucmr-title"
   }, "Unconfirmed Marks"), loading && !error && h(SvgCircleNotch, null), !loggedOut && !error && Array.isArray(marks) && h("div", null, Array.isArray(marks) && marks.map(({
     key,
     course,
@@ -80,19 +75,19 @@ class SchulNetzMarks extends Component {
     mark
   }) => h("div", {
     key: key,
-    "class": "ucmr-row"
+    class: "ucmr-row"
   }, h("div", {
-    "class": "ucmr-course"
+    class: "ucmr-course"
   }, course), h("div", {
-    "class": "ucmr-name"
+    class: "ucmr-name"
   }, name), h("div", {
-    "class": "ucmr-date"
+    class: "ucmr-date"
   }, date), h("div", {
-    "class": "ucmr-mark"
+    class: "ucmr-mark"
   }, mark)))), loggedOut && h("div", {
-    "class": "login"
+    class: "login"
   }, h("input", {
-    "class": "form-control",
+    class: "form-control",
     required: true,
     ref: e => {
       this.inputs.login = e;
@@ -100,7 +95,7 @@ class SchulNetzMarks extends Component {
     placeholder: "Username",
     type: "text"
   }), h("input", {
-    "class": "form-control",
+    class: "form-control",
     required: true,
     ref: e => {
       this.inputs.password = e;
@@ -108,7 +103,7 @@ class SchulNetzMarks extends Component {
     placeholder: "Password",
     type: "password"
   }), h("input", {
-    "class": "form-control",
+    class: "form-control",
     required: true,
     ref: e => {
       this.inputs.page = e;
@@ -116,10 +111,10 @@ class SchulNetzMarks extends Component {
     placeholder: "Page (ausserschwyz, einsiedeln...)",
     type: "text"
   }), h("button", {
-    "class": "btn btn-primary",
+    class: "btn btn-primary",
     onclick: this.handleLogin
   }, "Save")), !loggedOut && marks === false && h("div", null, "Sie haben alle Noten best\xE4tigt."), error && h("div", {
-    "class": "ucmr-error"
+    class: "ucmr-error"
   }, errorMsg ?? 'Something went wrong')));
   handleLogin = () => {
     const login = this.inputs.login.value;
@@ -139,6 +134,10 @@ class SchulNetzMarks extends Component {
   };
 
   componentDidMount() {
+    this.checkCredentials();
+  }
+
+  checkCredentials() {
     const login = GM_getValue('login');
     const password = GM_getValue('password');
     const page = GM_getValue('page');

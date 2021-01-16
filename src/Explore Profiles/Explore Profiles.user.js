@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles rest
-// @version      2021.01.15a
+// @version      2021.01.16a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
@@ -11,25 +11,24 @@
 // @run-at       document-start
 // @require      __dayjs_jsd
 // @require      __dayjs_relativeTime_jsd
-// _@require     __htmPreact_jsd
 // @require      __preact_jsd
+// @require      __DOMPurify_jsd
 // ==/UserScript==
+
 /* globals
-dayjs: false
-dayjs_plugin_relativeTime: false
-M: false */
+  preact: false
+  dayjs: false
+  dayjs_plugin_relativeTime: false
+  DOMPurify: false
+  M: false
+*/
+
 dayjs.extend( dayjs_plugin_relativeTime );
 
-// to switch forth and back between htmPreact and preact
-
-// /* globals htmPreact: false */
-// const { render, Component, html } = htmPreact;
-
-/* globals preact: false, html: false */
 const {
   render,
   Component,
-  // eslint-disable-next-line no-unused-vars
+  Fragment,
   h,
 } = preact;
 
@@ -41,7 +40,7 @@ const runOnce = () => {
   const notification = document.createElement( 'div' );
 
   render(
-    html`<${ Notification } />`,
+    <Notification />,
     notification
   );
   document.body.append( notification );
@@ -62,13 +61,13 @@ const runOnce = () => {
     type=text/css rel=stylesheet/>`,
     document.head
   ); */
-  GM_addStyle( '<INJECT_FILE path="Explore Profiles/style.css"/>' );
+  GM_addStyle( '<INJECT_FILE {"path": "dist/Explore Profiles/style.css", "quotes": true} />' );
 
   const buttons = document.createElement( 'div' );
   buttons.classList.add( 'btn-group' );
 
   render(
-    html`
+    <>
       <button data-action="-1" class="btn btn-secondary">
         Previous profile
       </button>
@@ -78,7 +77,7 @@ const runOnce = () => {
       </button>
       <button data-action="-10" class="btn btn-secondary">-10 profiles</button>
       <button data-action="10" class="btn btn-secondary">+10 profiles</button>
-    `,
+    </>,
     buttons
   );
 
@@ -127,27 +126,27 @@ class Notification extends Component {
   render = (
     _props, { from, to }
   ) => from !== null
-    && html`<div class="epr-notification">
+    && <div class="epr-notification">
       <div class="epr-centered">
         <div class="epr-spinner">
-          <div class="bounce1"></div>
-          <div class="bounce2"></div>
-          <div class="bounce3"></div>
+          <div class="bounce1" />
+          <div class="bounce2" />
+          <div class="bounce3" />
         </div>
         <div class="epr-text-center">
-          ${ `Checking ${ to === null
-      ? from
-      : Math.min(
-        to,
-        from
-      ) }` }${ to
-            !== null && ` to ${ Math.max(
-        to,
-        from
-      ) }` }
+          { `Checking ${ to === null
+            ? from
+            : Math.min(
+              to,
+              from
+            ) }` }
+          { to !== null && ` to ${ Math.max(
+            to,
+            from
+          ) }` }
         </div>
       </div>
-    </div>`;
+    </div>;
 }
 
 class Header extends Component {
@@ -162,7 +161,7 @@ class Header extends Component {
   render = (
     _props,
     { id, image, fullname, firstaccess, lastaccess, isContact, isUserProfile }
-  ) => html`<div class="col-12 pt-3 pb-3">
+  ) => <div class="col-12 pt-3 pb-3">
     <div class="card ">
       <div class="card-body ">
         <div class="d-flex align-items-center">
@@ -170,35 +169,35 @@ class Header extends Component {
             <div class="page-context-header">
               <div class="page-header-image">
                 <a
-                  href=${ `https://moodle.ksasz.ch/user/profile.php?id=${ id }` }
+                  href={ `https://moodle.ksasz.ch/user/profile.php?id=${ id }` }
                   class="d-inline-block aabtn"
                 >
                   <img
-                    src=${ image }
+                    src={ image }
                     class="userpicture defaultuserpic"
-                    alt=${ `Picture of ${ fullname }` }
-                    title=${ `Picture of ${ fullname }` }
+                    alt={ `Picture of ${ fullname }` }
+                    title={ `Picture of ${ fullname }` }
                     width="100"
                     height="100"
                   />
                 </a>
               </div>
               <div class="page-header-headings">
-                <h1>${ fullname }</h1>
+                <h1>{ fullname }</h1>
                 <h5>
-                  ${ 'First accessed Moodle: ' }
+                  { 'First accessed Moodle: ' }
                   <span class="epr-coloured">
-                    ${ dayjs
-    .unix( firstaccess )
-    .format( 'ddd, D MMM YYYY HH:mm:ss' ) }
+                    { dayjs
+                      .unix( firstaccess )
+                      .format( 'ddd, D MMM YYYY HH:mm:ss' ) }
                   </span>
                 </h5>
                 <h5>
-                  ${ 'Last accessed Moodle ' /* for the trailing space*/ }
+                  { 'Last accessed Moodle ' /* for the trailing space*/ }
                   <span class="epr-coloured">
-                    ${ dayjs.unix( lastaccess ).fromNow( false ) }
+                    { dayjs.unix( lastaccess ).fromNow( false ) }
                   </span>
-                  ${ ' ago' /* for the leading space */ }
+                  { ' ago' /* for the leading space */ }
                 </h5>
               </div>
               <div class="btn-group header-button-group">
@@ -206,9 +205,9 @@ class Header extends Component {
                   id="message-user-button"
                   role="button"
                   data-conversationid="0"
-                  data-userid=${ id }
+                  data-userid={ id }
                   class="btn"
-                  href=${ `https://moodle.ksasz.ch/message/index.php?id=${ id }` }
+                  href={ `https://moodle.ksasz.ch/message/index.php?id=${ id }` }
                 >
                   <span>
                     <i
@@ -225,37 +224,37 @@ class Header extends Component {
                   tabIndex="-1"
                 />
 
-                ${ isUserProfile === false
-                && html`<a
-                  data-userid=${ id }
-                  data-is-contact=${ isContact
-                  ? 1
-                  : 0 }
+                { isUserProfile === false
+                && <a
+                  data-userid={ id }
+                  data-is-contact={ isContact
+                    ? 1
+                    : 0 }
                   id="toggle-contact-button"
                   role="button"
                   class="ajax-contact-button btn"
-                  href=${ `https://moodle.ksasz.ch/message/index.php?user1=${ USER_ID }&user2=${ id }&${
+                  href={ `https://moodle.ksasz.ch/message/index.php?user1=${ USER_ID }&user2=${ id }&${
                     isContact
                       ? 'removecontact'
                       : 'addcontact'
                   }=${ id }&sesskey=${ M.cfg.sesskey }` }
                 >
                   <span>
-                    ${ isContact
-                    ? html`<i
-                          class="icon fa fa-user-times fa-fw iconsmall"
-                          title="Remove from contacts"
-                          aria-label="Remove from contacts"
-                        />`
-                    : html`<i
-                          class="icon fa fa-address-card fa-fw iconsmall"
-                          title="Add to contacts"
-                          aria-label="Add to contacts"
-                        />` }
+                    { isContact
+                      ? <i
+                        class="icon fa fa-user-times fa-fw iconsmall"
+                        title="Remove from contacts"
+                        aria-label="Remove from contacts"
+                      />
+                      : <i
+                        class="icon fa fa-address-card fa-fw iconsmall"
+                        title="Add to contacts"
+                        aria-label="Add to contacts"
+                      /> }
                     <span class="header-button-title">
-                      ${ isContact
-                      ? 'Remove from contacts'
-                      : 'Add to contacts' }
+                      { isContact
+                        ? 'Remove from contacts'
+                        : 'Add to contacts' }
                     </span>
                   </span>
                   <span class="loading-icon icon-no-margin">
@@ -265,7 +264,7 @@ class Header extends Component {
                       aria-label="Loading"
                     />
                   </span>
-                </a>` }
+                </a> }
               </div>
             </div>
           </div>
@@ -286,60 +285,60 @@ class Header extends Component {
 
                 <li class="breadcrumb-item">
                   <a
-                    href=${ `https://moodle.ksasz.ch/user/profile.php?id=${ id }` }
+                    href={ `https://moodle.ksasz.ch/user/profile.php?id=${ id }` }
                     aria-current="page"
                   >
-                    ${ fullname }
+                    { fullname }
                   </a>
                 </li>
               </ol>
             </nav>
           </div>
           <div class="ml-auto d-flex">
-            ${ isUserProfile
-            && html`<div class="singlebutton">
-                <form
-                  method="post"
-                  action="https://moodle.ksasz.ch/user/profile.php"
+            { isUserProfile
+            && <><div class="singlebutton">
+              <form
+                method="post"
+                action="https://moodle.ksasz.ch/user/profile.php"
+              >
+                <input type="hidden" name="edit" value="1" />
+                <input type="hidden" name="reset" value="1" />
+                <input type="hidden" name="id" value={ USER_ID } />
+                <input type="hidden" name="sesskey" value={ M.cfg.sesskey } />
+                <button
+                  type="submit"
+                  class="btn btn-secondary"
+                  id="single_button5fcba57352eb71"
+                  title=""
                 >
-                  <input type="hidden" name="edit" value="1" />
-                  <input type="hidden" name="reset" value="1" />
-                  <input type="hidden" name="id" value=${ USER_ID } />
-                  <input type="hidden" name="sesskey" value=${ M.cfg.sesskey } />
-                  <button
-                    type="submit"
-                    class="btn btn-secondary"
-                    id="single_button5fcba57352eb71"
-                    title=""
-                  >
                     Reset page to default
-                  </button>
-                </form>
-              </div>
-              <div class="singlebutton">
-                <form
-                  method="post"
-                  action="https://moodle.ksasz.ch/user/profile.php"
+                </button>
+              </form>
+            </div>
+            <div class="singlebutton">
+              <form
+                method="post"
+                action="https://moodle.ksasz.ch/user/profile.php"
+              >
+                <input type="hidden" name="edit" value="1" />
+                <input type="hidden" name="id" value={ USER_ID } />
+                <input type="hidden" name="sesskey" value={ M.cfg.sesskey } />
+                <button
+                  type="submit"
+                  class="btn btn-secondary"
+                  id="single_button5fcba57352eb72"
+                  title=""
                 >
-                  <input type="hidden" name="edit" value="1" />
-                  <input type="hidden" name="id" value=${ USER_ID } />
-                  <input type="hidden" name="sesskey" value=${ M.cfg.sesskey } />
-                  <button
-                    type="submit"
-                    class="btn btn-secondary"
-                    id="single_button5fcba57352eb72"
-                    title=""
-                  >
                     Customise this page
-                  </button>
-                </form>
-              </div>` }
+                </button>
+              </form>
+            </div></> }
           </div>
           <div id="course-header" />
         </div>
       </div>
     </div>
-  </div>`;
+  </div>;
 }
 
 class Main extends Component {
@@ -367,7 +366,7 @@ class Main extends Component {
       lastaccess,
       isUserProfile,
     }
-  ) => html`<section
+  ) => <section
     id="region-main"
     class="region-main-content"
     aria-label="Content"
@@ -376,14 +375,14 @@ class Main extends Component {
     <div role="main">
       <span id="maincontent" />
       <div class="userprofile">
-        ${ typeof description !== 'undefined'
+        { typeof description !== 'undefined'
         && description !== ''
-        && html`<div
+        && <div
           class="description"
-          dangerouslySetInnerHTML=${ {
-          __html: description,
-        } }
-        />` }
+          dangerouslySetInnerHTML={ { // eslint-disable-line react/no-danger
+            __html: DOMPurify.sanitize( description ),
+          } }
+        /> }
         <aside
           id="block-region-content"
           class="block-region"
@@ -391,73 +390,73 @@ class Main extends Component {
           data-droptarget="1"
         />
         <div class="profile_tree">
-          ${ [ email, country, city, url, interests ].some( e => typeof e !== 'undefined' )
-          && html`<section class="node_category card d-inline-block w-100 mb-3">
+          { [ email, country, city, url, interests ].some( e => typeof e !== 'undefined' )
+          && <section class="node_category card d-inline-block w-100 mb-3">
             <div class="card-body">
               <h3 class="lead">User details</h3>
               <ul>
-                ${ typeof email !== 'undefined'
-                && html`<li class="contentnode">
+                { typeof email !== 'undefined'
+                && <li class="contentnode">
                   <dl>
                     <dt>Email address</dt>
                     <dd>
-                      <a href=${ `mailto:${ encodeURIComponent( email ) }` }>
-                        ${ email }
+                      <a href={ `mailto:${ encodeURIComponent( email ) }` }>
+                        { email }
                       </a>
                     </dd>
                   </dl>
-                </li>` }
-                ${ typeof country !== 'undefined'
-                && html`<li class="contentnode">
+                </li> }
+                { typeof country !== 'undefined'
+                && <li class="contentnode">
                   <dl>
                     <dt>Country</dt>
-                    <dd>${ country }</dd>
+                    <dd>{ country }</dd>
                   </dl>
-                </li>` }
-                ${ typeof city !== 'undefined'
-                && html`<li class="contentnode">
+                </li> }
+                { typeof city !== 'undefined'
+                && <li class="contentnode">
                   <dl>
                     <dt>City/town</dt>
-                    <dd>${ city }</dd>
+                    <dd>{ city }</dd>
                   </dl>
-                </li>` }
-                ${ typeof url !== 'undefined'
-                && html`<li class="contentnode">
+                </li> }
+                { typeof url !== 'undefined'
+                && <li class="contentnode">
                   <dl>
                     <dt>Web page</dt>
                     <dd>
-                      <a href=${ url } rel="noopener noreferrer">${ url }</a>
+                      <a href={ url } rel="noopener noreferrer">{ url }</a>
                     </dd>
                   </dl>
-                </li>` }
-                ${ typeof interests !== 'undefined'
-                && html`<li class="contentnode">
+                </li> }
+                { typeof interests !== 'undefined'
+                && <li class="contentnode">
                   <dl>
                     <dt>Interests</dt>
                     <dd>
                       <div class="tag_list hideoverlimit ">
                         <ul class="inline-list">
-                          ${ interests.map( (
-                  e, i
-                ) => html`<li key=${ i }>
-                              <a
-                                href=${ `https://moodle.ksasz.ch/tag/index.php?tag=${ encodeURIComponent( e ) }` }
-                                class="badge badge-info"
-                              >
-                                ${ e }
-                              </a>
-                            </li>` ) }
+                          { interests.map( (
+                            interest, idx
+                          ) => <li key={ idx }>
+                            <a
+                              href={ `https://moodle.ksasz.ch/tag/index.php?tag=${ encodeURIComponent( interest ) }` }
+                              class="badge badge-info"
+                            >
+                              { interest }
+                            </a>
+                          </li> ) }
                         </ul>
                       </div>
                     </dd>
                   </dl>
-                </li>` }
+                </li> }
               </ul>
             </div>
-          </section>` }
-          ${ Array.isArray( courses )
+          </section> }
+          { Array.isArray( courses )
           && courses.length > 0
-          && html`<section class="node_category card d-inline-block w-100 mb-3">
+          && <section class="node_category card d-inline-block w-100 mb-3">
             <div class="card-body">
               <h3 class="lead">Course details</h3>
               <ul>
@@ -466,18 +465,18 @@ class Main extends Component {
                     <dt>Course profiles</dt>
                     <dd>
                       <ul>
-                        ${ courses.map( e => html`<li key=${ e.id }>
-                            <a href=${ `/user/view.php?id=${ id }&course=${ e.id }` }>
-                              ${ e.coursename }
-                            </a>
-                          </li>` ) }
+                        { courses.map( e => <li key={ e.id }>
+                          <a href={ `/user/view.php?id=${ id }&course=${ e.id }` }>
+                            { e.coursename }
+                          </a>
+                        </li> ) }
                       </ul>
                     </dd>
                   </dl>
                 </li>
               </ul>
             </div>
-          </section>` }
+          </section> }
           <section class="node_category card d-inline-block w-100 mb-3">
             <div class="card-body">
               <h3 class="lead">Miscellaneous</h3>
@@ -485,7 +484,7 @@ class Main extends Component {
                 <li>
                   <span>
                     <a
-                      href=${ `https://moodle.ksasz.ch/blog/index.php?userid=${ id }` }
+                      href={ `https://moodle.ksasz.ch/blog/index.php?userid=${ id }` }
                     >
                       View all blog entries
                     </a>
@@ -494,7 +493,7 @@ class Main extends Component {
                 <li>
                   <span>
                     <a
-                      href=${ `https://moodle.ksasz.ch/mod/forum/user.php?id=${ id }` }
+                      href={ `https://moodle.ksasz.ch/mod/forum/user.php?id=${ id }` }
                     >
                       Forum posts
                     </a>
@@ -503,7 +502,7 @@ class Main extends Component {
                 <li>
                   <span>
                     <a
-                      href=${ `https://moodle.ksasz.ch/mod/forum/user.php?id=${ id }&mode=discussions` }
+                      href={ `https://moodle.ksasz.ch/mod/forum/user.php?id=${ id }&mode=discussions` }
                     >
                       Forum discussions
                     </a>
@@ -512,8 +511,8 @@ class Main extends Component {
               </ul>
             </div>
           </section>
-          ${ isUserProfile
-          && html`<section class="node_category card d-inline-block w-100 mb-3">
+          { isUserProfile
+          && <section class="node_category card d-inline-block w-100 mb-3">
             <div class="card-body">
               <h3 class="lead">Reports</h3>
               <ul>
@@ -529,7 +528,7 @@ class Main extends Component {
                 <li>
                   <span>
                     <a
-                      href=${ `https://moodle.ksasz.ch/grade/report/overview/index.php?userid=${ USER_ID }&id=1` }
+                      href={ `https://moodle.ksasz.ch/grade/report/overview/index.php?userid=${ USER_ID }&id=1` }
                     >
                       Grades overview
                     </a>
@@ -537,42 +536,42 @@ class Main extends Component {
                 </li>
               </ul>
             </div>
-          </section>` }
+          </section> }
           <section class="node_category card d-inline-block w-100 mb-3">
             <div class="card-body">
               <h3 class="lead">Login activity</h3>
               <ul>
-                ${ typeof firstaccess !== 'undefined'
-                && html`<li class="contentnode">
+                { typeof firstaccess !== 'undefined'
+                && <li class="contentnode">
                   <dl>
                     <dt>First access to site</dt>
                     <dd>
-                      ${ dayjs
-                  .unix( firstaccess )
-                  .format( 'dddd, D MMMM YYYY, H:mm' ) }
-                      ${ ' (' }${ dayjs.unix( firstaccess ).fromNow( false ) })
+                      { dayjs
+                        .unix( firstaccess )
+                        .format( 'dddd, D MMMM YYYY, H:mm' ) }
+                      { ' (' }{ dayjs.unix( firstaccess ).fromNow( false ) })
                     </dd>
                   </dl>
-                </li>` }
-                ${ typeof lastaccess !== 'undefined'
-                && html`<li class="contentnode">
+                </li> }
+                { typeof lastaccess !== 'undefined'
+                && <li class="contentnode">
                   <dl>
                     <dt>Last access to site</dt>
                     <dd>
-                      ${ dayjs
-                  .unix( lastaccess )
-                  .format( 'dddd, D MMMM YYYY, H:mm' ) }
-                      ${ ' (' }${ dayjs.unix( lastaccess ).fromNow( false ) })
+                      { dayjs
+                        .unix( lastaccess )
+                        .format( 'dddd, D MMMM YYYY, H:mm' ) }
+                      { ' (' }{ dayjs.unix( lastaccess ).fromNow( false ) })
                     </dd>
                   </dl>
-                </li>` }
+                </li> }
               </ul>
             </div>
           </section>
         </div>
       </div>
     </div>
-  </section>`;
+  </section>;
 }
 
 class Sidebar extends Component {
@@ -590,114 +589,114 @@ class Sidebar extends Component {
     if ( isUserProfile ) {
       return undefined;
     }
-    return html`<p
-        class="tree_item branch"
-        role="treeitem"
-        aria-expanded="true"
-        aria-owns="random5fcb9ae3999e64_group"
+    return <><p
+      class="tree_item branch"
+      role="treeitem"
+      aria-expanded="true"
+      aria-owns="random5fcb9ae3999e64_group"
+      tabindex="-1"
+      aria-selected="false"
+    >
+      <span tabIndex="-1" id="label_2_34">Users</span>
+    </p>
+    <ul role="group" tabindex="-1">
+      <li
+        class="type_user depth_3 contains_branch current_branch"
+        aria-labelledby="label_3_35"
         tabindex="-1"
-        aria-selected="false"
       >
-        <span tabIndex="-1" id="label_2_34">Users</span>
-      </p>
-      <ul role="group" tabindex="-1">
-        <li
-          class="type_user depth_3 contains_branch current_branch"
-          aria-labelledby="label_3_35"
+        <p
+          class="tree_item branch active_tree_node"
+          role="treeitem"
+          aria-expanded="true"
+          aria-owns="random5fcb9ae3999e65_group"
           tabindex="-1"
+          aria-selected="false"
         >
-          <p
-            class="tree_item branch active_tree_node"
-            role="treeitem"
-            aria-expanded="true"
-            aria-owns="random5fcb9ae3999e65_group"
+          <a
             tabindex="-1"
-            aria-selected="false"
+            id="label_3_35"
+            href={ `https://moodle.ksasz.ch/user/profile.php?id=${ id }` }
           >
-            <a
+            { fullname }
+          </a>
+        </p>
+        <ul role="group" tabindex="-1">
+          <li
+            class="type_container depth_4 contains_branch"
+            aria-labelledby="label_4_36"
+            tabindex="-1"
+          >
+            <p
+              class="tree_item branch"
+              role="treeitem"
+              aria-expanded="false"
+              aria-owns="random5fcb9ae3999e66_group"
               tabindex="-1"
-              id="label_3_35"
-              href=${ `https://moodle.ksasz.ch/user/profile.php?id=${ id }` }
+              aria-selected="false"
             >
-              ${ fullname }
-            </a>
-          </p>
-          <ul role="group" tabindex="-1">
-            <li
-              class="type_container depth_4 contains_branch"
-              aria-labelledby="label_4_36"
-              tabindex="-1"
-            >
-              <p
-                class="tree_item branch"
-                role="treeitem"
-                aria-expanded="false"
-                aria-owns="random5fcb9ae3999e66_group"
+              <span tabIndex="-1" id="label_4_36">Blogs</span>
+            </p>
+            <ul role="group" aria-hidden="true" tabindex="-1">
+              <li
+                class="type_custom depth_5 item_with_icon"
+                aria-labelledby="label_5_37"
                 tabindex="-1"
-                aria-selected="false"
               >
-                <span tabIndex="-1" id="label_4_36">Blogs</span>
-              </p>
-              <ul role="group" aria-hidden="true" tabindex="-1">
-                <li
-                  class="type_custom depth_5 item_with_icon"
-                  aria-labelledby="label_5_37"
+                <p
+                  class="tree_item hasicon"
+                  role="treeitem"
                   tabindex="-1"
+                  aria-selected="false"
                 >
-                  <p
-                    class="tree_item hasicon"
-                    role="treeitem"
+                  <a
                     tabindex="-1"
-                    aria-selected="false"
+                    id="label_5_37"
+                    href={ `https://moodle.ksasz.ch/blog/index.php?userid=${ id }` }
                   >
-                    <a
-                      tabindex="-1"
-                      id="label_5_37"
-                      href=${ `https://moodle.ksasz.ch/blog/index.php?userid=${ id }` }
-                    >
-                      <i
-                        class="icon fa fa-square fa-fw navicon"
-                        aria-hidden="true"
-                        tabIndex="-1"
-                      />
-                      <span class="item-content-wrap" tabIndex="-1">
-                        View all entries by ${ fullname }
-                      </span>
-                    </a>
-                  </p>
-                </li>
-              </ul>
-            </li>
-            <li
-              class="type_setting depth_4 item_with_icon"
-              aria-labelledby="label_4_38"
+                    <i
+                      class="icon fa fa-square fa-fw navicon"
+                      aria-hidden="true"
+                      tabIndex="-1"
+                    />
+                    <span class="item-content-wrap" tabIndex="-1">
+                        View all entries by { fullname }
+                    </span>
+                  </a>
+                </p>
+              </li>
+            </ul>
+          </li>
+          <li
+            class="type_setting depth_4 item_with_icon"
+            aria-labelledby="label_4_38"
+            tabindex="-1"
+          >
+            <p
+              class="tree_item hasicon"
+              role="treeitem"
               tabindex="-1"
+              aria-selected="false"
             >
-              <p
-                class="tree_item hasicon"
-                role="treeitem"
+              <a
                 tabindex="-1"
-                aria-selected="false"
+                id="label_4_38"
+                href={ `https://moodle.ksasz.ch/message/index.php?user1=${ USER_ID }&user2=${ id }` }
               >
-                <a
-                  tabindex="-1"
-                  id="label_4_38"
-                  href=${ `https://moodle.ksasz.ch/message/index.php?user1=${ USER_ID }&user2=${ id }` }
-                >
-                  <i
-                    class="icon fa fa-square fa-fw navicon"
-                    aria-hidden="true"
-                    tabIndex="-1"
-                  />
-                  <span class="item-content-wrap" tabIndex="-1">
+                <i
+                  class="icon fa fa-square fa-fw navicon"
+                  aria-hidden="true"
+                  tabIndex="-1"
+                />
+                <span class="item-content-wrap" tabIndex="-1">
                     Messages
-                  </span>
-                </a>
-              </p>
-            </li>
-          </ul>
-        </li>
-      </ul>`;
+                </span>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </li>
+    </ul></>;
   };
 }
 
@@ -881,11 +880,11 @@ const fetchNewProfile = async e => {
     clearNode( regionMainBox );
 
     render(
-      html`<${ Main } />`,
+      <Main />,
       regionMainBox
     );
     render(
-      html`<${ Header } />`,
+      <Header />,
       pageHeader
     );
     let li = document.querySelector( 'li[aria-labelledby="label_2_34"]' )
@@ -907,7 +906,7 @@ const fetchNewProfile = async e => {
       document.querySelector( 'li[aria-labelledby="label_2_4"]' ).after( li );
     }
     render(
-      html`<${ Sidebar } />`,
+      <Sidebar />,
       li
     );
   }
