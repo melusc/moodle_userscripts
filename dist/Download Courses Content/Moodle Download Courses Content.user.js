@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Download Course's Content
-// @version      2021.01.16e
+// @version      2021.01.16f
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js
@@ -32,6 +32,11 @@ const init = () => {
     saveButton.addEventListener('click', initDownload);
   }
 };
+
+const padStart = d => `${d}`.padStart(2, '0'); // https://en.wikipedia.org/wiki/Filename
+
+
+const sanitizeFileName = str => str.replace(/[/\\?%*:|"<>]/g, '_');
 
 const initDownload = (event, noChache = false) => {
   event.preventDefault();
@@ -72,9 +77,9 @@ const initDownload = (event, noChache = false) => {
       for (let i = 0; i < jsonPageContent.length; ++i) {
         const section = jsonPageContent[i];
         const {
-          modules,
-          name: sectionName
+          modules
         } = section;
+        const sectionName = sanitizeFileName(section.name);
 
         for (let j = 0; j < modules.length; ++j) {
           const module = modules[j];
@@ -86,15 +91,15 @@ const initDownload = (event, noChache = false) => {
             const {
               contents
             } = module;
-            const folderName = module.name;
+            const folderName = sanitizeFileName(module.name);
 
             for (let k = 0; k < contents.length; ++k) {
               const content = contents[k];
               const {
                 fileurl,
-                filename,
                 filepath
               } = content;
+              const filename = sanitizeFileName(content.filename);
               const date = new Date(content.timemodified * 1000);
               let zipFileName;
 
@@ -144,9 +149,6 @@ const initDownload = (event, noChache = false) => {
       }
 
       const date = new Date();
-
-      const padStart = d => `${d}`.padStart(2, '0');
-
       zipFile.generateAsync({
         type: 'blob',
         compression: 'DEFLATE',
