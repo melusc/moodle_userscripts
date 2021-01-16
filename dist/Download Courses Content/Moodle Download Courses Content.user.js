@@ -154,15 +154,13 @@ const initDownload = (event, noChache = false) => {
           level: 9
         },
         comment: 'https://github.com/melusc/moodle_userscripts'
-      }, ({
-        percent
-      }) => {
-        target.textContent = `${percent.toFixed(2)}%`;
+      }, metadata => {
+        target.textContent = `${metadata.percent.toFixed(2)}%`;
       }).then(blob => {
         saveAs(blob, `course-${courseId}_${date.getFullYear()}${padStart(date.getMonth() + 1)}${padStart(date.getDate())}-${padStart(date.getHours())}${padStart(date.getMinutes())}${padStart(date.getSeconds())}.zip`);
         target.disabled = false;
         target.textContent = 'Save contents to zip';
-      });
+      }, console.error);
       return undefined;
     });
   });
