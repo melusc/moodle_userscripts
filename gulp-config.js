@@ -9,20 +9,34 @@ exports.paths = {
 };
 
 exports.dynamicVars = [
-  [ /'<INJECT_FILE path="(?<path>.+)" ?\/>'/g,
+  [ /(?:'|")<INJECT_FILE\s(?<json>{.+})\s?\/>(?:'|")/g,
     (
       match, ...args
     ) => {
-      const { path } = args.pop();
-
+      const groups = args.pop();
+      let json;
       try {
-        return `\`${ fs.readFileSync(
-          `${ __dirname }\\dist\\${ path }`,
-          'utf8'
-        ) }\``;
+        json = JSON.parse( groups.json );
       }
       catch {
-        console.error( `"/dist/${ path }" doesn't exist.` );
+        console.error( 'Invalid json' );
+        return match;
+      }
+      const path = `${ __dirname }\\${ json.path }`;
+      const quotes = Boolean( json.quotes );
+
+      try {
+        const file = fs.readFileSync(
+          path,
+          'utf8'
+        );
+        if ( quotes ) {
+          return `\`${ file }\``;
+        }
+        return file;
+      }
+      catch {
+        console.error( `"${ path }" doesn't exist.` );
         return match;
       }
     } ],

@@ -55,8 +55,7 @@ function compSCSS() {
 
 function compJS() {
   const progress = src( paths.js )
-    .pipe( cache( 'javascript' ) )
-    .pipe( babel() );
+    .pipe( cache( 'javascript' ) );
 
   for ( const [ replacer, replacement ] of dynamicVars ) {
     progress.pipe( replace(
@@ -66,6 +65,7 @@ function compJS() {
   }
 
   return progress
+    .pipe( babel() )
     .pipe( dest( paths.dest ) );
 }
 
