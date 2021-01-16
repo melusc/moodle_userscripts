@@ -26,12 +26,9 @@ exports.dynamicVars = [
         return match;
       }
     } ],
-  [ '__preact_jsd',
-    'https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js' ],
-  [ '__htmPreact_jsd',
-    'https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js' ],
-  [ '__dayjs_jsd',
-    'https://cdn.jsdelivr.net/npm/dayjs@1.10.3/dayjs.min.js' ],
-  [ '__dayjs_relativeTime_jsd',
-    'https://cdn.jsdelivr.net/npm/dayjs@1.10.3/plugin/relativeTime.js' ],
+  [ '__preact_jsd', 'https://cdn.jsdelivr.net/npm/preact@10.5.10/dist/preact.min.js' ],
+  [ '__htmPreact_jsd', 'https://cdn.jsdelivr.net/npm/htm@3.0.4/preact/standalone.umd.js' ],
+  [ '__dayjs_jsd', 'https://cdn.jsdelivr.net/npm/dayjs@1.10.3/dayjs.min.js' ],
+  [ '__dayjs_relativeTime_jsd', 'https://cdn.jsdelivr.net/npm/dayjs@1.10.3/plugin/relativeTime.js' ],
+  [ '__dompurify_jsd', 'https://cdn.jsdelivr.net/npm/dompurify@2.2.6/dist/purify.min.js' ],
 ];
