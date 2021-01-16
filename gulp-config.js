@@ -45,4 +45,6 @@ exports.dynamicVars = [
   [ '__dayjs_jsd', 'https://cdn.jsdelivr.net/npm/dayjs@1.10.3/dayjs.min.js' ],
   [ '__dayjs_relativeTime_jsd', 'https://cdn.jsdelivr.net/npm/dayjs@1.10.3/plugin/relativeTime.js' ],
   [ '__DOMPurify_jsd', 'https://cdn.jsdelivr.net/npm/dompurify@2.2.6/dist/purify.min.js' ],
+  [ '__JSZip_jsd', 'https://cdn.jsdelivr.net/npm/jszip@3.5.0/dist/jszip.min.js' ],
+  [ '__FileSaver_jsd', 'https://cdn.jsdelivr.net/npm/filesaver.js@1.3.4/FileSaver.min.js' ],
 ];
