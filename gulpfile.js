@@ -54,17 +54,17 @@ function compSCSS() {
 }
 
 function compJS() {
-  const progress = src( paths.js )
+  const result = src( paths.js )
     .pipe( cache( 'javascript' ) );
 
   for ( const [ replacer, replacement ] of dynamicVars ) {
-    progress.pipe( replace(
+    result.pipe( replace(
       replacer,
       replacement
     ) );
   }
 
-  return progress
+  return result
     .pipe( babel() )
     .pipe( dest( paths.dest ) );
 }
