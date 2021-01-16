@@ -5,7 +5,7 @@
     "greasemonkey": true
   },
   "plugins": ["@babel"],
-  "extends": ["eslint:recommended"],
+  "extends": ["preact"],
   "globals": {
     "GM_addValueChangeListener": true,
     "GM_notification": true
