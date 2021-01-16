@@ -293,8 +293,11 @@ const runOnce = () => {
   // this number only really matters for rand anyway
   );
   /* render(
-    html`<link href="http://localhost:5000/Explore%20Profiles/style.css"
-    type=text/css rel=stylesheet/>`,
+    <link
+      href="http://localhost:5000/Explore%20Profiles/style.css"
+      type="text/css"
+      rel="stylesheet"
+    />,
     document.head
   ); */
 
