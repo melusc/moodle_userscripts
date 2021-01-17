@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Unconfirmed Marks Preact
-// @version      2021.01.17a
+// @version      2021.01.17b
 // @author       lusc
 // @include      *://moodle.ksasz.ch/
 // @include      *://moodle.ksasz.ch/?*
@@ -132,6 +132,8 @@ class SchulNetzMarks extends Component {
       && <div>Sie haben alle Noten bestätigt.</div> }
       { error
       && <div class="ucmr-error">{ errorMsg ?? 'Something went wrong' }</div> }
+
+      <hr />
     </div>
   </div>;
 
