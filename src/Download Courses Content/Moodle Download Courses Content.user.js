@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Download Course's Content
-// @version      2021.01.16f
+// @version      2021.01.17a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js
@@ -11,14 +11,15 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-start
 // @connect      *
-// @require      __preact_jsd
-// @require      __JSZip_jsd
-// @require      __FileSaver_jsd
+// _@require      __preact_jsd
+// _@require      __JSZip_jsd
+// _@require      __FileSaver_jsd
 // ==/UserScript==
 
-/* globals preact: false, JSZip: false, saveAs: false */
-
-const { render, h, Component } = preact;
+import { render, h, Component } from 'preact';
+import saveAs from 'file-saver';
+import JSZip from 'jszip/dist/jszip';
+import style from './style.scss';
 
 const init = () => {
   if ( !document.querySelector( '#region-main div.errorbox.alert.alert-danger' ) ) {
@@ -345,7 +346,7 @@ const getCredentials = () => new Promise( resolve => {
         div
       );
 
-      GM_addStyle( '<INJECT_FILE {"path": "dist/Download Courses Content/style.css", "quotes": true} />' );
+      GM_addStyle( style );
     }
   }
 } );

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Custom Icons Preact
-// @version      2021.01.16a
+// @version      2021.01.17a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include      *://moodle.ksasz.ch/*
@@ -12,17 +12,11 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @run-at       document-start
-// @require      __htmPreact_jsd
 // ==/UserScript==
 
-/* globals htmPreact: false */
-const {
-  render,
-  Component,
-  html,
-  Fragment,
-  h,
-} = htmPreact;
+import { render, Component, html, h } from 'htm/preact';
+import { Fragment } from 'preact';
+import style from './style.scss';
 
 const errors = {
   error: Error( 'An error occured' ),
@@ -238,7 +232,7 @@ const initSettingspage = () => {
 
   document.title = 'Custom Icons Preact Setup';
 
-  GM_addStyle( '<INJECT_FILE {"path": "dist/Custom Icons/style.css", "quotes": true} />' );
+  GM_addStyle( style );
 
   const icon = document.createElement( 'link' );
 

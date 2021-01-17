@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Unconfirmed Marks Preact
-// @version      2021.01.16a
+// @version      2021.01.17a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/
 // @include      *://moodle.ksasz.ch/?*
@@ -12,15 +12,14 @@
 // @grant        GM_deleteValue
 // @run-at       document-start
 // @connect      www.schul-netz.com
-// @require      __preact_jsd
 // ==/UserScript==
 
-/* globals preact: false */
-const {
+import {
   render,
   Component,
-  h,
-} = preact;
+  h
+} from 'preact';
+import style from './style.scss';
 
 const init = () => {
   const main = document.querySelector( '#region-main ul.section' );
@@ -39,7 +38,7 @@ const init = () => {
     li
   );
 
-  GM_addStyle( '<INJECT_FILE {"path": "dist/Unconfirmed Marks/style.css", "quotes": true} />' );
+  GM_addStyle( style );
 };
 
 const SvgCircleNotch = () => <svg

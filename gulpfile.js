@@ -1,17 +1,14 @@
-const { src, dest, watch, series, parallel } = require( 'gulp' );
-const csso = require( 'gulp-csso' );
-const babel = require( 'gulp-babel' );
+const { src, dest, watch } = require( 'gulp' );
 const svgmin = require( 'gulp-svgmin' );
-const rename = require( 'gulp-rename' );
-const replace = require( 'gulp-replace' );
 const cache = require( 'gulp-cached' );
-const sass = require( 'gulp-sass' );
+const rename = require( 'gulp-rename' );
 
 const del = require( 'del' );
 
-const { paths, dynamicVars } = require( './gulp-config' );
-
-sass.compiler = require( 'sass' );
+const paths = {
+  svg: [ './src/**/*.svg', '!./src/**/*.min.svg' ],
+  svgDest: './src',
+};
 
 function clean() {
   return del(
@@ -20,53 +17,13 @@ function clean() {
   );
 }
 
-const build = parallel(
-  minSvg,
-  series(
-    compSCSS,
-    compJS
-  )
-);
-
 function start() {
-  build();
-
-  watch(
-    [ ...paths.js, ...paths.scss ],
-    series(
-      compSCSS,
-      compJS
-    )
-  );
+  minSvg();
 
   watch(
     paths.svg,
     minSvg
   );
-}
-
-function compSCSS() {
-  return src( paths.scss )
-    .pipe( cache( 'scss' ) )
-    .pipe( sass() )
-    .pipe( csso() )
-    .pipe( dest( paths.dest ) );
-}
-
-function compJS() {
-  const result = src( paths.js )
-    .pipe( cache( 'javascript' ) );
-
-  for ( const [ replacer, replacement ] of dynamicVars ) {
-    result.pipe( replace(
-      replacer,
-      replacement
-    ) );
-  }
-
-  return result
-    .pipe( babel() )
-    .pipe( dest( paths.dest ) );
 }
 
 function minSvg() {
@@ -114,9 +71,6 @@ function minSvg() {
     .pipe( dest( paths.svgDest ) );
 }
 
-exports.default = exports.build = build;
+exports.default = exports.start = start;
 exports.minSvg = minSvg;
-exports.compJS = compJS;
-exports.compSCSS = compSCSS;
-exports.start = start;
 exports.clean = clean;

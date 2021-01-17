@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles rest
-// @version      2021.01.16a
+// @version      2021.01.17a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
@@ -9,23 +9,20 @@
 // @grant        GM_getValue
 // @grant        GM_deleteValue
 // @run-at       document-start
-// @require      __dayjs_jsd
-// @require      __dayjs_relativeTime_jsd
-// @require      __preact_jsd
-// @require      __DOMPurify_jsd
 // ==/UserScript==
 
 /* globals
-  preact: false
-  dayjs: false
-  dayjs_plugin_relativeTime: false
-  DOMPurify: false
   M: false
 */
 
-dayjs.extend( dayjs_plugin_relativeTime );
+import dayjs from 'dayjs';
+import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime';
+import DOMPurify from 'dompurify';
+import style from './style.scss';
 
-const { render, Component, Fragment, h } = preact;
+dayjs.extend( dayjsPluginRelativeTime );
+
+import { render, Component, Fragment, h } from 'preact';
 
 let USER_ID;
 let CONTACTS;
@@ -59,7 +56,7 @@ const runOnce = () => {
     />,
     document.head
   ); */
-  GM_addStyle( '<INJECT_FILE {"path": "dist/Explore Profiles/style.css", "quotes": true} />' );
+  GM_addStyle( style );
 
   const buttons = document.createElement( 'div' );
   buttons.classList.add( 'btn-group' );

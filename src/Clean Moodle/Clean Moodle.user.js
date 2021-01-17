@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.16a
+// @version      2021.01.17a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -11,16 +11,12 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_addValueChangeListener
 // @run-at       document-start
-// @require      __preact_jsd
 // ==/UserScript==
 
-/* globals preact: false */
-const {
-  render,
-  Component,
-  Fragment,
-  h,
-} = preact;
+import frontPageCss from './frontpage.scss';
+import settingsPageCss from './settingspage.scss';
+
+import { render, Component, Fragment, h } from 'preact';
 
 if ( location.protocol !== 'https:' ) {
   location.protocol = 'https:';
@@ -611,7 +607,7 @@ const getCredentials = () => new Promise( resolve => {
           div
         );
 
-        GM_addStyle( '<INJECT_FILE {"path": "dist/Clean Moodle/frontpage.css", "quotes": true} />' );
+        GM_addStyle( frontPageCss );
       }
     }
     else {
@@ -727,7 +723,7 @@ const initSettingsPage = () => {
   link.href = '/theme/image.php/classic/theme/1588340020/favicon';
   document.head.append( link );
 
-  GM_addStyle( '<INJECT_FILE {"path": "dist/Clean Moodle/settingspage.css", "quotes": true} />' );
+  GM_addStyle( settingsPageCss );
 
   /* const style = document.createElement( 'link' );
   style.rel = 'stylesheet';

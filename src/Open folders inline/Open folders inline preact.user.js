@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle open folders inline preact
-// @version      2021.01.16b
+// @version      2021.01.17a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
@@ -8,17 +8,13 @@
 // @grant        GM_getValue
 // @grant        GM_addStyle
 // @run-at       document-start
-// @require      __preact_jsd
 // ==/UserScript==
 
-/* globals preact: false */
-const {
-  render,
-  Fragment,
-  h,
-} = preact;
+import { render, Fragment, h } from 'preact';
 
-GM_addStyle( '<INJECT_FILE {"path": "dist/Open folders inline/style.css", "quotes": true} />' );
+import style from './style.scss';
+
+GM_addStyle( style );
 
 const init = () => {
   document
