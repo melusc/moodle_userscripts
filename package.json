@@ -19,6 +19,7 @@
     "@babel/eslint-parser": "^7.12.1",
     "@babel/eslint-plugin": "^7.12.1",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-syntax-class-properties": "^7.12.1",
     "babel-loader": "^8.2.2",
     "babel-plugin-htm": "^3.0.0",
     "babel-preset-preact": "^2.0.0",
