@@ -18,6 +18,16 @@ module.exports = {
     ),
     filename: '[name].user.js',
   },
+  cache: {
+    type: 'filesystem',
+    cacheDirectory: path.resolve(
+      __dirname,
+      '.temp_cache'
+    ),
+    buildDependencies: {
+      config: [ __filename ],
+    },
+  },
   optimization: {
     usedExports: true,
     minimize: true,
