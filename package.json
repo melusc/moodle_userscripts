@@ -7,7 +7,8 @@
     "start": "gulp start",
     "clean": "gulp clean",
     "webpack": "webpack -c prod.config.js",
-    "webpack:w": "webpack -c prod.config.js -w"
+    "webpack:w": "webpack -c prod.config.js -w",
+    "build": "npm run clean && npm run webpack"
   },
   "sideEffects": false,
   "author": "",
