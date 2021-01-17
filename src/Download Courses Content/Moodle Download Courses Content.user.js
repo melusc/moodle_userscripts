@@ -11,9 +11,6 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-start
 // @connect      *
-// _@require      __preact_jsd
-// _@require      __JSZip_jsd
-// _@require      __FileSaver_jsd
 // ==/UserScript==
 
 import { render, h, Component } from 'preact';
