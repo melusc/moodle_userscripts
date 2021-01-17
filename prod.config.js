@@ -55,9 +55,7 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              plugins: [
-                '@babel/plugin-proposal-class-properties',
-              ],
+              plugins: [ '@babel/plugin-proposal-class-properties' ],
               presets: [ 'preact' ],
             },
           },
@@ -66,11 +64,12 @@ module.exports = {
       {
         test: /\.scss$/,
         type: 'asset/source',
-        use: [ 'sass-loader' ],
+        use: [ 'csso-loader', 'sass-loader' ],
       },
       {
         test: /\.css$/,
         type: 'asset/source',
+        use: [ 'csso-loader' ],
       },
     ],
   },
