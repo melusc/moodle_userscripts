@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles rest
-// @version      2021.01.17b
+// @version      2021.01.18a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
@@ -195,9 +195,9 @@ class Header extends Component {
                   </span>
                 </h5>
                 <h5>
-                  {'Last accessed Moodle ' /* for the trailing space*/}
+                  {'Last accessed Moodle ' /* for the trailing space */}
                   <span class="epr-coloured">
-                    {dayjs.unix( lastaccess ).fromNow( false )}
+                    {dayjs.unix( lastaccess ).fromNow( true )}
                   </span>
                   {' ago' /* for the leading space */}
                 </h5>
