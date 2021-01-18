@@ -1,4 +1,4 @@
-@use 'sass:string';
+@use 'sass:math';
 
 .svg-refresh {
   margin-left: 5px;
@@ -9,4 +9,7 @@ div.folders-inline-icon {
 }
 div.folders-inline-icon-div {
   display: inline;
+}
+li.activity.folder > ul > li > ul li {
+  margin-left: 24px;
 }
