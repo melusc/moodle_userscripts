@@ -269,7 +269,7 @@
     "space-in-parens": ["error", "always"],
     "space-infix-ops": "error",
     "space-unary-ops": "error",
-    "spaced-comment": ["error", "always"],
+    "spaced-comment": ["error", "always", { "exceptions": ["#"] }],
     "strict": ["error", "global"],
     "switch-colon-spacing": [
       "error",
