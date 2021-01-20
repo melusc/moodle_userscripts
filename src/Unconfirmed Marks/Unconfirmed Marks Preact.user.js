@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Unconfirmed Marks Preact
-// @version      2021.01.19a
+// @version      2021.01.20a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/
 // @include      *://moodle.ksasz.ch/?*
@@ -125,7 +125,7 @@ class SchulNetzMarks extends Component {
           && <div class="ucmr-error">{errorMsg ?? 'Something went wrong'}</div>
       }
 
-      <hr />
+      {/* <hr /> */}
     </div>
   </div>
   ;
