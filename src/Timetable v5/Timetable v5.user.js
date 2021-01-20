@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v5
-// @version      2021.01.17b
+// @version      2021.01.20a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js
 // @include      *://moodle.ksasz.ch/
@@ -15,12 +15,7 @@
 // @grant        GM_notification
 // @run-at       document-start
 // ==/UserScript==
-import {
-  render,
-  Component,
-  Fragment,
-  h
-} from 'preact';
+import { render, Component, Fragment, h } from 'preact';
 
 import frontPageStyle from './frontpage.scss';
 import settingsPageStyle from './settingspage.scss';
@@ -71,11 +66,12 @@ const initSettingsPage = () => {
     '',
     '/timetable/v5'
   );
-  while ( notNullOrUndef( document.head.lastChild ) ) {
-    document.head.lastChild.remove();
+  const { body, head } = document;
+  while ( head.lastChild ) {
+    head.lastChild.remove();
   }
-  while ( notNullOrUndef( document.body.lastChild ) ) {
-    document.body.lastChild.remove();
+  while ( body.lastChild ) {
+    body.lastChild.remove();
   }
   document.title = 'Moodle timetable v5';
 
@@ -127,7 +123,7 @@ const SettingsPage = ( () => {
     for ( let i = 0, l = DAYS.length; i < l; ++i ) {
       const storedVal = GM_getValue( 'days' )?.[ i ];
 
-      if ( notNullOrUndef( storedVal ) ) {
+      if ( storedVal ) {
         arr[ i ] = storedVal.map( ( { from, to, content, id } ) => ( {
           from: parseTimeToString( from ),
           parsedfrom: from,
@@ -487,7 +483,7 @@ const SettingsPage = ( () => {
       const { target } = e;
       const iconRemoveRow = target.closest( '.remove-row' );
 
-      if ( notNullOrUndef( iconRemoveRow ) ) {
+      if ( iconRemoveRow ) {
         const curRow = target.closest( '.table-row' );
         const rowIndex = [ ...target.closest( '.table' ).children ].indexOf( curRow );
 
@@ -508,7 +504,7 @@ const SettingsPage = ( () => {
     handleCaretClick = e => {
       const closestDiv = e.target.closest( 'div' );
 
-      if ( isNullOrUndef( closestDiv ) ) {
+      if ( !closestDiv ) {
         return;
       }
 
@@ -612,7 +608,7 @@ const SettingsPage = ( () => {
       const curRow = target.closest( '.table-row' );
       const parent = target.parentNode;
 
-      if ( isNullOrUndef( curRow ) ) {
+      if ( !curRow ) {
         return;
       }
 
@@ -684,7 +680,7 @@ const SettingsPage = ( () => {
       return raw => {
         const str = raw.trim();
 
-        if ( ( /^\d{2}:\d{2}$/ ).test( str ) === false ) {
+        if ( !( /^\d{2}:\d{2}$/ ).test( str ) ) {
           return false;
         }
         input.value = str;
@@ -694,7 +690,7 @@ const SettingsPage = ( () => {
 
         const [ hour, minute ] = str.split( ':' );
 
-        return ( +hour * 60 ) + +minute;
+        return ( hour * 60 ) + +minute;
       };
     } )();
 
@@ -758,7 +754,7 @@ const SettingsPage = ( () => {
         if ( target.classList.contains( 'entry' ) ) {
           const curRow = target.closest( '.table-row' );
 
-          if ( isNullOrUndef( curRow.nextElementSibling ) ) {
+          if ( !curRow.nextElementSibling ) {
             e.preventDefault();
             const table = curRow.parentNode;
             const firstRow = table.children[ 0 ];
@@ -782,11 +778,7 @@ const login = ( () => {
     const storedToken = GM_getValue( 'token' );
     const lastValidated = GM_getValue( 'lastValidatedToken' );
 
-    if (
-      !cachedToken
-      && storedToken
-      && new Date().getTime() - lastValidated < 18000000
-    ) {
+    if ( !cachedToken && storedToken && new Date() - lastValidated < 18000000 ) {
       // less than 5h
       cachedToken = Promise.resolve( storedToken ); // to make it a Promise and as such "thenable"
     }
@@ -888,7 +880,7 @@ const logout = ( removeCredentials = false ) => {
 
 const setLastValidatedToken = () => GM_setValue(
   'lastValidatedToken',
-  new Date().getTime()
+  +new Date()
 );
 
 class ButtonGrid extends Component {
@@ -978,9 +970,13 @@ const Table = ( { content, handleFocus } ) => <div class="table" onFocus={handle
       </span>
     </div>
     <div class="table-cell entry">
-      <span contentEditable data-type="content">{content}</span>
+      <span contentEditable data-type="content">
+        {content}
+      </span>
       <hr />
-      <span contentEditable data-type="id">{id}</span>
+      <span contentEditable data-type="id">
+        {id}
+      </span>
     </div>
     <div class="table-cell remove-row">
       <SvgIconX />
@@ -1056,6 +1052,15 @@ const FrontPage = ( () => {
       this.timeout = null;
     };
 
+    setCoursesTimeout = delay => {
+      this.clearTimeout();
+      this.timeout = setTimeout(
+        this.updateCourse.bind( this ),
+        delay,
+        true
+      );
+    };
+
     updateCourse( notify ) {
       if ( currentVals.length === 0 ) {
         this.setState( { isEmpty: true } );
@@ -1089,13 +1094,7 @@ const FrontPage = ( () => {
           0
         );
 
-        this.clearTimeout();
-        this.timeout = setTimeout(
-          () => {
-            this.updateCourse( true );
-          },
-          nextDate.getTime() - curTime.getTime()
-        );
+        this.setCoursesTimeout( nextDate - curTime );
       }
       else if ( curTimeInMinutes >= totalTo ) {
         this.setState( {
@@ -1116,12 +1115,7 @@ const FrontPage = ( () => {
           tableRows: [ curVal, nextVal ],
         } );
 
-        if (
-          !this.state.isHolidy
-          && curVal
-          && notify
-          && curVal.hasOwnProperty( 'content' )
-        ) {
+        if ( notify && !this.state.isHoliday && curVal && 'content' in curVal ) {
           GM_notification( {
             text: curVal.content,
             title: 'Now',
@@ -1148,13 +1142,7 @@ const FrontPage = ( () => {
           0
         );
 
-        this.clearTimeout();
-        this.timeout = setTimeout(
-          () => {
-            this.updateCourse( true );
-          },
-          nextDate.getTime() - curTime.getTime()
-        );
+        this.setCoursesTimeout( nextDate - curTime );
       }
     }
 
@@ -1173,26 +1161,22 @@ const FrontPage = ( () => {
                   <div class="tt-title">Timetable</div>
                   <div class="tt-table">
                     <div class="tt-tbody">
-                      {!isWeekend
-                        && isHoliday === false
-                        && type === BEFORELESSONS
-                          && <TimetableRow
-                            values={{ content: 'No lesson' }}
-                            isNow={true}
-                          />
+                      {!isWeekend && !isHoliday && type === BEFORELESSONS
+                        && <TimetableRow
+                          values={{ content: 'No lesson' }}
+                          isNow={true}
+                        />
                       }
-                      {!isWeekend
-                        && isHoliday === false
-                        && type === AFTERLESSONS
-                          && <div class="tt-title">No school anymore</div>
+                      {!isWeekend && !isHoliday && type === AFTERLESSONS
+                        && <div class="tt-title">No school anymore</div>
                       }
-                      {isWeekend && isHoliday === false
+                      {isWeekend && !isHoliday
                         && <div class="tt-title">Weekend</div>
                       }
                       {isHoliday && <div class="tt-title">Holiday</div>}
                       {!isWeekend
-                        && isEmpty === false
-                        && isHoliday === false
+                        && !isEmpty
+                        && !isHoliday
                         && ( type === BEFORELESSONS || type === DURINGLESSONS )
                         && tableRows?.map( (
                           curVal, idx
@@ -1258,8 +1242,6 @@ const TimetableRow = ( { values, isNow } ) => {
   );
 };
 
-const notNullOrUndef = val => val !== null && val !== undefined;
-const isNullOrUndef = val => val === null || val === undefined;
 const parseTimeToString = int => {
   if ( isNaN( int ) ) {
     return false;
@@ -1286,7 +1268,7 @@ const timeStringIsValid = ( () => {
   return raw => {
     const str = `${ raw }`.trim();
 
-    if ( ( /^\d{2}:\d{2}$/ ).test( str ) === false ) {
+    if ( !( /^\d{2}:\d{2}$/ ).test( str ) ) {
       return false;
     }
 
@@ -1300,7 +1282,7 @@ const getVal = (
 ) => {
   const tmVal = GM_getValue( name );
 
-  if ( notNullOrUndef( tmVal ) ) {
+  if ( tmVal !== undefined ) {
     return tmVal;
   }
 
@@ -1316,7 +1298,7 @@ const getVal = (
 const focusTarget = (
   target, offset
 ) => {
-  if ( notNullOrUndef( target ) ) {
+  if ( target instanceof Element ) {
     const range = new Range();
     const sel = getSelection();
     const start = +( offset ?? target.textContent.length );
