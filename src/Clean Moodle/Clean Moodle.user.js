@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.17b
+// @version      2021.01.20a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -68,6 +68,7 @@ const initFrontPage = () => {
   }
 
   const replaceObj = GM_getValue( 'replace' );
+
   if ( typeof replaceObj === 'object' ) {
     const replaceEntries = Object.entries( replaceObj );
     for ( const item of replaceEntries ) {
@@ -602,12 +603,11 @@ const getCredentials = () => new Promise( resolve => {
         const div = document.createElement( 'div' );
         div.className = 'clean-moodle';
         document.body.append( div );
+        GM_addStyle( frontPageCss );
         render(
           <FrontPageLogin />,
           div
         );
-
-        GM_addStyle( frontPageCss );
       }
     }
     else {
@@ -818,9 +818,9 @@ class Main extends Component {
 
                 <input
                   placeholder={
-                    isNullOrUndef( replacedText )
-                      ? 'Select course to the left'
-                      : `Reset text to ${ selected.text }`
+                    notNullOrUndef( replacedText )
+                      ? `Reset text to ${ selected.text }`
+                      : 'Select course to the left'
                   }
                   class="replace-input"
                   onInput={handleInput}
@@ -917,10 +917,13 @@ class SettingsPage extends Component {
 
   handleInput = e => {
     const { target } = e;
+
     if ( notNullOrUndef( this.state.selected.id ) ) {
       this.setState( state => {
         const { selected } = state;
+
         selected.replacedText = target.value;
+
         return {
           selected,
         };
@@ -953,18 +956,33 @@ class SettingsPage extends Component {
   };
 
   updateCourses = id => {
-    const { courses } = this.state;
-    for ( let i = 0; i < courses.length; ++i ) {
-      if ( courses[ i ].id === id ) {
-        courses[ i ].isRemoved = checkIsRemoved( id );
-        courses[ i ].isReplaced = checkIsReplaced( id );
-        break;
+    this.setState( state => {
+      const { courses } = state;
+      for ( let i = 0; i < courses.length; ++i ) {
+        if ( courses[ i ].id === id ) {
+          courses[ i ].isRemoved = checkIsRemoved( id );
+          courses[ i ].isReplaced = checkIsReplaced( id );
+          break;
+        }
       }
-    }
 
-    sortCoursesArr( courses );
+      sortCoursesArr( courses );
 
-    this.setState( { courses } );
+      return { courses };
+    } );
+  };
+
+  clearSelectedIfEqualId = id => {
+    this.setState( state => {
+      const selectedId = state.selected.id;
+      if ( selectedId === id ) {
+        this.input.value = '';
+        return {
+          selected: {},
+        };
+      }
+      return {};
+    } );
   };
 
   handleSidebarClick = (
@@ -973,8 +991,24 @@ class SettingsPage extends Component {
     const { target } = e;
     const svg = target.closest( 'svg' );
     const row = target.closest( '.row' );
-    if ( notNullOrUndef( row ) ) {
-      if ( isNullOrUndef( svg ) ) {
+    if ( row ) {
+      if ( svg ) {
+        const svgCl = svg.classList;
+        if ( svgCl.contains( 'svg-icon-check' ) || svgCl.contains( 'svg-icon-x' ) ) {
+          const isRemoved = checkIsRemoved( id );
+          setRemove(
+            id,
+            !isRemoved // toggle between removed and not
+          );
+        }
+        else if ( svgCl.contains( 'svg-icon-arrow-back' ) ) {
+          setReplace( id );
+        }
+
+        this.clearSelectedIfEqualId( id );
+        this.updateCourses( id );
+      }
+      else {
         const { courses } = this.state;
         let text;
         for ( let i = 0; i < courses.length; ++i ) {
@@ -1011,32 +1045,6 @@ class SettingsPage extends Component {
           id,
           { replace: false }
         );
-        this.updateCourses( id );
-      }
-      else {
-        const svgCl = svg.classList;
-        if ( svgCl.contains( 'svg-icon-check' ) || svgCl.contains( 'svg-icon-x' ) ) {
-          const isRemoved = checkIsRemoved( id );
-          setRemove(
-            id,
-            !isRemoved // toggle between removed and not
-          );
-
-          this.setState( state => {
-            const selectedId = state.selected.id;
-            if ( selectedId === id ) {
-              this.input.value = '';
-              return {
-                selected: {},
-              };
-            }
-            return {};
-          } );
-        }
-        else if ( svgCl.contains( 'svg-icon-arrow-back' ) ) {
-          setReplace( id );
-        }
-
         this.updateCourses( id );
       }
     }
@@ -1125,26 +1133,29 @@ const sortRemoveArr = arr => arr.sort( (
   a, b
 ) => a - b );
 
-const sortCoursesArr = courses => void quickSort(
-  courses,
-  (
-    a, b
-  ) => {
-    const aText = ( typeof a.isReplaced === 'string'
-      ? a.isReplaced
-      : a.name
-    ).toLowerCase();
-    const bText = ( typeof b.isReplaced === 'string'
-      ? b.isReplaced
-      : b.name
-    ).toLowerCase();
-    return aText < bText
-      ? -1
-      : aText > bText
-        ? 1
-        : 0;
-  }
-);
+const sortCoursesArr = courses => {
+  quickSort(
+    courses,
+    (
+      a, b
+    ) => {
+      const aText = ( typeof a.isReplaced === 'string'
+        ? a.isReplaced
+        : a.name
+      ).toLowerCase();
+      const bText = ( typeof b.isReplaced === 'string'
+        ? b.isReplaced
+        : b.name
+      ).toLowerCase();
+      return aText < bText
+        ? -1
+        : aText > bText
+          ? 1
+          : 0;
+    }
+  );
+  return courses;
+};
 
 const setReplace = (
   id, newVal, defaultVal
