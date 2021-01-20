@@ -32,12 +32,12 @@
     "gulp-rename": "^2.0.0",
     "gulp-svgmin": "^3.0.0",
     "prettier": "^2.2.1",
-    "sass": "^1.32.4",
+    "sass": "^1.32.5",
     "sass-loader": "^10.1.1",
     "serve": "^11.3.2",
     "terser-webpack-plugin": "^5.1.1",
-    "webpack": "^5.15.0",
-    "webpack-cli": "^4.3.1",
+    "webpack": "^5.16.0",
+    "webpack-cli": "^4.4.0",
     "webpack-glob-entry": "^2.1.1"
   },
   "dependencies": {
