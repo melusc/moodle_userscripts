@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.21c
+// @version      2021.01.21d
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -689,8 +689,8 @@ class SettingsPage extends Component {
       const { courses } = state;
       for ( let i = 0; i < courses.length; ++i ) {
         if ( courses[ i ].id === id ) {
-          courses[ i ].isRemoved = checkIsRemoved( id );
-          courses[ i ].isReplaced = checkIsReplaced( id );
+          courses[ i ].isRemoved = courseIsRemoved( id );
+          courses[ i ].isReplaced = courseIsReplaced( id );
           break;
         }
       }
@@ -724,7 +724,7 @@ class SettingsPage extends Component {
       if ( svg ) {
         const svgCl = svg.classList;
         if ( svgCl.contains( 'svg-icon-check' ) || svgCl.contains( 'svg-icon-x' ) ) {
-          const isRemoved = checkIsRemoved( id );
+          const isRemoved = courseIsRemoved( id );
           setRemove(
             id,
             !isRemoved // toggle between removed and not
@@ -747,7 +747,7 @@ class SettingsPage extends Component {
           }
         }
 
-        const replacedText = checkIsReplaced( id ) || text;
+        const replacedText = courseIsReplaced( id ) || text;
 
         this.setState(
           {
@@ -791,8 +791,8 @@ class SettingsPage extends Component {
       const courses = Object.entries( coursesObj ).map( ( [ id, fullname ] ) => ( {
         id,
         name: fullname,
-        isReplaced: checkIsReplaced( id ),
-        isRemoved: checkIsRemoved( id ),
+        isReplaced: courseIsReplaced( id ),
+        isRemoved: courseIsRemoved( id ),
       } ) );
       sortCoursesArr( courses );
 
@@ -801,9 +801,9 @@ class SettingsPage extends Component {
   };
 }
 
-const checkIsRemoved = id => GM_getValue( 'remove' ).includes( id );
+const courseIsRemoved = id => GM_getValue( 'remove' )?.includes( id ) ?? false;
 
-const checkIsReplaced = id => {
+const courseIsReplaced = id => {
   const replaceObj = GM_getValue( 'replace' ) ?? {};
   return typeof replaceObj[ id ] === 'string' && replaceObj[ id ];
 };
