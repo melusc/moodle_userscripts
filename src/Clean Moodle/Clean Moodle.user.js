@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.21d
+// @version      2021.01.21e
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -538,27 +538,25 @@ class Main extends Component {
       <div class="outerMain">
         <div class="main">
           {loggedOut
-            ? <>
-              <div class="replace-flex-input">
-                <h5>Login</h5>
-                <input
-                  placeholder="Username"
-                  ref={e => {
-                    this.inputs.username = e;
-                  }}
-                />
-                <input
-                  placeholder="Password"
-                  ref={e => {
-                    this.inputs.password = e;
-                  }}
-                  type="password"
-                />
-                <button class="btn-save" onClick={this.handleLoggedOutBtnClick}>
-                  Login
-                </button>
-              </div>
-            </>
+            ? <div class="replace-flex-input">
+              <h5>Login</h5>
+              <input
+                placeholder="Username"
+                ref={e => {
+                  this.inputs.username = e;
+                }}
+              />
+              <input
+                placeholder="Password"
+                ref={e => {
+                  this.inputs.password = e;
+                }}
+                type="password"
+              />
+              <button class="btn-save" onClick={this.handleLoggedOutBtnClick}>
+                Login
+              </button>
+            </div>
 
             : <>
               <div class="section-title">Rename course</div>
@@ -640,8 +638,8 @@ class SettingsPage extends Component {
   ;
 
   loggedOutCallbackHandler = vals => {
-    this.setState( { loggedOut: false, loggedOutCallback: null } );
     this.state.loggedOutCallback( vals );
+    this.setState( { loggedOut: false, loggedOutCallback: null } );
   };
 
   handleInput = e => {
