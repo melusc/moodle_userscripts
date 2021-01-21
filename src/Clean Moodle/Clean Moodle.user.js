@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.21a
+// @version      2021.01.21b
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -462,7 +462,7 @@ const getCourses = ( () => {
   };
 } )();
 
-const getUserId = () => login() // because it can return a string or a promise and strings are not thenable
+const getUserId = () => login()
   .then( token => {
     const bodyParams = new URLSearchParams();
 
@@ -697,7 +697,7 @@ const testForInexistantCourse = id => {
 };
 
 const initSettingsPage = () => {
-  while ( notNullOrUndef( document.body.lastChild ) ) {
+  while ( document.body.lastChild ) {
     document.body.lastChild.remove();
   }
 
@@ -712,7 +712,7 @@ const initSettingsPage = () => {
     document.body
   );
 
-  while ( notNullOrUndef( document.head.lastChild ) ) {
+  while ( document.head.lastChild ) {
     document.head.lastChild.remove();
   }
 
@@ -806,8 +806,30 @@ class Main extends Component {
     return (
       <div class="outerMain">
         <div class="main">
-          {!loggedOut
-            && <>
+
+          {loggedOut
+            ? <>
+              <div class="replace-flex-input">
+                <h5>Login</h5>
+                <input
+                  placeholder="Username"
+                  ref={e => {
+                    this.inputs.username = e;
+                  }}
+                />
+                <input
+                  placeholder="Password"
+                  ref={e => {
+                    this.inputs.password = e;
+                  }}
+                  type="password"
+                />
+                <button class="btn-save" onClick={this.handleLoggedOutBtnClick}>
+                  Login
+                </button>
+              </div>
+            </>
+            : <>
               <div class="section-title">Rename course</div>
               <div class="replace-flex-inputs">
                 <div>
@@ -835,30 +857,6 @@ class Main extends Component {
                   class="btn-save"
                 >
                   Save
-                </button>
-              </div>
-            </>
-          }
-
-          {loggedOut
-            && <>
-              <div class="replace-flex-input">
-                <h5>Login</h5>
-                <input
-                  placeholder="Username"
-                  ref={e => {
-                    this.inputs.username = e;
-                  }}
-                />
-                <input
-                  placeholder="Password"
-                  ref={e => {
-                    this.inputs.password = e;
-                  }}
-                  type="password"
-                />
-                <button class="btn-save" onClick={this.handleLoggedOutBtnClick}>
-                  Login
                 </button>
               </div>
             </>
