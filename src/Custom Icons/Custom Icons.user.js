@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Custom Icons Preact
-// @version      2021.01.21a
+// @version      2021.01.21b
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include      *://moodle.ksasz.ch/*
@@ -16,7 +16,10 @@
 
 import { render, Component, html, h } from 'htm/preact';
 import { Fragment } from 'preact';
+import { getCourses } from '../shared/moodle-functions';
 import style from './style.scss';
+
+const isFrontpage = !( /^\/customiconspreact/iu ).test( location.pathname );
 
 const errors = {
   error: Error( 'An error occured' ),
@@ -215,7 +218,10 @@ const refresh = (
 };
 
 const testIfUserLeftCourse = id => {
-  getCourses().then( courses => {
+  getCourses(
+    false,
+    currentPageReturnState
+  ).then( courses => {
     if ( !courses.hasOwnProperty( id ) ) {
       deleteVal( id );
       alert( `You appear to not be in the course with the id "${ id }" anymore.\nThe course will not be checked for anymore` );
@@ -251,32 +257,8 @@ const initSettingspage = () => {
   );
 };
 
+let settingsPageSetState;
 class SettingsPage extends Component {
-  render = (
-    _props,
-    { courses, selectedCourse, inputStates, notificationString }
-  ) => <div class="container">
-    <Sidebar
-      courses={ courses }
-      handleClick={ this.handleSidebarClick }
-      blur={ `${ notNullOrUndef( notificationString ) }` }
-    />
-    <Main
-      selectedCourse={ selectedCourse }
-      courses={ courses }
-      handleInput={ this.handleMainInput }
-      inputStates={ inputStates }
-      handleSave={ this.handleSave }
-      inputRefs={ this.inputRefs }
-      blur={ `${ notNullOrUndef( notificationString ) }` }
-    />
-    { notificationString
-    && <Notification
-      handleClick={ this.handleNotificationClick }
-      notificationString={ notificationString }
-    /> }
-  </div>;
-
   state = {
     courses: [],
 
@@ -289,9 +271,45 @@ class SettingsPage extends Component {
 
       current: null,
     },
+
+    loggedOut: false,
+    loggedOutCallback: null,
   };
 
   inputRefs = {};
+
+  render = (
+    _props,
+    { courses, selectedCourse, inputStates, notificationString }
+  ) => <div class="container">
+    <Sidebar
+      courses={courses}
+      handleClick={this.handleSidebarClick}
+      blur={`${ notNullOrUndef( notificationString ) }`}
+    />
+    <Main
+      selectedCourse={selectedCourse}
+      courses={courses}
+      handleInput={this.handleMainInput}
+      inputStates={inputStates}
+      handleSave={this.handleSave}
+      inputRefs={this.inputRefs}
+      blur={`${ notNullOrUndef( notificationString ) }`}
+      loggedOut={this.state.loggedOut}
+      loggedOutCallback={this.loggedOutCallbackHandler}
+    />
+    {notificationString
+        && <Notification
+          handleClick={this.handleNotificationClick}
+          notificationString={notificationString}
+        />
+    }
+  </div>;
+
+  loggedOutCallbackHandler = vals => {
+    this.state.loggedOutCallback( vals );
+    this.setState( { loggedOut: false, loggedOutCallback: null } );
+  };
 
   handleSidebarClick = e => {
     const { target } = e;
@@ -462,8 +480,7 @@ class SettingsPage extends Component {
       const type = inputStates.current;
 
       if ( notNullOrUndef( type ) ) {
-        this
-          .saveHandlers[ type ]( inputStates )
+        this.saveHandlers[ type ]( inputStates )
           .then( () => {
             const { id } = this.state.selectedCourse;
 
@@ -591,7 +608,12 @@ class SettingsPage extends Component {
   };
 
   componentDidMount() {
-    getCourses().then( coursesObj => {
+    settingsPageSetState = this.setState.bind( this );
+
+    getCourses(
+      false,
+      currentPageReturnState
+    ).then( coursesObj => {
       const courses = Object.entries( coursesObj ).map( ( [ id, fullname ] ) => {
         const dataURIObj = getDataURI( id );
         let dataURI;
@@ -638,246 +660,38 @@ class SettingsPage extends Component {
   }
 }
 
-const getCourses = ( () => {
-  let courses;
-
-  return ( noCache = false ) => {
-    if ( noCache || !courses ) {
-      courses = Promise.all( [ login(), getUserId() ] )
-        .then( ( [ token, userid ] ) => {
-          const bodyParams = new URLSearchParams();
-
-          bodyParams.set(
-            'requests[0][function]',
-            'core_enrol_get_users_courses'
-          );
-          bodyParams.set(
-            'requests[0][arguments]',
-            JSON.stringify( {
-              userid,
-              returnusercount: false,
-            } )
-          );
-          bodyParams.set(
-            'wsfunction',
-            'tool_mobile_call_external_functions'
-          );
-          bodyParams.set(
-            'wstoken',
-            token
-          );
-
-          return fetch(
-            '/webservice/rest/server.php?moodlewsrestformat=json',
-            {
-              method: 'POST',
-              body: bodyParams.toString(),
-              headers: {
-                'content-type': 'application/x-www-form-urlencoded',
-              },
-            }
-          ).then( e => e.json() );
-        } )
-        .then( responseJSON => {
-          if ( responseJSON.hasOwnProperty( 'exception' ) ) {
-            logout();
-            return getCourses( true );
-          }
-
-          const data = JSON.parse( responseJSON.responses[ 0 ].data );
-          const coursesObj = {};
-
-          for ( let i = 0, l = data.length; i < l; ++i ) {
-            const { id, fullname } = data[ i ];
-
-            coursesObj[ id ] = fullname;
-          }
-
-          setLastValidatedToken();
-
-          return coursesObj;
-        } );
-    }
-
-    return courses;
-  };
-} )();
-
-const getUserId = () => login()
-  .then( token => {
-    const bodyParams = new URLSearchParams();
-
-    bodyParams.set(
-      'wsfunction',
-      'core_webservice_get_site_info'
-    );
-    bodyParams.set(
-      'wstoken',
-      token
-    );
-
-    return fetch(
-      '/webservice/rest/server.php?moodlewsrestformat=json',
-      {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded',
-        },
-        body: bodyParams.toString(),
-      }
-    );
-  } )
-  .then( res => res.json() )
-  .then( responseJSON => {
-    if ( responseJSON.hasOwnProperty( 'exception' ) ) {
-      logout();
-      return getUserId();
-    }
-
-    setLastValidatedToken();
-
-    return responseJSON.userid;
-  } );
-
-const setLastValidatedToken = () => GM_setValue(
-  'lastValidatedToken',
-  new Date().getTime()
-);
-
-const login = ( () => {
-  let cachedToken;
-
-  return ( noCache = false ) => {
-    if ( cachedToken ) {
-      return cachedToken;
-    }
-
-    const storedToken = GM_getValue( 'token' );
-    const lastValidated = GM_getValue( 'lastValidatedToken' );
-
-    if (
-      !cachedToken
-      && storedToken
-      && new Date().getTime() - lastValidated < 18000000
-    ) {
-      // less than 5h
-      cachedToken = Promise.resolve( storedToken ); // to make it a Promise and as such "thenable"
-    }
-
-    if ( noCache || !cachedToken ) {
-      const username = getVal(
-        'username',
-        'Username'
-      );
-
-      const password = getVal(
-        'password',
-        'Password'
-      );
-
-      const loginParams = new URLSearchParams();
-
-      loginParams.set(
-        'username',
-        username
-      );
-      loginParams.set(
-        'password',
-        password
-      );
-      loginParams.set(
-        'service',
-        'moodle_mobile_app'
-      );
-      cachedToken = fetch(
-        '/login/token.php',
-        {
-          method: 'POST',
-          body: loginParams.toString(),
-          headers: {
-            'content-type': 'application/x-www-form-urlencoded',
-          },
-        }
-      )
-        .then( e => e.json() )
-        .then( response => {
-          if ( response.hasOwnProperty( 'errorcode' ) ) {
-            logout( true );
-            return login( true );
-          }
-
-          GM_setValue(
-            'token',
-            response.token
-          );
-          setLastValidatedToken();
-
-          return response.token;
-        } );
-    }
-
-    return cachedToken;
-  };
-} )();
-
-const getVal = (
-  storedValName, promptMsg
-) => {
-  const storageVal = GM_getValue( storedValName );
-
-  if ( notNullOrUndef( storageVal ) ) {
-    return storageVal;
-  }
-
-  const newVal = prompt( promptMsg );
-
-  GM_setValue(
-    storedValName,
-    newVal
-  );
-  return newVal;
+const settingsPageReturnState = state => {
+  settingsPageSetState( state );
 };
 
-const logout = ( removeCredentials = false ) => {
-  [ 'token', 'lastValidatedToken' ].map( GM_deleteValue );
-  if ( removeCredentials ) {
-    [ 'username', 'password' ].map( GM_deleteValue );
-  }
-};
+const currentPageReturnState = isFrontpage
+  ? undefined
+  : settingsPageReturnState;
 
-const Sidebar = ( { blur, courses, handleClick } ) => <div
-  data-blur={ blur }
-  class="outer-sidebar"
-  onClick={ handleClick }
->
+const Sidebar = ( { blur, courses, handleClick } ) => <div data-blur={blur} class="outer-sidebar" onClick={handleClick}>
   <div class="sidebar">
-    { courses?.map( ( { id, dataURI, name, isXML, rawXML } ) => <div
-      class="row"
-      data-id={ id }
-      key={ id }
-    >
-      { typeof isXML === 'boolean'
-          && <>
-            {isXML
-              ? <span class="icon">{ html( [ rawXML ] ) }</span>
-              : <img class="icon" src={ dataURI } />
-            }
-            <SvgX type="del-icon" /></> }
-      <span>{ name }</span>
-    </div> ) }
+    {courses?.map( ( { id, dataURI, name, isXML, rawXML } ) => <div class="row" data-id={id} key={id}>
+      {typeof isXML === 'boolean'
+            && <>
+              {isXML
+                ? <span class="icon">{html( [ rawXML ] )}</span>
+                : <img class="icon" src={dataURI} />
+              }
+              <SvgX type="del-icon" />
+            </>
+      }
+      <span>{name}</span>
+    </div> )}
   </div>
 </div>;
-
 class Notification extends Component {
-  render = ( { handleClick, notificationString } ) => <div
-    onClick={ handleClick }
-    class="outer-notification"
-  >
+  render = ( { handleClick, notificationString } ) => <div onClick={handleClick} class="outer-notification">
     <div class="inner-notification">
       <SvgX type="close" />
-      <div class="notification-string">{ notificationString }</div>
+      <div class="notification-string">{notificationString}</div>
     </div>
-  </div>;
+  </div>
+  ;
 
   componentDidMount() {
     scroll( {
@@ -894,15 +708,16 @@ const SvgX = props => <svg
   stroke-linecap="round"
   stroke-linejoin="round"
   stroke-width="2"
-  data-svg-type={ props.type }
+  data-svg-type={props.type}
   class="svg-icon svg-icon-x"
   viewBox="0 0 24 24"
-  onClick={ props.handleClick }
+  onClick={props.handleClick}
 >
   <path d="M24 0L0 24M0 0l24 24" />
 </svg>;
-
 class Main extends Component {
+  inputs = {};
+
   render = ( {
     selectedCourse,
     courses,
@@ -911,6 +726,7 @@ class Main extends Component {
     handleInput,
     inputRefs,
     handleSave,
+    loggedOut,
   } ) => {
     const dataURIObj = getDataURI( selectedCourse?.id );
     let dataURI;
@@ -934,74 +750,115 @@ class Main extends Component {
     const id = selectedCourse?.id;
     const { fileVal } = inputStates;
 
-    return <div class="outer-main" data-blur={ blur }>
-      <div class="main" onInput={ handleInput }>
-        <h2>Modify existing or add an icon</h2>
-        <div>
-          { dataURI
-          && ( isXML
-            ? html( [ rawXML ] )
-            : <img src={ dataURI } class="icon" /> ) }
-          <span>{ name ?? 'Select course on left' }</span>
+    return (
+      <div class="outer-main" data-blur={blur}>
+        <div class="main" onInput={handleInput}>
+          {loggedOut
+            ? <div class="replace-flex-input">
+              <h2>Login</h2>
+              <input
+                placeholder="Username"
+                ref={e => {
+                  this.inputs.username = e;
+                }}
+              />
+              <input
+                placeholder="Password"
+                ref={e => {
+                  this.inputs.password = e;
+                }}
+                type="password"
+              />
+              <button class="btn-save" onClick={this.handleLoggedOutBtnClick}>
+                  Login
+              </button>
+            </div>
+
+            : <>
+              <h2>Modify existing or add an icon</h2>
+              <div>
+                {dataURI
+                  && ( isXML
+                    ? html( [ rawXML ] )
+                    : <img src={dataURI} class="icon" /> )}
+                <span>{name ?? 'Select course on left'}</span>
+              </div>
+
+              <h3>Upload image from URL</h3>
+              <input
+                type="url"
+                placeholder="Image url"
+                URL
+                data-input-type="url"
+                ref={e => {
+                  inputRefs.url = e;
+                }}
+                disabled={
+                  inputStates.current !== null && inputStates.current !== 'url'
+                }
+              />
+
+              <h3>Upload image from file</h3>
+              <input
+                data-input-type="file"
+                type="file"
+                hidden
+                ref={e => {
+                  inputRefs.file = e;
+                }}
+              />
+              <button
+                disabled={
+                  inputStates.current !== null && inputStates.current !== 'file'
+                }
+                onClick={() => {
+                  inputRefs.file.click();
+                }}
+              >
+                {notNullOrUndef( fileVal )
+                  ? fileVal.name
+                  : 'Upload file'}
+                {notNullOrUndef( fileVal )
+                  && <SvgX type="clear" handleClick={this.clearFile} />
+                }
+              </button>
+
+              <h3>Copy image from other course</h3>
+              <select
+                disabled={
+                  inputStates.current !== null && inputStates.current !== 'copy'
+                }
+                ref={e => {
+                  inputRefs.copy = e;
+                }}
+                data-input-type="copy"
+              >
+                <option value="null" defaultValue>
+                  Select course to copy icon from
+                </option>
+                {courses?.map( ( { id: curId, name: curName, dataURI, rawXML } ) => ( dataURI || rawXML )
+                      && <option key={id} value={curId} disabled={curId === id}>
+                        {curName}
+                      </option> )}
+              </select>
+
+              <button onClick={handleSave} class="btn-save">
+                Save
+              </button>
+            </>
+          }
         </div>
-
-        <h3>Upload image from URL</h3>
-        <input
-          type="url"
-          placeholder="Image url"
-          URL
-          data-input-type="url"
-          ref={ e => {
-            inputRefs.url = e;
-          } }
-          disabled={ inputStates.current !== null
-          && inputStates.current !== 'url' }
-        />
-
-        <h3>Upload image from file</h3>
-        <input
-          data-input-type="file"
-          type="file"
-          hidden
-          ref={ e => {
-            inputRefs.file = e;
-          } }
-        />
-        <button
-          disabled={ inputStates.current !== null
-          && inputStates.current !== 'file' }
-          onClick={ () => {
-            inputRefs.file.click();
-          } }
-        >
-          { notNullOrUndef( fileVal )
-            ? fileVal.name
-            : 'Upload file' }
-          { notNullOrUndef( fileVal )
-          && <SvgX type="clear" handleClick={ this.clearFile } /> }
-        </button>
-
-        <h3>Copy image from other course</h3>
-        <select
-          disabled={ inputStates.current !== null
-          && inputStates.current !== 'copy' }
-          ref={ e => {
-            inputRefs.copy = e;
-          } }
-          data-input-type="copy"
-        >
-          <option value="null" defaultValue>
-            Select course to copy icon from
-          </option>
-          { courses?.map( ( { id: curId, name: curName, dataURI, rawXML } ) => ( dataURI || rawXML )
-              && <option key={ id } value={ curId } disabled={ curId === id }>
-                { curName }
-              </option> ) }
-        </select>
-
-        <button onClick={ handleSave } class="btn-save">Save</button>
       </div>
-    </div>;
+    );
+  };
+
+  handleLoggedOutBtnClick = () => {
+    const username = this.inputs.username.value.trim();
+    const password = this.inputs.password.value;
+
+    if ( username && password ) {
+      this.props.loggedOutCallback( { username, password } );
+    }
   };
 
   clearFile = e => {
@@ -1084,9 +941,9 @@ const deleteVal = id => {
 };
 
 if ( !( /^\/cleanmoodle/iu ).test( location.pathname ) ) {
-  const functionToRun = ( /^\/customiconspreact/iu ).test( location.pathname )
-    ? initSettingspage
-    : runOnceOnFrontPage;
+  const functionToRun = isFrontpage
+    ? runOnceOnFrontPage
+    : initSettingspage;
 
   document.readyState === 'complete'
     ? functionToRun()

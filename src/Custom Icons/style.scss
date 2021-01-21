@@ -99,9 +99,13 @@ h3 {
   font-size: 1.64rem;
 }
 
+input {
+  margin-top: 5px;
+}
 input,
 button,
 select {
+  display: block;
   background: none;
   box-shadow: none;
   border: $border;
