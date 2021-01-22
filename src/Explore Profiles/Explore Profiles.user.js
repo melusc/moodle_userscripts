@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles rest
-// @version      2021.01.22a
+// @version      2021.01.22b
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
@@ -19,7 +19,8 @@ import dayjs from 'dayjs';
 import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime';
 import DOMPurify from 'dompurify';
 import style from './style.scss';
-import COUNTRY_CODES from './countries.js';
+import COUNTRY_CODES from './countries';
+import { login, logout } from '../shared/moodle-functions';
 
 dayjs.extend( dayjsPluginRelativeTime );
 
@@ -118,9 +119,7 @@ class Notification extends Component {
   };
 
   componentDidMount = () => {
-    notificationSetState = data => {
-      this.setState( data );
-    };
+    notificationSetState = this.setState.bind( this );
   };
 
   render = (
@@ -154,9 +153,7 @@ class Header extends Component {
   state = initialState;
 
   componentDidMount = () => {
-    headerSetState = data => {
-      this.setState( data );
-    };
+    headerSetState = this.setState.bind( this );
   };
 
   render = (
@@ -360,9 +357,7 @@ class Main extends Component {
   state = initialState;
 
   componentDidMount = () => {
-    mainSetState = data => {
-      this.setState( data );
-    };
+    mainSetState = this.setState.bind( this );
   };
 
   // copied directly from a profile
@@ -603,19 +598,13 @@ class Sidebar extends Component {
   state = initialState;
 
   componentDidMount = () => {
-    sidebarSetState = data => {
-      this.setState( data );
-    };
+    sidebarSetState = this.setState.bind( this );
   };
 
   render = (
     _props, { isUserProfile, id, fullname }
-  ) => {
-    if ( isUserProfile ) {
-      return undefined;
-    }
-    return (
-      <>
+  ) => !isUserProfile
+      && <>
         <p
           class="tree_item branch"
           role="treeitem"
@@ -729,8 +718,7 @@ class Sidebar extends Component {
           </li>
         </ul>
       </>
-    );
-  };
+    ;
 }
 
 const clearNode = el => {
@@ -952,9 +940,9 @@ const fetchNewProfile = async e => {
  * @param {number} range range to find more profiles in
  * @example start = 1940, range = -9, will return profiles 1931 up to and including 1940
  */
-const getProfilesInRange = async (
+const getProfilesInRange = (
   start, range
-) => {
+) => login().then( token => {
   let lower = start;
   let upper = start + range;
 
@@ -981,10 +969,10 @@ const getProfilesInRange = async (
   );
   bodyParams.set(
     'wstoken',
-    await login()
+    token
   );
 
-  const response = await fetch(
+  return fetch(
     'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_user_get_course_user_profiles',
     {
       method: 'POST',
@@ -993,110 +981,20 @@ const getProfilesInRange = async (
         'content-type': 'application/x-www-form-urlencoded',
       },
     }
-  ).then( e => e.json() );
+  )
+    .then( e => e.json() )
+    .then( response => {
+      if ( !Array.isArray( response ) && response.hasOwnProperty( 'errorcode' ) ) {
+        logout();
+        return getProfilesInRange(
+          start,
+          range
+        );
+      }
 
-  if (
-    Array.isArray( response ) === false
-    && response.hasOwnProperty( 'errorcode' )
-  ) {
-    logout();
-    return getProfilesInRange(
-      start,
-      range
-    );
-  }
-
-  return response;
-};
-
-const login = async () => {
-  const tmToken = GM_getValue( 'token' );
-  const last = GM_getValue( 'lastValidatedToken' );
-
-  if (
-    typeof tmToken !== 'undefined'
-    && new Date().getTime() - last < 1000 * 60 * 60 * 3
-  ) {
-    // 3 hours
-    return tmToken;
-  }
-
-  const username = getVal(
-    'username',
-    'Username'
-  );
-
-  const password = getVal(
-    'password',
-    'Password'
-  );
-
-  const loginParams = new URLSearchParams();
-
-  loginParams.set(
-    'username',
-    username
-  );
-  loginParams.set(
-    'password',
-    password
-  );
-  loginParams.set(
-    'service',
-    'moodle_mobile_app'
-  );
-  const response = await fetch(
-    '/login/token.php',
-    {
-      method: 'POST',
-      body: loginParams.toString(),
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-    }
-  ).then( e => e.json() );
-
-  if ( response.hasOwnProperty( 'errorcode' ) ) {
-    logout( true );
-    return login();
-  }
-
-  GM_setValue(
-    'token',
-    response.token
-  );
-  GM_setValue(
-    'lastValidatedToken',
-    new Date().getTime()
-  );
-
-  return response.token;
-};
-
-const logout = removeCredentials => {
-  [ 'token', 'lastValidatedToken' ].map( GM_deleteValue );
-  if ( removeCredentials === true ) {
-    [ 'username', 'password' ].map( GM_deleteValue );
-  }
-};
-
-const getVal = (
-  valName, promptMsg
-) => {
-  const tmVal = GM_getValue( valName );
-
-  if ( typeof tmVal !== 'undefined' ) {
-    return tmVal;
-  }
-
-  const promptedVal = prompt( promptMsg );
-
-  GM_setValue(
-    valName,
-    promptedVal
-  );
-  return promptedVal;
-};
+      return response;
+    } );
+} );
 
 const unescapeHTML = val => `${ val }`
   .replace(
