@@ -22,7 +22,7 @@ module.exports = {
     type: 'filesystem',
     cacheDirectory: path.resolve(
       __dirname,
-      '.temp_cache'
+      '.cache'
     ),
     buildDependencies: {
       config: [ __filename ],
