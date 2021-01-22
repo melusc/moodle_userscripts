@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v5
-// @version      2021.01.21a
+// @version      2021.01.22a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js
 // @include      *://moodle.ksasz.ch/
@@ -16,6 +16,7 @@
 // @run-at       document-start
 // ==/UserScript==
 import { render, Component, Fragment, h } from 'preact';
+import { getCourses } from '../shared/moodle-functions';
 
 import frontPageStyle from './frontpage.scss';
 import settingsPageStyle from './settingspage.scss';
@@ -102,6 +103,7 @@ const initSettingsPage = () => {
   );
 };
 
+let settingsPageSetState;
 const SettingsPage = ( () => {
   const DAYS = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday' ];
   const createTable = () => {
@@ -161,7 +163,12 @@ const SettingsPage = ( () => {
         contentInput: null,
       },
       courses: [],
+
+      loggedOut: false,
+      loggedOutCallback: null,
     };
+
+    inputs = {};
 
     saveButtonRef = a => {
       this.saveButton = a;
@@ -178,6 +185,40 @@ const SettingsPage = ( () => {
     ) {
       return (
         <>
+          {this.state.loggedOut
+            && <div class="login-popup">
+              <div class="vertical-horizontal-center">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Login</h5>
+                    <input
+                      placeholder="Username"
+                      required
+                      class="input-group-text"
+                      ref={e => {
+                        this.inputs.username = e;
+                      }}
+                    />
+                    <input
+                      placeholder="Password"
+                      required
+                      class="input-group-text"
+                      ref={e => {
+                        this.inputs.password = e;
+                      }}
+                      type="password"
+                    />
+                  </div>
+                  <button
+                    class="btn btn-primary"
+                    onClick={this.handleLoginClick}
+                  >
+                    Login
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
           <div class="container">
             <div class="table-center">
               <div class="grid-buttons">
@@ -246,6 +287,16 @@ const SettingsPage = ( () => {
       );
     }
 
+    handleLoginClick = () => {
+      const username = this.inputs.username.value.trim();
+      const password = this.inputs.password.value;
+
+      if ( username && password ) {
+        this.setState( { loggedOut: false, loggedOutCallback: null } );
+        this.state.loggedOutCallback( { username, password } );
+      }
+    };
+
     handleSuggestionsClick = e => {
       const { target } = e;
       const suggestion = target.closest( '.suggestion' );
@@ -273,62 +324,23 @@ const SettingsPage = ( () => {
       }
     };
 
-    fetchCourses() {
-      Promise.all( [ getUserId(), login() ] ).then( ( [ userid, token ] ) => {
-        const bodyParams = new URLSearchParams();
+    fetchCourses = () => {
+      getCourses(
+        false,
+        settingsPageSetState
+      ).then( coursesObj => {
+        const courses = Object.entries( coursesObj ).map( ( [ id, fullname ] ) => ( {
+          id,
+          name: fullname,
+          uuid: generateUUIDv4(),
+        } ) );
 
-        bodyParams.set(
-          'requests[0][function]',
-          'core_enrol_get_users_courses'
-        );
-        bodyParams.set(
-          'requests[0][arguments]',
-          `{"userid":"${ userid }","returnusercount":false}`
-        );
-        bodyParams.set(
-          'wsfunction',
-          'tool_mobile_call_external_functions'
-        );
-        bodyParams.set(
-          'wstoken',
-          token
-        );
-
-        fetch(
-          '/webservice/rest/server.php?moodlewsrestformat=json',
-          {
-            method: 'POST',
-            body: bodyParams.toString(),
-            headers: {
-              'content-type': 'application/x-www-form-urlencoded',
-            },
-          }
-        )
-          .then( e => e.json() )
-          .then( responseJSON => {
-            if ( responseJSON.hasOwnProperty( 'exception' ) ) {
-              return this.componentDidMount();
-            }
-
-            const data = JSON.parse( responseJSON.responses[ 0 ].data );
-            const courses = [];
-
-            for ( let i = 0, l = data.length; i < l; ++i ) {
-              courses[ i ] = {
-                id: data[ i ].id,
-                name: data[ i ].fullname,
-                uuid: generateUUIDv4(),
-              };
-            }
-
-            this.setState( { courses } );
-
-            return undefined;
-          } );
+        this.setState( { courses } );
       } );
-    }
+    };
 
     componentDidMount = () => {
+      settingsPageSetState = this.setState.bind( this );
       addEventListener(
         'click',
         this.handleTableFocus
@@ -767,122 +779,6 @@ const SettingsPage = ( () => {
   };
 } )();
 
-const login = ( () => {
-  let cachedToken;
-
-  return ( noCache = false ) => {
-    if ( cachedToken ) {
-      return cachedToken;
-    }
-
-    const storedToken = GM_getValue( 'token' );
-    const lastValidated = GM_getValue( 'lastValidatedToken' );
-
-    if ( !cachedToken && storedToken && new Date() - lastValidated < 18000000 ) {
-      // less than 5h
-      cachedToken = Promise.resolve( storedToken ); // to make it a Promise and as such "thenable"
-    }
-
-    if ( noCache || !cachedToken ) {
-      const username = getVal(
-        'username',
-        'Username'
-      );
-
-      const password = getVal(
-        'password',
-        'Password'
-      );
-
-      const loginParams = new URLSearchParams();
-
-      loginParams.set(
-        'username',
-        username
-      );
-      loginParams.set(
-        'password',
-        password
-      );
-      loginParams.set(
-        'service',
-        'moodle_mobile_app'
-      );
-      cachedToken = fetch(
-        '/login/token.php',
-        {
-          method: 'POST',
-          body: loginParams.toString(),
-          headers: {
-            'content-type': 'application/x-www-form-urlencoded',
-          },
-        }
-      )
-        .then( e => e.json() )
-        .then( response => {
-          if ( response.hasOwnProperty( 'errorcode' ) ) {
-            logout( true );
-            return login( true );
-          }
-
-          GM_setValue(
-            'token',
-            response.token
-          );
-          setLastValidatedToken();
-
-          return response.token;
-        } );
-    }
-
-    return cachedToken;
-  };
-} )();
-
-const getUserId = async () => {
-  const token = await login();
-  const bodyParams = new URLSearchParams();
-
-  bodyParams.set(
-    'wsfunction',
-    'core_webservice_get_site_info'
-  );
-  bodyParams.set(
-    'wstoken',
-    token
-  );
-
-  const responseJSON = await fetch(
-    '/webservice/rest/server.php?moodlewsrestformat=json',
-    {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: bodyParams.toString(),
-    }
-  ).then( res => res.json() );
-
-  if ( responseJSON.hasOwnProperty( 'exception' ) ) {
-    logout();
-    return getUserId();
-  }
-
-  return responseJSON.userid;
-};
-
-const logout = ( removeCredentials = false ) => {
-  [ 'token', 'lastValidatedToken' ].map( GM_deleteValue );
-  if ( removeCredentials ) {
-    [ 'username', 'password' ].map( GM_deleteValue );
-  }
-};
-
-const setLastValidatedToken = () => GM_setValue(
-  'lastValidatedToken',
-  +new Date()
-);
-
 class ButtonGrid extends Component {
   render( { handleClick, handleSave, saveButtonRef, day } ) {
     return (
@@ -1276,24 +1172,6 @@ const timeStringIsValid = ( () => {
     return input.value === str;
   };
 } )();
-
-const getVal = (
-  name, promptMsg
-) => {
-  const tmVal = GM_getValue( name );
-
-  if ( tmVal !== undefined ) {
-    return tmVal;
-  }
-
-  const promptedVal = prompt( promptMsg );
-
-  GM_setValue(
-    name,
-    promptedVal
-  );
-  return promptedVal;
-};
 
 const focusTarget = (
   target, offset
