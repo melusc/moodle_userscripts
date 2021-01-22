@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Clean Moodle with Preact
-// @version      2021.01.21e
+// @version      2021.01.22a
 // @author       lusc
 // @include      *://moodle.ksasz.ch/*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -351,7 +351,7 @@ const refresh = ( () => {
         if ( removedVals.length > 0 ) {
           getCourses(
             false,
-            currentPageReturnState
+            settingsPageSetState
           ).then( coursesObj => {
             for ( const id of removedVals ) {
               const fullname = coursesObj[ id ];
@@ -403,14 +403,6 @@ const refresh = ( () => {
   };
 } )();
 
-const settingsPageReturnState = state => {
-  settingsPageSetState( state );
-};
-
-const currentPageReturnState = isFrontpage
-  ? undefined
-  : settingsPageReturnState;
-
 const getElem = (
   id, sidebar
 ) => sidebar.querySelector( `a[href="https://moodle.ksasz.ch/course/view.php?id=${ id }"]` );
@@ -418,7 +410,7 @@ const getElem = (
 const testForInexistantCourse = id => {
   getCourses(
     false,
-    currentPageReturnState
+    settingsPageSetState
   ).then( courses => {
     if ( !courses.hasOwnProperty( id ) ) {
       removeElementFromStorage( id );
@@ -784,7 +776,7 @@ class SettingsPage extends Component {
 
     getCourses(
       false,
-      currentPageReturnState
+      settingsPageSetState
     ).then( coursesObj => {
       const courses = Object.entries( coursesObj ).map( ( [ id, fullname ] ) => ( {
         id,

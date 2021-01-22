@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Custom Icons Preact
-// @version      2021.01.21b
+// @version      2021.01.22a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include      *://moodle.ksasz.ch/*
@@ -220,7 +220,7 @@ const refresh = (
 const testIfUserLeftCourse = id => {
   getCourses(
     false,
-    currentPageReturnState
+    settingsPageSetState
   ).then( courses => {
     if ( !courses.hasOwnProperty( id ) ) {
       deleteVal( id );
@@ -612,7 +612,7 @@ class SettingsPage extends Component {
 
     getCourses(
       false,
-      currentPageReturnState
+      settingsPageSetState
     ).then( coursesObj => {
       const courses = Object.entries( coursesObj ).map( ( [ id, fullname ] ) => {
         const dataURIObj = getDataURI( id );
@@ -659,14 +659,6 @@ class SettingsPage extends Component {
     } );
   }
 }
-
-const settingsPageReturnState = state => {
-  settingsPageSetState( state );
-};
-
-const currentPageReturnState = isFrontpage
-  ? undefined
-  : settingsPageReturnState;
 
 const Sidebar = ( { blur, courses, handleClick } ) => <div data-blur={blur} class="outer-sidebar" onClick={handleClick}>
   <div class="sidebar">
