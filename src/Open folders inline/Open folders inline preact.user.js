@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle open folders inline preact
-// @version      2021.01.21b
+// @version      2021.01.22a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
@@ -11,6 +11,7 @@
 // ==/UserScript==
 
 import { render, Fragment, h } from 'preact';
+import { login } from '../shared/moodle-functions';
 
 import style from './style.scss';
 
@@ -286,108 +287,6 @@ const GenerateFolder = ( { contents, base, directoryDepth = 0 } ) => {
       </ul>
     </>
   );
-};
-
-const setLastValidatedToken = () => GM_setValue(
-  'lastValidatedToken',
-  new Date().getTime()
-);
-
-const login = ( () => {
-  let cachedToken;
-
-  return ( noCache = false ) => {
-    if ( cachedToken ) {
-      return cachedToken;
-    }
-
-    const storedToken = GM_getValue( 'token' );
-    const lastValidated = GM_getValue( 'lastValidatedToken' );
-    if (
-      !cachedToken
-      && storedToken
-      && new Date().getTime() - lastValidated < 18000000
-    ) {
-      // less than 5h
-      cachedToken = Promise.resolve( storedToken ); // to make it a Promise and as such "thenable"
-    }
-
-    if ( noCache || !cachedToken ) {
-      const username = getVal(
-        'username',
-        'Username'
-      );
-      const password = getVal(
-        'password',
-        'Password'
-      );
-
-      const loginParams = new URLSearchParams();
-
-      loginParams.set(
-        'username',
-        username
-      );
-      loginParams.set(
-        'password',
-        password
-      );
-      loginParams.set(
-        'service',
-        'moodle_mobile_app'
-      );
-      cachedToken = fetch(
-        '/login/token.php',
-        {
-          method: 'POST',
-          body: loginParams.toString(),
-          headers: {
-            'content-type': 'application/x-www-form-urlencoded',
-          },
-        }
-      )
-        .then( e => e.json() )
-        .then( response => {
-          if ( response.hasOwnProperty( 'errorcode' ) ) {
-            logout( true );
-            return login( true );
-          }
-
-          GM_setValue(
-            'token',
-            response.token
-          );
-          setLastValidatedToken();
-
-          return response.token;
-        } );
-    }
-
-    return cachedToken;
-  };
-} )();
-
-const getVal = (
-  storageName, promptMsg
-) => {
-  const storageVal = GM_getValue( storageName );
-  if ( typeof storageVal !== 'undefined' ) {
-    return storageVal;
-  }
-
-  const newVal = prompt( promptMsg );
-  GM_setValue(
-    storageName,
-    newVal
-  );
-  return newVal;
-};
-
-const logout = ( removeCredentials = false ) => {
-  [ 'token', 'lastValidatedToken' ].map( GM_deleteValue );
-  if ( removeCredentials ) {
-    [ 'username', 'password' ].map( GM_deleteValue );
-  }
 };
 
 document.readyState === 'complete'
