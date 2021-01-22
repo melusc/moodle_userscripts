@@ -7,9 +7,9 @@ export const setLastValidatedToken = () => GM_setValue(
 );
 
 export const logout = ( removeCredentials = false ) => {
-  [ 'token', 'lastValidatedToken' ].map( GM_deleteValue );
+  [ 'token', 'lastValidatedToken' ].forEach( GM_deleteValue );
   if ( removeCredentials ) {
-    [ 'username', 'password' ].map( GM_deleteValue );
+    [ 'username', 'password' ].forEach( GM_deleteValue );
   }
 };
 
