@@ -1,8 +1,10 @@
+# Moodle Userscripts
+
 Here you can find some useful userscripts for moodle. I have only ever tested them on my school's moodle, though.
 
 To run these you need to have tampermonkey, greasemonkey or similar installed.
 
-# Quick Installation
+## Quick Installation
 
 [Clean Moodle](https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js)
 
@@ -18,7 +20,7 @@ To run these you need to have tampermonkey, greasemonkey or similar installed.
 
 [Download Course's Content](https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js)
 
-# About
+## About
 
 Currently, all these userscripts are written in es6+ and jsx with [preact](https://github.com/preactjs/preact).
 
