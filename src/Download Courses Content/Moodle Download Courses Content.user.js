@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Download Course's Content
-// @version      2021.01.22a
+// @version      2021.01.23a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js
@@ -49,8 +49,8 @@ const sanitizeFileName = str => str.replace(
 const initDownload = (
   event, noChache = false
 ) => {
-  event.preventDefault();
-  event.stopImmediatePropagation();
+  event.preventDefault?.();
+  event.stopImmediatePropagation?.();
   const { target } = event;
 
   if ( target.disabled ) {
@@ -62,23 +62,7 @@ const initDownload = (
 
   login( noChache ).then( token => {
     const courseId = new URLSearchParams( location.search ).get( 'id' );
-    const requestParams = new URLSearchParams();
-    requestParams.set(
-      'courseid',
-      courseId
-    );
-    requestParams.set(
-      'options[0][name]',
-      'includestealthmodules'
-    );
-    requestParams.set(
-      'options[0][value]',
-      1
-    );
-    requestParams.set(
-      'wstoken',
-      token
-    );
+    const body = `courseid=${ courseId }&options[0][name]=includestealthmodules&options[0][value]=1&wstoken=${ token }`;
 
     fetch(
       '/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_course_get_contents',
@@ -87,18 +71,19 @@ const initDownload = (
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
         },
-        body: requestParams.toString(),
+        body,
       }
     )
       .then( e => e.json() )
       .then( jsonPageContent => {
-        if ( jsonPageContent.hasOwnProperty( 'exception' ) ) {
+        if ( !Array.isArray( jsonPageContent ) && 'exception' in jsonPageContent ) {
           logout();
           return initDownload(
-            event,
+            { target },
             true
           );
         }
+
         setLastValidatedToken();
 
         const body = `token=${ token }`;
