@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle explore profiles rest
-// @version      2021.01.22b
+// @version      2021.01.23a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
 // @include      https://moodle.ksasz.ch/user/profile.php?id=*
@@ -20,7 +20,7 @@ import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime';
 import DOMPurify from 'dompurify';
 import style from './style.scss';
 import COUNTRY_CODES from './countries';
-import { login, logout } from '../shared/moodle-functions';
+import { setLastValidatedToken, login, logout } from '../shared/moodle-functions';
 
 dayjs.extend( dayjsPluginRelativeTime );
 
@@ -834,19 +834,8 @@ const fetchNewProfile = async e => {
 
   document.title = `${ profile.fullname }: Public profile`;
 
-  if ( typeof CONTACTS === 'undefined' ) {
-    CONTACTS = (
-      await fetch(
-        'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_message_get_user_contacts',
-        {
-          headers: {
-            'content-type': 'application/x-www-form-urlencoded',
-          },
-          body: `userid=${ USER_ID }&wsfunction=core_message_get_user_contacts&wstoken=f115c49a1e7095268eef4dc43b27bde4`,
-          method: 'POST',
-        }
-      ).then( e => e.json() )
-    ).map( ( { id } ) => id );
+  if ( !Array.isArray( CONTACTS ) ) {
+    CONTACTS = await getContacts();
   }
 
   /* {
@@ -865,7 +854,7 @@ const fetchNewProfile = async e => {
     } */
 
   const isUserProfile = profile.hasOwnProperty( 'preferences' );
-  const isContact = CONTACTS.indexOf( profile.id ) !== -1;
+  const isContact = CONTACTS.includes( profile.id );
   const state = {
     isContact,
     isUserProfile,
@@ -992,9 +981,34 @@ const getProfilesInRange = (
         );
       }
 
+      setLastValidatedToken();
+
       return response;
     } );
 } );
+
+const getContacts = noCache => login( noCache )
+  .then( token => fetch(
+    'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_message_get_user_contacts',
+    {
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: `userid=${ USER_ID }&wsfunction=core_message_get_user_contacts&wstoken=${ token }`,
+      method: 'POST',
+    }
+  )
+    .then( e => e.json() ) )
+  .then( response => {
+    if ( !Array.isArray( response ) && response.hasOwnProperty( 'exception' ) ) {
+      logout();
+      return getContacts( true );
+    }
+
+    setLastValidatedToken();
+
+    return response.map( e => e.id );
+  } );
 
 const unescapeHTML = val => `${ val }`
   .replace(
