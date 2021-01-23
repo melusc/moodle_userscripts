@@ -3,19 +3,10 @@ const svgmin = require( 'gulp-svgmin' );
 const cache = require( 'gulp-cached' );
 const rename = require( 'gulp-rename' );
 
-const del = require( 'del' );
-
 const paths = {
   svg: [ './src/**/*.svg', '!./src/**/*.min.svg' ],
   svgDest: './src',
 };
-
-function clean() {
-  return del(
-    [ 'dist/**', '!dist' ],
-    { force: true }
-  );
-}
 
 function start() {
   minSvg();
@@ -73,4 +64,3 @@ function minSvg() {
 
 exports.default = exports.start = start;
 exports.minSvg = minSvg;
-exports.clean = clean;
