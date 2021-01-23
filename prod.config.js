@@ -1,6 +1,7 @@
 const path = require( 'path' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const entry = require( 'webpack-glob-entry' );
+const { CleanWebpackPlugin } = require( 'clean-webpack-plugin' );
 
 module.exports = {
   mode: 'production',
@@ -18,6 +19,7 @@ module.exports = {
     ),
     filename: '[name].user.js',
   },
+  plugins: [ new CleanWebpackPlugin() ],
   cache: {
     type: 'filesystem',
     cacheDirectory: path.resolve(
