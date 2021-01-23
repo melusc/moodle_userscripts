@@ -1,17 +1,18 @@
 // ==UserScript==
 // @name         Moodle open folders inline preact
-// @version      2021.01.22a
+// @version      2021.01.23a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @grant        GM_deleteValue
 // @grant        GM_addStyle
 // @run-at       document-start
 // ==/UserScript==
 
 import { render, Fragment, h } from 'preact';
-import { login } from '../shared/moodle-functions';
+import { login, logout, setLastValidatedToken } from '../shared/moodle-functions';
 
 import style from './style.scss';
 
@@ -77,7 +78,7 @@ const handleClick = ( () => {
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
             aria-hidden="true"
-            class="icon navicon"
+            class="icon navicon svg-refresh"
             style={{ marginLeft: 5 }}
             viewBox="0 0 512 512"
           >
@@ -88,71 +89,39 @@ const handleClick = ( () => {
         anchor.append( refresh );
       }
 
-      login().then( token => {
-        const courseId = new URLSearchParams( location.search ).get( 'id' );
-        const requestParams = new URLSearchParams();
-        requestParams.set(
-          'courseid',
-          courseId
-        );
-        requestParams.set(
-          'options[0][name]',
-          'includestealthmodules'
-        );
-        requestParams.set(
-          'options[0][value]',
-          1
-        );
-        requestParams.set(
-          'wstoken',
-          token
-        );
+      if ( typeof pageContent === 'undefined' ) {
+        pageContent = getPageContent();
+      }
 
-        if ( typeof pageContent === 'undefined' ) {
-          pageContent = fetch(
-            '/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_course_get_contents',
-            {
-              method: 'POST',
-              headers: {
-                'content-type': 'application/x-www-form-urlencoded',
-              },
-              body: requestParams.toString(),
-            }
-          ).then( e => e.json() );
-        }
+      pageContent.then( pageContentJSON => {
+        const section = anchor.closest( 'li.section.main' );
+        const sectionId = +section
+          .getAttribute( 'aria-labelledby' )
+          .match( /(?<=-)\d+(?=-)/ )[ 0 ];
+        const sectionObj = pageContentJSON.find( ( { id } ) => id === sectionId );
+        const { modules } = sectionObj;
 
-        pageContent.then( pageContentJSON => {
-          const section = anchor.closest( 'li.section.main' );
-          const sectionId = +section
-            .getAttribute( 'aria-labelledby' )
-            .match( /(?<=-)\d+(?=-)/ )[ 0 ];
-          const sectionObj = pageContentJSON.find( ( { id } ) => id === sectionId );
-          const { modules } = sectionObj;
+        const folderId = +folder.id.match( /\d+$/ )[ 0 ];
 
-          const folderId = +folder.id.match( /\d+$/ )[ 0 ];
+        const folderObj = modules.find( ( { id } ) => id === folderId );
+        const { contents } = folderObj;
 
-          const folderObj = modules.find( ( { id } ) => id === folderId );
-          const { contents } = folderObj;
-
+        if ( contents.length && !Array.isArray( contents[ 0 ].filepath ) ) {
           for ( let i = 0; i < contents.length; i++ ) {
-            if ( Array.isArray( contents[ i ].filepath ) ) {
-              break;
-            }
-
             contents[ i ].filepath = contents[ i ].filepath
               .split( '/' )
               .filter( e => e !== '' );
           }
+        }
 
-          const frag = document.createDocumentFragment();
+        const frag = document.createDocumentFragment();
 
-          render(
-            <GenerateFolder contents={contents} />,
-            frag
-          );
+        render(
+          <GenerateFolder contents={contents} />,
+          frag
+        );
 
-          folder.append( frag );
-        } );
+        folder.append( frag );
       } );
     }
   };
@@ -288,6 +257,47 @@ const GenerateFolder = ( { contents, base, directoryDepth = 0 } ) => {
     </>
   );
 };
+
+const getPageContent = noCache => login( noCache ).then( token => {
+  const courseId = new URLSearchParams( location.search ).get( 'id' );
+  const requestParams = new URLSearchParams();
+  requestParams.set(
+    'courseid',
+    courseId
+  );
+  requestParams.set(
+    'options[0][name]',
+    'includestealthmodules'
+  );
+  requestParams.set(
+    'options[0][value]',
+    1
+  );
+  requestParams.set(
+    'wstoken',
+    token
+  );
+
+  return fetch(
+    '/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_course_get_contents',
+    {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: requestParams.toString(),
+    }
+  ).then( e => e.json() )
+    .then( responseJSON => {
+      if ( responseJSON.hasOwnProperty( 'exception' ) ) {
+        logout();
+        return getPageContent( true );
+      }
+
+      setLastValidatedToken();
+      return responseJSON;
+    } );
+} );
 
 document.readyState === 'complete'
   ? init()
