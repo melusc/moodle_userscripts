@@ -8,11 +8,11 @@ import style from './settingspage.scss';
 
 /**
  * Designed to run on the clean moodle settingspage
- * Sets up the settings by clearing and dom and rendering the settings
+ * Sets up the settings by clearing the dom and rendering the settings
  *
  * @returns {void}
  */
-export const initSettingsPage = () => {
+export const setupSettingsPage = () => {
   const { head, body } = document;
   while ( head.lastChild ) {
     head.lastChild.remove();

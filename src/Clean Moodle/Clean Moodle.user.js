@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.01.24a
+// @version   2021.01.24b
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -18,7 +18,7 @@ import { render, h } from 'preact';
 import { getCourses } from '../shared/moodle-functions';
 import { quickSort } from '../shared/general-functions';
 
-import { initSettingsPage } from './settingspage';
+import { setupSettingsPage } from './settingspage';
 import { removeElementFromStorage } from './shared';
 
 if ( location.protocol !== 'https:' ) {
@@ -27,7 +27,7 @@ if ( location.protocol !== 'https:' ) {
 
 const isFrontpage = !( /^\/cleanmoodlepreact/i ).test( location.pathname );
 
-const runOnceOnFrontpage = () => {
+const setupFrontpage = () => {
   const sidebar = getSidebar( document );
 
   GM_registerMenuCommand(
@@ -37,35 +37,29 @@ const runOnceOnFrontpage = () => {
     }
   );
 
-  if ( !sidebar ) {
-    return;
+  if ( sidebar ) {
+    cleanFrontpage( sidebar );
+
+    GM_addValueChangeListener(
+      'replace',
+      refresh
+    );
+    GM_addValueChangeListener(
+      'remove',
+      refresh
+    );
+
+    const p = sidebar.previousSibling;
+    const span = document.createElement( 'span' );
+    p.append( span );
+    render(
+      <SvgSettingsGear />,
+      span
+    );
   }
-
-  initFrontPage( sidebar );
-
-  GM_addValueChangeListener(
-    'replace',
-    refresh
-  );
-  GM_addValueChangeListener(
-    'remove',
-    refresh
-  );
-
-  const p = sidebar.previousSibling;
-  const span = document.createElement( 'span' );
-  p.append( span );
-  render(
-    <SvgSettingsGear />,
-    span
-  );
 };
 
-const initFrontPage = ( sidebar = getSidebar( document ) ) => {
-  if ( !sidebar ) {
-    return;
-  }
-
+const cleanFrontpage = sidebar => {
   const replaceObj = GM_getValue( 'replace' );
 
   if ( typeof replaceObj === 'object' ) {
@@ -120,6 +114,13 @@ const SvgSettingsGear = () => <a
     <path d="M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 014.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 01-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 011.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 012.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 012.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 011.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 01-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 018.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 001.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 00.52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 00-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 00-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 00-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 00-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 00.52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 001.255-.52l.094-.319zM8 5.754a2.246 2.246 0 100 4.492 2.246 2.246 0 000-4.492zM4.754 8a3.246 3.246 0 116.492 0 3.246 3.246 0 01-6.492 0z" />
   </svg>
 </a>;
+
+/**
+ * Replace the text of a course
+ * @param {number|string} id The id of the course to replace
+ * @param {[string]} newVal The new value, defaults to the anchors title (for resetting it)
+ * @param {Element} sidebar The sidebar where the course is
+ */
 const replace = (
   id, newVal, sidebar
 ) => {
@@ -129,43 +130,27 @@ const replace = (
   );
 
   if ( !anchor ) {
-    testForInexistantCourse( id );
+    return testForInexistantCourse( id );
   }
-  else if ( anchor.childElementCount === 0 ) {
-    anchor.textContent = newVal;
+
+  const text = newVal ?? anchor.title; // instead of now removed resetReplaced()
+
+  if ( anchor.childElementCount === 0 ) {
+    anchor.textContent = text;
   }
   else {
     // because custom icons can use a span with an svg in it
     // so we need to be more specific about which span
-    anchor.querySelector( 'span.item-content-wrap' ).textContent = newVal;
+    anchor.querySelector( 'span.item-content-wrap' ).textContent = text;
   }
+  return undefined;
 };
 
-const resetReplaced = (
-  id, sidebar
-) => {
-  const anchor = getElem(
-    id,
-    sidebar
-  );
-
-  if ( anchor ) {
-    const text = anchor.title;
-
-    if ( anchor.childElementCount === 0 ) {
-      anchor.textContent = text;
-    }
-    else {
-      // because custom icons can use a span with an svg in it
-      // so we need to be more specific about which span
-      anchor.querySelector( 'span.item-content-wrap' ).textContent = text;
-    }
-  }
-  else {
-    testForInexistantCourse( id );
-  }
-};
-
+/**
+ * Removes a course from the sidebar by the id
+ * @param {number|string} id The id of the course to remove
+ * @param {Element} sidebar The sidebar where the course is
+ */
 const remove = (
   id, sidebar
 ) => {
@@ -185,6 +170,10 @@ const remove = (
   }
 };
 
+/**
+ * Sort the sidebar by the courses' name
+ * @param {Element} sidebar The sidebar where the course is
+ */
 const sortSidebar = sidebar => {
   const children = [ ...sidebar.querySelectorAll( ':scope > li.type_course' ) ];
 
@@ -194,6 +183,10 @@ const sortSidebar = sidebar => {
       a, b
     ) => {
       const aText = a.firstElementChild.textContent.toLowerCase();
+      //              ^ if we're on the courses page it has more text like "participants" or "grades"
+      // but we only want to sort it by the course's name
+      // normally it would sort it in the same way if we allowed the additional text
+      // but if two courses start with the same name it can sort it wrong
       const bText = b.firstElementChild.textContent.toLowerCase();
       return aText < bText
         ? -1
@@ -210,14 +203,14 @@ const testDiff = (
 ) => {
   if ( Array.isArray( oldVal ) ) {
     const addedOrChanged = newVal.filter( cur => !oldVal.includes( cur ) );
-    const removed = oldVal.filter( cur => !newVal.includes( cur ) );
-    return { addedOrChanged, removed };
+    const removedVals = oldVal.filter( cur => !newVal.includes( cur ) );
+    return { addedOrChanged, removedVals };
   }
   const oldArr = Object.keys( oldVal );
   const newArr = Object.keys( newVal );
   const addedOrChanged = newArr.filter( id => !oldArr.includes( id ) || oldVal[ id ] !== newVal[ id ] );
-  const removed = oldArr.filter( id => !newArr.includes( id ) );
-  return { addedOrChanged, removed };
+  const removedVals = oldArr.filter( id => !newArr.includes( id ) );
+  return { addedOrChanged, removedVals };
 };
 
 const refresh = ( () => {
@@ -227,88 +220,88 @@ const refresh = ( () => {
     name, oldValue, newValue, remote
   ) => {
     if ( remote ) {
-      if ( !sidebar && !( sidebar = getSidebar( document ) ) ) {
-        return;
-      }
+      // more readable by seperating them and terser optimises this into one anyway
+      if ( sidebar || ( sidebar = getSidebar( document ) ) ) {
+        const { removedVals, addedOrChanged } = testDiff(
+          oldValue,
+          newValue
+        );
 
-      const { removed: removedVals, addedOrChanged } = testDiff(
-        oldValue,
-        newValue
-      );
+        if ( name === 'replace' ) {
+          for ( const item of removedVals ) {
+            replace(
+              item,
+              null, // defaults to the anchor title which is exactly what we want
+              sidebar
+            );
+          }
 
-      if ( name === 'replace' ) {
-        for ( const item of removedVals ) {
-          resetReplaced(
-            item,
-            sidebar
-          );
-        }
-
-        for ( const item of addedOrChanged ) {
-          replace(
-            item,
-            newValue[ item ],
-            sidebar
-          );
-        }
-        sortSidebar( sidebar );
+          for ( const item of addedOrChanged ) {
+            replace(
+              item,
+              newValue[ item ],
+              sidebar
+            );
+          }
+          sortSidebar( sidebar );
         // adding anchors leavers the sidebar potentially (slightly) unsorted
-      }
-      else if ( name === 'remove' ) {
-        for ( const item of addedOrChanged ) {
-          remove(
-            item,
-            sidebar
-          );
         }
-        // removing anchors leaves the sidebar still sorted
+        else if ( name === 'remove' ) {
+          for ( const item of addedOrChanged ) {
+            remove(
+              item,
+              sidebar
+            );
+          }
+          // removing anchors leaves the sidebar still sorted
 
-        if ( removedVals.length > 0 ) {
-          getCourses().then( coursesObj => {
-            for ( const id of removedVals ) {
-              const fullname = coursesObj[ id ];
+          if ( removedVals.length > 0 ) {
+            getCourses().then( coursesObj => {
+              for ( const id of removedVals ) {
+                const fullname = coursesObj[ id ];
 
-              if ( !getElem(
-                id,
-                sidebar
-              ) ) {
-                const li = document.createElement( 'li' );
-                li.className = 'type_course depth_3 item_with_icon';
-                li.tabIndex = -1;
-                sidebar.prepend( li );
+                if ( !getElem(
+                  id,
+                  sidebar
+                ) ) {
+                  const li = document.createElement( 'li' );
+                  li.className = 'type_course depth_3 item_with_icon';
+                  li.tabIndex = -1;
+                  sidebar.prepend( li );
 
-                render(
-                  <p
-                    class="tree_item hasicon"
-                    role="treeitem"
-                    id={`expandable_branch_20_${ id }`}
-                    tabindex="-1"
-                    aria-selected="false"
-                  >
-                    <a
+                  render(
+                    <p
+                      class="tree_item hasicon"
+                      role="treeitem"
+                      id={`expandable_branch_20_${ id }`}
                       tabindex="-1"
-                      title={fullname}
-                      href={`https://moodle.ksasz.ch/course/view.php?id=${ id }`}
+                      aria-selected="false"
                     >
-                      <i
-                        class="icon fa fa-graduation-cap fa-fw navicon"
-                        aria-hidden="true"
+                      <a
                         tabindex="-1"
-                      />
-                      <span class="item-content-wrap" tabindex="-1">
-                        {fullname}
-                      </span>
-                    </a>
-                  </p>,
-                  li
-                );
+                        title={fullname}
+                        href={`https://moodle.ksasz.ch/course/view.php?id=${ id }`}
+                      >
+                        <i
+                          class="icon fa fa-graduation-cap fa-fw navicon"
+                          aria-hidden="true"
+                          tabindex="-1"
+                        />
+                        <span class="item-content-wrap" tabindex="-1">
+                          {fullname}
+                        </span>
+                      </a>
+                    </p>,
+                    li
+                  );
+                }
               }
-            }
 
-            sortSidebar( sidebar );
+              sortSidebar( sidebar );
 
-            dispatchEvent( new Event( 'customIconsPreact' ) );
-          } );
+              dispatchEvent( new Event( 'customIconsPreact' ) );
+            } );
+          }
         }
       }
     }
@@ -330,11 +323,12 @@ const testForInexistantCourse = id => {
 
 const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' )
   ?? context.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
+  // second one assumes user is in "allgemeine informationen" and is for worst case scenario where the above doesn't work
 
 if ( !( /^\/customicons/iu ).test( location.pathname ) ) {
   const functionToRun = isFrontpage
-    ? runOnceOnFrontpage
-    : initSettingsPage;
+    ? setupFrontpage
+    : setupSettingsPage;
 
   document.readyState === 'complete'
     ? functionToRun()
