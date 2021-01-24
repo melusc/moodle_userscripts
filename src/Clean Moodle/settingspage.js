@@ -36,8 +36,6 @@ export const initSettingsPage = () => {
   document.head.append( link );
 };
 
-export const getSettingsPageSetState = () => settingsPageSetState;
-
 let settingsPageSetState;
 class SettingsPage extends Component {
   state = {
