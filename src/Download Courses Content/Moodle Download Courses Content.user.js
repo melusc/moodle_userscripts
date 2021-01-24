@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Download Course's Content
-// @version      2021.01.23a
+// @version      2021.01.24a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js
@@ -13,7 +13,8 @@
 // @connect      *
 // ==/UserScript==
 
-window.nonExistantFunc?.(); //  for whatever reason, without this, webpack optimises the metadata above away
+// this is so webpack doesn't remove the metadata above
+if ( location.protocol !== 'https:' ) { location.protocol = 'https:'; /* this should never happen*/ }
 
 import saveAs from 'file-saver';
 import JSZip from 'jszip/dist/jszip';
