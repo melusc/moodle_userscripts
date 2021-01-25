@@ -42,7 +42,6 @@ export const setupSettingsPage = () => {
   document.head.append( link );
 };
 
-let settingsPageSetState;
 class SettingsPage extends Component {
   state = {
     courses: [],
@@ -57,7 +56,7 @@ class SettingsPage extends Component {
   inputs = { username: createRef(), password: createRef() };
 
   render = (
-    _props, { courses, selected }
+    _props, { courses, selected, loggedOut }
   ) => <div class="container">
     <Sidebar
       courses={courses}
@@ -69,7 +68,7 @@ class SettingsPage extends Component {
       selected={selected}
       replaceInputRef={this.replaceInputRef}
       handleSave={this.handleSave}
-      loggedOut={this.state.loggedOut}
+      loggedOut={loggedOut}
       loggedOutCallback={this.loggedOutCallbackHandler}
       loggedOutInputs={this.inputs}
     />
@@ -87,10 +86,9 @@ class SettingsPage extends Component {
   };
 
   componentDidMount = () => {
-    settingsPageSetState = this.setState.bind( this );
     getCourses(
       false,
-      settingsPageSetState
+      this.setState.bind( this )
     ).then( coursesObj => {
       const courses = Object.entries( coursesObj ).map( ( [ courseId, courseName ] ) => {
         const isReplaced = checkIsCourseReplaced( courseId );
