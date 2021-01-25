@@ -21,6 +21,12 @@ export const setupSettingsPage = () => {
     body.lastChild.remove();
   }
 
+  history.replaceState(
+    {},
+    '',
+    '/cleanMoodlePreact'
+  );
+
   document.title = 'Clean Moodle Setup';
 
   GM_addStyle( style );
@@ -119,14 +125,7 @@ class SettingsPage extends Component {
 
       this.setState( () => ( { selected: { isSelected: false } } ) );
 
-      this.iterateCourses(
-        courseId,
-        course => {
-          const isReplaced = checkIsCourseReplaced( courseId );
-          course.isReplaced = isReplaced !== false;
-          course.replacedName = isReplaced;
-        }
-      );
+      this.updateCourseById( courseId );
     }
   };
 
@@ -141,15 +140,7 @@ class SettingsPage extends Component {
       setRemoved( courseId );
     }
 
-    this.iterateCourses(
-      courseId,
-      course => {
-        course.isRemoved = checkIsCourseRemoved( courseId );
-        const isReplaced = checkIsCourseReplaced( courseId );
-        course.isReplaced = isReplaced !== false;
-        course.replacedName = isReplaced;
-      }
-    );
+    this.updateCourseById( courseId );
 
     this.removeSelectedIfEqualId( courseId );
   };
@@ -159,8 +150,11 @@ class SettingsPage extends Component {
   ) => {
     const { courseId } = item;
     ev.stopImmediatePropagation();
+    this.removeSelectedIfEqualId( courseId );
 
-    this.iterateCourses(
+    removeElementFromStorage( courseId );
+
+    this.updateCourseById(
       courseId,
       course => {
         course.isReplaced = false;
@@ -178,14 +172,14 @@ class SettingsPage extends Component {
     } );
   };
 
-  iterateCourses = (
-    id, fn
-  ) => {
+  updateCourseById = id => {
     this.setState( ( { courses } ) => {
-      for ( let i = 0; i < courses.length; ++i ) {
-        const course = courses[ i ];
+      for ( const course of courses ) {
         if ( course.courseId === id ) {
-          courses[ i ] = fn( course ) ?? course;
+          course.isRemoved = checkIsCourseRemoved( id );
+          const isReplaced = checkIsCourseReplaced( id );
+          course.isReplaced = isReplaced !== false;
+          course.replacedName = isReplaced;
           break;
         }
       }
@@ -202,12 +196,7 @@ class SettingsPage extends Component {
         item.courseId,
         { updateReplacers: false }
       );
-      this.iterateCourses(
-        item.courseId,
-        course => {
-          course.isRemoved = false;
-        }
-      );
+      this.updateCourseById( item.courseId );
     }
 
     this.setState(
