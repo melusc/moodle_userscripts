@@ -154,13 +154,7 @@ class SettingsPage extends Component {
 
     removeElementFromStorage( courseId );
 
-    this.updateCourseById(
-      courseId,
-      course => {
-        course.isReplaced = false;
-        course.replacedName = false;
-      }
-    );
+    this.updateCourseById( courseId );
   };
 
   removeSelectedIfEqualId = id => {
