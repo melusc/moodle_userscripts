@@ -9,7 +9,6 @@
 // @grant        GM.setValue
 // @grant        GM.getValue
 // @grant        GM_addStyle
-// _@grant        GM_deleteValue
 // @grant        GM.deleteValue
 // @run-at       document-start
 // @connect      www.schul-netz.com
