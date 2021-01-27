@@ -4,7 +4,6 @@
     "es2020": true,
     "greasemonkey": true
   },
-  "plugins": ["@babel"],
   "extends": ["preact"],
   "globals": {
     "GM_addValueChangeListener": true,
@@ -12,22 +11,22 @@
   },
   "overrides": [
     {
-      "files": ["./*.js"], // root level js files are config files and as such run in node
       "env": {
         "es2020": true,
         "node": true
       },
-      "rules": { "camelcase": "off" }
+      "files": ["./*.js"],
+      "rules": {
+        "camelcase": "off"
+      }
     }
   ],
-
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 11
   },
-  "parser": "@babel/eslint-parser",
-
+  "plugins": ["@babel"],
   "rules": {
-    // babel
     "@babel/no-invalid-this": "error",
     "@babel/no-unused-expressions": [
       "error",
@@ -38,8 +37,6 @@
     ],
     "@babel/object-curly-spacing": ["error", "always"],
     "@babel/semi": ["error", "always"],
-
-    // normal eslint
     "accessor-pairs": [
       "error",
       {
@@ -156,9 +153,9 @@
       "error",
       "all",
       {
+        "conditionalAssign": false,
         "nestedBinaryExpressions": false,
-        "returnAssign": true,
-        "conditionalAssign": false
+        "returnAssign": true
       }
     ],
     "no-floating-decimal": "error",
@@ -269,7 +266,13 @@
     "space-in-parens": ["error", "always"],
     "space-infix-ops": "error",
     "space-unary-ops": "error",
-    "spaced-comment": ["error", "always", { "exceptions": ["#__PURE__"] }],
+    "spaced-comment": [
+      "error",
+      "always",
+      {
+        "exceptions": ["#__PURE__"]
+      }
+    ],
     "strict": ["error", "global"],
     "switch-colon-spacing": [
       "error",

@@ -1,18 +1,14 @@
 {
-  "name": "moodle_userscript",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {
-    "serve": "serve dist",
-    "start": "gulp start",
-    "webpack": "webpack -c prod.config.js",
-    "webpack:w": "webpack -c prod.config.js -w",
-    "build": "npm run webpack"
-  },
-  "sideEffects": false,
   "author": "",
-  "license": "ISC",
-  "private": true,
+  "dependencies": {
+    "dayjs": "^1.10.4",
+    "dompurify": "^2.2.6",
+    "file-saver": "^2.0.5",
+    "htm": "^3.0.4",
+    "jszip": "^3.5.0",
+    "preact": "^10.5.12"
+  },
+  "description": "",
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/eslint-parser": "^7.12.1",
@@ -39,12 +35,16 @@
     "webpack-cli": "^4.4.0",
     "webpack-glob-entry": "^2.1.1"
   },
-  "dependencies": {
-    "dayjs": "^1.10.4",
-    "dompurify": "^2.2.6",
-    "file-saver": "^2.0.5",
-    "htm": "^3.0.4",
-    "jszip": "^3.5.0",
-    "preact": "^10.5.12"
-  }
+  "license": "ISC",
+  "name": "moodle_userscript",
+  "private": true,
+  "scripts": {
+    "build": "npm run webpack",
+    "serve": "serve dist",
+    "start": "gulp start",
+    "webpack": "webpack -c prod.config.js",
+    "webpack:w": "webpack -c prod.config.js -w"
+  },
+  "sideEffects": false,
+  "version": "1.0.0"
 }
