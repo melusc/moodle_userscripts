@@ -45,6 +45,7 @@ export const setupSettingsPage = () => {
 class SettingsPage extends Component {
   state = {
     courses: [],
+    loadingCourses: true,
     selected: { isSelected: false },
 
     loggedOut: false,
@@ -56,13 +57,14 @@ class SettingsPage extends Component {
   inputs = { username: createRef(), password: createRef() };
 
   render = (
-    _props, { courses, selected, loggedOut }
+    _props, { courses, selected, loggedOut, loadingCourses }
   ) => <div class="container">
     <Sidebar
       courses={courses}
       handleClick={this.handleSidebarClick}
       toggleItem={this.toggleItem}
       resetItem={this.resetItem}
+      loadingCourses={loadingCourses}
     />
     <Main
       selected={selected}
@@ -104,7 +106,7 @@ class SettingsPage extends Component {
 
       sortCoursesArr( courses );
 
-      this.setState( { courses } );
+      this.setState( { courses, loadingCourses: false } );
     } );
   };
 
@@ -308,8 +310,9 @@ const setReplaced = (
   );
 };
 
-const Sidebar = ( { courses, ...rest } ) => <div class="outer-sidebar">
+const Sidebar = ( { courses, loadingCourses, ...rest } ) => <div class="outer-sidebar">
   <div class="sidebar">
+    {loadingCourses && <div>Loading courses...</div>}
     {courses.map( course => <SidebarRow key={course.courseId} item={course} {...rest} /> )}
   </div>
 </div>;

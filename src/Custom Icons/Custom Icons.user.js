@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Custom Icons Preact
-// @version      2021.01.27b
+// @version      2021.01.27c
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include      *://moodle.ksasz.ch/*
@@ -19,7 +19,7 @@ import { Fragment } from 'preact';
 import { getCourses } from '../shared/moodle-functions';
 import style from './style.scss';
 
-const isFrontpage = !( /^\/customiconspreact/iu ).test( location.pathname );
+const isFrontpage = !( /^\/customiconspreact/i ).test( location.pathname );
 
 const errors = {
   error: Error( 'An error occured' ),
@@ -261,6 +261,7 @@ let settingsPageSetState;
 class SettingsPage extends Component {
   state = {
     courses: [],
+    loadingCourses: true,
 
     notificationString: null,
 
@@ -280,12 +281,13 @@ class SettingsPage extends Component {
 
   render = (
     _props,
-    { courses, selectedCourse, inputStates, notificationString, loggedOutCallback }
+    { courses, selectedCourse, inputStates, notificationString, loggedOutCallback, loadingCourses }
   ) => <div class="container">
     <Sidebar
       courses={courses}
       handleClick={this.handleSidebarClick}
       blur={`${ notNullOrUndef( notificationString ) }`}
+      loadingCourses={loadingCourses}
     />
     <Main
       selectedCourse={selectedCourse}
@@ -650,13 +652,14 @@ class SettingsPage extends Component {
             : 0;
       } );
 
-      this.setState( { courses } );
+      this.setState( { courses, loadingCourses: false } );
     } );
   }
 }
 
-const Sidebar = ( { blur, courses, handleClick } ) => <div data-blur={blur} class="outer-sidebar" onClick={handleClick}>
+const Sidebar = ( { blur, courses, handleClick, loadingCourses } ) => <div data-blur={blur} class="outer-sidebar" onClick={handleClick}>
   <div class="sidebar">
+    {loadingCourses && <div>Loading courses...</div>}
     {courses?.map( ( { id, dataURI, name, isXML, rawXML } ) => <div class="row" data-id={id} key={id}>
       {typeof isXML === 'boolean'
             && <>
@@ -927,7 +930,7 @@ const deleteVal = id => {
   }
 };
 
-if ( !( /^\/cleanmoodle/iu ).test( location.pathname ) ) {
+if ( !( /^\/cleanmoodle/i ).test( location.pathname ) ) {
   const functionToRun = isFrontpage
     ? runOnceOnFrontPage
     : initSettingspage;

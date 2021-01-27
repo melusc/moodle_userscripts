@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.01.27b
+// @version   2021.01.27c
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -325,7 +325,7 @@ const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_
   ?? context.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
   // second one assumes user is in "allgemeine informationen" and is for worst case scenario where the above doesn't work
 
-if ( !( /^\/customicons/iu ).test( location.pathname ) ) {
+if ( !( /^\/customicons/i ).test( location.pathname ) ) {
   const functionToRun = isFrontpage
     ? setupFrontpage
     : setupSettingsPage;
