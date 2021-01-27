@@ -81,7 +81,6 @@ class SettingsPage extends Component {
 
     if ( username && password ) {
       this.state.loggedOutCallback( { username, password } );
-      this.setState( { loggedOut: false, loggedOutCallback: null } );
     }
   };
 

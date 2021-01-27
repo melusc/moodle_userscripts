@@ -129,6 +129,9 @@ export const getCredentials = ( loginReturnState = defaultLoginReturnState ) => 
       'password',
       password
     );
+
+    loginReturnState( { loggedOut: false, loggedOutCallback: null } );
+
     resolve( { username, password } );
   };
 
@@ -138,12 +141,10 @@ export const getCredentials = ( loginReturnState = defaultLoginReturnState ) => 
     resolve( { username, password } );
   }
   else {
-    const state = {
+    loginReturnState( {
       loggedOut: true,
       loggedOutCallback: callback,
-    };
-
-    loginReturnState( state );
+    } );
   }
 } );
 
@@ -192,7 +193,6 @@ class FrontPageLogin extends Component {
     const password = this.inputs.password.value;
 
     if ( username && password ) {
-      this.setState( { loggedOut: false } );
       this.state.loggedOutCallback( {
         username,
         password,
@@ -201,9 +201,7 @@ class FrontPageLogin extends Component {
   };
 
   componentDidMount = () => {
-    frontPageLoginSetState = state => {
-      this.setState( state );
-    };
+    frontPageLoginSetState = this.setState.bind( this );
   };
 }
 

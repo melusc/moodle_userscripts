@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Custom Icons Preact
-// @version      2021.01.27a
+// @version      2021.01.27b
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include      *://moodle.ksasz.ch/*
@@ -280,7 +280,7 @@ class SettingsPage extends Component {
 
   render = (
     _props,
-    { courses, selectedCourse, inputStates, notificationString }
+    { courses, selectedCourse, inputStates, notificationString, loggedOutCallback }
   ) => <div class="container">
     <Sidebar
       courses={courses}
@@ -296,7 +296,7 @@ class SettingsPage extends Component {
       inputRefs={this.inputRefs}
       blur={`${ notNullOrUndef( notificationString ) }`}
       loggedOut={this.state.loggedOut}
-      loggedOutCallback={this.loggedOutCallbackHandler}
+      loggedOutCallback={loggedOutCallback}
     />
     {notificationString
         && <Notification
@@ -305,11 +305,6 @@ class SettingsPage extends Component {
         />
     }
   </div>;
-
-  loggedOutCallbackHandler = vals => {
-    this.state.loggedOutCallback( vals );
-    this.setState( { loggedOut: false, loggedOutCallback: null } );
-  };
 
   handleSidebarClick = e => {
     const { target } = e;
