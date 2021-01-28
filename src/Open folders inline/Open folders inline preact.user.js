@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle open folders inline preact
-// @version      2021.01.27b
+// @version      2021.01.28a
 // @author       lusc
 // @include      https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
@@ -117,7 +117,7 @@ const handleClick = ( () => {
         const frag = document.createDocumentFragment();
 
         render(
-          <GenerateFolder contents={contents} />,
+          <Folder contents={contents} />,
           frag
         );
 
@@ -161,7 +161,7 @@ const generateImageURL = ( () => {
     : defaultVal;
 } )();
 
-const GenerateFolder = ( { contents, base, directoryDepth = 0 } ) => {
+const Folder = ( { contents, base, directoryDepth = 0 } ) => {
   const filePaths = {
     '/': [],
   };
@@ -174,7 +174,18 @@ const GenerateFolder = ( { contents, base, directoryDepth = 0 } ) => {
     filePathArr.push( contents[ i ] );
   }
 
-  const root = filePaths[ '/' ];
+  const root = filePaths[ '/' ].sort( (
+    a, b
+  ) => {
+    const aL = a.filename.toLowerCase();
+    const bL = b.filename.toLowerCase();
+
+    return aL < bL
+      ? -1
+      : aL > bL
+        ? 1
+        : 0;
+  } );
   delete filePaths[ '/' ];
 
   const entries = Object.entries( filePaths ).sort( (
@@ -211,7 +222,7 @@ const GenerateFolder = ( { contents, base, directoryDepth = 0 } ) => {
 
       <ul style="list-style: none;" hidden={Boolean( base )}>
         {entries.map( ( [ key, val ] ) => <li>
-          <GenerateFolder
+          <Folder
             contents={val}
             base={key}
             directoryDepth={directoryDepth + 1}
