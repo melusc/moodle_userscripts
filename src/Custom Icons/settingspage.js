@@ -179,6 +179,10 @@ class SettingsPage extends Component {
   ) => {
     e.stopImmediatePropagation();
     deleteVal( courseId );
+    if ( courseId === this.state.selected.courseId ) {
+      this.reset();
+    }
+
     this.updateCourseById( courseId );
   };
 
@@ -229,7 +233,7 @@ class SettingsPage extends Component {
   };
 
   reset = ( resetSelected = true ) => {
-    this.form.current?.reset();
+    this.form.current.reset();
     const obj = {
       inputVals: { current: false },
       ...resetSelected && { selected: { isSelected: false } },
@@ -297,7 +301,7 @@ class SettingsPage extends Component {
           const uuid = uuidv4();
           const values = GM_getValue( 'values' );
 
-          const obj = { mediaType: blobLike.type };
+          const obj = {};
 
           const { rawByteString } = fr.result.match( /^data:[\w+/]+;base64,(?<rawByteString>.+)$/ ).groups;
           if ( blobLike.type === 'image/svg+xml' ) {
@@ -307,6 +311,7 @@ class SettingsPage extends Component {
           }
           else {
             obj.rawByteString = rawByteString;
+            obj.mediaType = blobLike.type;
           }
 
           values[ uuid ] = obj;
@@ -334,6 +339,7 @@ class SettingsPage extends Component {
     saveByCopy: val => {
       const { courseId } = this.state.selected;
       const pointers = GM_getValue( 'pointers' );
+      deleteVal( courseId );
       pointers[ courseId ] = pointers[ val ];
       GM_setValue(
         'pointers',
@@ -414,10 +420,11 @@ const getIcon = id => {
       if ( returnObj.isXML ) {
         returnObj.rawXML = value.rawXML;
       }
+      else {
+        const { mediaType, rawByteString } = value;
 
-      const { mediaType, rawByteString } = value;
-
-      returnObj.dataURI = `data:${ mediaType };base64,${ rawByteString }`;
+        returnObj.dataURI = `data:${ mediaType };base64,${ rawByteString }`;
+      }
 
       return returnObj;
     }
