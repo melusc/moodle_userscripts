@@ -75,39 +75,36 @@ class SettingsPage extends Component {
       loggedOutCallback,
       notificationString,
     }
-  ) => {
-    console.log( this.state );
-    return (
-      <>
-        <div class={`container${ notificationString
-          ? ' blur'
-          : '' }`}>
-          <Sidebar
-            courses={courses}
-            rowClick={this.rowClick}
-            delIcon={this.delIcon}
-          />
-          <Main
-            courses={courses}
-            selected={selected}
-            handleInput={this.handleMainInput}
-            currentInput={current}
-            currentInputVal={val}
-            loggedOut={loggedOut}
-            loggedOutCallback={loggedOutCallback}
-            handleSave={this.handleSave}
-            formRef={this.form}
-          />
-        </div>
-        {notificationString
+  ) => <>
+    <div class={`container${ notificationString
+      ? ' blur'
+      : '' }`}>
+      <Sidebar
+        courses={courses}
+        rowClick={this.rowClick}
+        delIcon={this.delIcon}
+      />
+      <Main
+        courses={courses}
+        selected={selected}
+        handleInput={this.handleMainInput}
+        currentInput={current}
+        currentInputVal={val}
+        loggedOut={loggedOut}
+        loggedOutCallback={loggedOutCallback}
+        handleSave={this.handleSave}
+        formRef={this.form}
+        reset={this.reset}
+      />
+    </div>
+    {notificationString
           && <Notification
             handleClick={this.closeNotification}
             notificationString={notificationString}
           />
-        }
-      </>
-    );
-  };
+    }
+  </>
+    ;
 
   closeNotification = (
     e, testForClass
@@ -229,18 +226,18 @@ class SettingsPage extends Component {
     } );
   };
 
-  reset = () => {
+  reset = ( resetSelected = true ) => {
     this.form.current?.reset();
-
-    this.setState( {
-      selected: { isSelected: false },
+    const obj = {
       inputVals: { current: false },
-    } );
+      ...resetSelected && { selected: { isSelected: false } },
+    };
+
+    this.setState( obj );
   };
 
   saveHandlers = {
     saveByURL: val => {
-      console.log( val );
       GM_xmlhttpRequest( {
         method: 'GET',
         url: val,
@@ -428,6 +425,7 @@ const Main = ( {
   loggedOut,
   loggedOutCallback,
   formRef,
+  reset,
 } ) => {
   const fileRef = useRef( null );
   const fileBtnClick = e => {
@@ -437,13 +435,7 @@ const Main = ( {
   const resetFile = e => {
     e.preventDefault();
     e.stopImmediatePropagation();
-    if ( fileRef.current ) {
-      fileRef.current.value = null;
-      handleInput(
-        { target: fileRef.current },
-        FILE_CONSTANT
-      );
-    }
+    reset();
   };
   const usernameRef = useRef( null );
   const passwordRef = useRef( null );
