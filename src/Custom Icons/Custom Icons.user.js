@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.01.29c
+// @version   2021.01.29d
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include   *://moodle.ksasz.ch/*
@@ -168,7 +168,7 @@ const getBlobURL = id => {
 const refresh = (
   _name, oldVal, newVal, remote
 ) => {
-  if ( remote === true ) {
+  if ( remote ) {
     const sidebar = getSidebar( document );
     const oldEntries = Object.entries( oldVal );
     const newEntries = Object.entries( newVal );
