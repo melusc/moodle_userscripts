@@ -9,13 +9,14 @@ const FILE_CONSTANT = 'FILE';
 const COPY_CONSTANT = 'COPY';
 const URL_CONSTANT = 'URL';
 const errors = {
-  error: Error( 'An error occured' ),
-  timeout: Error( 'Request timed out' ),
-  abort: Error( 'Request was aborted' ),
-  invalidSelector: Error( 'Invalid option selected' ),
+  error: 'An error occured',
+  timeout: 'Request timed out',
+  abort: 'Request was aborted',
+  invalidSelector: 'Invalid option selected',
+  invalidURL: 'Invalid URL submitted',
   statusCode: (
     status, statusText
-  ) => new Error( `Error ${ status }: ${ statusText }` ),
+  ) => `Error ${ status }: ${ statusText }`,
 };
 
 export const setupSettingsPage = () => {
@@ -238,40 +239,48 @@ class SettingsPage extends Component {
 
   saveHandlers = {
     saveByURL: val => {
-      GM_xmlhttpRequest( {
-        method: 'GET',
-        url: val,
-        timeout: 15000,
-        responseType: 'blob',
-        anonymous: true,
-        onabort: () => {
-          this.setState( { notificationString: errors.abort } );
-        },
-        onerror: () => {
-          this.setState( { notificationString: errors.error } );
-        },
-        ontimeout: () => {
-          this.setState( { notificationString: errors.timeout } );
-        },
-        onload: res => {
-          if ( res.status === 200 ) {
-            this.saveHandlers.saveWithFileHandler( res.response );
-          }
-          else {
-            this.setState( {
-              notificationString: errors.statusCode(
-                res.status,
-                res.statusText
-              ),
-            } );
-          }
-        },
-      } );
+      try {
+        const url = new URL( val );
+
+        GM_xmlhttpRequest( {
+          method: 'GET',
+          url: url.href,
+          timeout: 15000,
+          responseType: 'blob',
+          anonymous: true,
+          onabort: () => {
+            this.setState( { notificationString: errors.abort } );
+          },
+          onerror: () => {
+            this.setState( { notificationString: errors.error } );
+          },
+          ontimeout: () => {
+            this.setState( { notificationString: errors.timeout } );
+          },
+          onload: res => {
+            if ( res.status === 200 ) {
+              this.saveHandlers.saveWithFileHandler( res.response );
+            }
+            else {
+              this.setState( {
+                notificationString: errors.statusCode(
+                  res.status,
+                  res.statusText
+                ),
+              } );
+            }
+          },
+        } );
+      }
+      catch {
+        this.setState( { notificationString: errors.invalidURL } );
+      }
     },
 
     saveWithFileHandler: blobLike => {
       const fr = new FileReader();
 
+      fr.onerror = () => { this.setState( { notificationString: errors.error } ); };
       fr.onload = () => {
         const img = new Image();
         img.onerror = () => {
