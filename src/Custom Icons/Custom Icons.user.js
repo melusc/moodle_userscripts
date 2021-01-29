@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.01.28a
+// @version   2021.01.29a
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
 // @include   *://moodle.ksasz.ch/*
@@ -15,8 +15,15 @@
 // @connect   *
 // ==/UserScript==
 
-if ( location.protocol !== 'https:' ) {
-  location.protocol = 'https:';
+if ( typeof GM_getValue( 'pointers' ) !== 'object' ) {
+  GM_setValue(
+    'pointers',
+    {}
+  );
+  GM_setValue(
+    'values',
+    {}
+  );
 }
 
 import { render, html } from 'htm/preact';
@@ -39,32 +46,21 @@ const runOnceOnFrontPage = () => {
 
   addEventListener(
     'customIconsPreact',
-    initFrontpage
+    updateIcons
   );
 
-  if ( !GM_getValue( 'pointers' ) ) {
-    GM_setValue(
-      'pointers',
-      {}
-    );
-    GM_setValue(
-      'values',
-      {}
-    );
-  }
-
-  initFrontpage();
+  updateIcons();
 };
 
-const initFrontpage = () => {
+const updateIcons = () => {
   const sidebar = getSidebar( document );
 
   if ( sidebar ) {
     const pointers = Object.keys( GM_getValue( 'pointers' ) );
 
-    for ( let i = 0; i < pointers.length; i++ ) {
+    for ( const id of pointers ) {
       applyIcon(
-        pointers[ i ],
+        id,
         sidebar
       );
     }
@@ -104,7 +100,7 @@ const applyIcon = (
         anchor.firstElementChild.replaceWith( span );
       }
       else {
-        const img = document.createElement( 'img' );
+        const img = new Image();
 
         img.classList.add(
           'icon',
@@ -154,7 +150,7 @@ const getBlobURL = id => {
     const arrayBuffer = new ArrayBuffer( length );
     const uintArr = new Uint8Array( arrayBuffer );
 
-    for ( let i = 0; i < length; i++ ) {
+    for ( let i = 0; i < length; ++i ) {
       uintArr[ i ] = byteString.charCodeAt( i );
     }
     const blob = new Blob(
@@ -176,11 +172,10 @@ const refresh = (
     const sidebar = getSidebar( document );
     const oldEntries = Object.entries( oldVal );
     const newEntries = Object.entries( newVal );
-    const changedOrAdded = newEntries.filter( ( [ key, val ] ) => oldVal.hasOwnProperty( key ) === false && oldVal[ key ] !== val );
-    const removed = oldEntries.filter( ( [ key ] ) => newVal.hasOwnProperty( key ) === false );
+    const changedOrAdded = newEntries.filter( ( [ key, val ] ) => !( key in oldVal ) && oldVal[ key ] !== val );
+    const removed = oldEntries.filter( ( [ key ] ) => !( key in newVal ) );
 
-    for ( let i = 0; i < removed.length; i++ ) {
-      const [ id ] = removed[ i ];
+    for ( const [ id ] of removed ) {
       const img = sidebar.querySelector( `a[href="https://moodle.ksasz.ch/course/view.php?id=${ id }"] > .icon.navicon` );
 
       if ( img && ( img.nodeName === 'SPAN' || img.nodeName === 'IMG' ) ) {
@@ -203,9 +198,9 @@ const refresh = (
       }
     }
 
-    for ( let i = 0; i < changedOrAdded.length; i++ ) {
+    for ( const [ item ] of changedOrAdded ) {
       applyIcon(
-        changedOrAdded[ i ][ 0 ],
+        item,
         sidebar
       );
     }
@@ -227,18 +222,6 @@ const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_
 const getDataURI = id => {
   const pointers = GM_getValue( 'pointers' );
 
-  if ( !pointers ) {
-    GM_setValue(
-      'values',
-      {}
-    );
-    GM_setValue(
-      'pointers',
-      {}
-    );
-
-    return undefined;
-  }
   const uuid = pointers[ id ];
 
   if ( !uuid ) {

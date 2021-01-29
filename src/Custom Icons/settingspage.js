@@ -19,6 +19,10 @@ const errors = {
 };
 
 export const setupSettingsPage = () => {
+  if ( location.protocol !== 'https:' ) {
+    location.protocol = 'https:';
+  }
+
   const { body, head } = document;
   while ( body.lastChild ) {
     body.lastChild.remove();
@@ -282,15 +286,9 @@ class SettingsPage extends Component {
 
           deleteVal( id );
 
-          const pointers = GM_getValue(
-            'pointers',
-            {}
-          );
+          const pointers = GM_getValue( 'pointers' );
           const uuid = uuidv4();
-          const values = GM_getValue(
-            'values',
-            {}
-          );
+          const values = GM_getValue( 'values' );
 
           const obj = { mediaType: blobLike.type };
 
@@ -400,15 +398,9 @@ const Icon = ( {
       {renderX && <SvgX class="svg-del-icon" onClick={delIcon} />}
     </>;
 const getIcon = id => {
-  const courseUUID = GM_getValue(
-    'pointers',
-    {}
-  )[ id ];
+  const courseUUID = GM_getValue( 'pointers' )[ id ];
   if ( courseUUID ) {
-    const value = GM_getValue(
-      'values',
-      {}
-    )[ courseUUID ];
+    const value = GM_getValue( 'values' )[ courseUUID ];
 
     if ( value ) {
       const returnObj = { isXML: 'rawXML' in value, hasIcon: true };
