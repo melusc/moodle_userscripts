@@ -8,13 +8,12 @@ import { deleteVal } from './shared';
 const FILE_CONSTANT = 'FILE';
 const COPY_CONSTANT = 'COPY';
 const URL_CONSTANT = 'URL';
-const ERROR_MSG = {
+const errors = {
   error: 'An error occured',
   timeout: 'Request timed out',
   abort: 'Request was aborted',
   invalidSelector: 'Invalid option selected',
   invalidURL: 'Invalid URL submitted',
-  notImage: 'File was not an image',
   statusCode: (
     status, statusText
   ) => `Error ${ status }: ${ statusText }`,
@@ -250,13 +249,13 @@ class SettingsPage extends Component {
           responseType: 'blob',
           anonymous: true,
           onabort: () => {
-            this.setState( { notificationString: ERROR_MSG.abort } );
+            this.setState( { notificationString: errors.abort } );
           },
           onerror: () => {
-            this.setState( { notificationString: ERROR_MSG.error } );
+            this.setState( { notificationString: errors.error } );
           },
           ontimeout: () => {
-            this.setState( { notificationString: ERROR_MSG.timeout } );
+            this.setState( { notificationString: errors.timeout } );
           },
           onload: res => {
             if ( res.status === 200 ) {
@@ -264,7 +263,7 @@ class SettingsPage extends Component {
             }
             else {
               this.setState( {
-                notificationString: ERROR_MSG.statusCode(
+                notificationString: errors.statusCode(
                   res.status,
                   res.statusText
                 ),
@@ -274,18 +273,18 @@ class SettingsPage extends Component {
         } );
       }
       catch {
-        this.setState( { notificationString: ERROR_MSG.invalidURL } );
+        this.setState( { notificationString: errors.invalidURL } );
       }
     },
 
     saveWithFileHandler: blobLike => {
       const fr = new FileReader();
 
-      fr.onerror = () => { this.setState( { notificationString: ERROR_MSG.error } ); };
+      fr.onerror = () => { this.setState( { notificationString: errors.error } ); };
       fr.onload = () => {
         const img = new Image();
         img.onerror = () => {
-          this.setState( { notificationString: ERROR_MSG.notImage } );
+          this.setState( { notificationString: errors.error } );
         };
 
         img.onload = () => {
