@@ -15,6 +15,11 @@
 // @grant        GM_notification
 // @run-at       document-start
 // ==/UserScript==
+
+if ( location.protocol !== 'https:' ) {
+  location.protocol = 'https:';
+}
+
 import { render, Component, Fragment, h } from 'preact';
 import { getCourses } from '../shared/moodle-functions';
 
