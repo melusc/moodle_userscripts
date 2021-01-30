@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name         Moodle explore profiles rest
-// @version      2021.01.29a
-// @author       lusc
-// @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
-// @include      https://moodle.ksasz.ch/user/profile.php?id=*
-// @grant        GM_addStyle
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_deleteValue
-// @run-at       document-start
+// @name      Moodle explore profiles rest
+// @version   2021.01.30a
+// @author    lusc
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
+// @include   https://moodle.ksasz.ch/user/profile.php?id=*
+// @grant     GM_addStyle
+// @grant     GM_setValue
+// @grant     GM_getValue
+// @grant     GM_deleteValue
+// @run-at    document-start
 // ==/UserScript==
 
 /* globals

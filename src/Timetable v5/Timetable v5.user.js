@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Moodle Timetable v5
-// @version      2021.01.29a
+// @version      2021.01.30a
 // @author       lusc
 // @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js
 // @include      *://moodle.ksasz.ch/
@@ -296,9 +296,7 @@ const SettingsPage = ( () => {
       const username = this.inputs.username.value.trim();
       const password = this.inputs.password.value;
 
-      if ( username && password ) {
-        this.state.loggedOutCallback( { username, password } );
-      }
+      this.state.loggedOutCallback( { username, password } );
     };
 
     handleSuggestionsClick = e => {

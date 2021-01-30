@@ -1,16 +1,16 @@
 // ==UserScript==
-// @name         Moodle Download Course's Content
-// @version      2021.01.29a
-// @author       lusc
-// @include      https://moodle.ksasz.ch/course/view.php?id=*
-// @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js
-// @grant        GM_getValue
-// @grant        GM_setValue
-// @grant        GM_deleteValue
-// @grant        GM_addStyle
-// @grant        GM_xmlhttpRequest
-// @run-at       document-start
-// @connect      *
+// @name      Moodle Download Course's Content
+// @version   2021.01.30a
+// @author    lusc
+// @include   https://moodle.ksasz.ch/course/view.php?id=*
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js
+// @grant     GM_getValue
+// @grant     GM_setValue
+// @grant     GM_deleteValue
+// @grant     GM_addStyle
+// @grant     GM_xmlhttpRequest
+// @run-at    document-start
+// @connect   *
 // ==/UserScript==
 
 // this is so webpack doesn't remove the metadata above

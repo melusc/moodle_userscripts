@@ -121,18 +121,23 @@ export const getUserId = ( loginReturnState = defaultLoginReturnState ) => login
 
 export const getCredentials = ( loginReturnState = defaultLoginReturnState ) => new Promise( resolve => {
   const callback = ( { username, password } ) => {
-    GM_setValue(
-      'username',
-      username
-    );
-    GM_setValue(
-      'password',
-      password
-    );
+    if ( username && password ) {
+      /* username and password both cant be empty strings (seems obvious)
+       so don't even try logging if either is */
 
-    loginReturnState( { loggedOut: false, loggedOutCallback: null } );
+      GM_setValue(
+        'username',
+        username
+      );
+      GM_setValue(
+        'password',
+        password
+      );
 
-    resolve( { username, password } );
+      loginReturnState( { loggedOut: false, loggedOutCallback: null } );
+
+      resolve( { username, password } );
+    }
   };
 
   const username = GM_getValue( 'username' );
@@ -192,12 +197,10 @@ class FrontPageLogin extends Component {
     const username = this.inputs.username.value.trim();
     const password = this.inputs.password.value;
 
-    if ( username && password ) {
-      this.state.loggedOutCallback( {
-        username,
-        password,
-      } );
-    }
+    this.state.loggedOutCallback( {
+      username,
+      password,
+    } );
   };
 
   componentDidMount = () => {

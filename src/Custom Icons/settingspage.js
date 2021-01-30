@@ -461,9 +461,7 @@ const Main = ( {
     const username = usernameRef.current?.value?.trim();
     const password = passwordRef.current?.value;
 
-    if ( username && password ) {
-      loggedOutCallback( { username, password } );
-    }
+    loggedOutCallback( { username, password } );
   };
 
   return (

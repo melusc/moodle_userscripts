@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name         Moodle open folders inline preact
-// @version      2021.01.29a
-// @author       lusc
-// @include      https://moodle.ksasz.ch/course/view.php?id=*
-// @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_deleteValue
-// @grant        GM_addStyle
-// @run-at       document-start
+// @name      Moodle open folders inline preact
+// @version   2021.01.30a
+// @author    lusc
+// @include   https://moodle.ksasz.ch/course/view.php?id=*
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
+// @grant     GM_setValue
+// @grant     GM_getValue
+// @grant     GM_deleteValue
+// @grant     GM_addStyle
+// @run-at    document-start
 // ==/UserScript==
 
 import { render, Fragment, h } from 'preact';

@@ -81,9 +81,7 @@ class SettingsPage extends Component {
     const username = this.inputs.username.current.value.trim();
     const password = this.inputs.password.current.value;
 
-    if ( username && password ) {
-      this.state.loggedOutCallback( { username, password } );
-    }
+    this.state.loggedOutCallback( { username, password } );
   };
 
   componentDidMount = () => {
@@ -418,7 +416,7 @@ class Main extends Component {
               type="password"
             />
             <button class="btn-save" onClick={loggedOutCallback}>
-                Login
+              Login
             </button>
           </div>
         </>
