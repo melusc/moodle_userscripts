@@ -1,6 +1,6 @@
 # Moodle Userscripts
 
-Here you can find some useful userscripts for moodle. I have only ever tested them on my school's moodle, though.
+Here you can find some useful userscripts for moodle. I have only tested them on my school's moodle.
 
 To run these you need to have tampermonkey, greasemonkey or similar installed.
 
