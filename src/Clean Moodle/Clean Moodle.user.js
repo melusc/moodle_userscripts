@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   __Clean_Moodle_version__
+// @version   2021.01.30a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js
@@ -12,8 +12,6 @@
 // @grant     GM_addValueChangeListener
 // @run-at    document-start
 // ==/UserScript==
-
-console.log( __Clean_Moodle_version__ );
 
 import { render, h } from 'preact';
 
