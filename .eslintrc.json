@@ -4,7 +4,8 @@
     "es2020": true,
     "greasemonkey": true
   },
-  "extends": ["preact"],
+  "root": true,
+  "extends": ["preact", "plugin:@typescript-eslint/recommended"],
   "globals": {
     "GM_addValueChangeListener": true,
     "GM_notification": true
@@ -17,15 +18,16 @@
       },
       "files": ["./*.js"],
       "rules": {
-        "camelcase": "off"
+        "camelcase": "off",
+        "@typescript-eslint/no-var-requires": "off"
       }
     }
   ],
-  "parser": "@babel/eslint-parser",
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 11
   },
-  "plugins": ["@babel"],
+  "plugins": ["@babel", "@typescript-eslint"],
   "rules": {
     "@babel/no-invalid-this": "error",
     "@babel/no-unused-expressions": [
@@ -65,7 +67,7 @@
         "allowSingleLine": true
       }
     ],
-    "camelcase": "error",
+    // "camelcase": "error",
     "comma-dangle": [
       "error",
       {
@@ -270,7 +272,8 @@
       "error",
       "always",
       {
-        "exceptions": ["#__PURE__"]
+        "exceptions": ["#__PURE__"],
+        "markers": ["/"]
       }
     ],
     "strict": ["error", "global"],
