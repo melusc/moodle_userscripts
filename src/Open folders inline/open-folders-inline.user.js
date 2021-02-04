@@ -3,7 +3,7 @@
 // @version   2021.02.04b
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/open-folders-inline.user.js
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Open%20folders%20inline/open-folders-inline.user.js
 // @grant     GM_setValue
 // @grant     GM_getValue
 // @grant     GM_deleteValue

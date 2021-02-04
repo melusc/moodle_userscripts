@@ -2,7 +2,7 @@
 // @name      Custom Icons Preact
 // @version   2021.02.04b
 // @author    lusc
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/custom-icons.user.js
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Custom%20Icons/custom-icons.user.js
 // @include   *://moodle.ksasz.ch/*
 // @grant     GM_setValue
 // @grant     GM_getValue

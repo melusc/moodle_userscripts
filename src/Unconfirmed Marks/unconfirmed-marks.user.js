@@ -4,7 +4,7 @@
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Unconfirmed%20Marks/unconfirmed-marks.user.js
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Unconfirmed%20Marks/unconfirmed-marks.user.js
 // @grant     GM_xmlhttpRequest
 // @grant     GM.setValue
 // @grant     GM.getValue

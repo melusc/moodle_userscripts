@@ -4,7 +4,7 @@
 // @version   2021.02.04b
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/clean-moodle.user.js
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Clean%20Moodle/clean-moodle.user.js
 // @grant     GM_setValue
 // @grant     GM_getValue
 // @grant     GM_deleteValue

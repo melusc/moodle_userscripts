@@ -3,7 +3,7 @@
 // @version   2021.02.04b
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/moodle-download-courses-content.user.js
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Download%20Courses%20Content/moodle-download-courses-content.user.js
 // @grant     GM_getValue
 // @grant     GM_setValue
 // @grant     GM_deleteValue
