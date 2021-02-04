@@ -40,7 +40,7 @@ export const setupSettingsPage = () => {
   const link = document.createElement( 'link' );
   link.rel = 'shortcut icon';
   link.href = '/theme/image.php/classic/theme/1588340020/favicon';
-  document.head.append( link );
+  head.append( link );
 };
 
 class SettingsPage extends Component {

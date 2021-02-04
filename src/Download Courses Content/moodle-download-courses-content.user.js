@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.02.04a
+// @version   2021.02.04b
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/moodle-download-courses-content.user.js
@@ -105,9 +105,9 @@ const initDownload = (
               const folderName = sanitizeFileName( module.name );
 
               for ( const content of contents ) {
-                const { fileurl, filepath } = content;
+                const { fileurl, filepath, timemodified: timeModified } = content;
                 const filename = sanitizeFileName( content.filename );
-                const date = new Date( content.timemodified * 1000 );
+                const date = new Date( timeModified * 1000 );
 
                 const zipFileName = modname === 'resource'
                   ? `${ sectionName }/${ filename }`

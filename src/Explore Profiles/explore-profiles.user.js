@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.02.04a
+// @version   2021.02.04b
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/explore-profiles.user.js
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -725,8 +725,8 @@ const clearNode = node => {
  * @listens click
  */
 const fetchNewProfile = async event => {
-  const { target } = event;
-  const isPopState = event.type === 'popstate';
+  const { target, type } = event;
+  const isPopState = type === 'popstate';
 
   if ( isPopState === false ) {
     if ( target.nodeName !== 'BUTTON' ) {

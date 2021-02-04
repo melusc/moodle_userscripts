@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.02.04a
+// @version   2021.02.04b
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -240,11 +240,9 @@ class SchulNetzMarks extends Component {
         .catch( error => {
           console.error( error );
           this.setState( { loggedOut: true, loading: false } );
-          [
-            'login',
-            'password',
-            'page',
-          ].forEach( value => { GM.deleteValue( value ); } );
+          for ( const value of [ 'login', 'password', 'page' ] ) {
+            GM.deleteValue( value );
+          }
         } );
 
       frontPage
@@ -254,11 +252,9 @@ class SchulNetzMarks extends Component {
           }
 
           if ( new URL( response.finalUrl ).pathname.endsWith( 'loginto.php' ) ) {
-            [
-              'login',
-              'password',
-              'page',
-            ].forEach( value => { GM.deleteValue( value ); } );
+            for ( const value of [ 'login', 'password', 'page' ] ) {
+              GM.deleteValue( value );
+            }
 
             this.setState( { loggedOut: true, loading: false } );
             return;

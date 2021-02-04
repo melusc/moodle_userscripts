@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.02.04a
+// @version   2021.02.04b
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/timetable-v5.user.js
 // @include   *://moodle.ksasz.ch/
@@ -90,12 +90,12 @@ const initSettingsPage = () => {
 
   GM_addStyle( settingsPageStyle );
 
-  document.head.append( icon );
+  head.append( icon );
 
   const root = document.createElement( 'div' );
 
   root.id = 'root';
-  document.body.append( root );
+  body.append( root );
 
   render(
     <SettingsPage />,
@@ -297,7 +297,7 @@ const SettingsPage = ( () => {
       const suggestion = target.closest( '.suggestion' );
 
       if ( suggestion ) {
-        const { idInput } = this.state.focusedElement;
+        const { idInput, contentInput } = this.state.focusedElement;
         const { id } = suggestion.dataset;
         const inputRow = idInput.closest( '.table-row' );
         const table = inputRow.parentNode;
@@ -305,15 +305,15 @@ const SettingsPage = ( () => {
 
         this.setState(
           state => {
-            const { activeDay } = state;
-            const object = state.tables[ activeDay ];
+            const { activeDay, tables } = state;
+            const object = tables[ activeDay ];
 
             object[ index ].id = id;
 
             return {};
           },
           () => {
-            focusTarget( this.state.focusedElement.contentInput );
+            focusTarget( contentInput );
           }
         );
       }
@@ -498,14 +498,14 @@ const SettingsPage = ( () => {
         const rowIndex = [ ...target.closest( '.table' ).children ].indexOf( currentRow );
 
         this.setState( state => {
-          const { activeDay } = state;
+          const { activeDay, tables } = state;
 
-          state.tables[ activeDay ].splice(
+          tables[ activeDay ].splice(
             rowIndex,
             1
           );
           return {
-            tables: state.tables,
+            tables,
           };
         } );
       }
@@ -616,10 +616,9 @@ const SettingsPage = ( () => {
     };
 
     handleTableInput = event => {
-      const { target } = event;
-      const { classList } = target;
+      const { target, parentNode: parent } = event;
+      const { classList, textContent: rawText, dataset: targetDataset } = target;
       const currentRow = target.closest( '.table-row' );
-      const parent = target.parentNode;
 
       if ( !currentRow ) {
         return;
@@ -629,12 +628,12 @@ const SettingsPage = ( () => {
       const { anchorOffset } = getSelection();
 
       if ( classList.contains( 'time-input' ) ) {
-        const time = target.textContent.trim();
+        const time = rawText.trim();
 
         this.setState(
           state => {
-            const { activeDay } = state;
-            const object = state.tables[ activeDay ][ currentRowIndex ];
+            const { activeDay, tables } = state;
+            const object = tables[ activeDay ][ currentRowIndex ];
 
             object[ classList.contains( 'time-from' )
               ? 'from'
@@ -645,9 +644,9 @@ const SettingsPage = ( () => {
                 : 'to' }`
             ] = this.parseStringToTime( time );
 
-            this.validateTimeOrder( state.tables[ activeDay ] );
+            this.validateTimeOrder( tables[ activeDay ] );
 
-            return { tables: state.tables };
+            return { tables };
           },
           () => {
             focusTarget(
@@ -661,20 +660,20 @@ const SettingsPage = ( () => {
         this.handleTableFocus( event );
         this.setState(
           state => {
-            const { activeDay } = state;
-            const object = state.tables[ activeDay ][ currentRowIndex ];
+            const { activeDay, tables } = state;
+            const object = tables[ activeDay ][ currentRowIndex ];
 
-            if ( target.dataset.type === 'id' ) {
-              object.id = target.textContent;
+            if ( targetDataset.type === 'id' ) {
+              object.id = rawText;
             }
-            else if ( target.dataset.type === 'content' ) {
-              object.content = target.textContent;
+            else if ( targetDataset.type === 'content' ) {
+              object.content = rawText;
               target.textContent = '';
               /* This fixes an issue where preact doesn't
               properly delete a text node and which causes duplicate text */
             }
 
-            return { tables: state.tables };
+            return { tables };
           },
           () => {
             focusTarget(
@@ -710,15 +709,15 @@ const SettingsPage = ( () => {
     } )();
 
     handleTableKeyDown = async event => {
-      const { target } = event;
+      const { target, keyCode, shiftKey } = event;
 
-      if ( event.keyCode === 13 ) {
+      if ( keyCode === 13 ) {
         event.preventDefault();
 
         if ( target.closest( '.entry' ) ) {
           const currentRow = target.closest( '.table-row' );
 
-          if ( event.shiftKey ) {
+          if ( shiftKey ) {
             if ( target.dataset.type === 'content' ) {
               focusTarget( currentRow.previousElementSibling?.querySelector( 'div.table-cell.entry > [data-type="id"]' ) );
             }
@@ -743,7 +742,7 @@ const SettingsPage = ( () => {
         else if ( target.closest( '.time' ) ) {
           const currentRow = target.closest( '.table-row' );
 
-          if ( event.shiftKey ) {
+          if ( shiftKey ) {
             if ( target.classList.contains( 'time-from' ) ) {
               focusTarget( currentRow.previousElementSibling?.querySelector( 'div.table-cell.time > .time-to' ) );
             }
@@ -766,7 +765,7 @@ const SettingsPage = ( () => {
           }
         }
       }
-      else if ( event.keyCode === 9 && target.classList.contains( 'entry' ) ) {
+      else if ( keyCode === 9 && target.classList.contains( 'entry' ) ) {
         const currentRow = target.closest( '.table-row' );
 
         if ( !currentRow.nextElementSibling ) {

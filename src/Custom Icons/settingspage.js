@@ -37,7 +37,7 @@ export const setupSettingsPage = () => {
   const icon = document.createElement( 'link' );
   icon.rel = 'shortcut icon';
   icon.href = '/theme/image.php/classic/theme/1606210545/favicon';
-  document.head.append( icon );
+  head.append( icon );
 
   document.title = 'Custom Icons Setup';
 
@@ -146,7 +146,7 @@ class SettingsPage extends Component {
     event, type
   ) => {
     const { target } = event;
-    const { value } = target;
+    const { value, files } = target;
     this.setState( () => {
       const inputVals = { current: false };
 
@@ -159,8 +159,8 @@ class SettingsPage extends Component {
         inputVals.current = value !== 'null' && COPY_CONSTANT;
       }
       else if ( type === FILE_CONSTANT ) {
-        inputVals.val = target.files[ 0 ];
-        inputVals.current = target.files?.length !== 0 && FILE_CONSTANT;
+        inputVals.val = files[ 0 ];
+        inputVals.current = files?.length !== 0 && FILE_CONSTANT;
       }
 
       if ( !inputVals.current ) {

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.02.04a
+// @version   2021.02.04b
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/custom-icons.user.js
 // @include   *://moodle.ksasz.ch/*
