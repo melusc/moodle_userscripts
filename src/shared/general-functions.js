@@ -1,20 +1,20 @@
 const sortingUsingPivot = (
-  arr, fn, left, right
+  array, comparisonFunction, left, right
 ) => {
-  const pivot = arr[ ( right + left ) >>> 1 ];
+  const pivot = array[ ( right + left ) >>> 1 ];
   let l = left;
   let r = right;
 
   while ( l <= r ) {
-    while ( fn(
-      arr[ l ],
+    while ( comparisonFunction(
+      array[ l ],
       pivot
     ) === -1 ) {
-      l++;
+      ++l;
     }
 
-    while ( fn(
-      arr[ r ],
+    while ( comparisonFunction(
+      array[ r ],
       pivot
     ) === 1 ) {
       r--;
@@ -22,11 +22,11 @@ const sortingUsingPivot = (
 
     if ( l <= r ) {
       swap(
-        arr,
+        array,
         l,
         r
       );
-      l++;
+      ++l;
       r--;
     }
   }
@@ -35,14 +35,14 @@ const sortingUsingPivot = (
 };
 
 const swap = (
-  arr, l, r
+  array, l, r
 ) => {
-  [ arr[ l ], arr[ r ] ] = [ arr[ r ], arr[ l ] ];
+  [ array[ l ], array[ r ] ] = [ array[ r ], array[ l ] ];
 };
 
 /**
  *
- * @param {array} arr The array to sort
+ * @param {array} array The array to sort
  * @param {function} fn The function to call when comparing vals
  * @param {number} left pivot
  * @param {number} right pivot
@@ -50,22 +50,22 @@ const swap = (
  * @returns {array} The sorted array
  */
 export const quickSort = (
-  arr, fn, left = 0, right = arr.length - 1
+  array, comparisonFunction, left = 0, right = array.length - 1
 ) => {
   let index;
 
-  if ( arr.length > 1 ) {
+  if ( array.length > 1 ) {
     index = sortingUsingPivot(
-      arr,
-      fn,
+      array,
+      comparisonFunction,
       left,
       right
     );
 
     if ( left < index - 1 ) {
       quickSort(
-        arr,
-        fn,
+        array,
+        comparisonFunction,
         left,
         index - 1
       );
@@ -73,13 +73,13 @@ export const quickSort = (
 
     if ( index < right ) {
       quickSort(
-        arr,
-        fn,
+        array,
+        comparisonFunction,
         index,
         right
       );
     }
   }
 
-  return arr;
+  return array;
 };

@@ -1,20 +1,20 @@
 // ==UserScript==
-// @name         Unconfirmed Marks Preact
-// @version      2021.01.29a
-// @author       lusc
-// @include      *://moodle.ksasz.ch/
-// @include      *://moodle.ksasz.ch/?*
-// @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Unconfirmed%20Marks/Unconfirmed%20Marks%20Preact.user.js
-// @grant        GM_xmlhttpRequest
-// @grant        GM.setValue
-// @grant        GM.getValue
-// @grant        GM_addStyle
-// @grant        GM.deleteValue
-// @run-at       document-start
-// @connect      www.schul-netz.com
+// @name      Unconfirmed Marks Preact
+// @version   2021.02.04a
+// @author    lusc
+// @include   *://moodle.ksasz.ch/
+// @include   *://moodle.ksasz.ch/?*
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Unconfirmed%20Marks/unconfirmed-marks.user.js
+// @grant     GM_xmlhttpRequest
+// @grant     GM.setValue
+// @grant     GM.getValue
+// @grant     GM_addStyle
+// @grant     GM.deleteValue
+// @run-at    document-start
+// @connect   www.schul-netz.com
 // ==/UserScript==
 
-import { render, Component, h } from 'preact';
+import { render, Component, h, createRef } from 'preact';
 import style from './style.scss';
 
 const init = () => {
@@ -23,7 +23,7 @@ const init = () => {
 
   li.id = 'module-marks';
   li.className = 'activity label modtype_label';
-  const timetablev5 = document.getElementById( 'module-timetable-v5' );
+  const timetablev5 = document.querySelector( '#module-timetable-v5' );
 
   timetablev5
     ? timetablev5.after( li )
@@ -57,13 +57,13 @@ class SchulNetzMarks extends Component {
   };
 
   inputs = {
-    login: null,
-    password: null,
-    page: null,
+    login: createRef(),
+    password: createRef(),
+    page: createRef(),
   };
 
   render = (
-    _props, { marks, loading, error, errorMsg, loggedOut }
+    _properties, { marks, loading, error, errorMsg, loggedOut }
   ) => <div class="mod-indent-outer">
     <div class="contentwithoutlink">
       {/* <link rel=stylesheet type=text/css
@@ -88,27 +88,21 @@ class SchulNetzMarks extends Component {
             <input
               class="form-control"
               required
-              ref={e => {
-                this.inputs.login = e;
-              }}
+              ref={this.inputs.login}
               placeholder="Username"
               type="text"
             />
             <input
               class="form-control"
               required
-              ref={e => {
-                this.inputs.password = e;
-              }}
+              ref={this.inputs.password}
               placeholder="Password"
               type="password"
             />
             <input
               class="form-control"
               required
-              ref={e => {
-                this.inputs.page = e;
-              }}
+              ref={this.inputs.page}
               placeholder="Page (ausserschwyz, einsiedeln...)"
               type="text"
             />
@@ -130,9 +124,9 @@ class SchulNetzMarks extends Component {
   ;
 
   handleLogin = () => {
-    const login = this.inputs.login.value;
-    const password = this.inputs.password.value;
-    const page = this.inputs.page.value;
+    const login = this.inputs.login.current.value;
+    const password = this.inputs.password.current.value;
+    const page = this.inputs.page.current.value;
 
     if ( login && password && page ) {
       Promise.all( [
@@ -196,9 +190,9 @@ class SchulNetzMarks extends Component {
       } );
 
       const frontPage = loginPage
-        .then( res => {
+        .then( response => {
           const parsed = new DOMParser().parseFromString(
-            res.responseText,
+            response.responseText,
             'text/html'
           );
 
@@ -218,7 +212,7 @@ class SchulNetzMarks extends Component {
             password
           );
 
-          const cookie = res.responseHeaders
+          const cookie = response.responseHeaders
             .match( /phpsessid=\w{26}(?=;)/giu )
             .pop();
 
@@ -243,39 +237,47 @@ class SchulNetzMarks extends Component {
             } );
           } );
         } )
-        .catch( err => {
-          console.error( err );
+        .catch( error => {
+          console.error( error );
           this.setState( { loggedOut: true, loading: false } );
-          [ 'login', 'password', 'page' ].forEach( GM.deleteValue );
+          [
+            'login',
+            'password',
+            'page',
+          ].forEach( value => { GM.deleteValue( value ); } );
         } );
 
       frontPage
-        .then( res => {
-          if ( typeof res !== 'object' || res.cancelled ) {
+        .then( response => {
+          if ( typeof response !== 'object' || response.cancelled ) {
             return;
           }
 
-          if ( new URL( res.finalUrl ).pathname.endsWith( 'loginto.php' ) ) {
-            [ 'login', 'password', 'page' ].forEach( GM.deleteValue );
+          if ( new URL( response.finalUrl ).pathname.endsWith( 'loginto.php' ) ) {
+            [
+              'login',
+              'password',
+              'page',
+            ].forEach( value => { GM.deleteValue( value ); } );
 
             this.setState( { loggedOut: true, loading: false } );
             return;
           }
 
           const parsed = new DOMParser().parseFromString(
-            res.responseText,
+            response.responseText,
             'text/html'
           );
 
-          const h3 = [ ...parsed.querySelectorAll( 'h3.tabletitle' ) ].find( e => e.textContent.toLowerCase().trim() === 'ihre letzten noten' );
+          const h3 = [ ...parsed.querySelectorAll( 'h3.tabletitle' ) ].find( item => item.textContent.toLowerCase().trim() === 'ihre letzten noten' );
 
           const table = h3.nextElementSibling;
           const { rows } = table;
           const marks = [];
           let allConfirmed = false;
 
-          for ( let i = 0; i < rows.length; i++ ) {
-            const [ course, name, date, mark ] = [ ...rows[ i ].children ].map( e => e.textContent.trim() );
+          for ( const row of rows ) {
+            const [ course, name, date, mark ] = [ ...row.children ].map( item => item.textContent.trim() );
 
             if ( ( /sie haben alle noten bestätigt./i ).test( course ) ) {
               this.setState( { marks: false } );
@@ -285,12 +287,14 @@ class SchulNetzMarks extends Component {
 
             marks.push( { course, name, date, mark, key: uuidv4() } );
           }
+
           if ( !allConfirmed ) {
             this.setState( { marks } );
           }
+
           this.setState( { loading: false } );
 
-          const anchor = [ ...parsed.querySelectorAll( 'a.mdl-menu__item' ) ].find( e => e.textContent.toLowerCase().trim() === 'abmelden' );
+          const anchor = [ ...parsed.querySelectorAll( 'a.mdl-menu__item' ) ].find( item => item.textContent.toLowerCase().trim() === 'abmelden' );
 
           if ( anchor ) {
             GM_xmlhttpRequest( {
@@ -300,8 +304,8 @@ class SchulNetzMarks extends Component {
             } );
           }
         } )
-        .catch( err => {
-          console.error( err );
+        .catch( error => {
+          console.error( error );
           this.setState( { error: true } );
         } );
     } );

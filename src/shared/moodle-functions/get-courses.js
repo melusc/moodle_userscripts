@@ -1,4 +1,4 @@
-import { defaultLoginReturnState, login, getUserId, logout, setLastValidatedToken } from './';
+import { defaultLoginReturnState, login, getUserId, logout, setLastValidatedToken } from './index.js';
 
 let courses;
 
@@ -15,24 +15,24 @@ export const getCourses = (
       getUserId( loginReturnState ),
     ] )
       .then( ( [ token, userid ] ) => {
-        const bodyParams = new URLSearchParams();
+        const bodyParameters = new URLSearchParams();
 
-        bodyParams.set(
+        bodyParameters.set(
           'requests[0][function]',
           'core_enrol_get_users_courses'
         );
-        bodyParams.set(
+        bodyParameters.set(
           'requests[0][arguments]',
           JSON.stringify( {
             userid,
             returnusercount: false,
           } )
         );
-        bodyParams.set(
+        bodyParameters.set(
           'wsfunction',
           'tool_mobile_call_external_functions'
         );
-        bodyParams.set(
+        bodyParameters.set(
           'wstoken',
           token
         );
@@ -41,15 +41,15 @@ export const getCourses = (
           '/webservice/rest/server.php?moodlewsrestformat=json',
           {
             method: 'POST',
-            body: bodyParams.toString(),
+            body: bodyParameters.toString(),
             headers: {
               'content-type': 'application/x-www-form-urlencoded',
             },
           }
-        ).then( e => e.json() );
+        ).then( response => response.json() );
       } )
       .then( responseJSON => {
-        if ( responseJSON.hasOwnProperty( 'exception' ) ) {
+        if ( 'exception' in responseJSON ) {
           logout();
           return getCourses(
             true,
@@ -59,15 +59,15 @@ export const getCourses = (
 
         const data = JSON.parse( responseJSON.responses[ 0 ].data );
 
-        const coursesObj = {};
+        const coursesObject = {};
 
         for ( const { id, fullname } of data ) {
-          coursesObj[ id ] = fullname;
+          coursesObject[ id ] = fullname;
         }
 
         setLastValidatedToken();
 
-        return coursesObj;
+        return coursesObject;
       } );
   }
 

@@ -1,17 +1,17 @@
-import { defaultLoginReturnState, logout, setLastValidatedToken, login } from './';
+import { defaultLoginReturnState, logout, setLastValidatedToken, login } from './index.js';
 
 export const getUserId = ( loginReturnState = defaultLoginReturnState ) => login(
   false,
   loginReturnState
 )
   .then( token => {
-    const bodyParams = new URLSearchParams();
+    const bodyParameters = new URLSearchParams();
 
-    bodyParams.set(
+    bodyParameters.set(
       'wsfunction',
       'core_webservice_get_site_info'
     );
-    bodyParams.set(
+    bodyParameters.set(
       'wstoken',
       token
     );
@@ -23,13 +23,13 @@ export const getUserId = ( loginReturnState = defaultLoginReturnState ) => login
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
         },
-        body: bodyParams.toString(),
+        body: bodyParameters.toString(),
       }
     );
   } )
-  .then( res => res.json() )
+  .then( response => response.json() )
   .then( responseJSON => {
-    if ( responseJSON.hasOwnProperty( 'exception' ) ) {
+    if ( 'exception' in responseJSON ) {
       logout();
       return getUserId( loginReturnState );
     }

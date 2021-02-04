@@ -1,10 +1,10 @@
-import { render, Component, h } from 'preact';
+import { render, Component, h, createRef } from 'preact';
 import frontPageCss from './getCredentials.scss';
 
 export const getCredentials = ( loginReturnState = defaultLoginReturnState ) => new Promise( resolve => {
   const callback = ( { username, password } ) => {
     if ( username && password ) {
-      /* username and password both cant be empty strings (seems obvious)
+      /* Username and password both cant be empty strings (seems obvious)
        so don't even try logging if either is */
 
       GM_setValue(
@@ -16,7 +16,7 @@ export const getCredentials = ( loginReturnState = defaultLoginReturnState ) => 
         password
       );
 
-      loginReturnState( { loggedOut: false, loggedOutCallback: null } );
+      loginReturnState( { loggedOut: false, loggedOutCallback: undefined } );
 
       resolve( { username, password } );
     }
@@ -41,10 +41,13 @@ let frontPageDefaultLoginState = {};
 class FrontPageLogin extends Component {
   state = frontPageDefaultLoginState;
 
-  inputs = {};
+  inputs = {
+    username: createRef(),
+    password: createRef(),
+  };
 
   render = (
-    _props, { loggedOut }
+    _properties, { loggedOut }
   ) => loggedOut
       && <div class="vertical-horizontal-center">
         <div class="card">
@@ -54,17 +57,13 @@ class FrontPageLogin extends Component {
               placeholder="Username"
               required
               class="input-group-text"
-              ref={e => {
-                this.inputs.username = e;
-              }}
+              ref={this.inputs.username}
             />
             <input
               placeholder="Password"
               required
               class="input-group-text"
-              ref={e => {
-                this.inputs.password = e;
-              }}
+              ref={this.inputs.password}
               type="password"
             />
           </div>
@@ -76,8 +75,8 @@ class FrontPageLogin extends Component {
     ;
 
   handleClick = () => {
-    const username = this.inputs.username.value.trim();
-    const password = this.inputs.password.value;
+    const username = this.inputs.username.current.value.trim();
+    const password = this.inputs.password.current.value;
 
     this.state.loggedOutCallback( {
       username,

@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.01.30a
+// @version   2021.02.04a
 // @author    lusc
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/explore-profiles.user.js
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
 // @grant     GM_addStyle
 // @grant     GM_setValue
@@ -19,8 +19,8 @@ import dayjs from 'dayjs';
 import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime';
 import DOMPurify from 'dompurify';
 import style from './style.scss';
-import COUNTRY_CODES from './countries';
-import { setLastValidatedToken, login, logout } from '../shared/moodle-functions';
+import COUNTRY_CODES from './countries.js';
+import { setLastValidatedToken, login, logout } from '../shared/moodle-functions/index.js';
 
 dayjs.extend( dayjsPluginRelativeTime );
 
@@ -44,18 +44,10 @@ const runOnce = () => {
   GM_getValue( 'highest' )
     ?? GM_setValue(
       'highest',
-      1946 // highest + 10 at time of creation
-      // this number only really matters for rand anyway
+      1946 // Highest + 10 at time of creation
+      // This number only really matters for rand anyway
     );
 
-  /* render(
-    <link
-      href="http://localhost:5000/Explore%20Profiles/style.css"
-      type="text/css"
-      rel="stylesheet"
-    />,
-    document.head
-  ); */
   GM_addStyle( style );
 
   const buttons = document.createElement( 'div' );
@@ -98,24 +90,24 @@ let headerSetState;
 let sidebarSetState;
 let notificationSetState;
 let initialState = {
-  email: null,
-  country: null,
-  city: null,
-  id: null,
+  email: undefined,
+  country: undefined,
+  city: undefined,
+  id: undefined,
   courses: [],
-  firstaccess: null,
-  lastaccess: null,
-  fullname: null,
-  description: null,
-  url: null,
-  interests: null,
-  image: null,
+  firstaccess: undefined,
+  lastaccess: undefined,
+  fullname: undefined,
+  description: undefined,
+  url: undefined,
+  interests: undefined,
+  image: undefined,
 };
 
 class Notification extends Component {
   state = {
-    from: null,
-    to: null,
+    from: undefined,
+    to: undefined,
   };
 
   componentDidMount = () => {
@@ -123,8 +115,8 @@ class Notification extends Component {
   };
 
   render = (
-    _props, { from, to }
-  ) => from !== null
+    _properties, { from, to }
+  ) => from !== undefined
       && <div class="epr-notification">
         <div class="epr-centered">
           <div class="epr-spinner">
@@ -133,13 +125,13 @@ class Notification extends Component {
             <div class="bounce3" />
           </div>
           <div class="epr-text-center">
-            {`Checking ${ to === null
+            {`Checking ${ to === undefined
               ? from
               : Math.min(
                 to,
                 from
               ) }`}
-            {to !== null && ` to ${ Math.max(
+            {to !== undefined && ` to ${ Math.max(
               to,
               from
             ) }`}
@@ -157,7 +149,7 @@ class Header extends Component {
   };
 
   render = (
-    _props,
+    _properties,
     { id, image, fullname, firstaccess, lastaccess, isContact, isUserProfile }
   ) => <div class="col-12 pt-3 pb-3">
     <div class="card ">
@@ -360,9 +352,9 @@ class Main extends Component {
     mainSetState = this.setState.bind( this );
   };
 
-  // copied directly from a profile
+  // Copied and merged from multiple profile
   render = (
-    _props,
+    _properties,
     {
       description,
       email,
@@ -396,7 +388,7 @@ class Main extends Component {
           data-droptarget="1"
         />
         <div class="profile_tree">
-          {[ email, country, city, url, interests ].some( e => typeof e !== 'undefined' )
+          {[ email, country, city, url, interests ].some( item => typeof item !== 'undefined' )
               && <section class="node_category card d-inline-block w-100 mb-3">
                 <div class="card-body">
                   <h3 class="lead">User details</h3>
@@ -449,8 +441,8 @@ class Main extends Component {
                             <div class="tag_list hideoverlimit ">
                               <ul class="inline-list">
                                 {interests.map( (
-                                  interest, idx
-                                ) => <li key={idx}>
+                                  interest, index
+                                ) => <li key={index}>
                                   <a
                                     href={`https://moodle.ksasz.ch/tag/index.php?tag=${ encodeURIComponent( interest ) }`}
                                     class="badge badge-info"
@@ -478,11 +470,11 @@ class Main extends Component {
                         <dt>Course profiles</dt>
                         <dd>
                           <ul>
-                            {courses.map( e => <li key={e.id}>
+                            {courses.map( item => <li key={item.id}>
                               <a
-                                href={`/user/view.php?id=${ id }&course=${ e.id }`}
+                                href={`/user/view.php?id=${ id }&course=${ item.id }`}
                               >
-                                {e.coursename}
+                                {item.coursename}
                               </a>
                             </li> )}
                           </ul>
@@ -602,7 +594,7 @@ class Sidebar extends Component {
   };
 
   render = (
-    _props, { isUserProfile, id, fullname }
+    _properties, { isUserProfile, id, fullname }
   ) => !isUserProfile
       && <>
         <p
@@ -721,34 +713,35 @@ class Sidebar extends Component {
     ;
 }
 
-const clearNode = el => {
-  while ( el.lastChild !== null ) {
-    el.lastChild.remove();
+const clearNode = node => {
+  while ( node.lastChild !== null ) {
+    node.lastChild.remove();
   }
 };
 
 /**
  * Listens to click on buttons
- * @param {EventListenerObject} e Event obj
+ * @param {EventListenerObject} event Event obj
  * @listens click
  */
-const fetchNewProfile = async e => {
-  const { target } = e;
-  const isPopState = e.type === 'popstate';
+const fetchNewProfile = async event => {
+  const { target } = event;
+  const isPopState = event.type === 'popstate';
 
   if ( isPopState === false ) {
     if ( target.nodeName !== 'BUTTON' ) {
       return;
     }
 
-    e.preventDefault();
-    e.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopImmediatePropagation();
   }
+
   const id = +new URL( location ).searchParams.get( 'id' );
   const action = +( target?.dataset?.action ?? 0 );
   let profile;
 
-  if ( isFinite( action ) ) {
+  if ( Number.isFinite( action ) ) {
     const isNegative = action < 0;
     const origNewId = id + action;
     let newId = origNewId;
@@ -768,7 +761,7 @@ const fetchNewProfile = async e => {
 
       notificationSetState( { from: newId, to: range } );
 
-      profiles = await getProfilesInRange(
+      profiles = await getProfilesInRange( // eslint-disable-line no-await-in-loop
         newId,
         isNegative
           ? -9
@@ -791,12 +784,9 @@ const fetchNewProfile = async e => {
     profile = profiles.find( ( { id } ) => id === origNewId );
 
     if ( !profile ) {
-      if ( isNegative ) {
-        profile = profiles.pop();
-      }
-      else {
-        profile = profiles[ 0 ];
-      }
+      profile = isNegative
+        ? profiles.pop()
+        : profiles[ 0 ];
     }
   }
   else {
@@ -806,13 +796,14 @@ const fetchNewProfile = async e => {
       const randProfile
         = Math.floor( Math.random() * ( GM_getValue( 'highest' ) + 1 ) ) + 1;
 
-      notificationSetState( { from: randProfile, to: null } );
+      notificationSetState( { from: randProfile, to: undefined } );
 
-      profiles = await getProfilesInRange(
+      profiles = await getProfilesInRange( // eslint-disable-line no-await-in-loop
         randProfile,
         0
       );
     }
+
     profile = profiles[ 0 ];
   }
 
@@ -830,7 +821,7 @@ const fetchNewProfile = async e => {
     );
   }
 
-  notificationSetState( { from: null, to: null } );
+  notificationSetState( { from: undefined, to: undefined } );
 
   document.title = `${ profile.fullname }: Public profile`;
 
@@ -853,7 +844,7 @@ const fetchNewProfile = async e => {
       image,
     } */
 
-  const isUserProfile = profile.hasOwnProperty( 'preferences' );
+  const isUserProfile = 'preferences' in profile;
   const isContact = CONTACTS.includes( profile.id );
   const state = {
     isContact,
@@ -871,7 +862,7 @@ const fetchNewProfile = async e => {
       coursename: unescapeHTML( fullname.trim() ),
     } ) ),
     fullname: profile.fullname?.trim(),
-    interests: profile.interests?.split( ',' )?.map( e => e.trim() ),
+    interests: profile.interests?.split( ',' )?.map( interest => interest.trim() ),
     image: profile.profileimageurl,
   };
 
@@ -883,8 +874,8 @@ const fetchNewProfile = async e => {
   else {
     initialState = state;
 
-    const regionMainBox = document.getElementById( 'region-main-box' );
-    const pageHeader = document.getElementById( 'page-header' );
+    const regionMainBox = document.querySelector( '#region-main-box' );
+    const pageHeader = document.querySelector( '#page-header' );
 
     clearNode( pageHeader );
     clearNode( regionMainBox );
@@ -916,6 +907,7 @@ const fetchNewProfile = async e => {
 
       document.querySelector( 'li[aria-labelledby="label_2_4"]' ).after( li );
     }
+
     render(
       <Sidebar />,
       li
@@ -939,24 +931,24 @@ const getProfilesInRange = (
     [ lower, upper ] = [ upper, lower ];
   }
 
-  const bodyParams = new URLSearchParams();
+  const bodyParameters = new URLSearchParams();
 
-  for ( let i = 0; i <= upper - lower; i++ ) {
-    bodyParams.set(
-      `userlist[${ i }][userid]`,
-      lower + i
+  for ( let index = 0; index <= upper - lower; ++index ) {
+    bodyParameters.set(
+      `userlist[${ index }][userid]`,
+      lower + index
     );
-    bodyParams.set(
-      `userlist[${ i }][courseid]`,
-      32 // allgemeine informationen
+    bodyParameters.set(
+      `userlist[${ index }][courseid]`,
+      32 // Allgemeine informationen
     );
   }
 
-  bodyParams.set(
+  bodyParameters.set(
     'wsfunction',
     'core_user_get_course_user_profiles'
   );
-  bodyParams.set(
+  bodyParameters.set(
     'wstoken',
     token
   );
@@ -965,15 +957,15 @@ const getProfilesInRange = (
     'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_user_get_course_user_profiles',
     {
       method: 'POST',
-      body: bodyParams.toString(),
+      body: bodyParameters.toString(),
       headers: {
         'content-type': 'application/x-www-form-urlencoded',
       },
     }
   )
-    .then( e => e.json() )
+    .then( response => response.json() )
     .then( response => {
-      if ( !Array.isArray( response ) && response.hasOwnProperty( 'errorcode' ) ) {
+      if ( 'errorcode' in response ) {
         logout();
         return getProfilesInRange(
           start,
@@ -998,19 +990,19 @@ const getContacts = noCache => login( noCache )
       method: 'POST',
     }
   )
-    .then( e => e.json() ) )
+    .then( response => response.json() ) )
   .then( response => {
-    if ( !Array.isArray( response ) && response.hasOwnProperty( 'exception' ) ) {
+    if ( 'exception' in response ) {
       logout();
       return getContacts( true );
     }
 
     setLastValidatedToken();
 
-    return response.map( e => e.id );
+    return response.map( ( { id } ) => id );
   } );
 
-const unescapeHTML = val => `${ val }`
+const unescapeHTML = string => `${ string }`
   .replace(
     /&amp;/g,
     '&'
@@ -1028,8 +1020,7 @@ const unescapeHTML = val => `${ val }`
     '"'
   )
   .replace(
-    /&#039;|&apos;/g, // second one just in case
-    //                   because i don't know how moodle escapes apostrophies
+    /&#039;|&apos;/g, /* Second one just in case because I don't know how moodle escapes apostrophies */
     "'"
   );
 

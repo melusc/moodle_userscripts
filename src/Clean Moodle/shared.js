@@ -27,6 +27,7 @@ export const removeElementFromStorage = (
       removers
     );
   }
+
   if ( updateReplacers ) {
     GM_setValue(
       'replace',

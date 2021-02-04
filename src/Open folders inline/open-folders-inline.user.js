@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   2021.01.30a
+// @version   2021.02.04a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/open-folders-inline.user.js
 // @grant     GM_setValue
 // @grant     GM_getValue
 // @grant     GM_deleteValue
@@ -12,7 +12,7 @@
 // ==/UserScript==
 
 import { render, Fragment, h } from 'preact';
-import { login, logout, setLastValidatedToken } from '../shared/moodle-functions';
+import { login, logout, setLastValidatedToken } from '../shared/moodle-functions/index.js';
 
 import style from './style.scss';
 
@@ -30,27 +30,27 @@ const init = () => {
 const handleClick = ( () => {
   let pageContent;
 
-  return e => {
-    const anchor = e.target.closest( 'a' );
+  return event => {
+    const anchor = event.target.closest( 'a' );
     const icon = anchor?.querySelector( 'svg.svg-refresh' )?.parentNode;
     const folder = anchor?.closest( 'li.activity.folder' );
-    const subFolder = e.target.closest( 'div.fp-filename-icon' );
+    const subFolder = event.target.closest( 'div.fp-filename-icon' );
 
     if ( subFolder ) {
       const subFolderContent = subFolder.nextElementSibling;
       subFolderContent.hidden = !subFolderContent.hidden;
-      const caretIcon = subFolder.getElementsByClassName( 'folders-inline-caret' )[ 0 ];
+      const caretIcon = subFolder.querySelector( '.folders-inline-caret' );
       caretIcon.classList.toggle( 'fa-caret-right' );
       caretIcon.classList.toggle( 'fa-caret-down' );
 
-      e.preventDefault();
-      e.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
       return;
     }
 
-    if ( e.target.closest( 'span' ) === icon ) {
-      e.preventDefault();
-      e.stopPropagation();
+    if ( event.target.closest( 'span' ) === icon ) {
+      event.preventDefault();
+      event.stopPropagation();
       folder.lastElementChild.remove();
       pageContent = undefined;
       anchor.click();
@@ -58,12 +58,12 @@ const handleClick = ( () => {
     }
 
     if ( anchor?.pathname === '/mod/folder/view.php' ) {
-      if ( e.ctrlKey === true ) {
+      if ( event.ctrlKey === true ) {
         return;
       }
 
-      e.preventDefault();
-      e.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
 
       if ( folder.childElementCount > 1 ) {
         folder.lastElementChild.remove();
@@ -98,19 +98,19 @@ const handleClick = ( () => {
         const sectionId = +section
           .getAttribute( 'aria-labelledby' )
           .match( /(?<=-)\d+(?=-)/ )[ 0 ];
-        const sectionObj = pageContentJSON.find( ( { id } ) => id === sectionId );
-        const { modules } = sectionObj;
+        const sectionObject = pageContentJSON.find( ( { id } ) => id === sectionId );
+        const { modules } = sectionObject;
 
         const folderId = +folder.id.match( /\d+$/ )[ 0 ];
 
-        const folderObj = modules.find( ( { id } ) => id === folderId );
-        const { contents } = folderObj;
+        const folderObject = modules.find( ( { id } ) => id === folderId );
+        const { contents } = folderObject;
 
-        if ( contents.length && !Array.isArray( contents[ 0 ].filepath ) ) {
-          for ( let i = 0; i < contents.length; i++ ) {
-            contents[ i ].filepath = contents[ i ].filepath
+        if ( contents.length > 0 && !Array.isArray( contents[ 0 ].filepath ) ) {
+          for ( const item of contents ) {
+            item.filepath = item.filepath
               .split( '/' )
-              .filter( e => e !== '' );
+              .filter( pathSection => pathSection !== '' );
           }
         }
 
@@ -141,7 +141,7 @@ const generateImageURL = ( () => {
       'powerpoint-256',
     'application/vnd.ms-powerpoint': 'powerpoint-256',
 
-    'text/plain': 'sourcecode-256', // moodle's decision
+    'text/plain': 'sourcecode-256',
 
     'audio/mp3': 'mp3-256',
     'audio/mp4': 'mp3-256',
@@ -155,10 +155,10 @@ const generateImageURL = ( () => {
   };
 
   return (
-    mimetype, defaultVal
-  ) => imageURLs.hasOwnProperty( mimetype )
+    mimetype, defaultValue
+  ) => mimetype in imageURLs
     ? `/theme/image.php/classic/core/1601902087/f/${ imageURLs[ mimetype ] }`
-    : defaultVal;
+    : defaultValue;
 } )();
 
 const Folder = ( { contents, base, directoryDepth = 0 } ) => {
@@ -166,12 +166,12 @@ const Folder = ( { contents, base, directoryDepth = 0 } ) => {
     '/': [],
   };
 
-  for ( let i = 0; i < contents.length; i++ ) {
-    const path = contents[ i ].filepath[ directoryDepth ] ?? '/';
+  for ( const item of contents ) {
+    const path = item.filepath[ directoryDepth ] ?? '/';
 
-    const filePathArr = filePaths[ path ] ?? ( filePaths[ path ] = [] );
+    const filePathArray = filePaths[ path ] ?? ( filePaths[ path ] = [] );
 
-    filePathArr.push( contents[ i ] );
+    filePathArray.push( item );
   }
 
   const root = filePaths[ '/' ].sort( (
@@ -221,9 +221,9 @@ const Folder = ( { contents, base, directoryDepth = 0 } ) => {
       }
 
       <ul style="list-style: none;" hidden={Boolean( base )}>
-        {entries.map( ( [ key, val ] ) => <li>
+        {entries.map( ( [ key, value ] ) => <li>
           <Folder
-            contents={val}
+            contents={value}
             base={key}
             directoryDepth={directoryDepth + 1}
           />
@@ -271,20 +271,20 @@ const Folder = ( { contents, base, directoryDepth = 0 } ) => {
 
 const getPageContent = noCache => login( noCache ).then( token => {
   const courseId = new URLSearchParams( location.search ).get( 'id' );
-  const requestParams = new URLSearchParams();
-  requestParams.set(
+  const requestParameters = new URLSearchParams();
+  requestParameters.set(
     'courseid',
     courseId
   );
-  requestParams.set(
+  requestParameters.set(
     'options[0][name]',
     'includestealthmodules'
   );
-  requestParams.set(
+  requestParameters.set(
     'options[0][value]',
     1
   );
-  requestParams.set(
+  requestParameters.set(
     'wstoken',
     token
   );
@@ -296,11 +296,11 @@ const getPageContent = noCache => login( noCache ).then( token => {
       headers: {
         'content-type': 'application/x-www-form-urlencoded',
       },
-      body: requestParams.toString(),
+      body: requestParameters.toString(),
     }
-  ).then( e => e.json() )
+  ).then( response => response.json() )
     .then( responseJSON => {
-      if ( responseJSON.hasOwnProperty( 'exception' ) ) {
+      if ( 'exception' in responseJSON ) {
         logout();
         return getPageContent( true );
       }

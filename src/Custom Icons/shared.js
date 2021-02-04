@@ -1,4 +1,4 @@
-export const deleteVal = id => {
+export const deleteIconFromStorage = id => {
   const pointers = GM_getValue( 'pointers' );
   const values = GM_getValue( 'values' );
   const uuid = pointers[ id ];

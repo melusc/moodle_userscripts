@@ -1,4 +1,4 @@
-import { defaultLoginReturnState, getCredentials, logout, setLastValidatedToken } from './';
+import { defaultLoginReturnState, getCredentials, logout, setLastValidatedToken } from './index.js';
 
 let cachedToken;
 
@@ -12,24 +12,24 @@ export const login = (
 
   const storedToken = GM_getValue( 'token' );
   const lastValidated = GM_getValue( 'lastValidatedToken' );
-  if ( !cachedToken && storedToken && +new Date() - lastValidated < 18000000 ) {
-    // less than 5h
-    cachedToken = Promise.resolve( storedToken ); // to make it a Promise and as such "thenable"
+  if ( !cachedToken && storedToken && Date.now() - lastValidated < 18000000 ) {
+    // Less than 5h
+    cachedToken = Promise.resolve( storedToken ); // To make it a Promise and as such "thenable"
   }
 
   if ( noCache || !cachedToken ) {
     cachedToken = getCredentials( loginReturnState ).then( ( { username, password } ) => {
-      const loginParams = new URLSearchParams();
+      const loginParameters = new URLSearchParams();
 
-      loginParams.set(
+      loginParameters.set(
         'username',
         username
       );
-      loginParams.set(
+      loginParameters.set(
         'password',
         password
       );
-      loginParams.set(
+      loginParameters.set(
         'service',
         'moodle_mobile_app'
       );
@@ -37,15 +37,15 @@ export const login = (
         '/login/token.php',
         {
           method: 'POST',
-          body: loginParams.toString(),
+          body: loginParameters.toString(),
           headers: {
             'content-type': 'application/x-www-form-urlencoded',
           },
         }
       )
-        .then( e => e.json() )
-        .then( response => {
-          if ( response.hasOwnProperty( 'errorcode' ) ) {
+        .then( response => response.json() )
+        .then( responseJSON => {
+          if ( 'errorcode' in responseJSON ) {
             logout( true );
             return login(
               true,
@@ -55,11 +55,11 @@ export const login = (
 
           GM_setValue(
             'token',
-            response.token
+            responseJSON.token
           );
           setLastValidatedToken();
 
-          return response.token;
+          return responseJSON.token;
         } );
     } );
   }

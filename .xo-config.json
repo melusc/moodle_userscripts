@@ -1,0 +1,75 @@
+{
+  "envs": ["browser", "es2020", "greasemonkey"],
+  "extends": ["preact"],
+  "globals": ["GM_addValueChangeListener", "GM_notification"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@babel"],
+  "rules": {
+    "@babel/no-invalid-this": "error",
+    "@babel/no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": true,
+        "allowTernary": true
+      }
+    ],
+    "@babel/object-curly-spacing": ["error", "always"],
+    "@babel/semi": ["error", "always"],
+    "array-bracket-spacing": ["error", "always"],
+    "brace-style": [
+      "error",
+      "stroustrup",
+      {
+        "allowSingleLine": true
+      }
+    ],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline"
+      }
+    ],
+    "computed-property-spacing": ["error", "always"],
+    "indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "max-depth": "off",
+    "new-cap": [
+      "error",
+      {
+        "capIsNewExceptionPattern": "^GM"
+      }
+    ],
+    "no-implicit-coercion": [
+      "error",
+      {
+        "allow": ["+"]
+      }
+    ],
+    "no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": true,
+        "allowTernary": true
+      }
+    ],
+    "object-curly-spacing": ["error", "always"],
+    "operator-linebreak": ["error", "before"],
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "space-in-parens": ["error", "always"],
+    "template-curly-spacing": ["error", "always"],
+    "unicorn/no-nested-ternary": "off",
+    "unicorn/no-null": "error"
+  }
+}

@@ -62,5 +62,6 @@ function minSvg() {
     .pipe( dest( paths.svgDest ) );
 }
 
-exports.default = exports.start = start;
+exports.default = start;
+exports.start = start;
 exports.minSvg = minSvg;

@@ -1,9 +1,9 @@
 import { render, h, Component, Fragment, createRef } from 'preact';
 
-import { getCourses } from '../shared/moodle-functions';
-import { quickSort } from '../shared/general-functions';
+import { getCourses } from '../shared/moodle-functions/index.js';
+import { quickSort } from '../shared/general-functions.js';
 
-import { removeElementFromStorage } from './shared';
+import { removeElementFromStorage } from './shared.js';
 import style from './settingspage.scss';
 
 /**
@@ -17,6 +17,7 @@ export const setupSettingsPage = () => {
   while ( head.lastChild ) {
     head.lastChild.remove();
   }
+
   while ( body.lastChild ) {
     body.lastChild.remove();
   }
@@ -49,7 +50,7 @@ class SettingsPage extends Component {
     selected: { isSelected: false },
 
     loggedOut: false,
-    loggedOutCallback: null,
+    loggedOutCallback: undefined,
   };
 
   replaceInputRef = createRef();
@@ -57,7 +58,7 @@ class SettingsPage extends Component {
   inputs = { username: createRef(), password: createRef() };
 
   render = (
-    _props, { courses, selected, loggedOut, loadingCourses }
+    _properties, { courses, selected, loggedOut, loadingCourses }
   ) => <div class="container">
     <Sidebar
       courses={courses}
@@ -88,8 +89,8 @@ class SettingsPage extends Component {
     getCourses(
       false,
       this.setState.bind( this )
-    ).then( coursesObj => {
-      const courses = Object.entries( coursesObj ).map( ( [ courseId, courseName ] ) => {
+    ).then( coursesObject => {
+      const courses = Object.entries( coursesObject ).map( ( [ courseId, courseName ] ) => {
         const isReplaced = checkIsCourseReplaced( courseId );
 
         // { courseName, courseId, isReplaced, replacedName, isRemoved }
@@ -97,19 +98,19 @@ class SettingsPage extends Component {
           courseName,
           courseId,
           isReplaced: isReplaced !== false,
-          replacedName: isReplaced, // only checks this if isReplaced is true, anyway
+          replacedName: isReplaced, // Only checks this if isReplaced is true, anyway
           isRemoved: checkIsCourseRemoved( courseId ),
         };
       } );
 
-      sortCoursesArr( courses );
+      sortCoursesArray( courses );
 
       this.setState( { courses, loadingCourses: false } );
     } );
   };
 
-  handleSave = e => {
-    if ( e.type !== 'keydown' || e.key === 'Enter' ) {
+  handleSave = event => {
+    if ( event.type !== 'keydown' || event.key === 'Enter' ) {
       const input = this.replaceInputRef.current.value;
 
       const { courseId, courseName } = this.state.selected;
@@ -127,9 +128,9 @@ class SettingsPage extends Component {
   };
 
   toggleItem = (
-    ev, { isRemoved, courseId }
+    event, { isRemoved, courseId }
   ) => {
-    ev.stopImmediatePropagation();
+    event.stopImmediatePropagation();
     if ( isRemoved ) {
       removeElementFromStorage( courseId );
     }
@@ -143,10 +144,10 @@ class SettingsPage extends Component {
   };
 
   resetItem = (
-    ev, item
+    event, item
   ) => {
     const { courseId } = item;
-    ev.stopImmediatePropagation();
+    event.stopImmediatePropagation();
     this.removeSelectedIfEqualId( courseId );
 
     removeElementFromStorage( courseId );
@@ -159,6 +160,7 @@ class SettingsPage extends Component {
       if ( selected.courseId === id ) {
         return { selected: { isSelected: false } };
       }
+
       return {};
     } );
   };
@@ -174,13 +176,14 @@ class SettingsPage extends Component {
           break;
         }
       }
-      sortCoursesArr( courses );
+
+      sortCoursesArray( courses );
       return { courses };
     } );
   };
 
   handleSidebarClick = (
-    ev, item
+    event, item
   ) => {
     if ( item.isRemoved ) {
       removeElementFromStorage(
@@ -213,8 +216,8 @@ class SettingsPage extends Component {
  * @param {Object[]} arr The courses
  * @return The sorted arr
  */
-const sortCoursesArr = arr => quickSort(
-  arr,
+const sortCoursesArray = array => quickSort(
+  array,
   (
     {
       courseName: courseNameA,
@@ -286,7 +289,7 @@ const setRemoved = id => {
  * @returns {void}
  */
 const setReplaced = (
-  id, _newVal, _oldVal
+  id, rawNewValue, rawOldValue
 ) => {
   const { replacers } = removeElementFromStorage(
     id,
@@ -295,11 +298,11 @@ const setReplaced = (
     }
   );
 
-  const newVal = ( _newVal ?? '' ).trim();
-  const oldVal = ( _oldVal ?? '' ).trim();
+  const newValue = ( rawNewValue ?? '' ).trim();
+  const oldValue = ( rawOldValue ?? '' ).trim();
 
-  if ( newVal !== '' && newVal !== oldVal ) {
-    replacers[ id ] = newVal;
+  if ( newValue !== '' && newValue !== oldValue ) {
+    replacers[ id ] = newValue;
   }
 
   GM_setValue(
@@ -354,18 +357,18 @@ const SidebarRow = ( { item, handleClick, toggleItem, resetItem } ) => {
       class={`row${ isRemoved
         ? ' removed'
         : '' }`}
-      onClick={e => {
+      onClick={event => {
         handleClick(
-          e,
+          event,
           item
         );
       }}
     >
       <span>
         <span
-          onClick={e => {
+          onClick={event => {
             toggleItem(
-              e,
+              event,
               item
             );
           }}
@@ -378,9 +381,9 @@ const SidebarRow = ( { item, handleClick, toggleItem, resetItem } ) => {
           ? <>
             {replacedName}
             <span
-              onClick={e => {
+              onClick={event => {
                 resetItem(
-                  e,
+                  event,
                   item
                 );
               }}
@@ -395,6 +398,7 @@ const SidebarRow = ( { item, handleClick, toggleItem, resetItem } ) => {
     </div>
   );
 };
+
 class Main extends Component {
   render = ( {
     selected: { isSelected, courseName, isReplaced, replacedName },
@@ -439,7 +443,7 @@ class Main extends Component {
                   ? isReplaced === false
                     ? courseName
                     : replacedName
-                  : null
+                  : undefined
               }
             />
             <button

@@ -1,27 +1,27 @@
 // ==UserScript==
-// @name         Moodle Timetable v5
-// @version      2021.01.30a
-// @author       lusc
-// @updateURL    https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js
-// @include      *://moodle.ksasz.ch/
-// @include      *://moodle.ksasz.ch/?*
-// @include      *://moodle.ksasz.ch/timetable/v5*
-// @grant        GM_addValueChangeListener
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_deleteValue
-// @grant        GM_registerMenuCommand
-// @grant        GM_addStyle
-// @grant        GM_notification
-// @run-at       document-start
+// @name      Moodle Timetable v5
+// @version   2021.02.04a
+// @author    lusc
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/timetable-v5.user.js
+// @include   *://moodle.ksasz.ch/
+// @include   *://moodle.ksasz.ch/?*
+// @include   *://moodle.ksasz.ch/timetable/v5*
+// @grant     GM_addValueChangeListener
+// @grant     GM_setValue
+// @grant     GM_getValue
+// @grant     GM_deleteValue
+// @grant     GM_registerMenuCommand
+// @grant     GM_addStyle
+// @grant     GM_notification
+// @run-at    document-start
 // ==/UserScript==
 
 if ( location.protocol !== 'https:' ) {
   location.protocol = 'https:';
 }
 
-import { render, Component, Fragment, h } from 'preact';
-import { getCourses } from '../shared/moodle-functions';
+import { render, Component, Fragment, h, createRef } from 'preact';
+import { getCourses } from '../shared/moodle-functions/index.js';
 
 import frontPageStyle from './frontpage.scss';
 import settingsPageStyle from './settingspage.scss';
@@ -76,9 +76,11 @@ const initSettingsPage = () => {
   while ( head.lastChild ) {
     head.lastChild.remove();
   }
+
   while ( body.lastChild ) {
     body.lastChild.remove();
   }
+
   document.title = 'Moodle timetable v5';
 
   const icon = document.createElement( 'link' );
@@ -87,13 +89,6 @@ const initSettingsPage = () => {
   icon.href = MOODLE_ICON;
 
   GM_addStyle( settingsPageStyle );
-
-  /* const style = document.createElement( 'link' );
-
-  style.type = 'text/css';
-  style.rel = 'stylesheet';
-  style.href = 'http://localhost:5000/settingspage.css';
-  document.head.append(style); */
 
   document.head.append( icon );
 
@@ -108,30 +103,29 @@ const initSettingsPage = () => {
   );
 };
 
+const defaultTimes = () => [
+  { from: '08:00', parsedfrom: 480, parsedto: 525, to: '08:45' },
+  { from: '08:45', parsedfrom: 525, parsedto: 570, to: '09:30' },
+  { from: '09:50', parsedfrom: 590, parsedto: 635, to: '10:35' },
+  { from: '10:40', parsedfrom: 640, parsedto: 685, to: '11:25' },
+  { from: '11:30', parsedfrom: 690, parsedto: 735, to: '12:15' },
+  { from: '12:15', parsedfrom: 735, parsedto: 790, to: '13:10' },
+  { from: '13:10', parsedfrom: 790, parsedto: 835, to: '13:55' },
+  { from: '13:55', parsedfrom: 835, parsedto: 880, to: '14:40' },
+  { from: '14:50', parsedfrom: 890, parsedto: 935, to: '15:35' },
+  { from: '15:35', parsedfrom: 935, parsedto: 975, to: '16:15' },
+];
 let settingsPageSetState;
 const SettingsPage = ( () => {
   const DAYS = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday' ];
   const createTable = () => {
-    const defaultTimes = () => [
-      { from: '08:00', parsedfrom: 480, parsedto: 525, to: '08:45' },
-      { from: '08:45', parsedfrom: 525, parsedto: 570, to: '09:30' },
-      { from: '09:50', parsedfrom: 590, parsedto: 635, to: '10:35' },
-      { from: '10:40', parsedfrom: 640, parsedto: 685, to: '11:25' },
-      { from: '11:30', parsedfrom: 690, parsedto: 735, to: '12:15' },
-      { from: '12:15', parsedfrom: 735, parsedto: 790, to: '13:10' },
-      { from: '13:10', parsedfrom: 790, parsedto: 835, to: '13:55' },
-      { from: '13:55', parsedfrom: 835, parsedto: 880, to: '14:40' },
-      { from: '14:50', parsedfrom: 890, parsedto: 935, to: '15:35' },
-      { from: '15:35', parsedfrom: 935, parsedto: 975, to: '16:15' },
-    ];
+    const array = [];
 
-    const arr = [];
+    for ( let index = 0, l = DAYS.length; index < l; ++index ) {
+      const storedValue = GM_getValue( 'days' )?.[ index ];
 
-    for ( let i = 0, l = DAYS.length; i < l; ++i ) {
-      const storedVal = GM_getValue( 'days' )?.[ i ];
-
-      if ( storedVal ) {
-        arr[ i ] = storedVal.map( ( { from, to, content, id } ) => ( {
+      if ( storedValue ) {
+        array[ index ] = storedValue.map( ( { from, to, content, id } ) => ( {
           from: parseTimeToString( from ),
           parsedfrom: from,
           to: parseTimeToString( to ),
@@ -142,11 +136,11 @@ const SettingsPage = ( () => {
         } ) );
       }
       else {
-        arr[ i ] = defaultTimes();
+        array[ index ] = defaultTimes();
       }
     }
 
-    return arr;
+    return array;
   };
 
   let activeDay = new Date().getDay() - 1;
@@ -160,27 +154,30 @@ const SettingsPage = ( () => {
       activeDay,
       tables: createTable(),
       focusedElement: {
-        top: null,
-        left: null,
-        height: null,
+        top: undefined,
+        left: undefined,
+        height: undefined,
         inputText: '',
-        idInput: null,
-        contentInput: null,
+        idInput: undefined,
+        contentInput: undefined,
       },
       courses: [],
 
       loggedOut: false,
-      loggedOutCallback: null,
+      loggedOutCallback: undefined,
     };
 
-    inputs = {};
+    inputs = {
+      username: createRef(),
+      password: createRef(),
+    };
 
     saveButtonRef = a => {
       this.saveButton = a;
     };
 
     render(
-      _props,
+      _properties,
       {
         activeDay,
         tables,
@@ -200,17 +197,13 @@ const SettingsPage = ( () => {
                       placeholder="Username"
                       required
                       class="input-group-text"
-                      ref={e => {
-                        this.inputs.username = e;
-                      }}
+                      ref={this.inputs.username}
                     />
                     <input
                       placeholder="Password"
                       required
                       class="input-group-text"
-                      ref={e => {
-                        this.inputs.password = e;
-                      }}
+                      ref={this.inputs.password}
                       type="password"
                     />
                   </div>
@@ -244,7 +237,7 @@ const SettingsPage = ( () => {
                   content={tables[ activeDay ]}
                   handleFocus={this.handleTableFocus}
                 />
-                <div class="row-gicon-add-row">
+                <div class="row-icon-add-row">
                   <div class="icon-add-row" onClick={this.createRow}>
                     <SvgIconAdd />
                   </div>
@@ -252,7 +245,7 @@ const SettingsPage = ( () => {
               </div>
             </div>
           </div>
-          {typeof top === 'number' // if top is type num all are
+          {typeof top === 'number' // If top is type num all are
             && <div
               class="suggestions"
               style={{ transform: `translate(${ left }px, ${ top + height }px)` }}
@@ -293,14 +286,14 @@ const SettingsPage = ( () => {
     }
 
     handleLoginClick = () => {
-      const username = this.inputs.username.value.trim();
-      const password = this.inputs.password.value;
+      const username = this.inputs.username.current.value.trim();
+      const password = this.inputs.password.current.value;
 
       this.state.loggedOutCallback( { username, password } );
     };
 
-    handleSuggestionsClick = e => {
-      const { target } = e;
+    handleSuggestionsClick = event => {
+      const { target } = event;
       const suggestion = target.closest( '.suggestion' );
 
       if ( suggestion ) {
@@ -313,9 +306,9 @@ const SettingsPage = ( () => {
         this.setState(
           state => {
             const { activeDay } = state;
-            const obj = state.tables[ activeDay ];
+            const object = state.tables[ activeDay ];
 
-            obj[ index ].id = id;
+            object[ index ].id = id;
 
             return {};
           },
@@ -330,8 +323,8 @@ const SettingsPage = ( () => {
       getCourses(
         false,
         settingsPageSetState
-      ).then( coursesObj => {
-        const courses = Object.entries( coursesObj ).map( ( [ id, fullname ] ) => ( {
+      ).then( coursesObject => {
+        const courses = Object.entries( coursesObject ).map( ( [ id, fullname ] ) => ( {
           id,
           name: fullname,
           uuid: generateUUIDv4(),
@@ -349,10 +342,10 @@ const SettingsPage = ( () => {
       );
       addEventListener(
         'keydown',
-        e => {
-          if ( e.ctrlKey && e.key === 's' ) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
+        event => {
+          if ( event.ctrlKey && event.key === 's' ) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
 
             this.handleSave();
           }
@@ -363,36 +356,37 @@ const SettingsPage = ( () => {
     };
 
     filterCourses = (
-      arr, inputText
+      array, inputText
     ) => {
-      const returnArr = [];
+      const returnArray = [];
       const regex = new RegExp(
         inputText,
         'i'
       );
 
-      for ( let i = 0, l = arr.length; i < l; ++i ) {
-        if ( regex.test( arr[ i ].name ) ) {
-          returnArr.push( {
-            ...arr[ i ],
-            index: arr[ i ].name.toLowerCase().indexOf( inputText ),
+      for ( let index = 0, l = array.length; index < l; ++index ) {
+        if ( regex.test( array[ index ].name ) ) {
+          returnArray.push( {
+            ...array[ index ],
+            index: array[ index ].name.toLowerCase().indexOf( inputText ),
           } );
         }
       }
-      returnArr.sort( (
+
+      returnArray.sort( (
         { index: indexA }, { index: indexB }
       ) => indexA - indexB );
 
-      return returnArr;
+      return returnArray;
     };
 
-    handleTableFocus = e => {
-      const { target } = e;
-      let idInput = null;
-      let contentInput = null;
-      let top = null;
-      let left = null;
-      let height = null;
+    handleTableFocus = event => {
+      const { target } = event;
+      let idInput;
+      let contentInput;
+      let top;
+      let left;
+      let height;
       let inputText = '';
 
       if ( target.dataset.type === 'id' ) {
@@ -434,31 +428,33 @@ const SettingsPage = ( () => {
       let dayInvalid;
       const days = [];
 
-      for ( let i = 0, l = this.state.tables.length; i < l; ++i ) {
-        const table = this.state.tables[ i ];
+      for ( let index0 = 0, l = this.state.tables.length; index0 < l; ++index0 ) {
+        const table = this.state.tables[ index0 ];
         const day = [];
 
         days.push( day );
 
-        for ( let j = 0, l2 = table.length; j < l2; ++j ) {
-          const row = table[ j ];
+        for ( let index1 = 0, l2 = table.length; index1 < l2; ++index1 ) {
+          const row = table[ index1 ];
           const { parsedfrom, parsedto, content, id } = row;
           const validRow = this.testRow( row );
 
           if ( !validRow && !anyInvalid ) {
             anyInvalid = true;
-            dayInvalid = i;
+            dayInvalid = index0;
           }
-          const obj = { from: parsedfrom, to: parsedto };
+
+          const object = { from: parsedfrom, to: parsedto };
 
           if ( id ) {
-            obj.id = id;
-          }
-          if ( content ) {
-            obj.content = content;
+            object.id = id;
           }
 
-          day.push( obj );
+          if ( content ) {
+            object.content = content;
+          }
+
+          day.push( object );
         }
       }
 
@@ -493,13 +489,13 @@ const SettingsPage = ( () => {
       return fromValid && toValid;
     };
 
-    handleTableClick = e => {
-      const { target } = e;
+    handleTableClick = event => {
+      const { target } = event;
       const iconRemoveRow = target.closest( '.remove-row' );
 
       if ( iconRemoveRow ) {
-        const curRow = target.closest( '.table-row' );
-        const rowIndex = [ ...target.closest( '.table' ).children ].indexOf( curRow );
+        const currentRow = target.closest( '.table-row' );
+        const rowIndex = [ ...target.closest( '.table' ).children ].indexOf( currentRow );
 
         this.setState( state => {
           const { activeDay } = state;
@@ -515,8 +511,8 @@ const SettingsPage = ( () => {
       }
     };
 
-    handleCaretClick = e => {
-      const closestDiv = e.target.closest( 'div' );
+    handleCaretClick = event => {
+      const closestDiv = event.target.closest( 'div' );
 
       if ( !closestDiv ) {
         return;
@@ -563,70 +559,73 @@ const SettingsPage = ( () => {
       } );
     };
 
-    validateTimeOrder = arr => {
-      for ( let i = 0, l = arr.length; i < l; ++i ) {
-        const currentFrom = arr[ i ].parsedfrom;
-        const currentTo = arr[ i ].parsedto;
-        let curValid = true;
+    validateTimeOrder = array => {
+      for ( let index = 0, l = array.length; index < l; ++index ) {
+        const currentFrom = array[ index ].parsedfrom;
+        const currentTo = array[ index ].parsedto;
+        let isCurrentValid = true;
 
         if ( Number.isInteger( currentFrom ) && Number.isInteger( currentTo ) ) {
           if ( currentFrom > currentTo ) {
-            arr[ i ].fromvalid = false;
-            arr[ i ].tovalid = false;
-            curValid = false;
+            array[ index ].fromvalid = false;
+            array[ index ].tovalid = false;
+            isCurrentValid = false;
           }
           else {
-            delete arr[ i ].fromvalid;
-            delete arr[ i ].tovalid;
+            delete array[ index ].fromvalid;
+            delete array[ index ].tovalid;
           }
         }
 
-        if ( i !== 0 ) {
-          const previousTo = arr[ i - 1 ].parsedto;
+        if ( index !== 0 ) {
+          const previousTo = array[ index - 1 ].parsedto;
 
           if ( Number.isInteger( previousTo ) && Number.isInteger( currentFrom ) ) {
             if ( currentFrom < previousTo ) {
-              arr[ i ].fromvalid = false;
-              arr[ i - 1 ].tovalid = false;
+              array[ index ].fromvalid = false;
+              array[ index - 1 ].tovalid = false;
             }
             else {
-              if ( curValid ) {
-                delete arr[ i ].fromvalid;
+              if ( isCurrentValid ) {
+                delete array[ index ].fromvalid;
               }
-              delete arr[ i - 1 ].tovalid;
+
+              delete array[ index - 1 ].tovalid;
             }
           }
         }
-        if ( i < l - 1 ) {
-          const nextFrom = arr[ i + 1 ].parsedfrom;
+
+        if ( index < l - 1 ) {
+          const nextFrom = array[ index + 1 ].parsedfrom;
 
           if ( Number.isInteger( currentTo ) && Number.isInteger( nextFrom ) ) {
             if ( nextFrom < currentTo ) {
-              arr[ i ].tovalid = false;
-              arr[ i + 1 ].fromvalid = false;
+              array[ index ].tovalid = false;
+              array[ index + 1 ].fromvalid = false;
             }
             else {
-              if ( curValid ) {
-                delete arr[ i ].tovalid;
+              if ( isCurrentValid ) {
+                delete array[ index ].tovalid;
               }
-              delete arr[ i + 1 ].fromvalid;
+
+              delete array[ index + 1 ].fromvalid;
             }
           }
         }
       }
     };
 
-    handleTableInput = e => {
-      const { target } = e;
+    handleTableInput = event => {
+      const { target } = event;
       const { classList } = target;
-      const curRow = target.closest( '.table-row' );
+      const currentRow = target.closest( '.table-row' );
       const parent = target.parentNode;
 
-      if ( !curRow ) {
+      if ( !currentRow ) {
         return;
       }
 
-      const curIndex = [ ...curRow.parentNode.children ].indexOf( curRow );
+      const currentRowIndex = [ ...currentRow.parentNode.children ].indexOf( currentRow );
       const { anchorOffset } = getSelection();
 
       if ( classList.contains( 'time-input' ) ) {
@@ -635,12 +634,12 @@ const SettingsPage = ( () => {
         this.setState(
           state => {
             const { activeDay } = state;
-            const obj = state.tables[ activeDay ][ curIndex ];
+            const object = state.tables[ activeDay ][ currentRowIndex ];
 
-            obj[ classList.contains( 'time-from' )
+            object[ classList.contains( 'time-from' )
               ? 'from'
               : 'to' ] = time;
-            obj[
+            object[
               `parsed${ classList.contains( 'time-from' )
                 ? 'from'
                 : 'to' }`
@@ -659,21 +658,22 @@ const SettingsPage = ( () => {
         );
       }
       else if ( parent.classList.contains( 'entry' ) ) {
-        this.handleTableFocus( e );
+        this.handleTableFocus( event );
         this.setState(
           state => {
             const { activeDay } = state;
-            const obj = state.tables[ activeDay ][ curIndex ];
+            const object = state.tables[ activeDay ][ currentRowIndex ];
 
             if ( target.dataset.type === 'id' ) {
-              obj.id = target.textContent;
+              object.id = target.textContent;
             }
             else if ( target.dataset.type === 'content' ) {
-              obj.content = target.textContent;
-              target.textContent
-                = ''; /* this fixes an issue where preact doesn't
+              object.content = target.textContent;
+              target.textContent = '';
+              /* This fixes an issue where preact doesn't
               properly delete a text node and which causes duplicate text */
             }
+
             return { tables: state.tables };
           },
           () => {
@@ -692,34 +692,35 @@ const SettingsPage = ( () => {
       input.type = 'time';
 
       return raw => {
-        const str = raw.trim();
+        const string = raw.trim();
 
-        if ( !( /^\d{2}:\d{2}$/ ).test( str ) ) {
-          return false;
-        }
-        input.value = str;
-        if ( input.value !== str ) {
+        if ( !( /^\d{2}:\d{2}$/ ).test( string ) ) {
           return false;
         }
 
-        const [ hour, minute ] = str.split( ':' );
+        input.value = string;
+        if ( input.value !== string ) {
+          return false;
+        }
+
+        const [ hour, minute ] = string.split( ':' );
 
         return ( hour * 60 ) + +minute;
       };
     } )();
 
-    handleTableKeyDown = async e => {
-      const { target } = e;
+    handleTableKeyDown = async event => {
+      const { target } = event;
 
-      if ( e.keyCode === 13 ) {
-        e.preventDefault();
+      if ( event.keyCode === 13 ) {
+        event.preventDefault();
 
         if ( target.closest( '.entry' ) ) {
-          const curRow = target.closest( '.table-row' );
+          const currentRow = target.closest( '.table-row' );
 
-          if ( e.shiftKey ) {
+          if ( event.shiftKey ) {
             if ( target.dataset.type === 'content' ) {
-              focusTarget( curRow.previousElementSibling?.querySelector( 'div.table-cell.entry > [data-type="id"]' ) );
+              focusTarget( currentRow.previousElementSibling?.querySelector( 'div.table-cell.entry > [data-type="id"]' ) );
             }
             else {
               focusTarget( target.parentNode.querySelector( '[data-type="content"]' ) );
@@ -729,22 +730,22 @@ const SettingsPage = ( () => {
             focusTarget( target.parentNode.querySelector( '[data-type="id"]' ) );
           }
           else {
-            let nextRow = curRow.nextElementSibling;
+            let nextRow = currentRow.nextElementSibling;
 
             if ( !nextRow ) {
               await this.createRow();
-              nextRow = curRow.nextElementSibling;
+              nextRow = currentRow.nextElementSibling;
             }
 
             focusTarget( nextRow?.querySelector( 'div.table-cell.entry > [data-type="content"]' ) );
           }
         }
         else if ( target.closest( '.time' ) ) {
-          const curRow = target.closest( '.table-row' );
+          const currentRow = target.closest( '.table-row' );
 
-          if ( e.shiftKey ) {
+          if ( event.shiftKey ) {
             if ( target.classList.contains( 'time-from' ) ) {
-              focusTarget( curRow.previousElementSibling?.querySelector( 'div.table-cell.time > .time-to' ) );
+              focusTarget( currentRow.previousElementSibling?.querySelector( 'div.table-cell.time > .time-to' ) );
             }
             else {
               focusTarget( target.parentNode.querySelector( '.time-from' ) );
@@ -754,27 +755,26 @@ const SettingsPage = ( () => {
             focusTarget( target.parentNode.querySelector( '.time-to' ) );
           }
           else {
-            let nextRow = curRow.nextElementSibling;
+            let nextRow = currentRow.nextElementSibling;
 
             if ( !nextRow ) {
               await this.createRow();
-              nextRow = curRow.nextElementSibling;
+              nextRow = currentRow.nextElementSibling;
             }
+
             focusTarget( nextRow?.querySelector( 'div.table-cell.time > .time-from' ) );
           }
         }
       }
-      else if ( e.keyCode === 9 ) {
-        if ( target.classList.contains( 'entry' ) ) {
-          const curRow = target.closest( '.table-row' );
+      else if ( event.keyCode === 9 && target.classList.contains( 'entry' ) ) {
+        const currentRow = target.closest( '.table-row' );
 
-          if ( !curRow.nextElementSibling ) {
-            e.preventDefault();
-            const table = curRow.parentNode;
-            const firstRow = table.children[ 0 ];
+        if ( !currentRow.nextElementSibling ) {
+          event.preventDefault();
+          const table = currentRow.parentNode;
+          const firstRow = table.children[ 0 ];
 
-            firstRow.querySelector( '.time-from' )?.focus();
-          }
+          firstRow.querySelector( '.time-from' )?.focus();
         }
       }
     };
@@ -890,8 +890,8 @@ const generateUUIDv4 = a => a
 
 const FrontPage = ( () => {
   const currentDay = new Date().getDay();
-  let currentVals = ( GM_getValue( 'days' )?.[ currentDay - 1 ] ?? [] ).map( e => ( {
-    ...e,
+  let currentVals = ( GM_getValue( 'days' )?.[ currentDay - 1 ] ?? [] ).map( item => ( {
+    ...item,
     uuid: generateUUIDv4(),
   } ) );
 
@@ -911,10 +911,10 @@ const FrontPage = ( () => {
           false
         ), false ),
       isEmpty: false,
-      type: null,
+      type: undefined,
     };
 
-    timeout = null;
+    timeout = undefined;
 
     componentDidMount = () => {
       GM_addValueChangeListener(
@@ -922,9 +922,9 @@ const FrontPage = ( () => {
         () => {
           currentVals = GM_getValue( 'days' )?.[ currentDay - 1 ] ?? [];
           this.clearTimeout();
-          // it will set another timeout if necessary
-          // and if not it would never be cleared so it gets
-          // cleared here
+          /* It will set another timeout if necessary
+             and if not it would never be cleared so it gets
+             cleared here */
           this.updateCourse();
         }
       );
@@ -932,7 +932,6 @@ const FrontPage = ( () => {
         'isHoliday',
         () => {
           this.clearTimeout();
-          // see above
           this.setState( { isHoliday: GM_getValue( 'isHoliday' ) } );
           if ( !GM_getValue( 'isHoliday' ) ) {
             this.updateCourse();
@@ -947,7 +946,7 @@ const FrontPage = ( () => {
 
     clearTimeout = () => {
       clearTimeout( this.timeout );
-      this.timeout = null;
+      this.timeout = undefined;
     };
 
     setCoursesTimeout = delay => {
@@ -964,17 +963,18 @@ const FrontPage = ( () => {
         this.setState( { isEmpty: true } );
         return;
       }
-      const curTime = new Date();
-      const curTimeInMinutes
-        = ( curTime.getHours() * 60 )
-        + curTime.getMinutes()
-        + ( curTime.getSeconds() / 60 )
-        + ( curTime.getMilliseconds() / 60 / 1000 );
+
+      const currentDate = new Date();
+      const currentTimeInMinutes
+        = ( currentDate.getHours() * 60 )
+        + currentDate.getMinutes()
+        + ( currentDate.getSeconds() / 60 )
+        + ( currentDate.getMilliseconds() / 60 / 1000 );
 
       const totalFrom = currentVals[ 0 ].from;
       const totalTo = currentVals[ currentVals.length - 1 ].to;
 
-      if ( curTimeInMinutes < totalFrom ) {
+      if ( currentTimeInMinutes < totalFrom ) {
         this.setState( {
           type: BEFORELESSONS,
           tableRows: [ undefined, currentVals[ 0 ] ],
@@ -992,43 +992,44 @@ const FrontPage = ( () => {
           0
         );
 
-        this.setCoursesTimeout( nextDate - curTime );
+        this.setCoursesTimeout( nextDate - currentDate );
       }
-      else if ( curTimeInMinutes >= totalTo ) {
+      else if ( currentTimeInMinutes >= totalTo ) {
         this.setState( {
           type: AFTERLESSONS,
         } );
       }
       else {
-        let curIndex = 0;
+        let currentIndex = 0;
 
-        while ( currentVals[ curIndex ].to < curTimeInMinutes ) {
-          ++curIndex;
+        while ( currentVals[ currentIndex ].to < currentTimeInMinutes ) {
+          ++currentIndex;
         }
-        const curVal = currentVals[ curIndex ];
-        const nextVal = currentVals[ curIndex + 1 ];
+
+        const currentValue = currentVals[ currentIndex ];
+        const nextValue = currentVals[ currentIndex + 1 ];
 
         this.setState( {
           type: DURINGLESSONS,
-          tableRows: [ curVal, nextVal ],
+          tableRows: [ currentValue, nextValue ],
         } );
 
-        if ( notify && !this.state.isHoliday && curVal && 'content' in curVal ) {
+        if ( notify && !this.state.isHoliday && currentValue && 'content' in currentValue ) {
           GM_notification( {
-            text: curVal.content,
+            text: currentValue.content,
             title: 'Now',
             image: NOTIFICATION_ICON,
             timeout: 4000,
             silent: true,
-            onclick() {
-              open( curVal.hasOwnProperty( 'id' )
-                ? `/course/view.php?id=${ curVal.id }`
+            onclick: () => {
+              open( 'id' in currentValue
+                ? `/course/view.php?id=${ currentValue.id }`
                 : '/' );
             },
           } );
         }
 
-        const nextInMinutesSinceMidnight = currentVals[ curIndex ].to;
+        const nextInMinutesSinceMidnight = currentVals[ currentIndex ].to;
         const nextHours = Math.floor( nextInMinutesSinceMidnight / 60 );
         const nextMinutes = nextInMinutesSinceMidnight % 60;
 
@@ -1040,12 +1041,12 @@ const FrontPage = ( () => {
           0
         );
 
-        this.setCoursesTimeout( nextDate - curTime );
+        this.setCoursesTimeout( nextDate - currentDate );
       }
     }
 
     render(
-      _props, { isEmpty, isHoliday, type, tableRows }
+      _properties, { isEmpty, isHoliday, type, tableRows }
     ) {
       const isWeekend = currentDay === 0 || currentDay === 6;
 
@@ -1077,12 +1078,12 @@ const FrontPage = ( () => {
                         && !isHoliday
                         && ( type === BEFORELESSONS || type === DURINGLESSONS )
                         && tableRows?.map( (
-                          curVal, idx
-                        ) => curVal
+                          currentValue, index
+                        ) => currentValue
                               && <TimetableRow
-                                key={curVal.uuid}
-                                values={curVal}
-                                isNow={idx === 0}
+                                key={currentValue.uuid}
+                                values={currentValue}
+                                isNow={index === 0}
                               /> )}
                       {isEmpty && !isWeekend
                         && <>
@@ -1141,9 +1142,10 @@ const TimetableRow = ( { values, isNow } ) => {
 };
 
 const parseTimeToString = int => {
-  if ( isNaN( int ) ) {
+  if ( Number.isNaN( int ) ) {
     return false;
   }
+
   const minutes = +int % 60;
   const hours = Math.floor( +int / 60 );
 
@@ -1164,14 +1166,14 @@ const timeStringIsValid = ( () => {
   input.type = 'time';
 
   return raw => {
-    const str = `${ raw }`.trim();
+    const string = `${ raw }`.trim();
 
-    if ( !( /^\d{2}:\d{2}$/ ).test( str ) ) {
+    if ( !( /^\d{2}:\d{2}$/ ).test( string ) ) {
       return false;
     }
 
-    input.value = str;
-    return input.value === str;
+    input.value = string;
+    return input.value === string;
   };
 } )();
 
@@ -1181,7 +1183,7 @@ const focusTarget = (
   if ( target instanceof Element ) {
     const range = new Range();
     const sel = getSelection();
-    const start = +( offset ?? target.textContent.length );
+    const start = +( offset ?? +target.textContent.length );
 
     target.focus();
     range.setStart(

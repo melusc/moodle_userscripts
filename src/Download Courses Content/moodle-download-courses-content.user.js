@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.01.30a
+// @version   2021.02.04a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/moodle-download-courses-content.user.js
 // @grant     GM_getValue
 // @grant     GM_setValue
 // @grant     GM_deleteValue
@@ -14,11 +14,14 @@
 // ==/UserScript==
 
 // this is so webpack doesn't remove the metadata above
-if ( location.protocol !== 'https:' ) { location.protocol = 'https:'; /* this should never happen*/ }
+if ( location.protocol !== 'https:' ) {
+  /* This should never happen as moodle itself upgrades to https */
+  location.protocol = 'https:';
+}
 
 import saveAs from 'file-saver';
 import JSZip from 'jszip/dist/jszip';
-import { login, logout, setLastValidatedToken } from '../shared/moodle-functions';
+import { login, logout, setLastValidatedToken } from '../shared/moodle-functions/index.js';
 
 const init = () => {
   if ( !document.querySelector( '#region-main div.errorbox.alert.alert-danger' ) ) {
@@ -42,8 +45,8 @@ const padStart = d => `${ d }`.padStart(
 );
 
 // https://en.wikipedia.org/wiki/Filename
-const sanitizeFileName = str => str.replace(
-  /[/\\?%*:|"<>]/g,
+const sanitizeFileName = string => string.replace(
+  /["%*/:<>?\\|]/g,
   '_'
 );
 
@@ -75,7 +78,7 @@ const initDownload = (
         body,
       }
     )
-      .then( e => e.json() )
+      .then( response => response.json() )
       .then( jsonPageContent => {
         if ( !Array.isArray( jsonPageContent ) && 'exception' in jsonPageContent ) {
           logout();
@@ -91,31 +94,24 @@ const initDownload = (
 
         const zipFile = new JSZip();
 
-        for ( let i = 0; i < jsonPageContent.length; ++i ) {
-          const section = jsonPageContent[ i ];
+        for ( const section of jsonPageContent ) {
           const { modules } = section;
           const sectionName = sanitizeFileName( section.name );
 
-          for ( let j = 0; j < modules.length; ++j ) {
-            const module = modules[ j ];
+          for ( const module of modules ) {
             const { modname } = module;
             if ( modname === 'resource' || modname === 'folder' ) {
               const { contents } = module;
               const folderName = sanitizeFileName( module.name );
 
-              for ( let k = 0; k < contents.length; ++k ) {
-                const content = contents[ k ];
+              for ( const content of contents ) {
                 const { fileurl, filepath } = content;
                 const filename = sanitizeFileName( content.filename );
                 const date = new Date( content.timemodified * 1000 );
 
-                let zipFileName;
-                if ( modname === 'resource' ) {
-                  zipFileName = `${ sectionName }/${ filename }`;
-                }
-                else {
-                  zipFileName = `${ sectionName }/${ folderName }${ filepath }${ filename }`;
-                }
+                const zipFileName = modname === 'resource'
+                  ? `${ sectionName }/${ filename }`
+                  : `${ sectionName }/${ folderName }${ filepath }${ filename }`;
 
                 zipFile.file(
                   zipFileName,
@@ -128,7 +124,7 @@ const initDownload = (
                         'content-type': 'application/x-www-form-urlencoded',
                       },
                     }
-                  ).then( e => e.blob() ),
+                  ).then( response => response.blob() ),
                   { date }
                 );
               }
@@ -206,8 +202,6 @@ const initDownload = (
             },
             console.error
           );
-
-        return undefined;
       } );
   } );
 };

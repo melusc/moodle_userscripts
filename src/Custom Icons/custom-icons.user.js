@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.01.30a
+// @version   2021.02.04a
 // @author    lusc
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/custom-icons.user.js
 // @include   *://moodle.ksasz.ch/*
 // @grant     GM_setValue
 // @grant     GM_getValue
@@ -27,9 +27,9 @@ if ( typeof GM_getValue( 'pointers' ) !== 'object' ) {
 }
 
 import { render, html } from 'htm/preact';
-import { getCourses } from '../shared/moodle-functions';
-import { setupSettingsPage } from './settingspage';
-import { deleteVal } from './shared';
+import { getCourses } from '../shared/moodle-functions/index.js';
+import { setupSettingsPage } from './settingspage.js';
+import { deleteIconFromStorage } from './shared.js';
 
 const isFrontpage = !( /^\/customiconspreact/i ).test( location.pathname );
 
@@ -68,7 +68,7 @@ const updateIcons = () => {
     GM_addValueChangeListener(
       'pointers',
       refresh
-    ); // if "values" changes "pointers" will change anyway
+    ); // Only listen for changes to pointers because if values changes this will change
   }
 };
 
@@ -79,13 +79,13 @@ const applyIcon = (
 
   if ( anchor ) {
     if ( anchor.childElementCount > 0 ) {
-      const blobURLObj = getBlobURL( id );
+      const blobURLObject = getBlobURL( id );
 
-      if ( typeof blobURLObj !== 'object' ) {
+      if ( typeof blobURLObject !== 'object' ) {
         return;
       }
 
-      if ( blobURLObj.isXML ) {
+      if ( blobURLObject.isXML ) {
         const span = document.createElement( 'span' );
 
         span.className = 'icon navicon';
@@ -93,7 +93,7 @@ const applyIcon = (
         span.style.color = 'var(--svg-fill, inherit)';
 
         render(
-          html( [ blobURLObj.rawXML ] ),
+          html( [ blobURLObject.rawXML ] ),
           span
         );
 
@@ -114,11 +114,11 @@ const applyIcon = (
           = 'fill: var(--svg-fill, inherit);stroke: var(--svg-fill, inherit);-moz-context-properties: fill, stroke;';
 
         img.tabIndex = -1;
-        img.src = blobURLObj.blobURL;
+        img.src = blobURLObject.blobURL;
         img.addEventListener(
           'load',
           () => {
-            URL.revokeObjectURL( blobURLObj );
+            URL.revokeObjectURL( blobURLObject.blobURL );
           },
           { once: true }
         );
@@ -148,13 +148,14 @@ const getBlobURL = id => {
     const byteString = atob( rawByteString );
     const { length } = byteString;
     const arrayBuffer = new ArrayBuffer( length );
-    const uintArr = new Uint8Array( arrayBuffer );
+    const uintArray = new Uint8Array( arrayBuffer );
 
-    for ( let i = 0; i < length; ++i ) {
-      uintArr[ i ] = byteString.charCodeAt( i );
+    for ( let index = 0; index < length; ++index ) {
+      uintArray[ index ] = byteString.charCodeAt( index );
     }
+
     const blob = new Blob(
-      [ uintArr ],
+      [ uintArray ],
       {
         type: mediaType,
       }
@@ -162,39 +163,38 @@ const getBlobURL = id => {
 
     return { blobURL: URL.createObjectURL( blob ), isXML: false };
   }
-  return undefined;
 };
 
 const refresh = (
-  _name, oldVal, newVal, remote
+  _valueName, oldValue, newValue, remote
 ) => {
   if ( remote ) {
     const sidebar = getSidebar( document );
-    const oldEntries = Object.entries( oldVal );
-    const newEntries = Object.entries( newVal );
-    const changedOrAdded = newEntries.filter( ( [ key, val ] ) => !( key in oldVal ) && oldVal[ key ] !== val );
-    const removed = oldEntries.filter( ( [ key ] ) => !( key in newVal ) );
+    const oldEntries = Object.entries( oldValue );
+    const newEntries = Object.entries( newValue );
+    const changedOrAdded = newEntries.filter( ( [ key, value ] ) => !( key in oldValue ) && oldValue[ key ] !== value );
+    const removed = oldEntries.filter( ( [ key ] ) => !( key in newValue ) );
 
     for ( const [ id ] of removed ) {
       const img = sidebar.querySelector( `a[href="https://moodle.ksasz.ch/course/view.php?id=${ id }"] > .icon.navicon` );
 
       if ( img && ( img.nodeName === 'SPAN' || img.nodeName === 'IMG' ) ) {
-        // nodeName to not update an icon accidentally
-        const i = document.createElement( 'i' );
+        // Test nodeName to not update an icon accidentally
+        const icon = document.createElement( 'i' );
 
-        i.classList.add(
+        icon.classList.add(
           'icon',
           'fa',
           'fa-graduation-cap',
           'fa-fw',
           'navicon'
         );
-        i.setAttribute(
+        icon.setAttribute(
           'aria-hidden',
           true
         );
-        i.tabIndex = -1;
-        img.replaceWith( i );
+        icon.tabIndex = -1;
+        img.replaceWith( icon );
       }
     }
 
@@ -209,15 +209,15 @@ const refresh = (
 
 const testIfUserLeftCourse = id => {
   getCourses().then( courses => {
-    if ( !courses.hasOwnProperty( id ) ) {
-      deleteVal( id );
-      alert( `You appear to not be in the course with the id "${ id }" anymore.\nThe course will not be checked for anymore` );
+    if ( !( id in courses ) ) {
+      deleteIconFromStorage( id );
+      alert( `You appear to not be in the course with the id "${ id }" anymore.\nThe course will not be checked for anymore` ); // eslint-disable-line no-alert
     }
   } );
 };
 
 const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' )
-  ?? context.getElementById( 'label_3_21' )?.closest( 'ul[role="group"]' );
+  ?? context.querySelector( '#label_3_21' )?.closest( 'ul[role="group"]' );
 
 const getDataURI = id => {
   const pointers = GM_getValue( 'pointers' );
@@ -225,14 +225,16 @@ const getDataURI = id => {
   const uuid = pointers[ id ];
 
   if ( !uuid ) {
-    return undefined;
+    return;
   }
-  const obj = GM_getValue( 'values' )[ uuid ];
 
-  if ( obj.hasOwnProperty( 'rawXML' ) ) {
-    return { rawXML: obj.rawXML, isXML: true };
+  const object = GM_getValue( 'values' )[ uuid ];
+
+  if ( 'rawXML' in object ) {
+    return { rawXML: object.rawXML, isXML: true };
   }
-  return { ...obj, isXML: false };
+
+  return { ...object, isXML: false };
 };
 
 if ( !( /^\/cleanmoodle/i ).test( location.pathname ) ) {

@@ -2,8 +2,8 @@ import { render, h, Component, Fragment, createRef } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import { html } from 'htm/preact';
 import style from './style.scss';
-import { getCourses } from '../shared/moodle-functions';
-import { deleteVal } from './shared';
+import { getCourses } from '../shared/moodle-functions/index.js';
+import { deleteIconFromStorage } from './shared.js';
 
 const FILE_CONSTANT = 'FILE';
 const COPY_CONSTANT = 'COPY';
@@ -29,6 +29,7 @@ export const setupSettingsPage = () => {
   while ( body.lastChild ) {
     body.lastChild.remove();
   }
+
   while ( head.lastChild ) {
     head.lastChild.remove();
   }
@@ -58,7 +59,7 @@ class SettingsPage extends Component {
   state = {
     courses: [],
     selected: { isSelected: false },
-    notificationString: null,
+    notificationString: undefined,
 
     inputVals: {
       current: false,
@@ -68,7 +69,7 @@ class SettingsPage extends Component {
   form = createRef();
 
   render = (
-    _props,
+    _properties,
     {
       courses,
       selected,
@@ -109,16 +110,16 @@ class SettingsPage extends Component {
     ;
 
   closeNotification = (
-    e, testForClass
+    event, testForClass
   ) => {
-    e.stopImmediatePropagation();
-    if ( !( testForClass && e.target.classList.contains( 'outer-notification' ) ) ) {
-      this.setState( { notificationString: null } );
+    event.stopImmediatePropagation();
+    if ( !( testForClass && event.target.classList.contains( 'outer-notification' ) ) ) {
+      this.setState( { notificationString: undefined } );
     }
   };
 
-  handleSave = e => {
-    e.preventDefault();
+  handleSave = event => {
+    event.preventDefault();
 
     const { isSelected } = this.state.selected;
     if ( isSelected ) {
@@ -142,9 +143,9 @@ class SettingsPage extends Component {
   };
 
   handleMainInput = (
-    e, type
+    event, type
   ) => {
-    const { target } = e;
+    const { target } = event;
     const { value } = target;
     this.setState( () => {
       const inputVals = { current: false };
@@ -161,24 +162,26 @@ class SettingsPage extends Component {
         inputVals.val = target.files[ 0 ];
         inputVals.current = target.files?.length !== 0 && FILE_CONSTANT;
       }
+
       if ( !inputVals.current ) {
         return { inputVals: { current: false } };
       }
+
       return { inputVals };
     } );
   };
 
   rowClick = (
-    e, item
+    event, item
   ) => {
     this.setState( { selected: { ...item, isSelected: true } } );
   };
 
   delIcon = (
-    e, { courseId }
+    event, { courseId }
   ) => {
-    e.stopImmediatePropagation();
-    deleteVal( courseId );
+    event.stopImmediatePropagation();
+    deleteIconFromStorage( courseId );
     if ( courseId === this.state.selected.courseId ) {
       this.reset();
     }
@@ -208,8 +211,8 @@ class SettingsPage extends Component {
     getCourses(
       false,
       this.setState.bind( this )
-    ).then( coursesObj => {
-      const courses = Object.entries( coursesObj )
+    ).then( coursesObject => {
+      const courses = Object.entries( coursesObject )
         .sort( (
           a, b
         ) => {
@@ -234,18 +237,17 @@ class SettingsPage extends Component {
 
   reset = ( resetSelected = true ) => {
     this.form.current.reset();
-    const obj = {
+
+    this.setState( {
       inputVals: { current: false },
       ...resetSelected && { selected: { isSelected: false } },
-    };
-
-    this.setState( obj );
+    } );
   };
 
   saveHandlers = {
-    saveByURL: val => {
+    saveByURL: value => {
       try {
-        const url = new URL( val );
+        const url = new URL( value );
 
         GM_xmlhttpRequest( {
           method: 'GET',
@@ -262,15 +264,15 @@ class SettingsPage extends Component {
           ontimeout: () => {
             this.setState( { notificationString: ERROR_MSG.timeout } );
           },
-          onload: res => {
-            if ( res.status === 200 ) {
-              this.saveHandlers.saveWithFileHandler( res.response );
+          onload: response => {
+            if ( response.status === 200 ) {
+              this.saveHandlers.saveWithFileHandler( response.response );
             }
             else {
               this.setState( {
                 notificationString: ERROR_MSG.statusCode(
-                  res.status,
-                  res.statusText
+                  response.status,
+                  response.statusText
                 ),
               } );
             }
@@ -285,62 +287,73 @@ class SettingsPage extends Component {
     saveWithFileHandler: blobLike => {
       const fr = new FileReader();
 
-      fr.onerror = () => { this.setState( { notificationString: ERROR_MSG.error } ); };
-      fr.onload = () => {
-        const img = new Image();
-        img.onerror = () => {
-          this.setState( { notificationString: ERROR_MSG.notImage } );
-        };
+      fr.addEventListener(
+        'error',
+        () => { this.setState( { notificationString: ERROR_MSG.error } ); }
+      );
+      fr.addEventListener(
+        'load',
+        () => {
+          const img = new Image();
+          img.addEventListener(
+            'error',
+            () => {
+              this.setState( { notificationString: ERROR_MSG.notImage } );
+            }
+          );
+          img.addEventListener(
+            'load',
+            () => {
+              const id = this.state.selected.courseId;
 
-        img.onload = () => {
-          const id = this.state.selected.courseId;
+              deleteIconFromStorage( id );
 
-          deleteVal( id );
+              const pointers = GM_getValue( 'pointers' );
+              const uuid = uuidv4();
+              const values = GM_getValue( 'values' );
 
-          const pointers = GM_getValue( 'pointers' );
-          const uuid = uuidv4();
-          const values = GM_getValue( 'values' );
+              const object = {};
 
-          const obj = {};
+              const { rawByteString } = fr.result.match( /^data:[\w+/]+;base64,(?<rawByteString>.+)$/ ).groups;
+              if ( blobLike.type === 'image/svg+xml' ) {
+                const rawXML = decodeURI( atob( rawByteString ) );
 
-          const { rawByteString } = fr.result.match( /^data:[\w+/]+;base64,(?<rawByteString>.+)$/ ).groups;
-          if ( blobLike.type === 'image/svg+xml' ) {
-            const rawXML = decodeURI( atob( rawByteString ) );
+                object.rawXML = rawXML;
+              }
+              else {
+                object.rawByteString = rawByteString;
+                object.mediaType = blobLike.type;
+              }
 
-            obj.rawXML = rawXML;
-          }
-          else {
-            obj.rawByteString = rawByteString;
-            obj.mediaType = blobLike.type;
-          }
+              values[ uuid ] = object;
 
-          values[ uuid ] = obj;
+              GM_setValue(
+                'values',
+                values
+              );
 
-          GM_setValue(
-            'values',
-            values
+              pointers[ id ] = uuid;
+              GM_setValue(
+                'pointers',
+                pointers
+              );
+
+              this.updateCourseById( id );
+              this.reset();
+            }
           );
 
-          pointers[ id ] = uuid;
-          GM_setValue(
-            'pointers',
-            pointers
-          );
-
-          this.updateCourseById( id );
-          this.reset();
-        };
-
-        img.src = fr.result;
-      };
+          img.src = fr.result;
+        }
+      );
       fr.readAsDataURL( blobLike );
     },
 
-    saveByCopy: val => {
+    saveByCopy: value => {
       const { courseId } = this.state.selected;
       const pointers = GM_getValue( 'pointers' );
-      deleteVal( courseId );
-      pointers[ courseId ] = pointers[ val ];
+      deleteIconFromStorage( courseId );
+      pointers[ courseId ] = pointers[ value ];
       GM_setValue(
         'pointers',
         pointers
@@ -351,7 +364,7 @@ class SettingsPage extends Component {
   };
 }
 
-const SvgX = ( { class: _class, ...props } ) => <svg
+const SvgX = ( { class: _class, ...properties } ) => <svg
   fill="none"
   stroke="currentColor"
   stroke-linecap="round"
@@ -361,7 +374,7 @@ const SvgX = ( { class: _class, ...props } ) => <svg
     ? ` ${ _class }`
     : '' }`}
   viewBox="0 0 24 24"
-  {...props}
+  {...properties}
 >
   <path d="M24 0L0 24M0 0l24 24" />
 </svg>;
@@ -377,9 +390,9 @@ const SidebarRow = ( { item, rowClick, delIcon } ) => {
   return (
     <div
       class="row"
-      onClick={e => {
+      onClick={event => {
         rowClick(
-          e,
+          event,
           item
         );
       }}
@@ -387,9 +400,9 @@ const SidebarRow = ( { item, rowClick, delIcon } ) => {
       <Icon
         renderX={true}
         iconVals={iconVals}
-        delIcon={e => {
+        delIcon={event => {
           delIcon(
-            e,
+            event,
             item
           );
         }}
@@ -398,6 +411,7 @@ const SidebarRow = ( { item, rowClick, delIcon } ) => {
     </div>
   );
 };
+
 const Icon = ( {
   iconVals: { hasIcon, isXML, rawXML, dataURI },
   delIcon,
@@ -410,25 +424,27 @@ const Icon = ( {
       }
       {renderX && <SvgX class="svg-del-icon" onClick={delIcon} />}
     </>;
+
 const getIcon = id => {
   const courseUUID = GM_getValue( 'pointers' )[ id ];
   if ( courseUUID ) {
     const value = GM_getValue( 'values' )[ courseUUID ];
 
     if ( value ) {
-      const returnObj = { isXML: 'rawXML' in value, hasIcon: true };
-      if ( returnObj.isXML ) {
-        returnObj.rawXML = value.rawXML;
+      const returnObject = { isXML: 'rawXML' in value, hasIcon: true };
+      if ( returnObject.isXML ) {
+        returnObject.rawXML = value.rawXML;
       }
       else {
         const { mediaType, rawByteString } = value;
 
-        returnObj.dataURI = `data:${ mediaType };base64,${ rawByteString }`;
+        returnObject.dataURI = `data:${ mediaType };base64,${ rawByteString }`;
       }
 
-      return returnObj;
+      return returnObject;
     }
   }
+
   return { hasIcon: false };
 };
 
@@ -444,22 +460,24 @@ const Main = ( {
   formRef,
   reset,
 } ) => {
-  const fileRef = useRef( null );
-  const fileBtnClick = e => {
-    e.preventDefault(); // because form
-    fileRef.current?.click();
+  const fileReference = useRef( null );
+  const fileButtonClick = error => {
+    error.preventDefault(); // Because it's in a form
+    fileReference.current?.click();
   };
-  const resetFile = e => {
-    e.preventDefault();
-    e.stopImmediatePropagation();
+
+  const resetFile = event => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
     reset();
   };
-  const usernameRef = useRef( null );
-  const passwordRef = useRef( null );
+
+  const usernameReference = useRef( null );
+  const passwordReference = useRef( null );
 
   const loggedOutCallbackValidator = () => {
-    const username = usernameRef.current?.value?.trim();
-    const password = passwordRef.current?.value;
+    const username = usernameReference.current?.value?.trim();
+    const password = passwordReference.current?.value;
 
     loggedOutCallback( { username, password } );
   };
@@ -470,8 +488,8 @@ const Main = ( {
         {loggedOut
           ? <div class="replace-flex-input">
             <h2>Login</h2>
-            <input placeholder="Username" ref={usernameRef} />
-            <input placeholder="Password" ref={passwordRef} type="password" />
+            <input placeholder="Username" ref={usernameReference} />
+            <input placeholder="Password" ref={passwordReference} type="password" />
             <button class="btn-save" onClick={loggedOutCallbackValidator}>
               Login
             </button>
@@ -493,9 +511,9 @@ const Main = ( {
               type="url"
               placeholder="Image url"
               disabled={currentInput && currentInput !== URL_CONSTANT}
-              onInput={e => {
+              onInput={event => {
                 handleInput(
-                  e,
+                  event,
                   URL_CONSTANT
                 );
               }}
@@ -504,16 +522,16 @@ const Main = ( {
             <input
               type="file"
               hidden
-              ref={fileRef}
-              onInput={e => {
+              ref={fileReference}
+              onInput={event => {
                 handleInput(
-                  e,
+                  event,
                   FILE_CONSTANT
                 );
               }}
             />
             <button
-              onClick={fileBtnClick}
+              onClick={fileButtonClick}
               disabled={currentInput && currentInput !== FILE_CONSTANT}
             >
               {currentInput === FILE_CONSTANT
@@ -527,9 +545,9 @@ const Main = ( {
             <h3>Copy image from other course</h3>
             <select
               disabled={currentInput && currentInput !== COPY_CONSTANT}
-              onInput={e => {
+              onInput={event => {
                 handleInput(
-                  e,
+                  event,
                   COPY_CONSTANT
                 );
               }}
@@ -539,11 +557,11 @@ const Main = ( {
               </option>
               {courses.map( ( {
                 courseName,
-                courseId: curCourseId,
+                courseId: currentCourseId,
                 iconVals: { hasIcon },
               } ) => hasIcon
-                  && ( !isSelected || courseId !== curCourseId )
-                    && <option value={curCourseId}>{courseName}</option> )}
+                  && ( !isSelected || courseId !== currentCourseId )
+                    && <option value={currentCourseId}>{courseName}</option> )}
             </select>
             <button class="btn-save" onClick={handleSave}>
               Save
@@ -570,9 +588,9 @@ const Notification = ( { handleClick, notificationString } ) => {
   return (
     <div
       class="outer-notification"
-      onClick={e => {
+      onClick={event => {
         handleClick(
-          e,
+          event,
           true
         );
       }}
