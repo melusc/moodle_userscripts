@@ -9,14 +9,14 @@ const sortingUsingPivot = (
     while ( comparisonFunction(
       array[ l ],
       pivot
-    ) === -1 ) {
+    ) < 0 ) {
       ++l;
     }
 
     while ( comparisonFunction(
       array[ r ],
       pivot
-    ) === 1 ) {
+    ) > 0 ) {
       r--;
     }
 
