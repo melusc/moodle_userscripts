@@ -49,7 +49,7 @@
   "name": "moodle_userscript",
   "private": true,
   "scripts": {
-    "build": "npm run webpack",
+    "build": "npm run test && npm run webpack",
     "serve": "serve dist",
     "start": "gulp start",
     "test": "xo",
