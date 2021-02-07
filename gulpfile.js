@@ -24,29 +24,7 @@ function minSvg() {
       multipass: true,
       precision: 3,
       plugins: [
-        {
-          sortAttrs: {
-            order: [
-              'id',
-              'width',
-              'height',
-              'x',
-              'x1',
-              'x2',
-              'y',
-              'y1',
-              'y2',
-              'cx',
-              'cy',
-              'r',
-              'fill',
-              'stroke',
-              'marker',
-              'd',
-              'points',
-            ],
-          },
-        },
+        { sortAttrs: true },
         { removeScriptElement: true },
         { removeDimensions: true },
         {

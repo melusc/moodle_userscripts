@@ -3,6 +3,24 @@ const TerserPlugin = require( 'terser-webpack-plugin' );
 const entry = require( 'webpack-glob-entry' );
 const { CleanWebpackPlugin } = require( 'clean-webpack-plugin' );
 
+// For reuse
+const babelConfig = {
+  loader: 'babel-loader',
+  options: {
+    plugins: [
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-transform-runtime',
+      [
+        '@babel/plugin-transform-react-jsx',
+        {
+          pragma: 'h',
+          pragmaFrag: 'Fragment',
+        },
+      ],
+    ],
+  },
+};
+
 module.exports = {
   mode: 'production',
   entry: Object.assign(
@@ -48,6 +66,10 @@ module.exports = {
           format: {
             comments: /^\s*==\/?UserScript==|^\s*@(?!see)[\w-]/,
           },
+          compress: {
+            passes: 3,
+            pure_funcs: [ '__webpack_require__' ],
+          },
         },
         extractComments: true,
       } ),
@@ -75,24 +97,7 @@ module.exports = {
           'src'
         ) ],
         exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              plugins: [
-                '@babel/plugin-proposal-class-properties',
-                '@babel/plugin-transform-runtime',
-                [
-                  '@babel/plugin-transform-react-jsx',
-                  {
-                    pragma: 'h',
-                    pragmaFrag: 'Fragment',
-                  },
-                ],
-              ],
-            },
-          },
-        ],
+        use: [ babelConfig ],
       },
       {
         test: /\.scss$/,

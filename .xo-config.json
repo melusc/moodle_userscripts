@@ -2,6 +2,15 @@
   "envs": ["browser", "es2020", "greasemonkey"],
   "extends": ["preact"],
   "globals": ["GM_addValueChangeListener", "GM_notification"],
+  "overrides": [
+    {
+      "env": ["es2020", "node"],
+      "files": ["./*.js"],
+      "rules": {
+        "camelcase": "off"
+      }
+    }
+  ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@babel"],
   "rules": {
