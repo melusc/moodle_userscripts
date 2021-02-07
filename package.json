@@ -4,6 +4,7 @@
     "@babel/runtime": "^7.12.13",
     "@reduxjs/toolkit": "^1.5.0",
     "@types/tampermonkey": "^4.0.0",
+    "@yarnpkg/pnpify": "^2.4.0",
     "dayjs": "^1.10.4",
     "dompurify": "^2.2.6",
     "file-saver": "^2.0.5",
