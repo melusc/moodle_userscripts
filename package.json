@@ -43,7 +43,7 @@
     "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^8.0.15",
     "typescript": "^4.1.3",
-    "webpack": "^5.21.1",
+    "webpack": "^5.21.2",
     "webpack-cli": "^4.5.0",
     "webpack-glob-entry": "^2.1.1",
     "xo": "^0.37.1"
@@ -52,7 +52,7 @@
   "name": "moodle_userscript",
   "private": true,
   "scripts": {
-    "build": "npm run test && npm run webpack",
+    "build": "yarn run test && yarn run webpack",
     "serve": "serve dist",
     "start": "gulp start",
     "test": "xo",
