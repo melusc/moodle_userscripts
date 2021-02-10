@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.02.07a
+// @version   2021.02.10a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Download%20Courses%20Content/moodle-download-courses-content.user.js
