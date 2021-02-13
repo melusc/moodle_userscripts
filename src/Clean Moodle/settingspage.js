@@ -443,7 +443,7 @@ class Main extends Component {
                   ? isReplaced === false
                     ? courseName
                     : replacedName
-                  : undefined
+                  : ''
               }
             />
             <button
