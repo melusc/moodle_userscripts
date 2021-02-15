@@ -22,6 +22,12 @@ const babelConfig = {
 };
 
 module.exports = {
+  resolve: {
+    alias: {
+      react: 'preact/compat',
+      'react-dom': 'preact/compat',
+    },
+  },
   mode: 'production',
   entry: Object.assign(
     entry(
