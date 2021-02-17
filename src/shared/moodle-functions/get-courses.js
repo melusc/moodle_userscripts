@@ -1,4 +1,10 @@
-import { defaultLoginReturnState, login, getUserId, logout, setLastValidatedToken } from './index.js';
+import {
+  defaultLoginReturnState,
+  login,
+  getUserId,
+  logout,
+  setLastValidatedToken
+} from './index.js';
 
 let courses;
 
@@ -9,36 +15,23 @@ export const getCourses = (
   if ( noCache || !courses ) {
     courses = Promise.all( [
       login(
-        false,
+        noCache,
         loginReturnState
       ),
       getUserId( loginReturnState ),
     ] )
-      .then( ( [ token, userid ] ) => {
-        const bodyParameters = new URLSearchParams();
-
-        bodyParameters.set(
-          'requests[0][function]',
-          'core_enrol_get_users_courses'
-        );
-        bodyParameters.set(
-          'requests[0][arguments]',
-          JSON.stringify( {
+      .then( ( [ wstoken, userid ] ) => {
+        const bodyParameters = new URLSearchParams( {
+          'requests[0][function]': 'core_enrol_get_users_courses',
+          'requests[0][arguments]': JSON.stringify( {
             userid,
             returnusercount: false,
-          } )
-        );
-        bodyParameters.set(
-          'wsfunction',
-          'tool_mobile_call_external_functions'
-        );
-        bodyParameters.set(
-          'wstoken',
-          token
-        );
+          } ),
+          wstoken,
+        } );
 
         return fetch(
-          '/webservice/rest/server.php?moodlewsrestformat=json',
+          '/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=tool_mobile_call_external_functions',
           {
             method: 'POST',
             body: bodyParameters.toString(),

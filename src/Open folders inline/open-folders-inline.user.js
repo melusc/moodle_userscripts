@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   2021.02.07a
+// @version   2021.02.17a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Open%20folders%20inline/open-folders-inline.user.js
@@ -12,7 +12,11 @@
 // ==/UserScript==
 
 import { render, Fragment, h } from 'preact';
-import { login, logout, setLastValidatedToken } from '../shared/moodle-functions/index.js';
+import {
+  login,
+  logout,
+  setLastValidatedToken
+} from '../shared/moodle-functions/index.js';
 
 import style from './style.scss';
 
@@ -269,25 +273,14 @@ const Folder = ( { contents, base, directoryDepth = 0 } ) => {
   );
 };
 
-const getPageContent = noCache => login( noCache ).then( token => {
+const getPageContent = noCache => login( noCache ).then( wstoken => {
   const courseId = new URLSearchParams( location.search ).get( 'id' );
-  const requestParameters = new URLSearchParams();
-  requestParameters.set(
-    'courseid',
-    courseId
-  );
-  requestParameters.set(
-    'options[0][name]',
-    'includestealthmodules'
-  );
-  requestParameters.set(
-    'options[0][value]',
-    1
-  );
-  requestParameters.set(
-    'wstoken',
-    token
-  );
+  const requestParameters = new URLSearchParams( {
+    courseid: courseId,
+    'options[0][name]': 'includestealthmodules',
+    'options[0][value]': 1,
+    wstoken,
+  } );
 
   return fetch(
     '/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_course_get_contents',
@@ -298,7 +291,8 @@ const getPageContent = noCache => login( noCache ).then( token => {
       },
       body: requestParameters.toString(),
     }
-  ).then( response => response.json() )
+  )
+    .then( response => response.json() )
     .then( responseJSON => {
       if ( 'exception' in responseJSON ) {
         logout();

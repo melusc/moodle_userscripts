@@ -19,20 +19,12 @@ export const login = (
 
   if ( noCache || !cachedToken ) {
     cachedToken = getCredentials( loginReturnState ).then( ( { username, password } ) => {
-      const loginParameters = new URLSearchParams();
+      const loginParameters = new URLSearchParams( {
+        username,
+        password,
+        service: 'moodle_mobile_app',
+      } );
 
-      loginParameters.set(
-        'username',
-        username
-      );
-      loginParameters.set(
-        'password',
-        password
-      );
-      loginParameters.set(
-        'service',
-        'moodle_mobile_app'
-      );
       return fetch(
         '/login/token.php',
         {

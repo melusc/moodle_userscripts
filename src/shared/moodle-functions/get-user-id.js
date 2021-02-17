@@ -1,20 +1,19 @@
-import { defaultLoginReturnState, logout, setLastValidatedToken, login } from './index.js';
+import {
+  defaultLoginReturnState,
+  logout,
+  setLastValidatedToken,
+  login
+} from './index.js';
 
 export const getUserId = ( loginReturnState = defaultLoginReturnState ) => login(
   false,
   loginReturnState
 )
-  .then( token => {
-    const bodyParameters = new URLSearchParams();
-
-    bodyParameters.set(
-      'wsfunction',
-      'core_webservice_get_site_info'
-    );
-    bodyParameters.set(
-      'wstoken',
-      token
-    );
+  .then( wstoken => {
+    const bodyParameters = new URLSearchParams( {
+      wsfunction: 'core_webservice_get_site_info',
+      wstoken,
+    } );
 
     return fetch(
       '/webservice/rest/server.php?moodlewsrestformat=json',

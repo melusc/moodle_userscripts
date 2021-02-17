@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.02.07a
+// @version   2021.02.17a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -196,21 +196,11 @@ class SchulNetzMarks extends Component {
             'text/html'
           );
 
-          const data = new URLSearchParams();
-
-          data.set(
-            'loginhash',
-            parsed.querySelector( 'input[name="loginhash"]' ).value
-          );
-
-          data.set(
-            'login',
-            login
-          );
-          data.set(
-            'passwort',
-            password
-          );
+          const data = new URLSearchParams( {
+            loginhash: parsed.querySelector( 'input[name="loginhash"]' ).value,
+            login,
+            passwort: password,
+          } );
 
           const cookie = response.responseHeaders
             .match( /phpsessid=\w{26}(?=;)/giu )
