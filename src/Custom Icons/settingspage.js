@@ -365,9 +365,9 @@ class SettingsPage extends Component {
 const SvgX = ( { class: _class, ...properties } ) => <svg
   fill="none"
   stroke="currentColor"
-  strokeLinecap="round"
-  strokeLinejoin="round"
-  strokeWidth="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  stroke-width="2"
   class={`svg-icon svg-icon-x${ _class
     ? ` ${ _class }`
     : '' }`}

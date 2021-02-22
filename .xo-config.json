@@ -93,7 +93,7 @@
     "react/no-unknown-property": [
       "error",
       {
-        "ignore": ["class"]
+        "ignore": ["class", "stroke-linecap", "stroke-linejoin", "stroke-width"]
       }
     ],
     "react/no-unused-state": "off",

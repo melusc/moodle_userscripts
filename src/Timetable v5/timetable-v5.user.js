@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.02.22a
+// @version   2021.02.22b
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Timetable%20v5/timetable-v5.user.js
 // @include   *://moodle.ksasz.ch/
@@ -822,8 +822,8 @@ class ButtonGrid extends Component {
 const SvgIconX = () => <svg viewBox="0 0 512 512">
   <path
     stroke="currentColor"
-    strokeLinecap="round"
-    strokeWidth="32"
+    stroke-linecap="round"
+    stroke-width="32"
     d="M368 368L144 144m224 0L144 368"
   />
 </svg>;
@@ -842,8 +842,8 @@ const SvgIconCaretForward = () => <svg viewBox="0 0 512 512">
 const SvgIconAdd = () => <svg viewBox="0 0 512 512">
   <path
     stroke="currentColor"
-    strokeLinecap="round"
-    strokeWidth="32"
+    stroke-linecap="round"
+    stroke-width="32"
     d="M256 112v288m144-144H112"
   />
 </svg>;

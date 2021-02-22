@@ -320,9 +320,9 @@ const Sidebar = ( { courses, loadingCourses, ...rest } ) => <div class="outer-si
 const SvgCheck = () => <svg
   fill="none"
   stroke="currentColor"
-  strokeLinecap="round"
-  strokeLinejoin="round"
-  strokeWidth="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  stroke-width="2"
   class="icon svg-icon-check"
   viewBox="0 0 24 24"
 >
@@ -331,9 +331,9 @@ const SvgCheck = () => <svg
 const SvgX = () => <svg
   fill="none"
   stroke="currentColor"
-  strokeLinecap="round"
-  strokeLinejoin="round"
-  strokeWidth="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  stroke-width="2"
   class="icon svg-icon-x"
   viewBox="0 0 24 24"
 >
@@ -342,9 +342,9 @@ const SvgX = () => <svg
 const SvgArrowBack = () => <svg
   fill="none"
   stroke="currentColor"
-  strokeLinecap="round"
-  strokeLinejoin="round"
-  strokeWidth="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  stroke-width="2"
   class="icon svg-icon-arrow-back"
   viewBox="0 0 24 24"
 >
