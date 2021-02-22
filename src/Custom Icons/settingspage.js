@@ -118,9 +118,7 @@ class SettingsPage extends Component {
     }
   };
 
-  handleSave = event => {
-    event.preventDefault();
-
+  handleSave = () => {
     const { isSelected } = this.state.selected;
     if ( isSelected ) {
       const type = this.state.inputVals.current;
@@ -367,9 +365,9 @@ class SettingsPage extends Component {
 const SvgX = ( { class: _class, ...properties } ) => <svg
   fill="none"
   stroke="currentColor"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  stroke-width="2"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeWidth="2"
   class={`svg-icon svg-icon-x${ _class
     ? ` ${ _class }`
     : '' }`}
@@ -381,7 +379,7 @@ const SvgX = ( { class: _class, ...properties } ) => <svg
 const Sidebar = ( { courses, ...rest } ) => <div class="outer-sidebar">
   <div class="sidebar">
     {courses.length === 0 && <div>Loading courses....</div>}
-    {courses.map( item => <SidebarRow item={item} {...rest} /> )}
+    {courses.map( item => <SidebarRow key={item.courseId} item={item} {...rest} /> )}
   </div>
 </div>;
 const SidebarRow = ( { item, rowClick, delIcon } ) => {
@@ -398,7 +396,7 @@ const SidebarRow = ( { item, rowClick, delIcon } ) => {
       }}
     >
       <Icon
-        renderX={true}
+        renderX
         iconVals={iconVals}
         delIcon={event => {
           delIcon(
@@ -461,8 +459,7 @@ const Main = ( {
   reset,
 } ) => {
   const fileReference = useRef( null );
-  const fileButtonClick = error => {
-    error.preventDefault(); // Because it's in a form
+  const fileButtonClick = () => {
     fileReference.current?.click();
   };
 
@@ -490,7 +487,7 @@ const Main = ( {
             <h2>Login</h2>
             <input placeholder="Username" ref={usernameReference} />
             <input placeholder="Password" ref={passwordReference} type="password" />
-            <button class="btn-save" onClick={loggedOutCallbackValidator}>
+            <button class="btn-save" type="button" onClick={loggedOutCallbackValidator}>
               Login
             </button>
           </div>
@@ -531,6 +528,7 @@ const Main = ( {
               }}
             />
             <button
+              type="button"
               onClick={fileButtonClick}
               disabled={currentInput && currentInput !== FILE_CONSTANT}
             >
@@ -563,7 +561,7 @@ const Main = ( {
                   && ( !isSelected || courseId !== currentCourseId )
                     && <option value={currentCourseId}>{courseName}</option> )}
             </select>
-            <button class="btn-save" onClick={handleSave}>
+            <button class="btn-save" type="button" onClick={handleSave}>
               Save
             </button>
           </form>

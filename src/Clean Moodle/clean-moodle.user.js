@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.02.17a
+// @version   2021.02.22a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Clean%20Moodle/clean-moodle.user.js
@@ -273,20 +273,20 @@ const refresh = ( () => {
                     class="tree_item hasicon"
                     role="treeitem"
                     id={`expandable_branch_20_${ id }`}
-                    tabindex="-1"
+                    tabIndex="-1"
                     aria-selected="false"
                   >
                     <a
-                      tabindex="-1"
+                      tabIndex="-1"
                       title={fullname}
                       href={`https://moodle.ksasz.ch/course/view.php?id=${ id }`}
                     >
                       <i
                         class="icon fa fa-graduation-cap fa-fw navicon"
                         aria-hidden="true"
-                        tabindex="-1"
+                        tabIndex="-1"
                       />
-                      <span class="item-content-wrap" tabindex="-1">
+                      <span class="item-content-wrap" tabIndex="-1">
                         {fullname}
                       </span>
                     </a>

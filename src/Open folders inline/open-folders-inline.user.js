@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   2021.02.17a
+// @version   2021.02.22a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Open%20folders%20inline/open-folders-inline.user.js
@@ -207,7 +207,8 @@ const Folder = ( { contents, base, directoryDepth = 0 } ) => {
 
   return (
     <>
-      {typeof base === 'string'
+      {
+        typeof base === 'string'
         && <div class="fp-filename-icon folders-inline-icon">
           <div class="folders-inline-icon-div">
             <i class="icon fa fa-caret-right fa-fw navicon folders-inline-caret" />
@@ -224,8 +225,8 @@ const Folder = ( { contents, base, directoryDepth = 0 } ) => {
         </div>
       }
 
-      <ul style="list-style: none;" hidden={Boolean( base )}>
-        {entries.map( ( [ key, value ] ) => <li>
+      <ul style={{ listStyle: 'none' }} hidden={!!base}>
+        {entries.map( ( [ key, value ] ) => <li key={key}>
           <Folder
             contents={value}
             base={key}
@@ -249,7 +250,7 @@ const Folder = ( { contents, base, directoryDepth = 0 } ) => {
           }
 
           return (
-            <li>
+            <li key={filename}>
               <span class="fp-filename-icon">
                 <a href={fileURL.href}>
                   <span class="fp-icon">

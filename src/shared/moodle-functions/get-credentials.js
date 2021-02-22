@@ -67,12 +67,11 @@ class FrontPageLogin extends Component {
               type="password"
             />
           </div>
-          <button class="btn btn-primary" onClick={this.handleClick}>
+          <button class="btn btn-primary" type="button" onClick={this.handleClick}>
             Login
           </button>
         </div>
-      </div>
-    ;
+      </div>;
 
   handleClick = () => {
     const username = this.inputs.username.current.value.trim();

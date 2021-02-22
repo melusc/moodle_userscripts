@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.02.17a
+// @version   2021.02.22a
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Explore%20Profiles/explore-profiles.user.js
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -55,19 +55,19 @@ const runOnce = () => {
 
   render(
     <>
-      <button data-action="-1" class="btn btn-secondary">
+      <button data-action="-1" class="btn btn-secondary" type="button">
         Previous profile
       </button>
-      <button data-action="1" class="btn btn-secondary">
+      <button data-action="1" class="btn btn-secondary" type="button">
         Next profile
       </button>
-      <button data-action="rand" class="btn btn-secondary">
+      <button data-action="rand" class="btn btn-secondary" type="button">
         Random profile
       </button>
-      <button data-action="-10" class="btn btn-secondary">
+      <button data-action="-10" class="btn btn-secondary" type="button">
         -10 profiles
       </button>
-      <button data-action="10" class="btn btn-secondary">
+      <button data-action="10" class="btn btn-secondary" type="button">
         +10 profiles
       </button>
     </>,
@@ -440,9 +440,7 @@ class Main extends Component {
                           <dd>
                             <div class="tag_list hideoverlimit ">
                               <ul class="inline-list">
-                                {interests.map( (
-                                  interest, index
-                                ) => <li key={index}>
+                                {interests.map( interest => <li key={interest}>
                                   <a
                                     href={`https://moodle.ksasz.ch/tag/index.php?tag=${ encodeURIComponent( interest ) }`}
                                     class="badge badge-info"
@@ -602,67 +600,67 @@ class Sidebar extends Component {
           role="treeitem"
           aria-expanded="true"
           aria-owns="random5fcb9ae3999e64_group"
-          tabindex="-1"
+          tabIndex="-1"
           aria-selected="false"
         >
           <span tabIndex="-1" id="label_2_34">
             Users
           </span>
         </p>
-        <ul role="group" tabindex="-1">
+        <ul role="group" tabIndex="-1">
           <li
             class="type_user depth_3 contains_branch current_branch"
             aria-labelledby="label_3_35"
-            tabindex="-1"
+            tabIndex="-1"
           >
             <p
               class="tree_item branch active_tree_node"
               role="treeitem"
               aria-expanded="true"
               aria-owns="random5fcb9ae3999e65_group"
-              tabindex="-1"
+              tabIndex="-1"
               aria-selected="false"
             >
               <a
-                tabindex="-1"
+                tabIndex="-1"
                 id="label_3_35"
                 href={`https://moodle.ksasz.ch/user/profile.php?id=${ id }`}
               >
                 {fullname}
               </a>
             </p>
-            <ul role="group" tabindex="-1">
+            <ul role="group" tabIndex="-1">
               <li
                 class="type_container depth_4 contains_branch"
                 aria-labelledby="label_4_36"
-                tabindex="-1"
+                tabIndex="-1"
               >
                 <p
                   class="tree_item branch"
                   role="treeitem"
                   aria-expanded="false"
                   aria-owns="random5fcb9ae3999e66_group"
-                  tabindex="-1"
+                  tabIndex="-1"
                   aria-selected="false"
                 >
                   <span tabIndex="-1" id="label_4_36">
                     Blogs
                   </span>
                 </p>
-                <ul role="group" aria-hidden="true" tabindex="-1">
+                <ul role="group" aria-hidden="true" tabIndex="-1">
                   <li
                     class="type_custom depth_5 item_with_icon"
                     aria-labelledby="label_5_37"
-                    tabindex="-1"
+                    tabIndex="-1"
                   >
                     <p
                       class="tree_item hasicon"
                       role="treeitem"
-                      tabindex="-1"
+                      tabIndex="-1"
                       aria-selected="false"
                     >
                       <a
-                        tabindex="-1"
+                        tabIndex="-1"
                         id="label_5_37"
                         href={`https://moodle.ksasz.ch/blog/index.php?userid=${ id }`}
                       >
@@ -682,16 +680,16 @@ class Sidebar extends Component {
               <li
                 class="type_setting depth_4 item_with_icon"
                 aria-labelledby="label_4_38"
-                tabindex="-1"
+                tabIndex="-1"
               >
                 <p
                   class="tree_item hasicon"
                   role="treeitem"
-                  tabindex="-1"
+                  tabIndex="-1"
                   aria-selected="false"
                 >
                   <a
-                    tabindex="-1"
+                    tabIndex="-1"
                     id="label_4_38"
                     href={`https://moodle.ksasz.ch/message/index.php?user1=${ USER_ID }&user2=${ id }`}
                   >

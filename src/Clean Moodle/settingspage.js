@@ -320,9 +320,9 @@ const Sidebar = ( { courses, loadingCourses, ...rest } ) => <div class="outer-si
 const SvgCheck = () => <svg
   fill="none"
   stroke="currentColor"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  stroke-width="2"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeWidth="2"
   class="icon svg-icon-check"
   viewBox="0 0 24 24"
 >
@@ -331,9 +331,9 @@ const SvgCheck = () => <svg
 const SvgX = () => <svg
   fill="none"
   stroke="currentColor"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  stroke-width="2"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeWidth="2"
   class="icon svg-icon-x"
   viewBox="0 0 24 24"
 >
@@ -342,9 +342,9 @@ const SvgX = () => <svg
 const SvgArrowBack = () => <svg
   fill="none"
   stroke="currentColor"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  stroke-width="2"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeWidth="2"
   class="icon svg-icon-arrow-back"
   viewBox="0 0 24 24"
 >
@@ -410,20 +410,18 @@ class Main extends Component {
   } ) => <div class="outer-main">
     <div class="main">
       {loggedOut
-        ? <>
-          <div class="replace-flex-input">
-            <h5>Login</h5>
-            <input placeholder="Username" ref={loggedOutInputs.username} />
-            <input
-              placeholder="Password"
-              ref={loggedOutInputs.password}
-              type="password"
-            />
-            <button class="btn-save" onClick={loggedOutCallback}>
-              Login
-            </button>
-          </div>
-        </>
+        ? <div class="replace-flex-input">
+          <h5>Login</h5>
+          <input placeholder="Username" ref={loggedOutInputs.username} />
+          <input
+            placeholder="Password"
+            ref={loggedOutInputs.password}
+            type="password"
+          />
+          <button class="btn-save" type="button" onClick={loggedOutCallback}>
+            Login
+          </button>
+        </div>
         : <>
           <div class="section-title">Rename course</div>
           <div class="replace-flex-inputs">
@@ -437,7 +435,7 @@ class Main extends Component {
               placeholder="Select course to the left"
               disabled={!isSelected}
               ref={replaceInputRef}
-              onKeydown={handleSave}
+              onKeyDown={handleSave}
               value={
                 isSelected
                   ? isReplaced === false
@@ -450,8 +448,9 @@ class Main extends Component {
               class="btn-save"
               disabled={!isSelected}
               onClick={handleSave}
+              type="button"
             >
-                Save
+              Save
             </button>
           </div>
         </>

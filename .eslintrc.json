@@ -167,7 +167,7 @@
     "no-implicit-coercion": [
       "error",
       {
-        "allow": ["+"]
+        "allow": ["+", "!!"]
       }
     ],
     "no-implicit-globals": "error",

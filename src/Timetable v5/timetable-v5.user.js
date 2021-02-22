@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.02.17a
+// @version   2021.02.22a
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Timetable%20v5/timetable-v5.user.js
 // @include   *://moodle.ksasz.ch/
@@ -208,6 +208,7 @@ const SettingsPage = ( () => {
                     />
                   </div>
                   <button
+                    type="button"
                     class="btn btn-primary"
                     onClick={this.handleLoginClick}
                   >
@@ -617,7 +618,11 @@ const SettingsPage = ( () => {
 
     handleTableInput = event => {
       const { target, parentNode: parent } = event;
-      const { classList, textContent: rawText, dataset: targetDataset } = target;
+      const {
+        classList,
+        textContent: rawText,
+        dataset: targetDataset,
+      } = target;
       const currentRow = target.closest( '.table-row' );
 
       if ( !currentRow ) {
@@ -794,6 +799,7 @@ class ButtonGrid extends Component {
           </div>
         </div>
         <button
+          type="button"
           class="save-button"
           onClick={handleSave}
           ref={saveButtonRef}
@@ -816,8 +822,8 @@ class ButtonGrid extends Component {
 const SvgIconX = () => <svg viewBox="0 0 512 512">
   <path
     stroke="currentColor"
-    stroke-linecap="round"
-    stroke-width="32"
+    strokeLinecap="round"
+    strokeWidth="32"
     d="M368 368L144 144m224 0L144 368"
   />
 </svg>;
@@ -836,8 +842,8 @@ const SvgIconCaretForward = () => <svg viewBox="0 0 512 512">
 const SvgIconAdd = () => <svg viewBox="0 0 512 512">
   <path
     stroke="currentColor"
-    stroke-linecap="round"
-    stroke-width="32"
+    strokeLinecap="round"
+    strokeWidth="32"
     d="M256 112v288m144-144H112"
   />
 </svg>;
@@ -854,7 +860,7 @@ const Table = ( { content, handleFocus } ) => <div class="table" onFocus={handle
       >
         {from}
       </span>
-          -
+      {' - '}
       <span
         class={`time-input time-to${
           timeStringIsValid( to ) && tovalid !== false
@@ -1013,7 +1019,12 @@ const FrontPage = ( () => {
           tableRows: [ currentValue, nextValue ],
         } );
 
-        if ( notify && !this.state.isHoliday && currentValue && 'content' in currentValue ) {
+        if (
+          notify
+          && !this.state.isHoliday
+          && currentValue
+          && 'content' in currentValue
+        ) {
           GM_notification( {
             text: currentValue.content,
             title: 'Now',
@@ -1060,10 +1071,7 @@ const FrontPage = ( () => {
                   <div class="tt-table">
                     <div class="tt-tbody">
                       {!isWeekend && !isHoliday && type === BEFORELESSONS
-                        && <TimetableRow
-                          values={{ content: 'No lesson' }}
-                          isNow={true}
-                        />
+                        && <TimetableRow values={{ content: 'No lesson' }} isNow />
                       }
                       {!isWeekend && !isHoliday && type === AFTERLESSONS
                         && <div class="tt-title">No school anymore</div>
@@ -1086,7 +1094,7 @@ const FrontPage = ( () => {
                               /> )}
                       {isEmpty && !isWeekend
                         && <>
-                          Today's timetable is empty, you can update it
+                          {"Today's timetable is empty, you can update it "}
                           <a
                             href="/timetable/v5"
                             rel="noopener noreferrer"
