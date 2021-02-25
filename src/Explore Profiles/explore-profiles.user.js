@@ -719,11 +719,11 @@ const clearNode = node => {
 
 /**
  * Listens to click on buttons
- * @param {EventListenerObject} event Event obj
+ * @param {EventListenerObject} event_ Event obj
  * @listens click
  */
-const fetchNewProfile = async event => {
-  const { target, type } = event;
+const fetchNewProfile = async event_ => {
+  const { target, type } = event_;
   const isPopState = type === 'popstate';
 
   if ( isPopState === false ) {
@@ -731,8 +731,8 @@ const fetchNewProfile = async event => {
       return;
     }
 
-    event.preventDefault();
-    event.stopImmediatePropagation();
+    event_.preventDefault();
+    event_.stopImmediatePropagation();
   }
 
   const id = +new URL( location ).searchParams.get( 'id' );

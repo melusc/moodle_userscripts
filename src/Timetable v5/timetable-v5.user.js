@@ -293,8 +293,8 @@ const SettingsPage = ( () => {
       this.state.loggedOutCallback( { username, password } );
     };
 
-    handleSuggestionsClick = event => {
-      const { target } = event;
+    handleSuggestionsClick = event_ => {
+      const { target } = event_;
       const suggestion = target.closest( '.suggestion' );
 
       if ( suggestion ) {
@@ -343,10 +343,10 @@ const SettingsPage = ( () => {
       );
       addEventListener(
         'keydown',
-        event => {
-          if ( event.ctrlKey && event.key === 's' ) {
-            event.preventDefault();
-            event.stopImmediatePropagation();
+        event_ => {
+          if ( event_.ctrlKey && event_.key === 's' ) {
+            event_.preventDefault();
+            event_.stopImmediatePropagation();
 
             this.handleSave();
           }
@@ -381,8 +381,8 @@ const SettingsPage = ( () => {
       return returnArray;
     };
 
-    handleTableFocus = event => {
-      const { target } = event;
+    handleTableFocus = event_ => {
+      const { target } = event_;
       let idInput;
       let contentInput;
       let top;
@@ -490,8 +490,8 @@ const SettingsPage = ( () => {
       return fromValid && toValid;
     };
 
-    handleTableClick = event => {
-      const { target } = event;
+    handleTableClick = event_ => {
+      const { target } = event_;
       const iconRemoveRow = target.closest( '.remove-row' );
 
       if ( iconRemoveRow ) {
@@ -512,8 +512,8 @@ const SettingsPage = ( () => {
       }
     };
 
-    handleCaretClick = event => {
-      const closestDiv = event.target.closest( 'div' );
+    handleCaretClick = event_ => {
+      const closestDiv = event_.target.closest( 'div' );
 
       if ( !closestDiv ) {
         return;
@@ -616,8 +616,8 @@ const SettingsPage = ( () => {
       }
     };
 
-    handleTableInput = event => {
-      const { target, parentNode: parent } = event;
+    handleTableInput = event_ => {
+      const { target, parentNode: parent } = event_;
       const {
         classList,
         textContent: rawText,
@@ -662,7 +662,7 @@ const SettingsPage = ( () => {
         );
       }
       else if ( parent.classList.contains( 'entry' ) ) {
-        this.handleTableFocus( event );
+        this.handleTableFocus( event_ );
         this.setState(
           state => {
             const { activeDay, tables } = state;
@@ -713,11 +713,11 @@ const SettingsPage = ( () => {
       };
     } )();
 
-    handleTableKeyDown = async event => {
-      const { target, keyCode, shiftKey } = event;
+    handleTableKeyDown = async event_ => {
+      const { target, keyCode, shiftKey } = event_;
 
       if ( keyCode === 13 ) {
-        event.preventDefault();
+        event_.preventDefault();
 
         if ( target.closest( '.entry' ) ) {
           const currentRow = target.closest( '.table-row' );
@@ -774,7 +774,7 @@ const SettingsPage = ( () => {
         const currentRow = target.closest( '.table-row' );
 
         if ( !currentRow.nextElementSibling ) {
-          event.preventDefault();
+          event_.preventDefault();
           const table = currentRow.parentNode;
           const firstRow = table.children[ 0 ];
 

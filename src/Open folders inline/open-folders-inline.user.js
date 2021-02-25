@@ -34,11 +34,11 @@ const init = () => {
 const handleClick = ( () => {
   let pageContent;
 
-  return event => {
-    const anchor = event.target.closest( 'a' );
+  return event_ => {
+    const anchor = event_.target.closest( 'a' );
     const icon = anchor?.querySelector( 'svg.svg-refresh' )?.parentNode;
     const folder = anchor?.closest( 'li.activity.folder' );
-    const subFolder = event.target.closest( 'div.fp-filename-icon' );
+    const subFolder = event_.target.closest( 'div.fp-filename-icon' );
 
     if ( subFolder ) {
       const subFolderContent = subFolder.nextElementSibling;
@@ -47,14 +47,14 @@ const handleClick = ( () => {
       caretIcon.classList.toggle( 'fa-caret-right' );
       caretIcon.classList.toggle( 'fa-caret-down' );
 
-      event.preventDefault();
-      event.stopPropagation();
+      event_.preventDefault();
+      event_.stopPropagation();
       return;
     }
 
-    if ( event.target.closest( 'span' ) === icon ) {
-      event.preventDefault();
-      event.stopPropagation();
+    if ( event_.target.closest( 'span' ) === icon ) {
+      event_.preventDefault();
+      event_.stopPropagation();
       folder.lastElementChild.remove();
       pageContent = undefined;
       anchor.click();
@@ -62,12 +62,12 @@ const handleClick = ( () => {
     }
 
     if ( anchor?.pathname === '/mod/folder/view.php' ) {
-      if ( event.ctrlKey === true ) {
+      if ( event_.ctrlKey === true ) {
         return;
       }
 
-      event.preventDefault();
-      event.stopPropagation();
+      event_.preventDefault();
+      event_.stopPropagation();
 
       if ( folder.childElementCount > 1 ) {
         folder.lastElementChild.remove();

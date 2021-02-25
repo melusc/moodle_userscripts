@@ -109,8 +109,8 @@ class SettingsPage extends Component {
     } );
   };
 
-  handleSave = event => {
-    if ( event.type !== 'keydown' || event.key === 'Enter' ) {
+  handleSave = event_ => {
+    if ( event_.type !== 'keydown' || event_.key === 'Enter' ) {
       const input = this.replaceInputRef.current.value;
 
       const { courseId, courseName } = this.state.selected;
@@ -128,9 +128,9 @@ class SettingsPage extends Component {
   };
 
   toggleItem = (
-    event, { isRemoved, courseId }
+    event_, { isRemoved, courseId }
   ) => {
-    event.stopImmediatePropagation();
+    event_.stopImmediatePropagation();
     if ( isRemoved ) {
       removeElementFromStorage( courseId );
     }
@@ -144,10 +144,10 @@ class SettingsPage extends Component {
   };
 
   resetItem = (
-    event, item
+    event_, item
   ) => {
     const { courseId } = item;
-    event.stopImmediatePropagation();
+    event_.stopImmediatePropagation();
     this.removeSelectedIfEqualId( courseId );
 
     removeElementFromStorage( courseId );
@@ -183,7 +183,7 @@ class SettingsPage extends Component {
   };
 
   handleSidebarClick = (
-    event, item
+    event_, item
   ) => {
     if ( item.isRemoved ) {
       removeElementFromStorage(
@@ -357,18 +357,18 @@ const SidebarRow = ( { item, handleClick, toggleItem, resetItem } ) => {
       class={`row${ isRemoved
         ? ' removed'
         : '' }`}
-      onClick={event => {
+      onClick={event_ => {
         handleClick(
-          event,
+          event_,
           item
         );
       }}
     >
       <span>
         <span
-          onClick={event => {
+          onClick={event_ => {
             toggleItem(
-              event,
+              event_,
               item
             );
           }}
@@ -381,9 +381,9 @@ const SidebarRow = ( { item, handleClick, toggleItem, resetItem } ) => {
           ? <>
             {replacedName}
             <span
-              onClick={event => {
+              onClick={event_ => {
                 resetItem(
-                  event,
+                  event_,
                   item
                 );
               }}

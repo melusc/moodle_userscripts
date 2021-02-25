@@ -51,11 +51,11 @@ const sanitizeFileName = string => string.replace(
 );
 
 const initDownload = (
-  event, noChache = false
+  event_, noChache = false
 ) => {
-  event.preventDefault?.();
-  event.stopImmediatePropagation?.();
-  const { target } = event;
+  event_.preventDefault?.();
+  event_.stopImmediatePropagation?.();
+  const { target } = event_;
 
   if ( target.disabled ) {
     return;

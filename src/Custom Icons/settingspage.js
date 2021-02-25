@@ -110,10 +110,10 @@ class SettingsPage extends Component {
     ;
 
   closeNotification = (
-    event, testForClass
+    event_, testForClass
   ) => {
-    event.stopImmediatePropagation();
-    if ( !( testForClass && event.target.classList.contains( 'outer-notification' ) ) ) {
+    event_.stopImmediatePropagation();
+    if ( !( testForClass && event_.target.classList.contains( 'outer-notification' ) ) ) {
       this.setState( { notificationString: undefined } );
     }
   };
@@ -141,9 +141,9 @@ class SettingsPage extends Component {
   };
 
   handleMainInput = (
-    event, type
+    event_, type
   ) => {
-    const { target } = event;
+    const { target } = event_;
     const { value, files } = target;
     this.setState( () => {
       const inputVals = { current: false };
@@ -170,15 +170,15 @@ class SettingsPage extends Component {
   };
 
   rowClick = (
-    event, item
+    event_, item
   ) => {
     this.setState( { selected: { ...item, isSelected: true } } );
   };
 
   delIcon = (
-    event, { courseId }
+    event_, { courseId }
   ) => {
-    event.stopImmediatePropagation();
+    event_.stopImmediatePropagation();
     deleteIconFromStorage( courseId );
     if ( courseId === this.state.selected.courseId ) {
       this.reset();
@@ -388,9 +388,9 @@ const SidebarRow = ( { item, rowClick, delIcon } ) => {
   return (
     <div
       class="row"
-      onClick={event => {
+      onClick={event_ => {
         rowClick(
-          event,
+          event_,
           item
         );
       }}
@@ -398,9 +398,9 @@ const SidebarRow = ( { item, rowClick, delIcon } ) => {
       <Icon
         renderX
         iconVals={iconVals}
-        delIcon={event => {
+        delIcon={event_ => {
           delIcon(
-            event,
+            event_,
             item
           );
         }}
@@ -463,9 +463,9 @@ const Main = ( {
     fileReference.current?.click();
   };
 
-  const resetFile = event => {
-    event.preventDefault();
-    event.stopImmediatePropagation();
+  const resetFile = event_ => {
+    event_.preventDefault();
+    event_.stopImmediatePropagation();
     reset();
   };
 
@@ -508,9 +508,9 @@ const Main = ( {
               type="url"
               placeholder="Image url"
               disabled={currentInput && currentInput !== URL_CONSTANT}
-              onInput={event => {
+              onInput={event_ => {
                 handleInput(
-                  event,
+                  event_,
                   URL_CONSTANT
                 );
               }}
@@ -520,9 +520,9 @@ const Main = ( {
               type="file"
               hidden
               ref={fileReference}
-              onInput={event => {
+              onInput={event_ => {
                 handleInput(
-                  event,
+                  event_,
                   FILE_CONSTANT
                 );
               }}
@@ -543,9 +543,9 @@ const Main = ( {
             <h3>Copy image from other course</h3>
             <select
               disabled={currentInput && currentInput !== COPY_CONSTANT}
-              onInput={event => {
+              onInput={event_ => {
                 handleInput(
-                  event,
+                  event_,
                   COPY_CONSTANT
                 );
               }}
@@ -586,9 +586,9 @@ const Notification = ( { handleClick, notificationString } ) => {
   return (
     <div
       class="outer-notification"
-      onClick={event => {
+      onClick={event_ => {
         handleClick(
-          event,
+          event_,
           true
         );
       }}
