@@ -200,16 +200,23 @@ const sortSidebar = sidebar => {
 const testDiff = (
   oldValue, newValue
 ) => {
-  if ( Array.isArray( oldValue ) ) {
-    const addedOrChanged = newValue.filter( value => !oldValue.includes( value ) );
-    const removedVals = oldValue.filter( value => !newValue.includes( value ) );
-    return { addedOrChanged, removedVals };
+  if ( Array.isArray( oldValue ) !== Array.isArray( newValue ) ) {
+    location.reload();
   }
 
-  const oldArray = Object.keys( oldValue );
-  const newArray = Object.keys( newValue );
-  const addedOrChanged = newArray.filter( id => !oldArray.includes( id ) || oldValue[ id ] !== newValue[ id ] );
-  const removedVals = oldArray.filter( id => !newArray.includes( id ) );
+  const isArray = Array.isArray( oldValue );
+  const oldArray = isArray
+    ? oldValue
+    : Object.keys( oldValue );
+  const newArray = isArray
+    ? newValue
+    : Object.keys( newValue );
+
+  const addedOrChanged = isArray
+    ? newArray.filter( value => !oldValue.includes( value ) )
+    : newArray.filter( value => !oldArray.includes( value ) || oldValue[ value ] !== newValue[ value ] );
+  const removedVals = oldArray.filter( value => !newArray.includes( value ) );
+
   return { addedOrChanged, removedVals };
 };
 
