@@ -54,6 +54,7 @@ class SchulNetzMarks extends Component {
     error: false,
     errorMsg: '',
     loggedOut: false,
+    bottomHR: false,
   };
 
   inputs = {
@@ -63,7 +64,7 @@ class SchulNetzMarks extends Component {
   };
 
   render = (
-    _properties, { marks, loading, error, errorMsg, loggedOut }
+    _properties, { marks, loading, error, errorMsg, loggedOut, bottomHR }
   ) => <div class="mod-indent-outer">
     <div class="contentwithoutlink">
       {/* <link rel=stylesheet type=text/css
@@ -122,7 +123,7 @@ class SchulNetzMarks extends Component {
           && <div class="ucmr-error">{errorMsg ?? 'Something went wrong'}</div>
       }
 
-      {GM_getValue( 'bottomHR' ) && <hr />}
+      {bottomHR && <hr />}
     </div>
   </div>
   ;
@@ -156,6 +157,10 @@ class SchulNetzMarks extends Component {
 
   componentDidMount() {
     this.checkCredentials();
+
+    GM.getValue( 'bottomHR' ).then( bottomHR => {
+      this.setState( { bottomHR } );
+    } );
   }
 
   checkCredentials() {
