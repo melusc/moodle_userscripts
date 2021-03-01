@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.02.23a
+// @version   2021.03.01a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -72,8 +72,7 @@ class SchulNetzMarks extends Component {
       <div class="ucmr-title">Unconfirmed Marks</div>
 
       {loading && !error && <SvgCircleNotch />}
-      {
-        !loggedOut && !error && Array.isArray( marks )
+      {!loggedOut && !error && Array.isArray( marks )
           && <div>
             {Array.isArray( marks )
               && marks.map( ( { key, course, name, date, mark } ) => <div key={key} class="ucmr-row">
@@ -107,7 +106,11 @@ class SchulNetzMarks extends Component {
               placeholder="Page (ausserschwyz, einsiedeln...)"
               type="text"
             />
-            <button class="btn btn-primary" type="button" onClick={this.handleLogin}>
+            <button
+              class="btn btn-primary"
+              type="button"
+              onClick={this.handleLogin}
+            >
               Save
             </button>
           </div>
@@ -119,7 +122,7 @@ class SchulNetzMarks extends Component {
           && <div class="ucmr-error">{errorMsg ?? 'Something went wrong'}</div>
       }
 
-      {/* <hr /> */}
+      {GM_getValue( 'bottomHR' ) && <hr />}
     </div>
   </div>
   ;
