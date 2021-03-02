@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.02.23a
+// @version   2021.03.02a
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Custom%20Icons/custom-icons.user.js
 // @include   *://moodle.ksasz.ch/*
@@ -166,8 +166,13 @@ const getBlobURL = id => {
 };
 
 const refresh = (
-  _valueName, oldValue, newValue, remote
+  _valueName, oldValue = {}, newValue = {}, remote
 ) => {
+  /* If the user clears the storage newValue will be undefined,
+    so default to empty object.
+    If the user undoes the clearing oldValue will be undefined,
+    so default to empty object. */
+
   if ( remote ) {
     const sidebar = getSidebar( document );
     const oldEntries = Object.entries( oldValue );
