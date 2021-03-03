@@ -157,10 +157,11 @@ const applyIcon = (
 };
 
 const refresh = (
+  _valueName,
   // I have no control over the order
   // eslint-disable-next-line default-param-last
-  _valueName,
   oldValue = {},
+  // eslint-disable-next-line default-param-last
   newValue = {},
   remote
 ) => {
