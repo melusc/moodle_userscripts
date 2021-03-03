@@ -26,6 +26,7 @@
     "@typescript-eslint/parser": "^4.16.1",
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^3.0.0",
+    "concurrently": "^6.0.0",
     "csso-loader": "^0.3.1",
     "eslint": "^7.21.0",
     "eslint-config-preact": "^1.1.3",
@@ -53,8 +54,9 @@
   "private": true,
   "scripts": {
     "build": "npm run test && npm run webpack",
+    "gulp": "gulp start",
     "serve": "serve dist",
-    "start": "gulp start",
+    "start": "concurrently npm:gulp npm:webpack:w -r -k",
     "test": "xo",
     "webpack": "webpack -c production.config.js",
     "webpack:w": "webpack -c production.config.js -w"
