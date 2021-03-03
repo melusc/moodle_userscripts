@@ -23,7 +23,8 @@ import COUNTRY_CODES from './countries.js';
 import {
   setLastValidatedToken,
   login,
-  logout
+  logout,
+  getUserId
 } from '../shared/moodle-functions/index.js';
 
 dayjs.extend( dayjsPluginRelativeTime );
@@ -324,7 +325,8 @@ class Main extends Component {
         {typeof description !== 'undefined' && description !== ''
             && <div
               class="description"
-              dangerouslySetInnerHTML={{ // eslint-disable-line react/no-danger
+              // eslint-disable-next-line react/no-danger
+              dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize( description ),
               }}
             />
@@ -815,8 +817,8 @@ const fetchNewProfile = async event_ => {
 
       notificationSetState( { from: newId, to: range } );
 
+      // eslint-disable-next-line no-await-in-loop
       profiles = await getProfilesInRange(
-        // eslint-disable-line no-await-in-loop
         newId,
         isNegative
           ? -9
@@ -853,8 +855,8 @@ const fetchNewProfile = async event_ => {
 
       notificationSetState( { from: randProfile, to: undefined } );
 
+      // eslint-disable-next-line no-await-in-loop
       profiles = await getProfilesInRange(
-        // eslint-disable-line no-await-in-loop
         randProfile,
         0
       );
@@ -980,52 +982,51 @@ const runOnce = () => {
   );
   document.body.append( notification );
 
-  USER_ID = +new URLSearchParams( document
-    .querySelector( '.logininfo > a[href^="https://moodle.ksasz.ch/user/profile.php?id="]' )
-    .search.slice( 1 ) ).get( 'id' );
+  getUserId().then( id => {
+    USER_ID = id;
+    GM_getValue( 'highest' )
+      ?? GM_setValue(
+        'highest',
+        1946 // Highest + 10 at time of creation
+        // This number only really matters for rand anyway
+      );
 
-  GM_getValue( 'highest' )
-    ?? GM_setValue(
-      'highest',
-      1946 // Highest + 10 at time of creation
-      // This number only really matters for rand anyway
+    GM_addStyle( style );
+
+    const buttons = document.createElement( 'div' );
+    buttons.classList.add( 'btn-group' );
+
+    render(
+      <>
+        <button data-action="-1" class="btn btn-secondary" type="button">
+          Previous profile
+        </button>
+        <button data-action="1" class="btn btn-secondary" type="button">
+          Next profile
+        </button>
+        <button data-action="rand" class="btn btn-secondary" type="button">
+          Random profile
+        </button>
+        <button data-action="-10" class="btn btn-secondary" type="button">
+          -10 profiles
+        </button>
+        <button data-action="10" class="btn btn-secondary" type="button">
+          +10 profiles
+        </button>
+      </>,
+      buttons
     );
 
-  GM_addStyle( style );
-
-  const buttons = document.createElement( 'div' );
-  buttons.classList.add( 'btn-group' );
-
-  render(
-    <>
-      <button data-action="-1" class="btn btn-secondary" type="button">
-        Previous profile
-      </button>
-      <button data-action="1" class="btn btn-secondary" type="button">
-        Next profile
-      </button>
-      <button data-action="rand" class="btn btn-secondary" type="button">
-        Random profile
-      </button>
-      <button data-action="-10" class="btn btn-secondary" type="button">
-        -10 profiles
-      </button>
-      <button data-action="10" class="btn btn-secondary" type="button">
-        +10 profiles
-      </button>
-    </>,
-    buttons
-  );
-
-  buttons.addEventListener(
-    'click',
-    fetchNewProfile
-  );
-  document.querySelector( 'ul.navbar-nav.d-none.d-md-flex' ).after( buttons );
-  addEventListener(
-    'popstate',
-    fetchNewProfile
-  );
+    buttons.addEventListener(
+      'click',
+      fetchNewProfile
+    );
+    document.querySelector( 'ul.navbar-nav.d-none.d-md-flex' ).after( buttons );
+    addEventListener(
+      'popstate',
+      fetchNewProfile
+    );
+  } );
 };
 
 document.readyState === 'complete'
