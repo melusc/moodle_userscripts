@@ -8,37 +8,35 @@ const paths = {
   svgDest: './src',
 };
 
-function start() {
+const minSvg = () => src( paths.svg )
+  .pipe( cache( 'svg' ) )
+  .pipe( svgmin( {
+    multipass: true,
+    precision: 3,
+    plugins: [
+      { sortAttrs: true },
+      { removeScriptElement: true },
+      { removeDimensions: true },
+      {
+        removeAttrs: {
+          attrs: [ 'class' ],
+        },
+      },
+    ],
+  } ) )
+  .pipe( rename( path => {
+    path.extname = '.min.svg';
+  } ) )
+  .pipe( dest( paths.svgDest ) );
+
+const start = () => {
   minSvg();
 
   watch(
     paths.svg,
     minSvg
   );
-}
-
-function minSvg() {
-  return src( paths.svg )
-    .pipe( cache( 'svg' ) )
-    .pipe( svgmin( {
-      multipass: true,
-      precision: 3,
-      plugins: [
-        { sortAttrs: true },
-        { removeScriptElement: true },
-        { removeDimensions: true },
-        {
-          removeAttrs: {
-            attrs: [ 'class' ],
-          },
-        },
-      ],
-    } ) )
-    .pipe( rename( path => {
-      path.extname = '.min.svg';
-    } ) )
-    .pipe( dest( paths.svgDest ) );
-}
+};
 
 exports.default = start;
 exports.start = start;

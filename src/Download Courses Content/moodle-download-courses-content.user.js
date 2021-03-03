@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.02.23a
+// @version   2021.03.03a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Download%20Courses%20Content/moodle-download-courses-content.user.js
@@ -21,23 +21,11 @@ if ( location.protocol !== 'https:' ) {
 
 import saveAs from 'file-saver';
 import JSZip from 'jszip/dist/jszip';
-import { login, logout, setLastValidatedToken } from '../shared/moodle-functions/index.js';
-
-const init = () => {
-  if ( !document.querySelector( '#region-main div.errorbox.alert.alert-danger' ) ) {
-    const saveButton = document.createElement( 'button' );
-    saveButton.textContent = 'Save contents to zip';
-    saveButton.className = 'btn btn-secondary';
-    document
-      .querySelector( '#page-header div.card > div.card-body > div.d-flex' )
-      ?.append( saveButton );
-
-    saveButton.addEventListener(
-      'click',
-      initDownload
-    );
-  }
-};
+import {
+  login,
+  logout,
+  setLastValidatedToken
+} from '../shared/moodle-functions/index.js';
 
 const padStart = d => `${ d }`.padStart(
   2,
@@ -105,13 +93,18 @@ const initDownload = (
               const folderName = sanitizeFileName( module.name );
 
               for ( const content of contents ) {
-                const { fileurl, filepath, timemodified: timeModified } = content;
+                const {
+                  fileurl,
+                  filepath,
+                  timemodified: timeModified,
+                } = content;
                 const filename = sanitizeFileName( content.filename );
                 const date = new Date( timeModified * 1000 );
 
-                const zipFileName = modname === 'resource'
-                  ? `${ sectionName }/${ filename }`
-                  : `${ sectionName }/${ folderName }${ filepath }${ filename }`;
+                const zipFileName
+                  = modname === 'resource'
+                    ? `${ sectionName }/${ filename }`
+                    : `${ sectionName }/${ folderName }${ filepath }${ filename }`;
 
                 zipFile.file(
                   zipFileName,
@@ -180,21 +173,7 @@ const initDownload = (
             blob => {
               saveAs(
                 blob,
-                `course-${
-                  courseId
-                }_${
-                  date.getFullYear()
-                }${
-                  padStart( date.getMonth() + 1 )
-                }${
-                  padStart( date.getDate() )
-                }-${
-                  padStart( date.getHours() )
-                }${
-                  padStart( date.getMinutes() )
-                }${
-                  padStart( date.getSeconds() )
-                }.zip`
+                `course-${ courseId }_${ date.getFullYear() }${ padStart( date.getMonth() + 1 ) }${ padStart( date.getDate() ) }-${ padStart( date.getHours() ) }${ padStart( date.getMinutes() ) }${ padStart( date.getSeconds() ) }.zip`
               );
 
               target.disabled = false;
@@ -204,6 +183,22 @@ const initDownload = (
           );
       } );
   } );
+};
+
+const init = () => {
+  if ( !document.querySelector( '#region-main div.errorbox.alert.alert-danger' ) ) {
+    const saveButton = document.createElement( 'button' );
+    saveButton.textContent = 'Save contents to zip';
+    saveButton.className = 'btn btn-secondary';
+    document
+      .querySelector( '#page-header div.card > div.card-body > div.d-flex' )
+      ?.append( saveButton );
+
+    saveButton.addEventListener(
+      'click',
+      initDownload
+    );
+  }
 };
 
 document.readyState === 'complete'

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.03.01b
+// @version   2021.03.03a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -17,25 +17,14 @@
 import { render, Component, h, createRef } from 'preact';
 import style from './style.scss';
 
-const init = () => {
-  const main = document.querySelector( '#region-main ul.section' );
-  const li = document.createElement( 'li' );
-
-  li.id = 'module-marks';
-  li.className = 'activity label modtype_label';
-  const timetablev5 = document.querySelector( '#module-timetable-v5' );
-
-  timetablev5
-    ? timetablev5.after( li )
-    : main.prepend( li );
-
-  render(
-    <SchulNetzMarks />,
-    li
-  );
-
-  GM_addStyle( style );
-};
+// https://stackoverflow.com/a/2117523
+const uuidv4 = () => ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace(
+  /[018]/g,
+  c => (
+    c
+      ^ ( crypto.getRandomValues( new Uint8Array( 1 ) )[ 0 ] & ( 15 >> ( c / 4 ) ) )
+  ).toString( 16 )
+);
 
 const SvgCircleNotch = () => <svg
   aria-hidden="true"
@@ -64,7 +53,8 @@ class SchulNetzMarks extends Component {
   };
 
   render = (
-    _properties, { marks, loading, error, errorMsg, loggedOut, bottomHR }
+    _properties,
+    { marks, loading, error, errorMsg, loggedOut, bottomHR }
   ) => <div class="mod-indent-outer">
     <div class="contentwithoutlink">
       {/* <link rel=stylesheet type=text/css
@@ -307,14 +297,25 @@ class SchulNetzMarks extends Component {
   }
 }
 
-// https://stackoverflow.com/a/2117523
-const uuidv4 = () => ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace(
-  /[018]/g,
-  c => (
-    c
-      ^ ( crypto.getRandomValues( new Uint8Array( 1 ) )[ 0 ] & ( 15 >> ( c / 4 ) ) )
-  ).toString( 16 )
-);
+const init = () => {
+  const main = document.querySelector( '#region-main ul.section' );
+  const li = document.createElement( 'li' );
+
+  li.id = 'module-marks';
+  li.className = 'activity label modtype_label';
+  const timetablev5 = document.querySelector( '#module-timetable-v5' );
+
+  timetablev5
+    ? timetablev5.after( li )
+    : main.prepend( li );
+
+  render(
+    <SchulNetzMarks />,
+    li
+  );
+
+  GM_addStyle( style );
+};
 
 document.readyState === 'complete'
   ? init()

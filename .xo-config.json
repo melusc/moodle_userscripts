@@ -67,6 +67,7 @@
         "allowTernary": true
       }
     ],
+    "no-use-before-define": "error",
     "node/file-extension-in-import": "off",
     "object-curly-spacing": ["error", "always"],
     "operator-linebreak": ["error", "before"],

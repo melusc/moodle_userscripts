@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.03.02a
+// @version   2021.03.03a
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Custom%20Icons/custom-icons.user.js
 // @include   *://moodle.ksasz.ch/*
@@ -33,43 +33,68 @@ import { deleteIconFromStorage } from './shared.js';
 
 const isFrontpage = !( /^\/customiconspreact/i ).test( location.pathname );
 
-const runOnceOnFrontPage = () => {
-  GM_registerMenuCommand(
-    'Open settings',
-    () => {
-      open(
-        '/customIconsPreact/',
-        '_blank'
-      );
-    }
-  );
+const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' )
+  ?? context.querySelector( '#label_3_21' )?.closest( 'ul[role="group"]' );
 
-  addEventListener(
-    'customIconsPreact',
-    updateIcons
-  );
+const getDataURI = id => {
+  const pointers = GM_getValue( 'pointers' );
 
-  updateIcons();
+  const uuid = pointers[ id ];
+
+  if ( !uuid ) {
+    return;
+  }
+
+  const object = GM_getValue( 'values' )[ uuid ];
+
+  if ( 'rawXML' in object ) {
+    return { rawXML: object.rawXML, isXML: true };
+  }
+
+  return { ...object, isXML: false };
 };
 
-const updateIcons = () => {
-  const sidebar = getSidebar( document );
+/**
+ * Takes dataURI from TM storage and returns an ObjectURL
+ * @param {string|number} id Id of course
+ * @returns {string} The object url
+ */
+const getBlobURL = id => {
+  const dataURI = getDataURI( id );
 
-  if ( sidebar ) {
-    const pointers = Object.keys( GM_getValue( 'pointers' ) );
-
-    for ( const id of pointers ) {
-      applyIcon(
-        id,
-        sidebar
-      );
+  if ( typeof dataURI === 'object' ) {
+    if ( dataURI.isXML ) {
+      return dataURI;
     }
 
-    GM_addValueChangeListener(
-      'pointers',
-      refresh
-    ); // Only listen for changes to pointers because if values changes this will change
+    const { mediaType, rawByteString } = dataURI;
+    const byteString = atob( rawByteString );
+    const { length } = byteString;
+    const arrayBuffer = new ArrayBuffer( length );
+    const uintArray = new Uint8Array( arrayBuffer );
+
+    for ( let index = 0; index < length; ++index ) {
+      uintArray[ index ] = byteString.charCodeAt( index );
+    }
+
+    const blob = new Blob(
+      [ uintArray ],
+      {
+        type: mediaType,
+      }
+    );
+
+    return { blobURL: URL.createObjectURL( blob ), isXML: false };
   }
+};
+
+const testIfUserLeftCourse = id => {
+  getCourses().then( courses => {
+    if ( !( id in courses ) ) {
+      deleteIconFromStorage( id );
+      alert( `You appear to not be in the course with the id "${ id }" anymore.\nThe course will not be checked for anymore` ); // eslint-disable-line no-alert
+    }
+  } );
 };
 
 const applyIcon = (
@@ -131,42 +156,13 @@ const applyIcon = (
   }
 };
 
-/**
- * Takes dataURI from TM storage and returns an ObjectURL
- * @param {string|number} id Id of course
- * @returns {string} The object url
- */
-const getBlobURL = id => {
-  const dataURI = getDataURI( id );
-
-  if ( typeof dataURI === 'object' ) {
-    if ( dataURI.isXML ) {
-      return dataURI;
-    }
-
-    const { mediaType, rawByteString } = dataURI;
-    const byteString = atob( rawByteString );
-    const { length } = byteString;
-    const arrayBuffer = new ArrayBuffer( length );
-    const uintArray = new Uint8Array( arrayBuffer );
-
-    for ( let index = 0; index < length; ++index ) {
-      uintArray[ index ] = byteString.charCodeAt( index );
-    }
-
-    const blob = new Blob(
-      [ uintArray ],
-      {
-        type: mediaType,
-      }
-    );
-
-    return { blobURL: URL.createObjectURL( blob ), isXML: false };
-  }
-};
-
 const refresh = (
-  _valueName, oldValue = {}, newValue = {}, remote
+  // I have no control over the order
+  // eslint-disable-next-line default-param-last
+  _valueName,
+  oldValue = {},
+  newValue = {},
+  remote
 ) => {
   /* If the user clears the storage newValue will be undefined,
     so default to empty object.
@@ -212,34 +208,43 @@ const refresh = (
   }
 };
 
-const testIfUserLeftCourse = id => {
-  getCourses().then( courses => {
-    if ( !( id in courses ) ) {
-      deleteIconFromStorage( id );
-      alert( `You appear to not be in the course with the id "${ id }" anymore.\nThe course will not be checked for anymore` ); // eslint-disable-line no-alert
+const updateIcons = () => {
+  const sidebar = getSidebar( document );
+
+  if ( sidebar ) {
+    const pointers = Object.keys( GM_getValue( 'pointers' ) );
+
+    for ( const id of pointers ) {
+      applyIcon(
+        id,
+        sidebar
+      );
     }
-  } );
+
+    GM_addValueChangeListener(
+      'pointers',
+      refresh
+    ); // Only listen for changes to pointers because if values changes this will change
+  }
 };
 
-const getSidebar = context => context.querySelector( 'li[aria-labelledby="label_2_4"] ul[role="group"]' )
-  ?? context.querySelector( '#label_3_21' )?.closest( 'ul[role="group"]' );
+const runOnceOnFrontPage = () => {
+  GM_registerMenuCommand(
+    'Open settings',
+    () => {
+      open(
+        '/customIconsPreact/',
+        '_blank'
+      );
+    }
+  );
 
-const getDataURI = id => {
-  const pointers = GM_getValue( 'pointers' );
+  addEventListener(
+    'customIconsPreact',
+    updateIcons
+  );
 
-  const uuid = pointers[ id ];
-
-  if ( !uuid ) {
-    return;
-  }
-
-  const object = GM_getValue( 'values' )[ uuid ];
-
-  if ( 'rawXML' in object ) {
-    return { rawXML: object.rawXML, isXML: true };
-  }
-
-  return { ...object, isXML: false };
+  updateIcons();
 };
 
 if ( !( /^\/cleanmoodle/i ).test( location.pathname ) ) {

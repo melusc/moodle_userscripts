@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.02.23a
+// @version   2021.03.03a
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Explore%20Profiles/explore-profiles.user.js
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -20,7 +20,11 @@ import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime';
 import DOMPurify from 'dompurify';
 import style from './style.scss';
 import COUNTRY_CODES from './countries.js';
-import { setLastValidatedToken, login, logout } from '../shared/moodle-functions/index.js';
+import {
+  setLastValidatedToken,
+  login,
+  logout
+} from '../shared/moodle-functions/index.js';
 
 dayjs.extend( dayjsPluginRelativeTime );
 
@@ -28,62 +32,6 @@ import { render, Component, Fragment, h } from 'preact';
 
 let USER_ID;
 let CONTACTS;
-const runOnce = () => {
-  const notification = document.createElement( 'div' );
-
-  render(
-    <Notification />,
-    notification
-  );
-  document.body.append( notification );
-
-  USER_ID = +new URLSearchParams( document
-    .querySelector( '.logininfo > a[href^="https://moodle.ksasz.ch/user/profile.php?id="]' )
-    .search.slice( 1 ) ).get( 'id' );
-
-  GM_getValue( 'highest' )
-    ?? GM_setValue(
-      'highest',
-      1946 // Highest + 10 at time of creation
-      // This number only really matters for rand anyway
-    );
-
-  GM_addStyle( style );
-
-  const buttons = document.createElement( 'div' );
-  buttons.classList.add( 'btn-group' );
-
-  render(
-    <>
-      <button data-action="-1" class="btn btn-secondary" type="button">
-        Previous profile
-      </button>
-      <button data-action="1" class="btn btn-secondary" type="button">
-        Next profile
-      </button>
-      <button data-action="rand" class="btn btn-secondary" type="button">
-        Random profile
-      </button>
-      <button data-action="-10" class="btn btn-secondary" type="button">
-        -10 profiles
-      </button>
-      <button data-action="10" class="btn btn-secondary" type="button">
-        +10 profiles
-      </button>
-    </>,
-    buttons
-  );
-
-  buttons.addEventListener(
-    'click',
-    fetchNewProfile
-  );
-  document.querySelector( 'ul.navbar-nav.d-none.d-md-flex' ).after( buttons );
-  addEventListener(
-    'popstate',
-    fetchNewProfile
-  );
-};
 
 let mainSetState;
 let headerSetState;
@@ -718,6 +666,114 @@ const clearNode = node => {
 };
 
 /**
+ *
+ * @param {number} start Start value
+ * @param {number} range range to find more profiles in
+ * @example start = 1940, range = -9, will return profiles 1931 up to and including 1940
+ */
+const getProfilesInRange = (
+  start, range
+) => login().then( token => {
+  let lower = start;
+  let upper = start + range;
+
+  if ( lower > upper ) {
+    [ lower, upper ] = [ upper, lower ];
+  }
+
+  const bodyParameters = new URLSearchParams();
+
+  for ( let index = 0; index <= upper - lower; ++index ) {
+    bodyParameters.set(
+      `userlist[${ index }][userid]`,
+      lower + index
+    );
+    bodyParameters.set(
+      `userlist[${ index }][courseid]`,
+      32 // Allgemeine informationen
+    );
+  }
+
+  bodyParameters.set(
+    'wsfunction',
+    'core_user_get_course_user_profiles'
+  );
+  bodyParameters.set(
+    'wstoken',
+    token
+  );
+
+  return fetch(
+    'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_user_get_course_user_profiles',
+    {
+      method: 'POST',
+      body: bodyParameters.toString(),
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+    }
+  )
+    .then( response => response.json() )
+    .then( response => {
+      if ( 'errorcode' in response ) {
+        logout();
+        return getProfilesInRange(
+          start,
+          range
+        );
+      }
+
+      setLastValidatedToken();
+
+      return response;
+    } );
+} );
+
+const getContacts = noCache => login( noCache )
+  .then( token => fetch(
+    'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_message_get_user_contacts',
+    {
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: `userid=${ USER_ID }&wsfunction=core_message_get_user_contacts&wstoken=${ token }`,
+      method: 'POST',
+    }
+  ).then( response => response.json() ) )
+  .then( response => {
+    if ( 'exception' in response ) {
+      logout();
+      return getContacts( true );
+    }
+
+    setLastValidatedToken();
+
+    return response.map( ( { id } ) => id );
+  } );
+
+const unescapeHTML = string => `${ string }`
+  .replace(
+    /&amp;/g,
+    '&'
+  )
+  .replace(
+    /&lt;/g,
+    '<'
+  )
+  .replace(
+    /&gt;/g,
+    '>'
+  )
+  .replace(
+    /&quot;/g,
+    '"'
+  )
+  .replace(
+    /&#039;|&apos;/g /* Second one just in case because I don't know how moodle escapes apostrophies */,
+    "'"
+  );
+
+/**
  * Listens to click on buttons
  * @param {EventListenerObject} event_ Event obj
  * @listens click
@@ -759,7 +815,8 @@ const fetchNewProfile = async event_ => {
 
       notificationSetState( { from: newId, to: range } );
 
-      profiles = await getProfilesInRange( // eslint-disable-line no-await-in-loop
+      profiles = await getProfilesInRange(
+        // eslint-disable-line no-await-in-loop
         newId,
         isNegative
           ? -9
@@ -796,7 +853,8 @@ const fetchNewProfile = async event_ => {
 
       notificationSetState( { from: randProfile, to: undefined } );
 
-      profiles = await getProfilesInRange( // eslint-disable-line no-await-in-loop
+      profiles = await getProfilesInRange(
+        // eslint-disable-line no-await-in-loop
         randProfile,
         0
       );
@@ -913,114 +971,62 @@ const fetchNewProfile = async event_ => {
   }
 };
 
-/**
- *
- * @param {number} start Start value
- * @param {number} range range to find more profiles in
- * @example start = 1940, range = -9, will return profiles 1931 up to and including 1940
- */
-const getProfilesInRange = (
-  start, range
-) => login().then( token => {
-  let lower = start;
-  let upper = start + range;
+const runOnce = () => {
+  const notification = document.createElement( 'div' );
 
-  if ( lower > upper ) {
-    [ lower, upper ] = [ upper, lower ];
-  }
+  render(
+    <Notification />,
+    notification
+  );
+  document.body.append( notification );
 
-  const bodyParameters = new URLSearchParams();
+  USER_ID = +new URLSearchParams( document
+    .querySelector( '.logininfo > a[href^="https://moodle.ksasz.ch/user/profile.php?id="]' )
+    .search.slice( 1 ) ).get( 'id' );
 
-  for ( let index = 0; index <= upper - lower; ++index ) {
-    bodyParameters.set(
-      `userlist[${ index }][userid]`,
-      lower + index
+  GM_getValue( 'highest' )
+    ?? GM_setValue(
+      'highest',
+      1946 // Highest + 10 at time of creation
+      // This number only really matters for rand anyway
     );
-    bodyParameters.set(
-      `userlist[${ index }][courseid]`,
-      32 // Allgemeine informationen
-    );
-  }
 
-  bodyParameters.set(
-    'wsfunction',
-    'core_user_get_course_user_profiles'
+  GM_addStyle( style );
+
+  const buttons = document.createElement( 'div' );
+  buttons.classList.add( 'btn-group' );
+
+  render(
+    <>
+      <button data-action="-1" class="btn btn-secondary" type="button">
+        Previous profile
+      </button>
+      <button data-action="1" class="btn btn-secondary" type="button">
+        Next profile
+      </button>
+      <button data-action="rand" class="btn btn-secondary" type="button">
+        Random profile
+      </button>
+      <button data-action="-10" class="btn btn-secondary" type="button">
+        -10 profiles
+      </button>
+      <button data-action="10" class="btn btn-secondary" type="button">
+        +10 profiles
+      </button>
+    </>,
+    buttons
   );
-  bodyParameters.set(
-    'wstoken',
-    token
+
+  buttons.addEventListener(
+    'click',
+    fetchNewProfile
   );
-
-  return fetch(
-    'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_user_get_course_user_profiles',
-    {
-      method: 'POST',
-      body: bodyParameters.toString(),
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-    }
-  )
-    .then( response => response.json() )
-    .then( response => {
-      if ( 'errorcode' in response ) {
-        logout();
-        return getProfilesInRange(
-          start,
-          range
-        );
-      }
-
-      setLastValidatedToken();
-
-      return response;
-    } );
-} );
-
-const getContacts = noCache => login( noCache )
-  .then( token => fetch(
-    'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_message_get_user_contacts',
-    {
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: `userid=${ USER_ID }&wsfunction=core_message_get_user_contacts&wstoken=${ token }`,
-      method: 'POST',
-    }
-  )
-    .then( response => response.json() ) )
-  .then( response => {
-    if ( 'exception' in response ) {
-      logout();
-      return getContacts( true );
-    }
-
-    setLastValidatedToken();
-
-    return response.map( ( { id } ) => id );
-  } );
-
-const unescapeHTML = string => `${ string }`
-  .replace(
-    /&amp;/g,
-    '&'
-  )
-  .replace(
-    /&lt;/g,
-    '<'
-  )
-  .replace(
-    /&gt;/g,
-    '>'
-  )
-  .replace(
-    /&quot;/g,
-    '"'
-  )
-  .replace(
-    /&#039;|&apos;/g, /* Second one just in case because I don't know how moodle escapes apostrophies */
-    "'"
+  document.querySelector( 'ul.navbar-nav.d-none.d-md-flex' ).after( buttons );
+  addEventListener(
+    'popstate',
+    fetchNewProfile
   );
+};
 
 document.readyState === 'complete'
   ? runOnce()

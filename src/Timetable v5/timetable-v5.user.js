@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.02.23a
+// @version   2021.03.03a
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Timetable%20v5/timetable-v5.user.js
 // @include   *://moodle.ksasz.ch/
@@ -30,6 +30,438 @@ const MOODLE_ICON
   = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2074%2051%22%3E%3Cpath%20fill%3D%22%23f98012%22%20d%3D%22M61.9%2050.3V27.4c0-4.8-2-7.2-5.9-7.2-4%200-5.9%202.4-5.9%207.2v22.9H38.4V27.4c0-4.8-1.9-7.2-5.8-7.2-4%200-5.9%202.4-5.9%207.2v22.9H15V26.1c0-5%201.7-8.8%205.2-11.3%203-2.3%207.2-3.4%2012.4-3.4%205.3%200%209.2%201.4%2011.6%204.1%202.2-2.7%206.1-4.1%2011.8-4.1%205.2%200%209.3%201.1%2012.4%203.4%203.5%202.6%205.2%206.3%205.2%2011.3v24.3H61.9z%22%2F%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M37.6%209.5L49.2%201%2049%20.6C28.1%203.1%2018.6%204.9.7%2015.4l.2.5h1.4c-.1%201.4-.4%205-.1%2010.4-2%205.8%200%209.7%201.8%2014%20.3-4.4.3-9.3-1.1-14.1-.3-5.3%200-8.8.1-10.2h11.9s-.1%203.6.4%207c10.7%203.7%2021.4%200%2027.1-9.2-1.7-1.9-4.8-4.3-4.8-4.3z%22%2F%3E%3C%2Fsvg%3E';
 
 const NOTIFICATION_ICON = 'https://i.imgur.com/ZtPH8v7.png';
+
+const parseTimeToString = int => {
+  if ( Number.isNaN( int ) ) {
+    return false;
+  }
+
+  const minutes = +int % 60;
+  const hours = Math.floor( +int / 60 );
+
+  return `${ hours.toString().padStart(
+    2,
+    '0'
+  ) }:${ minutes
+    .toString()
+    .padStart(
+      2,
+      '0'
+    ) }`;
+};
+
+const generateUUIDv4 = a => a
+  ? ( a ^ ( ( Math.random() * 16 ) >> ( a / 4 ) ) ).toString( 16 )
+  : ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace(
+    /[018]/g,
+    generateUUIDv4
+  );
+
+const defaultTimes = () => [
+  { from: '08:00', parsedfrom: 480, parsedto: 525, to: '08:45' },
+  { from: '08:45', parsedfrom: 525, parsedto: 570, to: '09:30' },
+  { from: '09:50', parsedfrom: 590, parsedto: 635, to: '10:35' },
+  { from: '10:40', parsedfrom: 640, parsedto: 685, to: '11:25' },
+  { from: '11:30', parsedfrom: 690, parsedto: 735, to: '12:15' },
+  { from: '12:15', parsedfrom: 735, parsedto: 790, to: '13:10' },
+  { from: '13:10', parsedfrom: 790, parsedto: 835, to: '13:55' },
+  { from: '13:55', parsedfrom: 835, parsedto: 880, to: '14:40' },
+  { from: '14:50', parsedfrom: 890, parsedto: 935, to: '15:35' },
+  { from: '15:35', parsedfrom: 935, parsedto: 975, to: '16:15' },
+];
+
+const SvgIconX = () => <svg viewBox="0 0 512 512">
+  <path
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-width="32"
+    d="M368 368L144 144m224 0L144 368"
+  />
+</svg>;
+const SvgIconCaretBack = () => <svg viewBox="0 0 512 512">
+  <path
+    fill="currentColor"
+    d="M321.94 98L158.82 237.78a24 24 0 000 36.44L321.94 414c15.57 13.34 39.62 2.28 39.62-18.22v-279.6c0-20.5-24.05-31.56-39.62-18.18z"
+  />
+</svg>;
+const SvgIconCaretForward = () => <svg viewBox="0 0 512 512">
+  <path
+    fill="currentColor"
+    d="M190.06 414l163.12-139.78a24 24 0 000-36.44L190.06 98c-15.57-13.34-39.62-2.28-39.62 18.22v279.6c0 20.5 24.05 31.56 39.62 18.18z"
+  />
+</svg>;
+const SvgIconAdd = () => <svg viewBox="0 0 512 512">
+  <path
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-width="32"
+    d="M256 112v288m144-144H112"
+  />
+</svg>;
+class ButtonGrid extends Component {
+  render( { handleClick, handleSave, saveButtonRef, day } ) {
+    return (
+      <>
+        <div class="day-controls" onClick={handleClick}>
+          <div class="caret-input caret-back">
+            <SvgIconCaretBack />
+          </div>
+          <div>{day}</div>
+          <div class="caret-input caret-forward">
+            <SvgIconCaretForward />
+          </div>
+        </div>
+        <button
+          type="button"
+          class="save-button"
+          onClick={handleSave}
+          ref={saveButtonRef}
+          onAnimationEnd={this.removeAnimation}
+        >
+          Save
+        </button>
+      </>
+    );
+  }
+
+  removeAnimation = ( { target } ) => {
+    target?.classList?.remove(
+      'save-failed',
+      'save-successful'
+    );
+  };
+}
+
+const timeStringIsValid = ( () => {
+  const input = document.createElement( 'input' );
+
+  input.type = 'time';
+
+  return raw => {
+    const string = `${ raw }`.trim();
+
+    if ( !( /^\d{2}:\d{2}$/ ).test( string ) ) {
+      return false;
+    }
+
+    input.value = string;
+    return input.value === string;
+  };
+} )();
+
+const Table = ( { content, handleFocus } ) => <div class="table" onFocus={handleFocus}>
+  {content?.map( ( { from, to, content, id, fromvalid, tovalid, uuid } ) => <div key={uuid} class="table-row">
+    <div class="table-cell time">
+      <span
+        class={`time-input time-from${
+          timeStringIsValid( from ) && fromvalid !== false
+            ? ''
+            : ' invalid-input'
+        }`}
+        contentEditable
+      >
+        {from}
+      </span>
+      {' - '}
+      <span
+        class={`time-input time-to${
+          timeStringIsValid( to ) && tovalid !== false
+            ? ''
+            : ' invalid-input'
+        }`}
+        contentEditable
+      >
+        {to}
+      </span>
+    </div>
+    <div class="table-cell entry">
+      <span contentEditable data-type="content">
+        {content}
+      </span>
+      <hr />
+      <span contentEditable data-type="id">
+        {id}
+      </span>
+    </div>
+    <div class="table-cell remove-row">
+      <SvgIconX />
+    </div>
+  </div> )}
+</div>;
+const TimetableRow = ( { values, isNow } ) => {
+  const { from, to, id, content } = values ?? {};
+  return (
+    typeof values === 'object'
+      && <div class="tt-tr">
+        <div class="tt-th">
+          {isNow
+            ? 'Now'
+            : 'Next'}
+          {from
+            && to
+            && ` (${ parseTimeToString( from ) } - ${ parseTimeToString( to ) })`}
+          :
+        </div>
+        <div class="tt-td">
+          {typeof id === 'string'
+            ? <a
+              href={`/course/view.php?id=${ id }`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {content}
+            </a>
+            : content ?? 'Free lesson'
+          }
+        </div>
+      </div>
+
+  );
+};
+
+const FrontPage = ( () => {
+  const currentDay = new Date().getDay();
+  let currentVals = ( GM_getValue( 'days' )?.[ currentDay - 1 ] ?? [] ).map( item => ( {
+    ...item,
+    uuid: generateUUIDv4(),
+  } ) );
+
+  // - 1 because monday is 0
+  // but in javascript dates monday would be 1 with sunday as 0
+  const BEFORELESSONS = 'BEFORELESSONS';
+  const AFTERLESSONS = 'AFTERLESSONS';
+  const DURINGLESSONS = 'DURINGLESSONS';
+
+  return class FrontPage extends Component {
+    state = {
+      curCourse: 1,
+      tableRows: [],
+      isHoliday:
+        GM_getValue( 'isHoliday' ) ?? ( GM_setValue(
+          'isHoliday',
+          false
+        ), false ),
+      isEmpty: false,
+      type: undefined,
+    };
+
+    timeout = undefined;
+
+    componentDidMount = () => {
+      GM_addValueChangeListener(
+        'days',
+        () => {
+          currentVals = GM_getValue( 'days' )?.[ currentDay - 1 ] ?? [];
+          this.clearTimeout();
+          /* It will set another timeout if necessary
+             and if not it would never be cleared so it gets
+             cleared here */
+          this.updateCourse();
+        }
+      );
+      GM_addValueChangeListener(
+        'isHoliday',
+        () => {
+          this.clearTimeout();
+          this.setState( { isHoliday: GM_getValue( 'isHoliday' ) } );
+          if ( !GM_getValue( 'isHoliday' ) ) {
+            this.updateCourse();
+          }
+        }
+      );
+
+      if ( !this.state.isHoliday ) {
+        this.updateCourse();
+      }
+    };
+
+    clearTimeout = () => {
+      clearTimeout( this.timeout );
+      this.timeout = undefined;
+    };
+
+    setCoursesTimeout = delay => {
+      this.clearTimeout();
+      this.timeout = setTimeout(
+        this.updateCourse.bind( this ),
+        delay,
+        true
+      );
+    };
+
+    updateCourse( notify ) {
+      if ( currentVals.length === 0 ) {
+        this.setState( { isEmpty: true } );
+        return;
+      }
+
+      const currentDate = new Date();
+      const currentTimeInMinutes
+        = ( currentDate.getHours() * 60 )
+        + currentDate.getMinutes()
+        + ( currentDate.getSeconds() / 60 )
+        + ( currentDate.getMilliseconds() / 60 / 1000 );
+
+      const totalFrom = currentVals[ 0 ].from;
+      const totalTo = currentVals[ currentVals.length - 1 ].to;
+
+      if ( currentTimeInMinutes < totalFrom ) {
+        this.setState( {
+          type: BEFORELESSONS,
+          tableRows: [ undefined, currentVals[ 0 ] ],
+        } );
+
+        const nextInMinutesSinceMidnight = currentVals[ 0 ].from;
+        const nextMinutes = nextInMinutesSinceMidnight % 60;
+        const nextHours = Math.floor( nextInMinutesSinceMidnight / 60 );
+
+        const nextDate = new Date();
+        nextDate.setHours(
+          nextHours,
+          nextMinutes,
+          0,
+          0
+        );
+
+        this.setCoursesTimeout( nextDate - currentDate );
+      }
+      else if ( currentTimeInMinutes >= totalTo ) {
+        this.setState( {
+          type: AFTERLESSONS,
+        } );
+      }
+      else {
+        let currentIndex = 0;
+
+        while ( currentVals[ currentIndex ].to < currentTimeInMinutes ) {
+          ++currentIndex;
+        }
+
+        const currentValue = currentVals[ currentIndex ];
+        const nextValue = currentVals[ currentIndex + 1 ];
+
+        this.setState( {
+          type: DURINGLESSONS,
+          tableRows: [ currentValue, nextValue ],
+        } );
+
+        if (
+          notify
+          && !this.state.isHoliday
+          && currentValue
+          && 'content' in currentValue
+        ) {
+          GM_notification( {
+            text: currentValue.content,
+            title: 'Now',
+            image: NOTIFICATION_ICON,
+            timeout: 4000,
+            silent: true,
+            onclick: () => {
+              open( 'id' in currentValue
+                ? `/course/view.php?id=${ currentValue.id }`
+                : '/' );
+            },
+          } );
+        }
+
+        const nextInMinutesSinceMidnight = currentVals[ currentIndex ].to;
+        const nextHours = Math.floor( nextInMinutesSinceMidnight / 60 );
+        const nextMinutes = nextInMinutesSinceMidnight % 60;
+
+        const nextDate = new Date();
+        nextDate.setHours(
+          nextHours,
+          nextMinutes,
+          0,
+          0
+        );
+
+        this.setCoursesTimeout( nextDate - currentDate );
+      }
+    }
+
+    render(
+      _properties, { isEmpty, isHoliday, type, tableRows }
+    ) {
+      const isWeekend = currentDay === 0 || currentDay === 6;
+
+      return (
+        <div>
+          <div class="mod-indent-outer">
+            <div class="contentwithoutlink">
+              <div class="no-overflow">
+                <hr />
+                <div>
+                  <div class="tt-title">Timetable</div>
+                  <div class="tt-table">
+                    <div class="tt-tbody">
+                      {!isWeekend && !isHoliday && type === BEFORELESSONS
+                        && <TimetableRow values={{ content: 'No lesson' }} isNow />
+                      }
+                      {!isWeekend && !isHoliday && type === AFTERLESSONS
+                        && <div class="tt-title">No school anymore</div>
+                      }
+                      {isWeekend && !isHoliday
+                        && <div class="tt-title">Weekend</div>
+                      }
+                      {isHoliday && <div class="tt-title">Holiday</div>}
+                      {!isWeekend
+                        && !isEmpty
+                        && !isHoliday
+                        && ( type === BEFORELESSONS || type === DURINGLESSONS )
+                        && tableRows?.map( (
+                          currentValue, index
+                        ) => currentValue
+                              && <TimetableRow
+                                key={currentValue.uuid}
+                                values={currentValue}
+                                isNow={index === 0}
+                              /> )}
+                      {isEmpty && !isWeekend
+                        && <>
+                          {"Today's timetable is empty, you can update it "}
+                          <a
+                            href="/timetable/v5"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            here
+                          </a>
+                        </>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <hr />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  };
+} )();
+
+const focusTarget = (
+  target, offset
+) => {
+  if ( target instanceof Element ) {
+    const range = new Range();
+    const sel = getSelection();
+    const start = +( offset ?? +target.textContent.length );
+
+    target.focus();
+    range.setStart(
+      target.childNodes[ 0 ] ?? target,
+      start
+    );
+    range.collapse( true );
+    sel.removeAllRanges();
+    sel.addRange( range );
+  }
+};
+
 const initFrontpage = () => {
   GM_registerMenuCommand(
     'Open settings',
@@ -66,55 +498,6 @@ const initFrontpage = () => {
   );
 };
 
-const initSettingsPage = () => {
-  history.replaceState(
-    {},
-    '',
-    '/timetable/v5'
-  );
-  const { body, head } = document;
-  while ( head.lastChild ) {
-    head.lastChild.remove();
-  }
-
-  while ( body.lastChild ) {
-    body.lastChild.remove();
-  }
-
-  document.title = 'Moodle timetable v5';
-
-  const icon = document.createElement( 'link' );
-
-  icon.rel = 'shortcut icon';
-  icon.href = MOODLE_ICON;
-
-  GM_addStyle( settingsPageStyle );
-
-  head.append( icon );
-
-  const root = document.createElement( 'div' );
-
-  root.id = 'root';
-  body.append( root );
-
-  render(
-    <SettingsPage />,
-    root
-  );
-};
-
-const defaultTimes = () => [
-  { from: '08:00', parsedfrom: 480, parsedto: 525, to: '08:45' },
-  { from: '08:45', parsedfrom: 525, parsedto: 570, to: '09:30' },
-  { from: '09:50', parsedfrom: 590, parsedto: 635, to: '10:35' },
-  { from: '10:40', parsedfrom: 640, parsedto: 685, to: '11:25' },
-  { from: '11:30', parsedfrom: 690, parsedto: 735, to: '12:15' },
-  { from: '12:15', parsedfrom: 735, parsedto: 790, to: '13:10' },
-  { from: '13:10', parsedfrom: 790, parsedto: 835, to: '13:55' },
-  { from: '13:55', parsedfrom: 835, parsedto: 880, to: '14:40' },
-  { from: '14:50', parsedfrom: 890, parsedto: 935, to: '15:35' },
-  { from: '15:35', parsedfrom: 935, parsedto: 975, to: '16:15' },
-];
 let settingsPageSetState;
 const SettingsPage = ( () => {
   const DAYS = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday' ];
@@ -709,7 +1092,7 @@ const SettingsPage = ( () => {
 
         const [ hour, minute ] = string.split( ':' );
 
-        return ( hour * 60 ) + +minute;
+        return ( +hour * 60 ) + +minute;
       };
     } )();
 
@@ -785,422 +1168,41 @@ const SettingsPage = ( () => {
   };
 } )();
 
-class ButtonGrid extends Component {
-  render( { handleClick, handleSave, saveButtonRef, day } ) {
-    return (
-      <>
-        <div class="day-controls" onClick={handleClick}>
-          <div class="caret-input caret-back">
-            <SvgIconCaretBack />
-          </div>
-          <div>{day}</div>
-          <div class="caret-input caret-forward">
-            <SvgIconCaretForward />
-          </div>
-        </div>
-        <button
-          type="button"
-          class="save-button"
-          onClick={handleSave}
-          ref={saveButtonRef}
-          onAnimationEnd={this.removeAnimation}
-        >
-          Save
-        </button>
-      </>
-    );
-  }
-
-  removeAnimation = ( { target } ) => {
-    target?.classList?.remove(
-      'save-failed',
-      'save-successful'
-    );
-  };
-}
-
-const SvgIconX = () => <svg viewBox="0 0 512 512">
-  <path
-    stroke="currentColor"
-    stroke-linecap="round"
-    stroke-width="32"
-    d="M368 368L144 144m224 0L144 368"
-  />
-</svg>;
-const SvgIconCaretBack = () => <svg viewBox="0 0 512 512">
-  <path
-    fill="currentColor"
-    d="M321.94 98L158.82 237.78a24 24 0 000 36.44L321.94 414c15.57 13.34 39.62 2.28 39.62-18.22v-279.6c0-20.5-24.05-31.56-39.62-18.18z"
-  />
-</svg>;
-const SvgIconCaretForward = () => <svg viewBox="0 0 512 512">
-  <path
-    fill="currentColor"
-    d="M190.06 414l163.12-139.78a24 24 0 000-36.44L190.06 98c-15.57-13.34-39.62-2.28-39.62 18.22v279.6c0 20.5 24.05 31.56 39.62 18.18z"
-  />
-</svg>;
-const SvgIconAdd = () => <svg viewBox="0 0 512 512">
-  <path
-    stroke="currentColor"
-    stroke-linecap="round"
-    stroke-width="32"
-    d="M256 112v288m144-144H112"
-  />
-</svg>;
-const Table = ( { content, handleFocus } ) => <div class="table" onFocus={handleFocus}>
-  {content?.map( ( { from, to, content, id, fromvalid, tovalid, uuid } ) => <div key={uuid} class="table-row">
-    <div class="table-cell time">
-      <span
-        class={`time-input time-from${
-          timeStringIsValid( from ) && fromvalid !== false
-            ? ''
-            : ' invalid-input'
-        }`}
-        contentEditable
-      >
-        {from}
-      </span>
-      {' - '}
-      <span
-        class={`time-input time-to${
-          timeStringIsValid( to ) && tovalid !== false
-            ? ''
-            : ' invalid-input'
-        }`}
-        contentEditable
-      >
-        {to}
-      </span>
-    </div>
-    <div class="table-cell entry">
-      <span contentEditable data-type="content">
-        {content}
-      </span>
-      <hr />
-      <span contentEditable data-type="id">
-        {id}
-      </span>
-    </div>
-    <div class="table-cell remove-row">
-      <SvgIconX />
-    </div>
-  </div> )}
-</div>;
-const generateUUIDv4 = a => a
-  ? ( a ^ ( ( Math.random() * 16 ) >> ( a / 4 ) ) ).toString( 16 )
-  : ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace(
-    /[018]/g,
-    generateUUIDv4
+const initSettingsPage = () => {
+  history.replaceState(
+    {},
+    '',
+    '/timetable/v5'
   );
+  const { body, head } = document;
+  while ( head.lastChild ) {
+    head.lastChild.remove();
+  }
 
-const FrontPage = ( () => {
-  const currentDay = new Date().getDay();
-  let currentVals = ( GM_getValue( 'days' )?.[ currentDay - 1 ] ?? [] ).map( item => ( {
-    ...item,
-    uuid: generateUUIDv4(),
-  } ) );
+  while ( body.lastChild ) {
+    body.lastChild.remove();
+  }
 
-  // - 1 because monday is 0
-  // but in javascript dates monday would be 1 with sunday as 0
-  const BEFORELESSONS = 'BEFORELESSONS';
-  const AFTERLESSONS = 'AFTERLESSONS';
-  const DURINGLESSONS = 'DURINGLESSONS';
+  document.title = 'Moodle timetable v5';
 
-  return class FrontPage extends Component {
-    state = {
-      curCourse: 1,
-      tableRows: [],
-      isHoliday:
-        GM_getValue( 'isHoliday' ) ?? ( GM_setValue(
-          'isHoliday',
-          false
-        ), false ),
-      isEmpty: false,
-      type: undefined,
-    };
+  const icon = document.createElement( 'link' );
 
-    timeout = undefined;
+  icon.rel = 'shortcut icon';
+  icon.href = MOODLE_ICON;
 
-    componentDidMount = () => {
-      GM_addValueChangeListener(
-        'days',
-        () => {
-          currentVals = GM_getValue( 'days' )?.[ currentDay - 1 ] ?? [];
-          this.clearTimeout();
-          /* It will set another timeout if necessary
-             and if not it would never be cleared so it gets
-             cleared here */
-          this.updateCourse();
-        }
-      );
-      GM_addValueChangeListener(
-        'isHoliday',
-        () => {
-          this.clearTimeout();
-          this.setState( { isHoliday: GM_getValue( 'isHoliday' ) } );
-          if ( !GM_getValue( 'isHoliday' ) ) {
-            this.updateCourse();
-          }
-        }
-      );
+  GM_addStyle( settingsPageStyle );
 
-      if ( !this.state.isHoliday ) {
-        this.updateCourse();
-      }
-    };
+  head.append( icon );
 
-    clearTimeout = () => {
-      clearTimeout( this.timeout );
-      this.timeout = undefined;
-    };
+  const root = document.createElement( 'div' );
 
-    setCoursesTimeout = delay => {
-      this.clearTimeout();
-      this.timeout = setTimeout(
-        this.updateCourse.bind( this ),
-        delay,
-        true
-      );
-    };
+  root.id = 'root';
+  body.append( root );
 
-    updateCourse( notify ) {
-      if ( currentVals.length === 0 ) {
-        this.setState( { isEmpty: true } );
-        return;
-      }
-
-      const currentDate = new Date();
-      const currentTimeInMinutes
-        = ( currentDate.getHours() * 60 )
-        + currentDate.getMinutes()
-        + ( currentDate.getSeconds() / 60 )
-        + ( currentDate.getMilliseconds() / 60 / 1000 );
-
-      const totalFrom = currentVals[ 0 ].from;
-      const totalTo = currentVals[ currentVals.length - 1 ].to;
-
-      if ( currentTimeInMinutes < totalFrom ) {
-        this.setState( {
-          type: BEFORELESSONS,
-          tableRows: [ undefined, currentVals[ 0 ] ],
-        } );
-
-        const nextInMinutesSinceMidnight = currentVals[ 0 ].from;
-        const nextMinutes = nextInMinutesSinceMidnight % 60;
-        const nextHours = Math.floor( nextInMinutesSinceMidnight / 60 );
-
-        const nextDate = new Date();
-        nextDate.setHours(
-          nextHours,
-          nextMinutes,
-          0,
-          0
-        );
-
-        this.setCoursesTimeout( nextDate - currentDate );
-      }
-      else if ( currentTimeInMinutes >= totalTo ) {
-        this.setState( {
-          type: AFTERLESSONS,
-        } );
-      }
-      else {
-        let currentIndex = 0;
-
-        while ( currentVals[ currentIndex ].to < currentTimeInMinutes ) {
-          ++currentIndex;
-        }
-
-        const currentValue = currentVals[ currentIndex ];
-        const nextValue = currentVals[ currentIndex + 1 ];
-
-        this.setState( {
-          type: DURINGLESSONS,
-          tableRows: [ currentValue, nextValue ],
-        } );
-
-        if (
-          notify
-          && !this.state.isHoliday
-          && currentValue
-          && 'content' in currentValue
-        ) {
-          GM_notification( {
-            text: currentValue.content,
-            title: 'Now',
-            image: NOTIFICATION_ICON,
-            timeout: 4000,
-            silent: true,
-            onclick: () => {
-              open( 'id' in currentValue
-                ? `/course/view.php?id=${ currentValue.id }`
-                : '/' );
-            },
-          } );
-        }
-
-        const nextInMinutesSinceMidnight = currentVals[ currentIndex ].to;
-        const nextHours = Math.floor( nextInMinutesSinceMidnight / 60 );
-        const nextMinutes = nextInMinutesSinceMidnight % 60;
-
-        const nextDate = new Date();
-        nextDate.setHours(
-          nextHours,
-          nextMinutes,
-          0,
-          0
-        );
-
-        this.setCoursesTimeout( nextDate - currentDate );
-      }
-    }
-
-    render(
-      _properties, { isEmpty, isHoliday, type, tableRows }
-    ) {
-      const isWeekend = currentDay === 0 || currentDay === 6;
-
-      return (
-        <div>
-          <div class="mod-indent-outer">
-            <div class="contentwithoutlink">
-              <div class="no-overflow">
-                <hr />
-                <div>
-                  <div class="tt-title">Timetable</div>
-                  <div class="tt-table">
-                    <div class="tt-tbody">
-                      {!isWeekend && !isHoliday && type === BEFORELESSONS
-                        && <TimetableRow values={{ content: 'No lesson' }} isNow />
-                      }
-                      {!isWeekend && !isHoliday && type === AFTERLESSONS
-                        && <div class="tt-title">No school anymore</div>
-                      }
-                      {isWeekend && !isHoliday
-                        && <div class="tt-title">Weekend</div>
-                      }
-                      {isHoliday && <div class="tt-title">Holiday</div>}
-                      {!isWeekend
-                        && !isEmpty
-                        && !isHoliday
-                        && ( type === BEFORELESSONS || type === DURINGLESSONS )
-                        && tableRows?.map( (
-                          currentValue, index
-                        ) => currentValue
-                              && <TimetableRow
-                                key={currentValue.uuid}
-                                values={currentValue}
-                                isNow={index === 0}
-                              /> )}
-                      {isEmpty && !isWeekend
-                        && <>
-                          {"Today's timetable is empty, you can update it "}
-                          <a
-                            href="/timetable/v5"
-                            rel="noopener noreferrer"
-                            target="_blank"
-                          >
-                            here
-                          </a>
-                        </>
-                      }
-                    </div>
-                  </div>
-                </div>
-                <hr />
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-  };
-} )();
-
-const TimetableRow = ( { values, isNow } ) => {
-  const { from, to, id, content } = values ?? {};
-  return (
-    typeof values === 'object'
-      && <div class="tt-tr">
-        <div class="tt-th">
-          {isNow
-            ? 'Now'
-            : 'Next'}
-          {from
-            && to
-            && ` (${ parseTimeToString( from ) } - ${ parseTimeToString( to ) })`}
-          :
-        </div>
-        <div class="tt-td">
-          {typeof id === 'string'
-            ? <a
-              href={`/course/view.php?id=${ id }`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {content}
-            </a>
-            : content ?? 'Free lesson'
-          }
-        </div>
-      </div>
-
+  render(
+    <SettingsPage />,
+    root
   );
-};
-
-const parseTimeToString = int => {
-  if ( Number.isNaN( int ) ) {
-    return false;
-  }
-
-  const minutes = +int % 60;
-  const hours = Math.floor( +int / 60 );
-
-  return `${ hours.toString().padStart(
-    2,
-    '0'
-  ) }:${ minutes
-    .toString()
-    .padStart(
-      2,
-      '0'
-    ) }`;
-};
-
-const timeStringIsValid = ( () => {
-  const input = document.createElement( 'input' );
-
-  input.type = 'time';
-
-  return raw => {
-    const string = `${ raw }`.trim();
-
-    if ( !( /^\d{2}:\d{2}$/ ).test( string ) ) {
-      return false;
-    }
-
-    input.value = string;
-    return input.value === string;
-  };
-} )();
-
-const focusTarget = (
-  target, offset
-) => {
-  if ( target instanceof Element ) {
-    const range = new Range();
-    const sel = getSelection();
-    const start = +( offset ?? +target.textContent.length );
-
-    target.focus();
-    range.setStart(
-      target.childNodes[ 0 ] ?? target,
-      start
-    );
-    range.collapse( true );
-    sel.removeAllRanges();
-    sel.addRange( range );
-  }
 };
 
 const functionToRun = ( /^\/timetable\/v5/iu ).test( location.pathname )

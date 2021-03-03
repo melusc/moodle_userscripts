@@ -20,40 +20,259 @@ const ERROR_MSG = {
   ) => `Error ${ status }: ${ statusText }`,
 };
 
-export const setupSettingsPage = () => {
-  if ( location.protocol !== 'https:' ) {
-    location.protocol = 'https:';
-  }
+const SvgX = ( { class: _class, ...properties } ) => <svg
+  fill="none"
+  stroke="currentColor"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  stroke-width="2"
+  class={`svg-icon svg-icon-x${ _class
+    ? ` ${ _class }`
+    : '' }`}
+  viewBox="0 0 24 24"
+  {...properties}
+>
+  <path d="M24 0L0 24M0 0l24 24" />
+</svg>;
+const Icon = ( {
+  iconVals: { hasIcon, isXML, rawXML, dataURI },
+  delIcon,
+  renderX = false,
+} ) => hasIcon
+    && <>
+      {isXML
+        ? <span class="icon">{html( [ rawXML ] )}</span>
+        : <img src={dataURI} class="icon" />
+      }
+      {renderX && <SvgX class="svg-del-icon" onClick={delIcon} />}
+    </>;
+const SidebarRow = ( { item, rowClick, delIcon } ) => {
+  const { courseName, iconVals } = item;
 
-  const { body, head } = document;
-  while ( body.lastChild ) {
-    body.lastChild.remove();
-  }
-
-  while ( head.lastChild ) {
-    head.lastChild.remove();
-  }
-
-  const icon = document.createElement( 'link' );
-  icon.rel = 'shortcut icon';
-  icon.href = '/theme/image.php/classic/theme/1606210545/favicon';
-  head.append( icon );
-
-  document.title = 'Custom Icons Setup';
-
-  history.replaceState(
-    {},
-    '',
-    '/customIconsPreact'
-  );
-
-  GM_addStyle( style );
-
-  render(
-    <SettingsPage />,
-    body
+  return (
+    <div
+      class="row"
+      onClick={event_ => {
+        rowClick(
+          event_,
+          item
+        );
+      }}
+    >
+      <Icon
+        renderX
+        iconVals={iconVals}
+        delIcon={event_ => {
+          delIcon(
+            event_,
+            item
+          );
+        }}
+      />
+      <span>{courseName}</span>
+    </div>
   );
 };
+
+const Sidebar = ( { courses, ...rest } ) => <div class="outer-sidebar">
+  <div class="sidebar">
+    {courses.length === 0 && <div>Loading courses....</div>}
+    {courses.map( item => <SidebarRow key={item.courseId} item={item} {...rest} /> )}
+  </div>
+</div>;
+const getIcon = id => {
+  const courseUUID = GM_getValue( 'pointers' )[ id ];
+  if ( courseUUID ) {
+    const value = GM_getValue( 'values' )[ courseUUID ];
+
+    if ( value ) {
+      const returnObject = { isXML: 'rawXML' in value, hasIcon: true };
+      if ( returnObject.isXML ) {
+        returnObject.rawXML = value.rawXML;
+      }
+      else {
+        const { mediaType, rawByteString } = value;
+
+        returnObject.dataURI = `data:${ mediaType };base64,${ rawByteString }`;
+      }
+
+      return returnObject;
+    }
+  }
+
+  return { hasIcon: false };
+};
+
+const Main = ( {
+  selected: { iconVals, courseName, isSelected, courseId },
+  courses,
+  handleInput,
+  currentInput,
+  currentInputVal,
+  handleSave,
+  loggedOut,
+  loggedOutCallback,
+  formRef,
+  reset,
+} ) => {
+  const fileReference = useRef( null );
+  const fileButtonClick = () => {
+    fileReference.current?.click();
+  };
+
+  const resetFile = event_ => {
+    event_.preventDefault();
+    event_.stopImmediatePropagation();
+    reset();
+  };
+
+  const usernameReference = useRef( null );
+  const passwordReference = useRef( null );
+
+  const loggedOutCallbackValidator = () => {
+    const username = usernameReference.current?.value?.trim();
+    const password = passwordReference.current?.value;
+
+    loggedOutCallback( { username, password } );
+  };
+
+  return (
+    <div class="outer-main">
+      <div class="main">
+        {loggedOut
+          ? <div class="replace-flex-input">
+            <h2>Login</h2>
+            <input placeholder="Username" ref={usernameReference} />
+            <input
+              placeholder="Password"
+              ref={passwordReference}
+              type="password"
+            />
+            <button
+              class="btn-save"
+              type="button"
+              onClick={loggedOutCallbackValidator}
+            >
+              Login
+            </button>
+          </div>
+          : <form ref={formRef}>
+            <h2>Change or add an icon</h2>
+            <div>
+              {isSelected
+                ? <>
+                  <Icon iconVals={iconVals} />
+                  <span>{courseName}</span>
+                </>
+                : 'Select course to the left'
+              }
+            </div>
+            <h3>Upload image from URL</h3>
+            <input
+              type="url"
+              placeholder="Image url"
+              disabled={currentInput && currentInput !== URL_CONSTANT}
+              onInput={event_ => {
+                handleInput(
+                  event_,
+                  URL_CONSTANT
+                );
+              }}
+            />
+            <h3>Upload image from file</h3>
+            <input
+              type="file"
+              hidden
+              ref={fileReference}
+              onInput={event_ => {
+                handleInput(
+                  event_,
+                  FILE_CONSTANT
+                );
+              }}
+            />
+            <button
+              type="button"
+              onClick={fileButtonClick}
+              disabled={currentInput && currentInput !== FILE_CONSTANT}
+            >
+              {currentInput === FILE_CONSTANT
+                ? <>
+                  {currentInputVal.name}
+                  <SvgX class="svg-clear" onClick={resetFile} />
+                </>
+                : 'Upload file'
+              }
+            </button>
+            <h3>Copy image from other course</h3>
+            <select
+              disabled={currentInput && currentInput !== COPY_CONSTANT}
+              onInput={event_ => {
+                handleInput(
+                  event_,
+                  COPY_CONSTANT
+                );
+              }}
+            >
+              <option selected value="null">
+                Select course to copy icon from
+              </option>
+              {courses.map( ( {
+                courseName,
+                courseId: currentCourseId,
+                iconVals: { hasIcon },
+              } ) => hasIcon
+                  && ( !isSelected || courseId !== currentCourseId )
+                    && <option value={currentCourseId}>{courseName}</option> )}
+            </select>
+            <button class="btn-save" type="button" onClick={handleSave}>
+              Save
+            </button>
+          </form>
+        }
+      </div>
+    </div>
+  );
+};
+
+const Notification = ( { handleClick, notificationString } ) => {
+  useEffect(
+    () => {
+      scroll( {
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+      } );
+    },
+    []
+  );
+
+  return (
+    <div
+      class="outer-notification"
+      onClick={event_ => {
+        handleClick(
+          event_,
+          true
+        );
+      }}
+    >
+      <div class="inner-notification">
+        <SvgX class="svg-close" onClick={handleClick} />
+        <div class="notification-string">{notificationString}</div>
+      </div>
+    </div>
+  );
+};
+
+/* https://stackoverflow.com/a/2117523 */
+const uuidv4 = () => ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace(
+  /[018]/g,
+  c => (
+    c
+      ^ ( crypto.getRandomValues( new Uint8Array( 1 ) )[ 0 ] & ( 15 >> ( c / 4 ) ) )
+  ).toString( 16 )
+);
 
 class SettingsPage extends Component {
   state = {
@@ -101,19 +320,21 @@ class SettingsPage extends Component {
       />
     </div>
     {notificationString
-          && <Notification
-            handleClick={this.closeNotification}
-            notificationString={notificationString}
-          />
+        && <Notification
+          handleClick={this.closeNotification}
+          notificationString={notificationString}
+        />
     }
   </>
-    ;
+  ;
 
   closeNotification = (
     event_, testForClass
   ) => {
     event_.stopImmediatePropagation();
-    if ( !( testForClass && event_.target.classList.contains( 'outer-notification' ) ) ) {
+    if (
+      !( testForClass && event_.target.classList.contains( 'outer-notification' ) )
+    ) {
       this.setState( { notificationString: undefined } );
     }
   };
@@ -287,7 +508,9 @@ class SettingsPage extends Component {
 
       fr.addEventListener(
         'error',
-        () => { this.setState( { notificationString: ERROR_MSG.error } ); }
+        () => {
+          this.setState( { notificationString: ERROR_MSG.error } );
+        }
       );
       fr.addEventListener(
         'load',
@@ -362,250 +585,37 @@ class SettingsPage extends Component {
   };
 }
 
-const SvgX = ( { class: _class, ...properties } ) => <svg
-  fill="none"
-  stroke="currentColor"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  stroke-width="2"
-  class={`svg-icon svg-icon-x${ _class
-    ? ` ${ _class }`
-    : '' }`}
-  viewBox="0 0 24 24"
-  {...properties}
->
-  <path d="M24 0L0 24M0 0l24 24" />
-</svg>;
-const Sidebar = ( { courses, ...rest } ) => <div class="outer-sidebar">
-  <div class="sidebar">
-    {courses.length === 0 && <div>Loading courses....</div>}
-    {courses.map( item => <SidebarRow key={item.courseId} item={item} {...rest} /> )}
-  </div>
-</div>;
-const SidebarRow = ( { item, rowClick, delIcon } ) => {
-  const { courseName, iconVals } = item;
-
-  return (
-    <div
-      class="row"
-      onClick={event_ => {
-        rowClick(
-          event_,
-          item
-        );
-      }}
-    >
-      <Icon
-        renderX
-        iconVals={iconVals}
-        delIcon={event_ => {
-          delIcon(
-            event_,
-            item
-          );
-        }}
-      />
-      <span>{courseName}</span>
-    </div>
-  );
-};
-
-const Icon = ( {
-  iconVals: { hasIcon, isXML, rawXML, dataURI },
-  delIcon,
-  renderX = false,
-} ) => hasIcon
-    && <>
-      {isXML
-        ? <span class="icon">{html( [ rawXML ] )}</span>
-        : <img src={dataURI} class="icon" />
-      }
-      {renderX && <SvgX class="svg-del-icon" onClick={delIcon} />}
-    </>;
-
-const getIcon = id => {
-  const courseUUID = GM_getValue( 'pointers' )[ id ];
-  if ( courseUUID ) {
-    const value = GM_getValue( 'values' )[ courseUUID ];
-
-    if ( value ) {
-      const returnObject = { isXML: 'rawXML' in value, hasIcon: true };
-      if ( returnObject.isXML ) {
-        returnObject.rawXML = value.rawXML;
-      }
-      else {
-        const { mediaType, rawByteString } = value;
-
-        returnObject.dataURI = `data:${ mediaType };base64,${ rawByteString }`;
-      }
-
-      return returnObject;
-    }
+export const setupSettingsPage = () => {
+  if ( location.protocol !== 'https:' ) {
+    location.protocol = 'https:';
   }
 
-  return { hasIcon: false };
-};
+  const { body, head } = document;
+  while ( body.lastChild ) {
+    body.lastChild.remove();
+  }
 
-const Main = ( {
-  selected: { iconVals, courseName, isSelected, courseId },
-  courses,
-  handleInput,
-  currentInput,
-  currentInputVal,
-  handleSave,
-  loggedOut,
-  loggedOutCallback,
-  formRef,
-  reset,
-} ) => {
-  const fileReference = useRef( null );
-  const fileButtonClick = () => {
-    fileReference.current?.click();
-  };
+  while ( head.lastChild ) {
+    head.lastChild.remove();
+  }
 
-  const resetFile = event_ => {
-    event_.preventDefault();
-    event_.stopImmediatePropagation();
-    reset();
-  };
+  const icon = document.createElement( 'link' );
+  icon.rel = 'shortcut icon';
+  icon.href = '/theme/image.php/classic/theme/1606210545/favicon';
+  head.append( icon );
 
-  const usernameReference = useRef( null );
-  const passwordReference = useRef( null );
+  document.title = 'Custom Icons Setup';
 
-  const loggedOutCallbackValidator = () => {
-    const username = usernameReference.current?.value?.trim();
-    const password = passwordReference.current?.value;
-
-    loggedOutCallback( { username, password } );
-  };
-
-  return (
-    <div class="outer-main">
-      <div class="main">
-        {loggedOut
-          ? <div class="replace-flex-input">
-            <h2>Login</h2>
-            <input placeholder="Username" ref={usernameReference} />
-            <input placeholder="Password" ref={passwordReference} type="password" />
-            <button class="btn-save" type="button" onClick={loggedOutCallbackValidator}>
-              Login
-            </button>
-          </div>
-
-          : <form ref={formRef}>
-            <h2>Change or add an icon</h2>
-            <div>
-              {isSelected
-                ? <>
-                  <Icon iconVals={iconVals} />
-                  <span>{courseName}</span>
-                </>
-                : 'Select course to the left'
-              }
-            </div>
-            <h3>Upload image from URL</h3>
-            <input
-              type="url"
-              placeholder="Image url"
-              disabled={currentInput && currentInput !== URL_CONSTANT}
-              onInput={event_ => {
-                handleInput(
-                  event_,
-                  URL_CONSTANT
-                );
-              }}
-            />
-            <h3>Upload image from file</h3>
-            <input
-              type="file"
-              hidden
-              ref={fileReference}
-              onInput={event_ => {
-                handleInput(
-                  event_,
-                  FILE_CONSTANT
-                );
-              }}
-            />
-            <button
-              type="button"
-              onClick={fileButtonClick}
-              disabled={currentInput && currentInput !== FILE_CONSTANT}
-            >
-              {currentInput === FILE_CONSTANT
-                ? <>
-                  {currentInputVal.name}
-                  <SvgX class="svg-clear" onClick={resetFile} />
-                </>
-                : 'Upload file'
-              }
-            </button>
-            <h3>Copy image from other course</h3>
-            <select
-              disabled={currentInput && currentInput !== COPY_CONSTANT}
-              onInput={event_ => {
-                handleInput(
-                  event_,
-                  COPY_CONSTANT
-                );
-              }}
-            >
-              <option selected value="null">
-                Select course to copy icon from
-              </option>
-              {courses.map( ( {
-                courseName,
-                courseId: currentCourseId,
-                iconVals: { hasIcon },
-              } ) => hasIcon
-                  && ( !isSelected || courseId !== currentCourseId )
-                    && <option value={currentCourseId}>{courseName}</option> )}
-            </select>
-            <button class="btn-save" type="button" onClick={handleSave}>
-              Save
-            </button>
-          </form>
-        }
-      </div>
-    </div>
-  );
-};
-
-const Notification = ( { handleClick, notificationString } ) => {
-  useEffect(
-    () => {
-      scroll( {
-        top: 0,
-        left: 0,
-        behavior: 'smooth',
-      } );
-    },
-    []
+  history.replaceState(
+    {},
+    '',
+    '/customIconsPreact'
   );
 
-  return (
-    <div
-      class="outer-notification"
-      onClick={event_ => {
-        handleClick(
-          event_,
-          true
-        );
-      }}
-    >
-      <div class="inner-notification">
-        <SvgX class="svg-close" onClick={handleClick} />
-        <div class="notification-string">{notificationString}</div>
-      </div>
-    </div>
+  GM_addStyle( style );
+
+  render(
+    <SettingsPage />,
+    body
   );
 };
-
-/* https://stackoverflow.com/a/2117523 */
-const uuidv4 = () => ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace(
-  /[018]/g,
-  c => (
-    c
-      ^ ( crypto.getRandomValues( new Uint8Array( 1 ) )[ 0 ] & ( 15 >> ( c / 4 ) ) )
-  ).toString( 16 )
-);

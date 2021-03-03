@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   2021.02.23a
+// @version   2021.03.03a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Open%20folders%20inline/open-folders-inline.user.js
@@ -22,13 +22,177 @@ import style from './style.scss';
 
 GM_addStyle( style );
 
-const init = () => {
-  document
-    .querySelector( 'div.course-content > ul.topics' )
-    ?.addEventListener(
-      'click',
-      handleClick
-    );
+const getPageContent = noCache => login( noCache ).then( wstoken => {
+  const courseId = new URLSearchParams( location.search ).get( 'id' );
+  const requestParameters = new URLSearchParams( {
+    courseid: courseId,
+    'options[0][name]': 'includestealthmodules',
+    'options[0][value]': 1,
+    wstoken,
+  } );
+
+  return fetch(
+    '/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_course_get_contents',
+    {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: requestParameters.toString(),
+    }
+  )
+    .then( response => response.json() )
+    .then( responseJSON => {
+      if ( 'exception' in responseJSON ) {
+        logout();
+        return getPageContent( true );
+      }
+
+      setLastValidatedToken();
+      return responseJSON;
+    } );
+} );
+
+const generateImageURL = ( () => {
+  const imageURLs = {
+    'application/pdf': 'pdf-256',
+    'application/zip': 'archive-256',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+      'document-256',
+    'application/msword': 'document-256',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+      'spreadsheet-256',
+    'application/vnd.ms-excel': 'spreadsheet-256',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+      'powerpoint-256',
+    'application/vnd.ms-powerpoint': 'powerpoint-256',
+
+    'text/plain': 'sourcecode-256',
+
+    'audio/mp3': 'mp3-256',
+    'audio/mp4': 'mp3-256',
+    'video/quicktime': 'quicktime-256',
+    'video/mp4': 'mpeg-256',
+
+    /* I'm copying moodle by using these
+       urls for the various mimetypes,
+       I found all these in moodle and
+       got them from there */
+  };
+
+  return (
+    mimetype, defaultValue
+  ) => mimetype in imageURLs
+    ? `/theme/image.php/classic/core/1601902087/f/${ imageURLs[ mimetype ] }`
+    : defaultValue;
+} )();
+
+const Folder = ( { contents, base, directoryDepth = 0 } ) => {
+  const filePaths = {
+    '/': [],
+  };
+
+  for ( const item of contents ) {
+    const path = item.filepath[ directoryDepth ] ?? '/';
+
+    const filePathArray = filePaths[ path ] ?? ( filePaths[ path ] = [] );
+
+    filePathArray.push( item );
+  }
+
+  const root = filePaths[ '/' ].sort( (
+    a, b
+  ) => {
+    const aL = a.filename.toLowerCase();
+    const bL = b.filename.toLowerCase();
+
+    return aL < bL
+      ? -1
+      : aL > bL
+        ? 1
+        : 0;
+  } );
+  delete filePaths[ '/' ];
+
+  const entries = Object.entries( filePaths ).sort( (
+    a, b
+  ) => {
+    const aL = a[ 0 ].toLowerCase();
+    const bL = b[ 0 ].toLowerCase();
+
+    return aL < bL
+      ? -1
+      : aL > bL
+        ? 1
+        : 0;
+  } );
+
+  return (
+    <>
+      {typeof base === 'string'
+        && <div class="fp-filename-icon folders-inline-icon">
+          <div class="folders-inline-icon-div">
+            <i class="icon fa fa-caret-right fa-fw navicon folders-inline-caret" />
+            <img
+              class="iconlarge activityicon"
+              alt={base}
+              role="presentation"
+              title={base}
+              aria-hidden="true"
+              src="/theme/image.php/classic/core/1601902087/f/folder-128"
+            />
+          </div>
+          <span class="fp-filename">{base}</span>
+        </div>
+      }
+
+      <ul style={{ listStyle: 'none' }} hidden={!!base}>
+        {entries.map( ( [ key, value ] ) => <li key={key}>
+          <Folder
+            contents={value}
+            base={key}
+            directoryDepth={directoryDepth + 1}
+          />
+        </li> )}
+        {root.map( ( { fileurl, mimetype, filename } ) => {
+          const fileURL = new URL( fileurl );
+          fileURL.pathname = fileURL.pathname.replace(
+            /^\/webservice/,
+            ''
+          );
+
+          const imgPath = new URL( fileURL );
+
+          if ( !mimetype.startsWith( 'image' ) ) {
+            imgPath.searchParams.set(
+              'preview',
+              1
+            );
+          }
+
+          return (
+            <li key={filename}>
+              <span class="fp-filename-icon">
+                <a href={fileURL.href}>
+                  <span class="fp-icon">
+                    <img
+                      alt={filename}
+                      title={filename}
+                      src={generateImageURL(
+                        mimetype,
+                        imgPath.href
+                      )}
+                    />
+                  </span>
+                  <span class="fp-filename">{filename}</span>
+                </a>
+              </span>
+            </li>
+          );
+        } )}
+      </ul>
+    </>
+  );
 };
 
 const handleClick = ( () => {
@@ -131,179 +295,14 @@ const handleClick = ( () => {
   };
 } )();
 
-const generateImageURL = ( () => {
-  const imageURLs = {
-    'application/pdf': 'pdf-256',
-    'application/zip': 'archive-256',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-      'document-256',
-    'application/msword': 'document-256',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-      'spreadsheet-256',
-    'application/vnd.ms-excel': 'spreadsheet-256',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-      'powerpoint-256',
-    'application/vnd.ms-powerpoint': 'powerpoint-256',
-
-    'text/plain': 'sourcecode-256',
-
-    'audio/mp3': 'mp3-256',
-    'audio/mp4': 'mp3-256',
-    'video/quicktime': 'quicktime-256',
-    'video/mp4': 'mpeg-256',
-
-    /* I'm copying moodle by using these
-       urls for the various mimetypes,
-       I found all these in moodle and
-       got them from there */
-  };
-
-  return (
-    mimetype, defaultValue
-  ) => mimetype in imageURLs
-    ? `/theme/image.php/classic/core/1601902087/f/${ imageURLs[ mimetype ] }`
-    : defaultValue;
-} )();
-
-const Folder = ( { contents, base, directoryDepth = 0 } ) => {
-  const filePaths = {
-    '/': [],
-  };
-
-  for ( const item of contents ) {
-    const path = item.filepath[ directoryDepth ] ?? '/';
-
-    const filePathArray = filePaths[ path ] ?? ( filePaths[ path ] = [] );
-
-    filePathArray.push( item );
-  }
-
-  const root = filePaths[ '/' ].sort( (
-    a, b
-  ) => {
-    const aL = a.filename.toLowerCase();
-    const bL = b.filename.toLowerCase();
-
-    return aL < bL
-      ? -1
-      : aL > bL
-        ? 1
-        : 0;
-  } );
-  delete filePaths[ '/' ];
-
-  const entries = Object.entries( filePaths ).sort( (
-    a, b
-  ) => {
-    const aL = a[ 0 ].toLowerCase();
-    const bL = b[ 0 ].toLowerCase();
-
-    return aL < bL
-      ? -1
-      : aL > bL
-        ? 1
-        : 0;
-  } );
-
-  return (
-    <>
-      {
-        typeof base === 'string'
-        && <div class="fp-filename-icon folders-inline-icon">
-          <div class="folders-inline-icon-div">
-            <i class="icon fa fa-caret-right fa-fw navicon folders-inline-caret" />
-            <img
-              class="iconlarge activityicon"
-              alt={base}
-              role="presentation"
-              title={base}
-              aria-hidden="true"
-              src="/theme/image.php/classic/core/1601902087/f/folder-128"
-            />
-          </div>
-          <span class="fp-filename">{base}</span>
-        </div>
-      }
-
-      <ul style={{ listStyle: 'none' }} hidden={!!base}>
-        {entries.map( ( [ key, value ] ) => <li key={key}>
-          <Folder
-            contents={value}
-            base={key}
-            directoryDepth={directoryDepth + 1}
-          />
-        </li> )}
-        {root.map( ( { fileurl, mimetype, filename } ) => {
-          const fileURL = new URL( fileurl );
-          fileURL.pathname = fileURL.pathname.replace(
-            /^\/webservice/,
-            ''
-          );
-
-          const imgPath = new URL( fileURL );
-
-          if ( !mimetype.startsWith( 'image' ) ) {
-            imgPath.searchParams.set(
-              'preview',
-              1
-            );
-          }
-
-          return (
-            <li key={filename}>
-              <span class="fp-filename-icon">
-                <a href={fileURL.href}>
-                  <span class="fp-icon">
-                    <img
-                      alt={filename}
-                      title={filename}
-                      src={generateImageURL(
-                        mimetype,
-                        imgPath.href
-                      )}
-                    />
-                  </span>
-                  <span class="fp-filename">{filename}</span>
-                </a>
-              </span>
-            </li>
-          );
-        } )}
-      </ul>
-    </>
-  );
+const init = () => {
+  document
+    .querySelector( 'div.course-content > ul.topics' )
+    ?.addEventListener(
+      'click',
+      handleClick
+    );
 };
-
-const getPageContent = noCache => login( noCache ).then( wstoken => {
-  const courseId = new URLSearchParams( location.search ).get( 'id' );
-  const requestParameters = new URLSearchParams( {
-    courseid: courseId,
-    'options[0][name]': 'includestealthmodules',
-    'options[0][value]': 1,
-    wstoken,
-  } );
-
-  return fetch(
-    '/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_course_get_contents',
-    {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: requestParameters.toString(),
-    }
-  )
-    .then( response => response.json() )
-    .then( responseJSON => {
-      if ( 'exception' in responseJSON ) {
-        logout();
-        return getPageContent( true );
-      }
-
-      setLastValidatedToken();
-      return responseJSON;
-    } );
-} );
 
 document.readyState === 'complete'
   ? init()

@@ -1,3 +1,9 @@
+const swap = (
+  array, index1, index2
+) => {
+  [ array[ index1 ], array[ index2 ] ] = [ array[ index2 ], array[ index1 ] ];
+};
+
 const sortingUsingPivot = (
   array, comparisonFunction, left, right
 ) => {
@@ -34,12 +40,6 @@ const sortingUsingPivot = (
   return l;
 };
 
-const swap = (
-  array, index1, index2
-) => {
-  [ array[ index1 ], array[ index2 ] ] = [ array[ index2 ], array[ index1 ] ];
-};
-
 /**
  *
  * @param {array} array The array to sort
@@ -50,7 +50,10 @@ const swap = (
  * @returns {array} The sorted array
  */
 export const quickSort = (
-  array, comparisonFunction, left = 0, right = array.length - 1
+  array,
+  comparisonFunction,
+  left = 0,
+  right = array.length - 1
 ) => {
   if ( array.length > 1 ) {
     const index = sortingUsingPivot(
