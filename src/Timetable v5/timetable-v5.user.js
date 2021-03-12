@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.03.03a
+// @version   2021.03.12a
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Timetable%20v5/timetable-v5.user.js
 // @include   *://moodle.ksasz.ch/
