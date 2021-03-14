@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.03.12a
+// @version   2021.03.14a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Unconfirmed%20Marks/unconfirmed-marks.user.js
+// @updateURL https://git.io/JqltZ
 // @grant     GM_xmlhttpRequest
 // @grant     GM.setValue
 // @grant     GM.getValue

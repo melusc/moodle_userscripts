@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   2021.03.12a
+// @version   2021.03.14a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/main/dist/Open%20folders%20inline/open-folders-inline.user.js
+// @updateURL https://git.io/Jqlt0
 // @grant     GM_setValue
 // @grant     GM_getValue
 // @grant     GM_deleteValue
