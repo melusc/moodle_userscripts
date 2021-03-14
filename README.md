@@ -6,19 +6,19 @@ To run these you need to have tampermonkey, greasemonkey or similar installed.
 
 ## Quick Installation
 
-[Clean Moodle](https://github.com/melusc/moodle_userscripts/raw/master/dist/Clean%20Moodle/Clean%20Moodle.user.js)
+[Clean Moodle](https://git.io/JqltW)
 
-[Custom Icons](https://github.com/melusc/moodle_userscripts/raw/master/dist/Custom%20Icons/Custom%20Icons.user.js)
+[Custom Icons](https://git.io/Jqlt8)
 
-[Timetable in Moodle](https://github.com/melusc/moodle_userscripts/raw/master/dist/Timetable%20v5/Timetable%20v5.user.js)
+[Timetable in Moodle](https://git.io/Jqlt4)
 
-[Explore Profiles](https://github.com/melusc/moodle_userscripts/raw/master/dist/Explore%20Profiles/Explore%20Profiles.user.js)
+[Explore Profiles](https://git.io/JqltR)
 
-[Open folders inline](https://github.com/melusc/moodle_userscripts/raw/master/dist/Open%20folders%20inline/Open%20folders%20inline%20preact.user.js)
+[Open folders inline](https://git.io/Jqlt0)
 
-[Unconfirmed Marks](https://github.com/melusc/moodle_userscripts/raw/master/dist/Unconfirmed%20Marks/Unconfirmed%20Marks%20Preact.user.js)
+[Unconfirmed Marks](https://git.io/JqltZ)
 
-[Download Course's Content](https://github.com/melusc/moodle_userscripts/raw/master/dist/Download%20Courses%20Content/Moodle%20Download%20Courses%20Content.user.js)
+[Download Course's Content](https://git.io/JqltE)
 
 ## About
 
