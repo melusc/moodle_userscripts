@@ -9,7 +9,7 @@
     "file-saver": "^2.0.5",
     "htm": "^3.0.4",
     "jszip": "^3.6.0",
-    "preact": "^10.5.12",
+    "preact": "^10.5.13",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5"
   },
@@ -44,7 +44,7 @@
     "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^8.0.18",
     "typescript": "^4.2.3",
-    "webpack": "^5.25.0",
+    "webpack": "^5.25.1",
     "webpack-cli": "^4.5.0",
     "webpack-glob-entry": "^2.1.1",
     "xo": "^0.38.2"
