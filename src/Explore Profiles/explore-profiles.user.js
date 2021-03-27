@@ -87,7 +87,7 @@ class Notification extends Component {
           </div>
         </div>
       </div>
-    ;
+  ;
 }
 
 class Header extends Component {
@@ -658,7 +658,7 @@ class Sidebar extends Component {
           </li>
         </ul>
       </>
-    ;
+  ;
 }
 
 const clearNode = node => {

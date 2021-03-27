@@ -17,11 +17,16 @@ const babelConfig = {
           pragmaFrag: 'Fragment',
         },
       ],
+      [ 'babel-plugin-replace-identifiers', {
+        // Tampermonkey's Proxy (which also a builtin) doesn't have Proxy#revocable for some reason
+        // It's a bit hacky, but I don't know why Proxy doesn't have revocable because unsafeWindow.Proxy does
+        Proxy: 'unsafeWindow.Proxy',
+      } ],
     ],
   },
 };
 
-module.exports = {
+module.exports = environment => ( {
   resolve: {
     alias: {
       react: 'preact/compat',
@@ -65,12 +70,12 @@ module.exports = {
   },
   optimization: {
     usedExports: true,
-    minimize: true,
+    minimize: 'PROD' in environment,
     minimizer: [
       new TerserPlugin( {
         terserOptions: {
           format: {
-            comments: /^\s*==\/?UserScript==|^\s*@(?!see)[\w-]/,
+            comments: /^\s*==\/?UserScript==|^\s*@(?!see|ts-ignore)[\w-]/,
           },
           compress: {
             passes: 3,
@@ -85,12 +90,8 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        include: [ path.resolve(
-          __dirname,
-          'src'
-        ) ],
-        exclude: /node_modules/,
         use: [
+          babelConfig,
           {
             loader: 'ts-loader',
           },
@@ -98,11 +99,6 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        include: [ path.resolve(
-          __dirname,
-          'src'
-        ) ],
-        exclude: /node_modules/,
         use: [ babelConfig ],
       },
       {
@@ -117,4 +113,4 @@ module.exports = {
       },
     ],
   },
-};
+} );

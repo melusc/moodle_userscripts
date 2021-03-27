@@ -42,7 +42,7 @@ class FrontPageLogin extends Component {
           </button>
         </div>
       </div>
-    ;
+  ;
 
   handleClick = () => {
     const username = this.inputs.username.current.value.trim();

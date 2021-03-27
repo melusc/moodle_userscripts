@@ -116,13 +116,14 @@
     ],
     "grouped-accessor-pairs": "error",
     "implicit-arrow-linebreak": ["error", "beside"],
-    "indent": [
+    "@typescript-eslint/indent": [
       "error",
       2,
       {
         "SwitchCase": 1
       }
     ],
+    "indent": "off",
     "key-spacing": "error",
     "keyword-spacing": "error",
     "linebreak-style": ["error", "windows"],
@@ -196,7 +197,6 @@
     "no-new-object": "error",
     "no-new-wrappers": "error",
     "no-octal-escape": "error",
-    "no-param-reassign": "error",
     "no-promise-executor-return": "error",
     "no-proto": "error",
     "no-prototype-builtins": 0,
