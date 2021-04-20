@@ -369,17 +369,29 @@ class SettingsPage extends Component {
     this.setState( () => {
       const inputVals = { current: false };
 
-      if ( type === URL_CONSTANT ) {
-        inputVals.val = value;
-        inputVals.current = value.trim() !== '' && URL_CONSTANT;
-      }
-      else if ( type === COPY_CONSTANT ) {
-        inputVals.val = value;
-        inputVals.current = value !== 'null' && COPY_CONSTANT;
-      }
-      else if ( type === FILE_CONSTANT ) {
-        inputVals.val = files[ 0 ];
-        inputVals.current = files?.length !== 0 && FILE_CONSTANT;
+      switch ( type ) {
+        case URL_CONSTANT: {
+          inputVals.val = value;
+          inputVals.current = value.trim() !== '' && URL_CONSTANT;
+
+          break;
+        }
+
+        case COPY_CONSTANT: {
+          inputVals.val = value;
+          inputVals.current = value !== 'null' && COPY_CONSTANT;
+
+          break;
+        }
+
+        case FILE_CONSTANT: {
+          inputVals.val = files[ 0 ];
+          inputVals.current = files?.length !== 0 && FILE_CONSTANT;
+
+          break;
+        }
+
+        // Skip default
       }
 
       if ( !inputVals.current ) {

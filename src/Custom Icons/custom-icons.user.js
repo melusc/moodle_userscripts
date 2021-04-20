@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.03.15a
+// @version   2021.04.20a
 // @author    lusc
 // @updateURL https://git.io/Jqlt8
 // @include   *://moodle.ksasz.ch/*

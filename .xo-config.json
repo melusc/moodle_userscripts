@@ -40,6 +40,12 @@
       }
     ],
     "computed-property-spacing": ["error", "always"],
+    "default-case": [
+      "error",
+      {
+        "commentPattern": "^\\s?(s|S)kip\\sdefault"
+      }
+    ],
     "indent": [
       "error",
       2,
