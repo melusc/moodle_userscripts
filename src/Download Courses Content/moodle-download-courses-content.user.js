@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.04.24a
+// @version   2021.04.24b
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JqltE
@@ -12,8 +12,6 @@
 // @run-at    document-start
 // @connect   *
 // ==/UserScript==
-
-import 'preact/devtools';
 
 // This is so webpack doesn't remove the metadata above
 if ( location.protocol !== 'https:' ) {

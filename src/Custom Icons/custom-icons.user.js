@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.04.24a
+// @version   2021.04.24b
 // @author    lusc
 // @updateURL https://git.io/Jqlt8
 // @include   *://moodle.ksasz.ch/*
@@ -14,8 +14,6 @@
 // @run-at    document-start
 // @connect   *
 // ==/UserScript==
-
-import 'preact/devtools';
 
 if ( typeof GM_getValue( 'pointers' ) !== 'object' ) {
   GM_setValue(

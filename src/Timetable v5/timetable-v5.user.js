@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.04.24a
+// @version   2021.04.24b
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -15,8 +15,6 @@
 // @grant     GM_notification
 // @run-at    document-start
 // ==/UserScript==
-
-import 'preact/devtools';
 
 if ( location.protocol !== 'https:' ) {
   location.protocol = 'https:';

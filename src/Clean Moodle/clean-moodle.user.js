@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.04.24a
+// @version   2021.04.24b
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JqltW
@@ -13,7 +13,6 @@
 // @run-at    document-start
 // ==/UserScript==
 
-import 'preact/devtools';
 import { render, h } from 'preact';
 
 import { getCourses } from '../shared/moodle-functions/index.js';
