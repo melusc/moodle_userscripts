@@ -46,6 +46,12 @@
         "commentPattern": "^\\s?(s|S)kip\\sdefault"
       }
     ],
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["preact/devtools"]
+      }
+    ],
     "indent": [
       "error",
       2,
@@ -73,7 +79,6 @@
         "allowTernary": true
       }
     ],
-    "import/no-unassigned-import": ["error", { "allow": ["preact/devtools"] }],
     "no-use-before-define": "error",
     "node/file-extension-in-import": "off",
     "object-curly-spacing": ["error", "always"],
@@ -109,6 +114,7 @@
     "space-in-parens": ["error", "always"],
     "template-curly-spacing": ["error", "always"],
     "unicorn/no-nested-ternary": "off",
-    "unicorn/no-null": "error"
+    "unicorn/no-null": "error",
+    "unicorn/prefer-module": "off"
   }
 }

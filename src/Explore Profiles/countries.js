@@ -1,4 +1,4 @@
-module.exports = {
+const countries = {
   AD: 'Andorra',
   AE: 'United Arab Emirates',
   AF: 'Afghanistan',
@@ -249,3 +249,5 @@ module.exports = {
   ZM: 'Zambia',
   ZW: 'Zimbabwe',
 };
+
+export default countries;
