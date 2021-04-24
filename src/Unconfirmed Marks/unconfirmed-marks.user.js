@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.03.15a
+// @version   2021.04.24a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -14,6 +14,7 @@
 // @connect   www.schul-netz.com
 // ==/UserScript==
 
+import 'preact/devtools';
 import { render, Component, h, createRef } from 'preact';
 import style from './style.scss';
 

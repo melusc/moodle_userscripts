@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.03.15a
+// @version   2021.04.24a
 // @author    lusc
 // @updateURL https://git.io/JqltR
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -15,6 +15,7 @@
   M: false
 */
 
+import 'preact/devtools';
 import dayjs from 'dayjs';
 import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime';
 import DOMPurify from 'dompurify';

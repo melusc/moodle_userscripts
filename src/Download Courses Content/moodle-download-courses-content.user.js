@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.03.15a
+// @version   2021.04.24a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JqltE
@@ -13,7 +13,9 @@
 // @connect   *
 // ==/UserScript==
 
-// this is so webpack doesn't remove the metadata above
+import 'preact/devtools';
+
+// This is so webpack doesn't remove the metadata above
 if ( location.protocol !== 'https:' ) {
   /* This should never happen as moodle itself upgrades to https */
   location.protocol = 'https:';
