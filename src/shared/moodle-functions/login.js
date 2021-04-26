@@ -1,4 +1,4 @@
-import { defaultLoginReturnState, getCredentials, logout, setLastValidatedToken } from './index.js';
+import { defaultLoginReturnState, getCredentials, logout, setLastValidatedToken } from './index.ts';
 
 let cachedToken;
 

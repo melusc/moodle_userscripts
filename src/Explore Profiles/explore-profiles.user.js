@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.04.24b
+// @version 2021.04.26a
 // @author    lusc
 // @updateURL https://git.io/JqltR
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -25,7 +25,7 @@ import {
   login,
   logout,
   getUserId
-} from '../shared/moodle-functions/index.js';
+} from '../shared/moodle-functions/index.ts';
 
 dayjs.extend( dayjsPluginRelativeTime );
 

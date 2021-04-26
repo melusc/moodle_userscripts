@@ -3,7 +3,7 @@ import {
   logout,
   setLastValidatedToken,
   login
-} from './index.js';
+} from './index.ts';
 
 export const getUserId = ( loginReturnState = defaultLoginReturnState ) => login(
   false,

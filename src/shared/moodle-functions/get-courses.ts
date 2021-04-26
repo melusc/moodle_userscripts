@@ -4,14 +4,36 @@ import {
   getUserId,
   logout,
   setLastValidatedToken
-} from './index.js';
+} from './index';
 
-let courses;
+type CoursesObject = Record<string, string>;
+type Courses = Promise<CoursesObject>;
 
-export const getCourses = (
+type GetUserCoursesResponse =
+  | {
+    exception: string;
+    errorcode: string;
+    message: string;
+  }
+  | {
+    responses: Array<
+    | {
+      error: false;
+      data: string;
+    }
+    | {
+      error: true;
+      exception: string;
+    }
+    >;
+  };
+
+let courses: Courses | undefined;
+
+export const getCourses = async (
   noCache = false,
   loginReturnState = defaultLoginReturnState
-) => {
+): Promise<CoursesObject> => {
   if ( noCache || !courses ) {
     courses = Promise.all( [
       login(
@@ -20,7 +42,7 @@ export const getCourses = (
       ),
       getUserId( loginReturnState ),
     ] )
-      .then( ( [ wstoken, userid ] ) => {
+      .then( async ( [ wstoken, userid ] ) => {
         const bodyParameters = new URLSearchParams( {
           'requests[0][function]': 'core_enrol_get_users_courses',
           'requests[0][arguments]': JSON.stringify( {
@@ -39,10 +61,13 @@ export const getCourses = (
               'content-type': 'application/x-www-form-urlencoded',
             },
           }
-        ).then( response => response.json() );
+        ).then( async response => response.json() );
       } )
-      .then( responseJSON => {
-        if ( 'exception' in responseJSON ) {
+      .then( ( responseJSON: GetUserCoursesResponse ) => {
+        if (
+          'exception' in responseJSON
+          || responseJSON.responses[ 0 ].error
+        ) {
           logout();
           return getCourses(
             true,
@@ -50,9 +75,9 @@ export const getCourses = (
           );
         }
 
-        const data = JSON.parse( responseJSON.responses[ 0 ].data );
+        const data: Array<{ id: number; fullname: string }> = JSON.parse( responseJSON.responses[ 0 ].data );
 
-        const coursesObject = {};
+        const coursesObject: CoursesObject = {};
 
         for ( const { id, fullname } of data ) {
           coursesObject[ id ] = fullname;

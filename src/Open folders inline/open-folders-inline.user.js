@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   2021.04.24b
+// @version 2021.04.26a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/Jqlt0
@@ -16,7 +16,7 @@ import {
   login,
   logout,
   setLastValidatedToken
-} from '../shared/moodle-functions/index.js';
+} from '../shared/moodle-functions/index.ts';
 
 import style from './style.scss';
 

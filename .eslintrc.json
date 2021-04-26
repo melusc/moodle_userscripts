@@ -39,6 +39,20 @@
     ],
     "@babel/object-curly-spacing": ["error", "always"],
     "@babel/semi": ["error", "always"],
+    "@typescript-eslint/array-type": [
+      "error",
+      {
+        "default": "generic",
+        "readonly": "generic"
+      }
+    ],
+    "@typescript-eslint/indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
     "accessor-pairs": [
       "error",
       {
@@ -116,13 +130,6 @@
     ],
     "grouped-accessor-pairs": "error",
     "implicit-arrow-linebreak": ["error", "beside"],
-    "@typescript-eslint/indent": [
-      "error",
-      2,
-      {
-        "SwitchCase": 1
-      }
-    ],
     "indent": "off",
     "key-spacing": "error",
     "keyword-spacing": "error",
@@ -266,7 +273,6 @@
       }
     ],
     "radix": "error",
-    "require-await": "error",
     "rest-spread-spacing": ["error", "never"],
     "semi-spacing": ["error"],
     "semi-style": ["error", "last"],

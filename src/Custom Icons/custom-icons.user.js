@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.04.24b
+// @version 2021.04.26a
 // @author    lusc
 // @updateURL https://git.io/Jqlt8
 // @include   *://moodle.ksasz.ch/*
@@ -27,7 +27,7 @@ if ( typeof GM_getValue( 'pointers' ) !== 'object' ) {
 }
 
 import { render, html } from 'htm/preact';
-import { getCourses } from '../shared/moodle-functions/index.js';
+import { getCourses } from '../shared/moodle-functions/index.ts';
 import { setupSettingsPage } from './settingspage.js';
 import { deleteIconFromStorage } from './shared.js';
 

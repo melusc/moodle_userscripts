@@ -1,8 +1,26 @@
 import { render, Component, h, createRef } from 'preact';
-import frontPageCss from './getCredentials.scss';
 
-let frontPageLoginSetState;
-let frontPageDefaultLoginState = {};
+import frontPageCss from './get-credentials.scss';
+
+import type { Component as ComponentInterface } from 'preact/src/index.d';
+
+type Credentials = {
+  username: string;
+  password: string;
+};
+
+type LoginState =
+  | {
+    loggedOut: true;
+    loggedOutCallback: ( argument0: Credentials ) => void;
+  }
+  | {
+    loggedOut: false;
+    loggedOutCallback: undefined;
+  };
+
+let frontPageLoginSetState: ComponentInterface['setState'];
+let frontPageDefaultLoginState: LoginState;
 
 class FrontPageLogin extends Component {
   state = frontPageDefaultLoginState;
@@ -13,7 +31,7 @@ class FrontPageLogin extends Component {
   };
 
   render = (
-    _properties, { loggedOut }
+    _properties: Record<string, unknown>, { loggedOut }: LoginState
   ) => loggedOut
       && <div class="vertical-horizontal-center">
         <div class="card">
@@ -48,10 +66,12 @@ class FrontPageLogin extends Component {
     const username = this.inputs.username.current.value.trim();
     const password = this.inputs.password.current.value;
 
-    this.state.loggedOutCallback( {
-      username,
-      password,
-    } );
+    if ( this.state?.loggedOutCallback ) {
+      this.state.loggedOutCallback( {
+        username,
+        password,
+      } );
+    }
   };
 
   componentDidMount = () => {
@@ -59,7 +79,7 @@ class FrontPageLogin extends Component {
   };
 }
 
-export const defaultLoginReturnState = state => {
+export const defaultLoginReturnState = ( state: LoginState ): void => {
   if ( typeof frontPageLoginSetState === 'function' ) {
     frontPageLoginSetState( state );
   }
@@ -68,7 +88,7 @@ export const defaultLoginReturnState = state => {
     const div = document.createElement( 'div' );
     div.className = 'shared-login-popup';
     document.body.append( div );
-    GM_addStyle( frontPageCss );
+    GM_addStyle( ( frontPageCss as unknown ) as string );
     render(
       <FrontPageLogin />,
       div
@@ -76,8 +96,8 @@ export const defaultLoginReturnState = state => {
   }
 };
 
-export const getCredentials = ( loginReturnState = defaultLoginReturnState ) => new Promise( resolve => {
-  const callback = ( { username, password } ) => {
+export const getCredentials = async ( loginReturnState = defaultLoginReturnState ): Promise<Credentials> => new Promise( resolve => {
+  const callback = ( { username, password }: Credentials ) => {
     if ( username && password ) {
       /* Username and password both cant be empty strings (seems obvious)
        so don't even try logging if either is */
@@ -97,15 +117,15 @@ export const getCredentials = ( loginReturnState = defaultLoginReturnState ) => 
     }
   };
 
-  const username = GM_getValue( 'username' );
-  const password = GM_getValue( 'password' );
+  const username: string | undefined = GM_getValue( 'username' );
+  const password: string | undefined = GM_getValue( 'password' );
   if ( username && password ) {
-    resolve( { username, password } );
+    resolve( { username, password } as Credentials );
   }
   else {
     loginReturnState( {
       loggedOut: true,
       loggedOutCallback: callback,
-    } );
+    } as LoginState );
   }
 } );

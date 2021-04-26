@@ -9,10 +9,18 @@
       "rules": {
         "camelcase": "off"
       }
+    },
+    {
+      "env": ["es2020", "browser", "greasemonkey"],
+      "files": ["**.ts", "**.tsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": ["error"],
+        "no-unused-vars": "off"
+      }
     }
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@babel"],
+  "plugins": ["@babel", "@typescript-eslint"],
   "rules": {
     "@babel/no-invalid-this": "error",
     "@babel/no-unused-expressions": [
@@ -24,6 +32,28 @@
     ],
     "@babel/object-curly-spacing": ["error", "always"],
     "@babel/semi": ["error", "always"],
+    "@typescript-eslint/brace-style": [
+      "error",
+      "stroustrup",
+      {
+        "allowSingleLine": true
+      }
+    ],
+    "@typescript-eslint/comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline"
+      }
+    ],
+    "@typescript-eslint/indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "@typescript-eslint/object-curly-spacing": ["error", "always"],
     "array-bracket-spacing": ["error", "always"],
     "brace-style": [
       "error",
@@ -46,12 +76,8 @@
         "commentPattern": "^\\s?(s|S)kip\\sdefault"
       }
     ],
-    "import/no-unassigned-import": [
-      "error",
-      {
-        "allow": ["preact/devtools"]
-      }
-    ],
+    "import/extensions": "off",
+    "import/no-unassigned-import": "off",
     "indent": [
       "error",
       2,

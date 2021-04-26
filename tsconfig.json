@@ -7,6 +7,11 @@
     "moduleResolution": "node",
     "noImplicitAny": true,
     "outDir": "./dist/",
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules"
+      }
+    ],
     "strictNullChecks": true,
     "target": "ES2020"
   }

@@ -2,7 +2,7 @@ import { render, h, Component, Fragment, createRef } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import { html } from 'htm/preact';
 import style from './style.scss';
-import { getCourses } from '../shared/moodle-functions/index.js';
+import { getCourses } from '../shared/moodle-functions/index.ts';
 import { deleteIconFromStorage } from './shared.js';
 
 const FILE_CONSTANT = 'FILE';

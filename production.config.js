@@ -17,11 +17,14 @@ const babelConfig = {
           pragmaFrag: 'Fragment',
         },
       ],
-      [ 'babel-plugin-replace-identifiers', {
-        // Tampermonkey's Proxy (which also a builtin) doesn't have Proxy#revocable for some reason
-        // It's a bit hacky, but I don't know why Proxy doesn't have revocable because unsafeWindow.Proxy does
-        Proxy: 'unsafeWindow.Proxy',
-      } ],
+      [
+        'babel-plugin-replace-identifiers',
+        {
+          // Tampermonkey's Proxy (which also a builtin) doesn't have Proxy#revocable for some reason
+          // It's a bit hacky, but I don't know why Proxy doesn't have revocable because unsafeWindow.Proxy does
+          Proxy: 'unsafeWindow.Proxy',
+        },
+      ],
     ],
   },
 };
@@ -32,6 +35,7 @@ module.exports = environment => ( {
       react: 'preact/compat',
       'react-dom': 'preact/compat',
     },
+    extensions: [ '.js', '.jsx', '.ts', '.tsx', '.scss', '.css' ],
   },
   mode: 'production',
   entry: Object.assign(
@@ -79,37 +83,30 @@ module.exports = environment => ( {
           },
           compress: {
             passes: 3,
-            pure_funcs: [ '__webpack_require__' ],
           },
         },
-        extractComments: true,
       } ),
     ],
   },
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: [
-          babelConfig,
-          {
-            loader: 'ts-loader',
-          },
-        ],
-      },
-      {
         test: /\.js$/,
         use: [ babelConfig ],
       },
       {
-        test: /\.scss$/,
-        type: 'asset/source',
-        use: [ 'csso-loader', 'sass-loader' ],
+        test: /\.tsx?$/,
+        use: [ 'ts-loader' ],
       },
       {
         test: /\.css$/,
         type: 'asset/source',
         use: [ 'csso-loader' ],
+      },
+      {
+        test: /\.scss$/,
+        type: 'asset/source',
+        use: [ 'csso-loader', 'sass-loader' ],
       },
     ],
   },

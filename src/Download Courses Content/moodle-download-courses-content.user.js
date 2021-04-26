@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.04.24b
+// @version 2021.04.26a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JqltE
@@ -25,7 +25,7 @@ import {
   login,
   logout,
   setLastValidatedToken
-} from '../shared/moodle-functions/index.js';
+} from '../shared/moodle-functions/index.ts';
 
 const padStart = d => `${ d }`.padStart(
   2,
