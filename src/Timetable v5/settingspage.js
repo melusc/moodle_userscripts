@@ -641,18 +641,16 @@ const SettingsPage = ( () => {
       }
     };
 
-    createRow = async () => {
-      await new Promise( resolve => {
-        this.setState(
-          produce( state => {
-            const { tables, activeDay } = state;
+    createRow = () => new Promise( resolve => {
+      this.setState(
+        produce( state => {
+          const { tables, activeDay } = state;
 
-            tables[ activeDay ].push( { key: uniqueId() } );
-          } ),
-          () => resolve()
-        );
-      } );
-    };
+          tables[ activeDay ].push( { key: uniqueId() } );
+        } ),
+        () => resolve()
+      );
+    } );
 
     handleTableInput = event_ => {
       const { target } = event_;
