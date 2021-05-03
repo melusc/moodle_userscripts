@@ -1,6 +1,6 @@
 export { getCredentials, defaultLoginReturnState } from './get-credentials';
-export { logout } from './logout.js';
-export { login } from './login.js';
-export { setLastValidatedToken } from './set-last-validated-token.js';
+export { logout } from './logout';
+export { login } from './login';
+export { setLastValidatedToken } from './set-last-validated-token';
 export { getCourses } from './get-courses';
-export { getUserId } from './get-user-id.js';
+export { getUserId } from './get-user-id';

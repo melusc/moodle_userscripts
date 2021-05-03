@@ -26,14 +26,14 @@ class FrontPageLogin extends Component {
   state = frontPageDefaultLoginState;
 
   inputs = {
-    username: createRef(),
-    password: createRef(),
+    username: createRef<HTMLInputElement>(),
+    password: createRef<HTMLInputElement>(),
   };
 
   render = (
-    _properties: Record<string, unknown>, { loggedOut }: LoginState
-  ) => loggedOut
-      && <div class="vertical-horizontal-center">
+      _properties: Record<string, unknown>, { loggedOut }: LoginState,
+  ) => loggedOut &&
+      <div class="vertical-horizontal-center">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Login</h5>
@@ -63,10 +63,10 @@ class FrontPageLogin extends Component {
   ;
 
   handleClick = () => {
-    const username = this.inputs.username.current.value.trim();
-    const password = this.inputs.password.current.value;
+    const username = this.inputs.username.current?.value.trim();
+    const password = this.inputs.password.current?.value;
 
-    if ( this.state?.loggedOutCallback ) {
+    if ( username && password && this.state?.loggedOutCallback ) {
       this.state.loggedOutCallback( {
         username,
         password,
@@ -90,25 +90,25 @@ export const defaultLoginReturnState = ( state: LoginState ): void => {
     document.body.append( div );
     GM_addStyle( ( frontPageCss as unknown ) as string );
     render(
-      <FrontPageLogin />,
-      div
+        <FrontPageLogin />,
+        div,
     );
   }
 };
 
-export const getCredentials = async ( loginReturnState = defaultLoginReturnState ): Promise<Credentials> => new Promise( resolve => {
+export const getCredentials = async ( loginReturnState = defaultLoginReturnState ): Promise<Credentials> => new Promise( ( resolve ) => {
   const callback = ( { username, password }: Credentials ) => {
     if ( username && password ) {
       /* Username and password both cant be empty strings (seems obvious)
        so don't even try logging if either is */
 
       GM_setValue(
-        'username',
-        username
+          'username',
+          username,
       );
       GM_setValue(
-        'password',
-        password
+          'password',
+          password,
       );
 
       loginReturnState( { loggedOut: false, loggedOutCallback: undefined } );
@@ -117,8 +117,8 @@ export const getCredentials = async ( loginReturnState = defaultLoginReturnState
     }
   };
 
-  const username: string | undefined = GM_getValue( 'username' );
-  const password: string | undefined = GM_getValue( 'password' );
+  const username = GM_getValue<string | undefined>( 'username' );
+  const password = GM_getValue<string | undefined>( 'password' );
   if ( username && password ) {
     resolve( { username, password } as Credentials );
   }

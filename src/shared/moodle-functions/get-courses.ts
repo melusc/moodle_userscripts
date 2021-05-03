@@ -3,7 +3,7 @@ import {
   login,
   getUserId,
   logout,
-  setLastValidatedToken
+  setLastValidatedToken,
 } from './index';
 
 type CoursesObject = Record<string, string>;
@@ -31,62 +31,65 @@ type GetUserCoursesResponse =
 let courses: Courses | undefined;
 
 export const getCourses = async (
-  noCache = false,
-  loginReturnState = defaultLoginReturnState
+    noCache = false,
+    loginReturnState = defaultLoginReturnState,
 ): Promise<CoursesObject> => {
   if ( noCache || !courses ) {
     courses = Promise.all( [
       login(
-        noCache,
-        loginReturnState
+          noCache,
+          loginReturnState,
       ),
       getUserId( loginReturnState ),
     ] )
-      .then( async ( [ wstoken, userid ] ) => {
-        const bodyParameters = new URLSearchParams( {
-          'requests[0][function]': 'core_enrol_get_users_courses',
-          'requests[0][arguments]': JSON.stringify( {
-            userid,
-            returnusercount: false,
-          } ),
-          wstoken,
-        } );
+        .then( async ( [wstoken, userid] ) => {
+          const bodyParameters = new URLSearchParams( {
+            'requests[0][function]': 'core_enrol_get_users_courses',
+            'requests[0][arguments]': JSON.stringify( {
+              userid,
+              returnusercount: false,
+            } ),
+            wstoken,
+          } );
 
-        return fetch(
-          '/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=tool_mobile_call_external_functions',
-          {
-            method: 'POST',
-            body: bodyParameters.toString(),
-            headers: {
-              'content-type': 'application/x-www-form-urlencoded',
-            },
+          return fetch(
+              '/webservice/rest/server.php' +
+            '?moodlewsrestformat=json' +
+            '&wsfunction=tool_mobile_call_external_functions',
+              {
+                method: 'POST',
+                body: bodyParameters.toString(),
+                headers: {
+                  'content-type': 'application/x-www-form-urlencoded',
+                },
+              },
+          ).then( async ( response ) => response.json() );
+        } )
+        .then( ( responseJSON: GetUserCoursesResponse ) => {
+          if ( 'exception' in responseJSON ||
+          responseJSON.responses[ 0 ].error ) {
+            logout();
+            return getCourses(
+                true,
+                loginReturnState,
+            );
           }
-        ).then( async response => response.json() );
-      } )
-      .then( ( responseJSON: GetUserCoursesResponse ) => {
-        if (
-          'exception' in responseJSON
-          || responseJSON.responses[ 0 ].error
-        ) {
-          logout();
-          return getCourses(
-            true,
-            loginReturnState
-          );
-        }
 
-        const data: Array<{ id: number; fullname: string }> = JSON.parse( responseJSON.responses[ 0 ].data );
+          const data = JSON.parse( responseJSON.responses[ 0 ].data ) as Array<{
+            id: number;
+            fullname: string;
+          }>;
 
-        const coursesObject: CoursesObject = {};
+          const coursesObject: CoursesObject = {};
 
-        for ( const { id, fullname } of data ) {
-          coursesObject[ id ] = fullname;
-        }
+          for ( const { id, fullname } of data ) {
+            coursesObject[ id ] = fullname;
+          }
 
-        setLastValidatedToken();
+          setLastValidatedToken();
 
-        return coursesObject;
-      } );
+          return coursesObject;
+        } );
   }
 
   return courses;

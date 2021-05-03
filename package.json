@@ -27,8 +27,8 @@
     "concurrently": "^6.0.2",
     "csso-loader": "^0.3.1",
     "eslint": "^7.25.0",
+    "eslint-config-google": "^0.14.0",
     "eslint-config-preact": "^1.1.4",
-    "eslint-config-xo-react": "^0.25.0",
     "eslint-plugin-unicorn": "^31.0.0",
     "gulp": "^4.0.2",
     "gulp-cached": "^1.1.1",
@@ -45,18 +45,18 @@
     "typescript-plugin-css-modules": "^3.2.0",
     "webpack": "^5.36.2",
     "webpack-cli": "^4.6.0",
-    "webpack-glob-entry": "^2.1.1",
-    "xo": "^0.39.1"
+    "webpack-glob-entry": "^2.1.1"
   },
   "license": "ISC",
   "name": "moodle_userscript",
   "private": true,
   "scripts": {
-    "build": "npm run test && npm run webpack",
+    "build": "npm run lint && npm run webpack",
     "gulp": "gulp start",
     "serve": "serve dist",
     "start": "concurrently npm:gulp npm:webpack:w -r -k",
-    "test": "xo",
+    "test": "eslint -c ./.eslintrc.json \"{*,**/*}.{ts,tsx,js,jsx}\"",
+    "lint": "eslint -c ./.eslintrc.json --fix \"{*,**/*}.{ts,tsx,js,jsx}\"",
     "webpack": "webpack -c production.config.js --env PROD",
     "webpack:w": "webpack -c production.config.js -w"
   },
