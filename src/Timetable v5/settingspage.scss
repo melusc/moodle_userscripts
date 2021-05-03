@@ -1,16 +1,19 @@
 @use 'sass:color';
 @import 'sanitize';
 
-$red: #ff4126;
+$red: #dc3545;
+$green: #198754;
 $black: #111;
-$font-size: 20px;
-$line-height: $font-size / 2 * 3;
-$green: green;
+
 $background-color: #171717;
 $secondary-background-color: #202020;
+
 $text: #f0f6fcb3;
-$border-look: 2px solid;
+$font-size: 20px;
+$line-height: $font-size / 2 * 3;
+
 $border-color: #30363d;
+$border-style: 2px solid;
 $border-radius: 2px;
 
 body {
@@ -52,12 +55,11 @@ body {
   width: 50%;
   padding: 0.3em 1em;
   box-sizing: border-box;
-  border: $border-look $border-color;
+  border: $border-style $border-color;
   // flex: 1 1 0;
   // border-radius: $border-radius;
 
   &.time {
-    // display: flex;
     /* because this way the time inputs
     are as wide as possible */
     display: grid;
@@ -123,7 +125,7 @@ body {
   .card {
     pointer-events: auto;
     background-color: $secondary-background-color;
-    border: $border-color $border-look;
+    border: $border-color $border-style;
     border-radius: $border-radius;
     padding: 0.3em 1em;
   }
@@ -138,7 +140,7 @@ body {
     margin-top: 5px;
     background: none;
     color: $text;
-    border: $border-look $border-color;
+    border: $border-style $border-color;
     border-radius: 2px;
     padding: 0.2em 1.3em;
     font-size: 90%;
@@ -190,7 +192,7 @@ body {
   margin-left: auto;
   background: none;
   color: $text;
-  border: $border-look $border-color;
+  border: $border-style $border-color;
   border-radius: 2px;
   padding: 0.2em 1.3em;
   font-size: 90%;
@@ -226,8 +228,8 @@ body {
   top: 0;
   left: 0;
   z-index: 1;
-  background-color: #0d1117;
-  border: $border-look $border-color;
+  background-color: $secondary-background-color;
+  border: $border-style $border-color;
   border-radius: $border-radius;
   padding: 12px 20px;
   max-width: calc(35% - 2.7em);

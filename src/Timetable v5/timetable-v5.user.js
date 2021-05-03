@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.04.30a
+// @version   2021.05.03a
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -85,14 +85,12 @@ const FrontPage = ( () => {
       type: undefined,
     };
 
-    timeout = undefined;
-
     componentDidMount = () => {
       GM_addValueChangeListener(
         'days',
         () => {
           currentVals = GM_getValue( 'days' )?.[ currentDay - 1 ] ?? [];
-          this.clearTimeout();
+          this.timeout.clearTimeout();
           /* It will set another timeout if necessary
              and if not it would never be cleared so it gets
              cleared here */
@@ -102,7 +100,7 @@ const FrontPage = ( () => {
       GM_addValueChangeListener(
         'isHoliday',
         () => {
-          this.clearTimeout();
+          this.timeout.clearTimeout();
           this.setState( { isHoliday: GM_getValue( 'isHoliday' ) } );
           if ( !GM_getValue( 'isHoliday' ) ) {
             this.updateCourse();
@@ -115,21 +113,23 @@ const FrontPage = ( () => {
       }
     };
 
-    clearTimeout = () => {
-      clearTimeout( this.timeout );
-      this.timeout = undefined;
+    timeout = {
+      clearTimeout: () => {
+        clearTimeout( this.timeout._t );
+        this.timeout._t = undefined;
+      },
+
+      setCoursesTimeout: delay => {
+        this.timeout.clearTimeout();
+        this.timeout._t = setTimeout(
+          this.updateCourse.bind( this ),
+          delay,
+          true
+        );
+      },
     };
 
-    setCoursesTimeout = delay => {
-      this.clearTimeout();
-      this.timeout = setTimeout(
-        this.updateCourse.bind( this ),
-        delay,
-        true
-      );
-    };
-
-    updateCourse( notify ) {
+    updateCourse = notify => {
       if ( currentVals.length === 0 ) {
         this.setState( { isEmpty: true } );
         return;
@@ -163,7 +163,7 @@ const FrontPage = ( () => {
           0
         );
 
-        this.setCoursesTimeout( nextDate - currentDate );
+        this.timeout.setCoursesTimeout( nextDate - currentDate );
       }
       else if ( currentTimeInMinutes >= totalTo ) {
         this.setState( {
@@ -217,13 +217,13 @@ const FrontPage = ( () => {
           0
         );
 
-        this.setCoursesTimeout( nextDate - currentDate );
+        this.timeout.setCoursesTimeout( nextDate - currentDate );
       }
-    }
+    };
 
-    render(
+    render = (
       _properties, { isEmpty, isHoliday, type, tableRows }
-    ) {
+    ) => {
       const isWeekend = currentDay === 0 || currentDay === 6;
 
       return (
@@ -236,28 +236,36 @@ const FrontPage = ( () => {
                   <div class="tt-title">Timetable</div>
                   <div class="tt-table">
                     <div class="tt-tbody">
-                      {!isWeekend && !isHoliday && type === BEFORELESSONS
-                        && <TimetableRow values={{ content: 'No lesson' }} isNow />
-                      }
-                      {!isWeekend && !isHoliday && type === AFTERLESSONS
-                        && <div class="tt-title">No school anymore</div>
+                      {!isWeekend && !isHoliday
+                        && <>
+                          {type === BEFORELESSONS
+                            && <TimetableRow
+                              values={{ content: 'No lesson' }}
+                              isNow
+                            />
+                          }
+                          {type === AFTERLESSONS
+                            && <div class="tt-title">No school anymore</div>
+                          }
+                          {!isEmpty
+                            && ( type === BEFORELESSONS
+                              || type === DURINGLESSONS )
+                            && tableRows?.map( (
+                              // eslint-disable-next-line default-param-last
+                              { key, ...values } = {},
+                              index
+                            ) => values
+                                  && <TimetableRow
+                                    key={key}
+                                    values={values}
+                                    isNow={index === 0}
+                                  /> )}
+                        </>
                       }
                       {isWeekend && !isHoliday
                         && <div class="tt-title">Weekend</div>
                       }
                       {isHoliday && <div class="tt-title">Holiday</div>}
-                      {!isWeekend
-                        && !isEmpty
-                        && !isHoliday
-                        && ( type === BEFORELESSONS || type === DURINGLESSONS )
-                        && tableRows?.map( (
-                          currentValue, index
-                        ) => currentValue
-                              && <TimetableRow
-                                key={currentValue.key}
-                                values={currentValue}
-                                isNow={index === 0}
-                              /> )}
                       {isEmpty && !isWeekend
                         && <>
                           {"Today's timetable is empty, you can update it "}
@@ -279,7 +287,7 @@ const FrontPage = ( () => {
           </div>
         </div>
       );
-    }
+    };
   };
 } )();
 

@@ -8,7 +8,6 @@ const babelConfig = {
   loader: 'babel-loader',
   options: {
     plugins: [
-      '@babel/plugin-proposal-class-properties',
       '@babel/plugin-transform-runtime',
       [
         '@babel/plugin-transform-react-jsx',
@@ -38,20 +37,11 @@ module.exports = environment => ( {
     extensions: [ '.js', '.jsx', '.ts', '.tsx', '.scss', '.css' ],
   },
   mode: 'production',
-  entry: Object.assign(
-    entry(
-      entry.basePath( 'src' ),
-      path.resolve(
-        __dirname,
-        'src/**/*.user.tsx'
-      )
-    ),
-    entry(
-      entry.basePath( 'src' ),
-      path.resolve(
-        __dirname,
-        'src/**/*.user.js'
-      )
+  entry: entry(
+    entry.basePath( 'src' ),
+    path.resolve(
+      __dirname,
+      'src/**/*.user.{js,jsx,ts,tsx}'
     )
   ),
   output: {
@@ -91,7 +81,7 @@ module.exports = environment => ( {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         use: [ babelConfig ],
       },
       {

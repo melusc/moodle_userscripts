@@ -1,10 +1,8 @@
 import { render, Component, Fragment, h, createRef } from 'preact';
 import { parseTimeToString, uniqueId, moodleIcon } from './shared.js';
 import { getCourses } from '../shared/moodle-functions/index.ts';
-import produce from 'immer/dist/immer.umd.development';
+import { produce } from 'immer';
 import settingsPageStyle from './settingspage.scss';
-
-const moodleIconBlobUrl = moodleIcon();
 
 const title = 'Moodle timetable v5';
 
@@ -89,10 +87,6 @@ const filterCourses = (
     'i'
   );
 
-  console.log(
-    array,
-    inputText
-  );
   for ( const item of array ) {
     if ( regex.test( item.name ) ) {
       result.push( {
@@ -101,8 +95,6 @@ const filterCourses = (
       } );
     }
   }
-
-  console.log( result );
 
   result.sort( (
     { index: indexA }, { index: indexB }
@@ -141,7 +133,7 @@ const focusTarget = (
   if ( target instanceof HTMLElement ) {
     const range = new Range();
     const sel = getSelection();
-    const start = +( offset ?? +target.textContent.length );
+    const start = +( offset ?? target.textContent.length );
 
     target.focus();
     range.setStart(
@@ -221,40 +213,33 @@ const Table = ( { content, handleFocus } ) => <div class="table" onFocus={handle
     </div>
   </div> )}
 </div>;
-class ButtonGrid extends Component {
-  render( { handleClick, handleSave, saveButtonRef, day } ) {
-    return (
-      <>
-        <div class="day-controls" onClick={handleClick}>
-          <div class="caret-input caret-back">
-            <SvgIconCaretBack />
-          </div>
-          <div>{day}</div>
-          <div class="caret-input caret-forward">
-            <SvgIconCaretForward />
-          </div>
-        </div>
-        <button
-          type="button"
-          class="save-button"
-          onClick={handleSave}
-          ref={saveButtonRef}
-          onAnimationEnd={this.removeAnimation}
-        >
-          Save
-        </button>
-      </>
-    );
-  }
+const buttonGridRemoveAnimation = ( { target } ) => {
+  target?.classList?.remove(
+    'save-failed',
+    'save-successful'
+  );
+};
 
-  removeAnimation = ( { target } ) => {
-    target?.classList?.remove(
-      'save-failed',
-      'save-successful'
-    );
-  };
-}
-
+const ButtonGrid = ( { handleClick, handleSave, saveButtonRef, day } ) => <>
+  <div class="day-controls" onClick={handleClick}>
+    <div class="caret-input caret-back">
+      <SvgIconCaretBack />
+    </div>
+    <div>{day}</div>
+    <div class="caret-input caret-forward">
+      <SvgIconCaretForward />
+    </div>
+  </div>
+  <button
+    type="button"
+    class="save-button"
+    onClick={handleSave}
+    ref={saveButtonRef}
+    onAnimationEnd={buttonGridRemoveAnimation}
+  >
+      Save
+  </button>
+</>;
 const SettingsPage = ( () => {
   const DAYS = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday' ];
   const createTable = () => {
@@ -368,6 +353,7 @@ const SettingsPage = ( () => {
               <div
                 class="main-table"
                 onKeyDown={this.handleTableKeyDown}
+                onKeyUp={this.handleTableKeyUp}
                 onInput={this.handleTableInput}
                 onClick={this.handleTableClick}
               >
@@ -491,45 +477,49 @@ const SettingsPage = ( () => {
 
     handleTableFocus = event_ => {
       const { target } = event_;
-      let idInput;
-      let contentInput;
-      let top;
-      let left;
-      let height;
-      let inputText = '';
 
-      if ( target.dataset.type === 'id' ) {
-        idInput = target;
-        contentInput = target.parentNode.querySelector( '[data-type="content"]' );
+      if ( target instanceof HTMLElement ) {
+        let idInput;
+        let contentInput;
+        let top;
+        let left;
+        let height;
+        let inputText = '';
+
+        const inputType = target.dataset.type;
+        if ( inputType === 'id' ) {
+          idInput = target;
+          contentInput = target.parentNode.querySelector( '[data-type="content"]' );
+        }
+        else if ( inputType === 'content' ) {
+          idInput = target.parentNode.querySelector( '[data-type="id"]' );
+          contentInput = target;
+        }
+
+        if ( idInput ) {
+          // <from jquery>
+          const rect = idInput.getBoundingClientRect();
+          const win = idInput.ownerDocument.defaultView;
+
+          top = rect.top + win.pageYOffset;
+          left = rect.left + win.pageXOffset;
+          // </from jquery>
+
+          height = idInput.clientHeight;
+          inputText = contentInput.textContent.trim().toLowerCase();
+        }
+
+        this.setState( {
+          focusedElement: {
+            top,
+            left,
+            height,
+            inputText,
+            idInput,
+            contentInput,
+          },
+        } );
       }
-      else if ( target.dataset.type === 'content' ) {
-        idInput = target.parentNode.querySelector( '[data-type="id"]' );
-        contentInput = target;
-      }
-
-      if ( idInput ) {
-        // <from jquery>
-        const rect = idInput.getBoundingClientRect();
-        const win = idInput.ownerDocument.defaultView;
-
-        top = rect.top + win.pageYOffset;
-        left = rect.left + win.pageXOffset;
-        // </from jquery>
-
-        height = idInput.clientHeight;
-        inputText = contentInput.textContent.trim().toLowerCase();
-      }
-
-      this.setState( {
-        focusedElement: {
-          top,
-          left,
-          height,
-          inputText,
-          idInput,
-          contentInput,
-        },
-      } );
     };
 
     handleSave = () => {
@@ -648,9 +638,20 @@ const SettingsPage = ( () => {
 
           tables[ activeDay ].push( { key: uniqueId() } );
         } ),
-        () => resolve()
+        resolve
       );
     } );
+
+    /**
+     * @returns Promise<void> when the row is ready, now or on preact render
+     */
+    conditionallyCreateRow = async nextRow => {
+      if ( nextRow ) {
+        return;
+      }
+
+      return this.createRow();
+    };
 
     handleTableInput = event_ => {
       const { target } = event_;
@@ -744,77 +745,69 @@ const SettingsPage = ( () => {
 
         const [ hour, minute ] = string.split( ':' );
 
-        return ( +hour * 60 ) + +minute;
+        const result = +hour * 60; // To stop prettier removing parens and eslint complaining
+
+        return result + +minute;
       };
     } )();
 
-    handleTableKeyDown = async event_ => {
-      const { target, keyCode, shiftKey } = event_;
+    handleTableKeyUp = event_ => {
+      const { key } = event_;
 
-      if ( keyCode === 13 ) {
+      if ( key === 'Tab' ) {
+        this.handleTableFocus( {
+          target: document.activeElement,
+        } );
+      }
+    };
+
+    handleTableKeyDown = event_ => {
+      const { target, key, shiftKey } = event_;
+
+      if ( key === 'Enter' ) {
         event_.preventDefault();
+
+        let elementToFocus;
 
         if ( target.closest( '.entry' ) ) {
           const currentRow = target.closest( '.table-row' );
 
           if ( shiftKey ) {
-            if ( target.dataset.type === 'content' ) {
-              focusTarget( currentRow.previousElementSibling?.querySelector( 'div.table-cell.entry > [data-type="id"]' ) );
-            }
-            else {
-              focusTarget( target.parentNode.querySelector( '[data-type="content"]' ) );
-            }
+            elementToFocus
+              = target.dataset.type === 'content'
+                ? currentRow.previousElementSibling?.querySelector( 'div.table-cell.entry > [data-type="id"]' )
+                : target.parentNode.querySelector( '[data-type="content"]' );
           }
           else if ( target.dataset.type === 'content' ) {
-            focusTarget( target.parentNode.querySelector( '[data-type="id"]' ) );
+            elementToFocus = target.parentNode.querySelector( '[data-type="id"]' );
           }
           else {
-            let nextRow = currentRow.nextElementSibling;
-
-            if ( !nextRow ) {
-              await this.createRow();
-              nextRow = currentRow.nextElementSibling;
-            }
-
-            focusTarget( nextRow?.querySelector( 'div.table-cell.entry > [data-type="content"]' ) );
+            elementToFocus = this.conditionallyCreateRow( currentRow.nextElementSibling ).then( () => currentRow.nextElementSibling?.querySelector( 'div.table-cell.entry > [data-type="content"]' ) );
           }
         }
         else if ( target.closest( '.time' ) ) {
           const currentRow = target.closest( '.table-row' );
 
           if ( shiftKey ) {
-            if ( target.classList.contains( 'time-from' ) ) {
-              focusTarget( currentRow.previousElementSibling?.querySelector( 'div.table-cell.time > .time-to' ) );
-            }
-            else {
-              focusTarget( target.parentNode.querySelector( '.time-from' ) );
-            }
+            elementToFocus = target.classList.contains( 'time-from' )
+              ? currentRow.previousElementSibling?.querySelector( 'div.table-cell.time > .time-to' )
+              : target.parentNode.querySelector( '.time-from' );
           }
           else if ( target.classList.contains( 'time-from' ) ) {
-            focusTarget( target.parentNode.querySelector( '.time-to' ) );
+            elementToFocus = target.parentNode.querySelector( '.time-to' );
           }
           else {
-            let nextRow = currentRow.nextElementSibling;
-
-            if ( !nextRow ) {
-              await this.createRow();
-              nextRow = currentRow.nextElementSibling;
-            }
-
-            focusTarget( nextRow?.querySelector( 'div.table-cell.time > .time-from' ) );
+            elementToFocus = this.conditionallyCreateRow( currentRow.nextElementSibling ).then( () => currentRow.nextElementSibling?.querySelector( 'div.table-cell.time > .time-from' ) );
           }
         }
-      }
-      else if ( keyCode === 9 && target.classList.contains( 'entry' ) ) {
-        const currentRow = target.closest( '.table-row' );
 
-        if ( !currentRow.nextElementSibling ) {
-          event_.preventDefault();
-          const table = currentRow.parentNode;
-          const firstRow = table.children[ 0 ];
+        Promise.resolve( elementToFocus ).then( elementToFocus_ => {
+          focusTarget( elementToFocus_ );
 
-          firstRow.querySelector( '.time-from' )?.focus();
-        }
+          this.handleTableFocus( {
+            target: elementToFocus_,
+          } );
+        } );
       }
     };
   };
@@ -840,7 +833,7 @@ const initSettingsPage = () => {
   const icon = document.createElement( 'link' );
 
   icon.rel = 'shortcut icon';
-  icon.href = moodleIconBlobUrl;
+  icon.href = moodleIcon();
 
   GM_addStyle( settingsPageStyle );
 
