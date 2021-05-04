@@ -4,6 +4,7 @@ import { html } from 'htm/preact';
 import style from './style.scss';
 import { getCourses } from '../shared/moodle-functions/index.ts';
 import { deleteIconFromStorage } from './shared.js';
+import { nanoid } from 'nanoid';
 
 const FILE_CONSTANT = 'FILE';
 const COPY_CONSTANT = 'COPY';
@@ -264,15 +265,6 @@ const Notification = ( { handleClick, notificationString } ) => {
     </div>
   );
 };
-
-/* https://stackoverflow.com/a/2117523 */
-const uuidv4 = () => ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace(
-  /[018]/g,
-  c => (
-    c
-      ^ ( crypto.getRandomValues( new Uint8Array( 1 ) )[ 0 ] & ( 15 >> ( c / 4 ) ) )
-  ).toString( 16 )
-);
 
 class SettingsPage extends Component {
   state = {
@@ -542,7 +534,7 @@ class SettingsPage extends Component {
               deleteIconFromStorage( id );
 
               const pointers = GM_getValue( 'pointers' );
-              const uuid = uuidv4();
+              const uuid = nanoid();
               const values = GM_getValue( 'values' );
 
               const object = {};
