@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.05.03a
+// @version   2021.05.04a
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -24,7 +24,8 @@ import { Component, Fragment, h, render } from 'preact';
 import { initSettingsPage } from './settingspage.js';
 
 import frontPageStyle from './frontpage.scss';
-import { parseTimeToString, uniqueId } from './shared.js';
+import { parseTimeToString } from './shared.js';
+import { uniqueId } from '../shared/general-functions/index.ts';
 
 const notificationUrl = 'https://i.imgur.com/ZtPH8v7.png';
 

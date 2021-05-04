@@ -1,6 +1,7 @@
 import { render, Component, Fragment, h, createRef } from 'preact';
-import { parseTimeToString, uniqueId, moodleIcon } from './shared.js';
+import { parseTimeToString, moodleIcon } from './shared.js';
 import { getCourses } from '../shared/moodle-functions/index.ts';
+import { uniqueId } from '../shared/general-functions/index.ts';
 import { produce } from 'immer';
 import settingsPageStyle from './settingspage.scss';
 

@@ -1,6 +1,6 @@
-export { getCredentials, defaultLoginReturnState } from './get-credentials';
-export { logout } from './logout';
-export { login } from './login';
-export { setLastValidatedToken } from './set-last-validated-token';
-export { getCourses } from './get-courses';
-export { getUserId } from './get-user-id';
+export * from './get-credentials';
+export * from './logout';
+export * from './login';
+export * from './set-last-validated-token';
+export * from './get-courses';
+export * from './get-user-id';

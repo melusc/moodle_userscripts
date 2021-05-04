@@ -16,7 +16,7 @@
 import { render, h } from 'preact';
 
 import { getCourses } from '../shared/moodle-functions/index.ts';
-import { quickSort } from '../shared/general-functions.ts';
+import { quickSort } from '../shared/general-functions/index.ts';
 
 import { setupSettingsPage } from './settingspage.js';
 import { removeElementFromStorage } from './shared.js';

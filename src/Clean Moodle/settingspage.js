@@ -1,7 +1,7 @@
 import { render, h, Component, Fragment, createRef } from 'preact';
 
 import { getCourses } from '../shared/moodle-functions/index.ts';
-import { quickSort } from '../shared/general-functions.ts';
+import { quickSort } from '../shared/general-functions/index.ts';
 
 import { removeElementFromStorage } from './shared.js';
 import style from './settingspage.scss';

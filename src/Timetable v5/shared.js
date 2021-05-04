@@ -19,10 +19,6 @@ const parseTimeToString = int => {
     ) }`;
 };
 
-// Based on lodash
-let counter = 0;
-const uniqueId = () => `__${ counter++ }`;
-
 // This was moved here because it should be shared
 // But notifications can't use a blob url for an icon
 // It'll just stay here, though
@@ -50,4 +46,4 @@ const moodleIcon = () => {
   return URL.createObjectURL( blob );
 };
 
-export { parseTimeToString, uniqueId, moodleIcon };
+export { parseTimeToString, moodleIcon };

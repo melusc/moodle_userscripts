@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.05.03a
+// @version   2021.05.04a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -14,17 +14,14 @@
 // @connect   www.schul-netz.com
 // ==/UserScript==
 
+if ( location.protocol !== 'https:' ) {
+  location.protocol = 'https:';
+}
+
 import { render, Component, h, createRef } from 'preact';
 import style from './style.scss';
 
-// https://stackoverflow.com/a/2117523
-const uuidv4 = () => ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace(
-  /[018]/g,
-  c => (
-    c
-      ^ ( crypto.getRandomValues( new Uint8Array( 1 ) )[ 0 ] & ( 15 >> ( c / 4 ) ) )
-  ).toString( 16 )
-);
+import { uniqueId } from '../shared/general-functions/index';
 
 const SvgCircleNotch = () => <svg
   aria-hidden="true"
@@ -270,7 +267,7 @@ class SchulNetzMarks extends Component {
               break;
             }
 
-            marks.push( { course, name, date, mark, key: uuidv4() } );
+            marks.push( { course, name, date, mark, key: uniqueId() } );
           }
 
           if ( !allConfirmed ) {
