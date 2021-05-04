@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.05.03a
+// @version   2021.05.04a
 // @author    lusc
 // @updateURL https://git.io/JqltR
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -87,7 +87,7 @@ class Notification extends Component {
           </div>
         </div>
       </div>
-  ;
+    ;
 }
 
 class Header extends Component {
@@ -132,11 +132,11 @@ class Header extends Component {
                   </span>
                 </h5>
                 <h5>
-                  {'Last accessed Moodle ' /* for the trailing space */}
+                  {'Last accessed Moodle '}
                   <span class="epr-coloured">
                     {dayjs.unix( lastaccess ).fromNow( true )}
                   </span>
-                  {' ago' /* for the leading space */}
+                  {' ago'}
                 </h5>
               </div>
               <div class="btn-group header-button-group">
@@ -658,7 +658,7 @@ class Sidebar extends Component {
           </li>
         </ul>
       </>
-  ;
+    ;
 }
 
 const clearNode = node => {
@@ -675,7 +675,7 @@ const clearNode = node => {
  */
 const getProfilesInRange = (
   start, range
-) => login().then( token => {
+) => login().then( wstoken => {
   let lower = start;
   let upper = start + range;
 
@@ -683,7 +683,10 @@ const getProfilesInRange = (
     [ lower, upper ] = [ upper, lower ];
   }
 
-  const bodyParameters = new URLSearchParams();
+  const bodyParameters = new URLSearchParams( {
+    wsfunction: 'core_user_get_course_user_profiles',
+    wstoken,
+  } );
 
   for ( let index = 0; index <= upper - lower; ++index ) {
     bodyParameters.set(
@@ -696,17 +699,8 @@ const getProfilesInRange = (
     );
   }
 
-  bodyParameters.set(
-    'wsfunction',
-    'core_user_get_course_user_profiles'
-  );
-  bodyParameters.set(
-    'wstoken',
-    token
-  );
-
   return fetch(
-    'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=core_user_get_course_user_profiles',
+    'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json',
     {
       method: 'POST',
       body: bodyParameters.toString(),
@@ -798,7 +792,7 @@ const fetchNewProfile = async event_ => {
   let profile;
 
   if ( Number.isFinite( action ) ) {
-    const isNegative = action < 0;
+    const actionSign = Math.sign( action );
     const origNewId = id + action;
     let newId = origNewId;
     let profiles = [];
@@ -811,22 +805,15 @@ const fetchNewProfile = async event_ => {
         newId = 1;
       }
 
-      const range = newId + ( isNegative
-        ? -9
-        : 9 );
+      const range = newId + ( 9 * actionSign );
 
       notificationSetState( { from: newId, to: range } );
 
-      // eslint-disable-next-line no-await-in-loop
       profiles = await getProfilesInRange(
         newId,
-        isNegative
-          ? -9
-          : 9 // 10 profiles so newId through newId +/- 9 (incl.)
+        9 * actionSign // 10 profiles so newId through newId +/- 9 (incl.)
       );
-      newId += isNegative
-        ? -10
-        : 10; // +/- 10 because above
+      newId += 10 * actionSign; // +/- 10 because above
     }
 
     const highest = profiles[ profiles.length - 1 ];
@@ -841,9 +828,9 @@ const fetchNewProfile = async event_ => {
     profile = profiles.find( ( { id } ) => id === origNewId );
 
     if ( !profile ) {
-      profile = isNegative
-        ? profiles.pop()
-        : profiles[ 0 ];
+      profile = profiles[ action < 0
+        ? profiles.length - 1
+        : 0 ];
     }
   }
   else {
@@ -855,7 +842,6 @@ const fetchNewProfile = async event_ => {
 
       notificationSetState( { from: randProfile, to: undefined } );
 
-      // eslint-disable-next-line no-await-in-loop
       profiles = await getProfilesInRange(
         randProfile,
         0
