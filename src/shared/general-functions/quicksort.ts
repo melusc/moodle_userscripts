@@ -1,4 +1,4 @@
-type ComparisonFunction<T> = ( leftItem: T, rightItem: T ) => -1 | 0 | 1;
+type ComparisonFunction<T> = ( leftItem: T, rightItem: T ) => number;
 
 const swap = <T>( array: Array<T>, index1: number, index2: number ): void => {
   [array[ index1 ], array[ index2 ]] = [array[ index2 ], array[ index1 ]];
