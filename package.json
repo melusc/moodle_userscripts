@@ -54,8 +54,8 @@
     "gulp": "gulp start",
     "serve": "serve dist",
     "start": "concurrently npm:gulp npm:webpack:w -r -k",
-    "test": "eslint -c ./.eslintrc.json \"{*,**/*}.{ts,tsx,js,jsx}\"",
-    "lint": "eslint -c ./.eslintrc.json --fix \"{*,**/*}.{ts,tsx,js,jsx}\"",
+    "test": "eslint -c .eslintrc.json --cache --cache-location .eslint-cache/  \"{*,**/*}.{ts,tsx,js,jsx}\"",
+    "lint": "eslint -c .eslintrc.json --cache --cache-location .eslint-cache/  --fix \"{*,**/*}.{ts,tsx,js,jsx}\"",
     "webpack": "webpack -c production.config.js --env PROD",
     "webpack:w": "webpack -c production.config.js -w"
   },
