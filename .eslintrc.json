@@ -59,8 +59,7 @@
             },
             "MemberExpression": 2,
             "ObjectExpression": 1,
-            "SwitchCase": 1,
-            "ignoredNodes": ["ConditionalExpression"]
+            "SwitchCase": 1
           }
         ],
         "@typescript-eslint/promise-function-async": "error",

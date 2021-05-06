@@ -87,15 +87,15 @@ class SchulNetzMarks extends Component {
 
       {loading && !error && <SvgCircleNotch />}
       {!loggedOut && !error && Array.isArray( marks ) ?
-          <div>
-            {marks.map( ( { key, course, name, date, mark } ) => <div key={key} class="ucmr-row">
-              <div class="ucmr-course">{course}</div>
-              <div class="ucmr-name">{name}</div>
-              <div class="ucmr-date">{date}</div>
-              <div class="ucmr-mark">{mark}</div>
-            </div> )}
-          </div> :
-          <div>Sie haben alle Noten bestätigt.</div>
+        <div>
+          {marks.map( ( { key, course, name, date, mark } ) => <div key={key} class="ucmr-row">
+            <div class="ucmr-course">{course}</div>
+            <div class="ucmr-name">{name}</div>
+            <div class="ucmr-date">{date}</div>
+            <div class="ucmr-mark">{mark}</div>
+          </div> )}
+        </div> :
+        <div>Sie haben alle Noten bestätigt.</div>
       }
       {loggedOut &&
           <div class="login">
@@ -350,8 +350,8 @@ const init = () => {
   const timetablev5 = document.querySelector( '#module-timetable-v5' );
 
   timetablev5 ?
-timetablev5.after( li ) :
-main.prepend( li );
+    timetablev5.after( li ) :
+    main.prepend( li );
 
   render(
       <SchulNetzMarks />,
