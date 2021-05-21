@@ -1,4 +1,6 @@
 @use 'sass:color';
+@use "sass:math";
+
 @import 'sanitize';
 
 $red: #dc3545;
@@ -10,7 +12,7 @@ $secondary-background-color: #202020;
 
 $text: #f0f6fcb3;
 $font-size: 20px;
-$line-height: $font-size / 2 * 3;
+$line-height: math.div($font-size, 2) * 3;
 
 $border-color: #30363d;
 $border-style: 2px solid;

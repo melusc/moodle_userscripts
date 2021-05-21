@@ -1,4 +1,6 @@
 @use 'sass:color';
+@use "sass:math";
+
 @import 'normalize';
 @import 'sanitize';
 
@@ -108,7 +110,7 @@ select {
   box-shadow: none;
   border: $border;
   color: inherit;
-  border-radius: $border-radius / 2;
+  border-radius: math.div($border-radius, 2);
   padding: 5px 15px;
   width: 220px;
   max-width: 100%;
