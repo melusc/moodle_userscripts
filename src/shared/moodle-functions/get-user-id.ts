@@ -17,34 +17,44 @@ type GetUserIdResponse =
     // There's more, but that's not useful here
   };
 
-export const getUserId = async ( loginReturnState = defaultLoginReturnState ): Promise<number> => login(
-    false,
-    loginReturnState,
-)
-    .then( async ( wstoken: string ): Promise<GetUserIdResponse> => {
-      const bodyParameters = new URLSearchParams( {
-        wsfunction: 'core_webservice_get_site_info',
-        wstoken,
-      } );
+let userId: number | undefined; // Cache userId
 
-      return fetch(
-          '/webservice/rest/server.php?moodlewsrestformat=json',
-          {
-            method: 'POST',
-            headers: {
-              'content-type': 'application/x-www-form-urlencoded',
+export const getUserId = async ( loginReturnState = defaultLoginReturnState ): Promise<number> => {
+  if ( userId !== undefined ) {
+    return userId;
+  }
+
+  return login(
+      false,
+      loginReturnState,
+  )
+      .then( async ( wstoken: string ): Promise<GetUserIdResponse> => {
+        const bodyParameters = new URLSearchParams( {
+          wsfunction: 'core_webservice_get_site_info',
+          wstoken,
+        } );
+
+        return fetch(
+            '/webservice/rest/server.php?moodlewsrestformat=json',
+            {
+              method: 'POST',
+              headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+              },
+              body: bodyParameters.toString(),
             },
-            body: bodyParameters.toString(),
-          },
-      ).then( async ( response ): Promise<GetUserIdResponse> => response.json() );
-    } )
-    .then( ( responseJSON: GetUserIdResponse ) => {
-      if ( 'exception' in responseJSON ) {
-        logout();
-        return getUserId( loginReturnState );
-      }
+        ).then( async ( response ): Promise<GetUserIdResponse> => response.json() );
+      } )
+      .then( ( responseJSON: GetUserIdResponse ) => {
+        if ( 'exception' in responseJSON ) {
+          logout();
+          return getUserId( loginReturnState );
+        }
 
-      setLastValidatedToken();
+        setLastValidatedToken();
 
-      return responseJSON.userid;
-    } );
+        userId = responseJSON.userid;
+
+        return userId;
+      } );
+};
