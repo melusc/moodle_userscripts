@@ -19,272 +19,272 @@ $border-style: 2px solid;
 $border-radius: 2px;
 
 body {
-  padding-top: 0.3em;
-  width: 100%;
-  min-height: 100vh;
-  font: $font-size sans-serif;
-  color: $text;
-  background-color: $background-color;
+	padding-top: 0.3em;
+	width: 100%;
+	min-height: 100vh;
+	font: $font-size sans-serif;
+	color: $text;
+	background-color: $background-color;
 }
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 .table-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  // width: max-content;
-  // min-width: 60%;
-  width: 70%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	// width: max-content;
+	// min-width: 60%;
+	width: 70%;
 }
 
 .main-table {
-  width: 100%;
-  margin-top: 0.5em;
+	width: 100%;
+	margin-top: 0.5em;
 }
 .table-cell.remove-row {
-  color: $text;
+	color: $text;
 }
 .table-row {
-  display: flex;
-  width: 100%;
-  // align-items: center;
-  margin-bottom: 0.3em;
+	display: flex;
+	width: 100%;
+	// align-items: center;
+	margin-bottom: 0.3em;
 }
 .table-cell {
-  width: 50%;
-  padding: 0.3em 1em;
-  box-sizing: border-box;
-  border: $border-style $border-color;
-  // flex: 1 1 0;
-  // border-radius: $border-radius;
+	width: 50%;
+	padding: 0.3em 1em;
+	box-sizing: border-box;
+	border: $border-style $border-color;
+	// flex: 1 1 0;
+	// border-radius: $border-radius;
 
-  &.time {
-    /* because this way the time inputs
+	&.time {
+		/* because this way the time inputs
     are as wide as possible */
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    border-top-left-radius: $border-radius;
-    border-bottom-left-radius: $border-radius;
-    align-items: center;
-    justify-content: center;
-  }
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
+		border-top-left-radius: $border-radius;
+		border-bottom-left-radius: $border-radius;
+		align-items: center;
+		justify-content: center;
+	}
 
-  &.entry {
-    border-top-right-radius: $border-radius;
-    border-bottom-right-radius: $border-radius;
-    display: flex;
-    width: 50%;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+	&.entry {
+		border-top-right-radius: $border-radius;
+		border-bottom-right-radius: $border-radius;
+		display: flex;
+		width: 50%;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
 
-    > * {
-      width: 100%;
-    }
+		> * {
+			width: 100%;
+		}
 
-    [data-type='content']:empty::before {
-      content: 'Content';
-      color: #8b949e;
-    }
-    [data-type='id']:empty::before {
-      content: 'Course id';
-      color: #8b949e;
-    }
-  }
+		[data-type='content']:empty::before {
+			content: 'Content';
+			color: #8b949e;
+		}
+		[data-type='id']:empty::before {
+			content: 'Course id';
+			color: #8b949e;
+		}
+	}
 
-  &.remove-row {
-    width: 1.5em;
-    // height: 1.5em;
-    border: none;
-    cursor: pointer;
-    padding-left: 0;
-    padding-right: 0;
+	&.remove-row {
+		width: 1.5em;
+		// height: 1.5em;
+		border: none;
+		cursor: pointer;
+		padding-left: 0;
+		padding-right: 0;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
 
 .login-popup {
-  text-align: center;
+	text-align: center;
 
-  .vertical-horizontal-center {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    z-index: 100000000;
-    top: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-  .card {
-    pointer-events: auto;
-    background-color: $secondary-background-color;
-    border: $border-color $border-style;
-    border-radius: $border-radius;
-    padding: 0.3em 1em;
-  }
+	.vertical-horizontal-center {
+		width: 100%;
+		height: 100%;
+		position: fixed;
+		z-index: 100000000;
+		top: 0;
+		left: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		pointer-events: none;
+	}
+	.card {
+		pointer-events: auto;
+		background-color: $secondary-background-color;
+		border: $border-color $border-style;
+		border-radius: $border-radius;
+		padding: 0.3em 1em;
+	}
 
-  input {
-    display: block;
-    cursor: text;
-  }
+	input {
+		display: block;
+		cursor: text;
+	}
 
-  input,
-  button {
-    margin-top: 5px;
-    background: none;
-    color: $text;
-    border: $border-style $border-color;
-    border-radius: 2px;
-    padding: 0.2em 1.3em;
-    font-size: 90%;
-  }
-  button {
-    cursor: pointer;
-  }
+	input,
+	button {
+		margin-top: 5px;
+		background: none;
+		color: $text;
+		border: $border-style $border-color;
+		border-radius: 2px;
+		padding: 0.2em 1.3em;
+		font-size: 90%;
+	}
+	button {
+		cursor: pointer;
+	}
 }
 
 .time-input {
-  margin-left: 0.5em;
-  margin-right: 0.5em;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
 
-  &.time-from {
-    text-align: right;
-  }
-  &.time-to {
-    text-align: left;
-  }
+	&.time-from {
+		text-align: right;
+	}
+	&.time-to {
+		text-align: left;
+	}
 }
 [contenteditable] {
-  cursor: text;
+	cursor: text;
 }
 .grid-buttons {
-  display: grid;
-  grid-template-columns: 0.3fr auto 0.3fr;
-  justify-items: center;
-  column-gap: 5px;
-  width: 100%;
-  margin-bottom: 0.3em;
-  margin-top: 0.3em;
+	display: grid;
+	grid-template-columns: 0.3fr auto 0.3fr;
+	justify-items: center;
+	column-gap: 5px;
+	width: 100%;
+	margin-bottom: 0.3em;
+	margin-top: 0.3em;
 }
 .day-controls {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  grid-column-start: 2;
-  user-select: none;
-  margin-right: 1.5em;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	grid-column-start: 2;
+	user-select: none;
+	margin-right: 1.5em;
 }
 .caret-back,
 .caret-forward {
-  width: 1.5em;
-  height: 1.5em;
-  cursor: pointer;
+	width: 1.5em;
+	height: 1.5em;
+	cursor: pointer;
 }
 .save-button {
-  cursor: pointer;
-  margin-left: auto;
-  background: none;
-  color: $text;
-  border: $border-style $border-color;
-  border-radius: 2px;
-  padding: 0.2em 1.3em;
-  font-size: 90%;
+	cursor: pointer;
+	margin-left: auto;
+	background: none;
+	color: $text;
+	border: $border-style $border-color;
+	border-radius: 2px;
+	padding: 0.2em 1.3em;
+	font-size: 90%;
 }
 
 .icon-add-row {
-  width: 1.5em;
-  height: 1.5em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-right: 1.5em; // width of remove row buttons
+	width: 1.5em;
+	height: 1.5em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	margin-right: 1.5em; // width of remove row buttons
 }
 
 .row-icon-add-row {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 .table-hidden {
-  display: none;
+	display: none;
 }
 .invalid-input {
-  color: $red;
+	color: $red;
 }
 .invalid-id {
-  border-bottom-color: $red;
+	border-bottom-color: $red;
 }
 .suggestions {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  background-color: $secondary-background-color;
-  border: $border-style $border-color;
-  border-radius: $border-radius;
-  padding: 12px 20px;
-  max-width: calc(35% - 2.7em);
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	background-color: $secondary-background-color;
+	border: $border-style $border-color;
+	border-radius: $border-radius;
+	padding: 12px 20px;
+	max-width: calc(35% - 2.7em);
 
-  .emphasised {
-    font-weight: bold;
-  }
+	.emphasised {
+		font-weight: bold;
+	}
 
-  &:empty {
-    display: none;
-  }
+	&:empty {
+		display: none;
+	}
 
-  .suggestion {
-    display: flex;
-    width: 100%;
+	.suggestion {
+		display: flex;
+		width: 100%;
 
-    &:hover {
-      // background-color: #21262d;
-      text-decoration: underline;
-    }
-  }
+		&:hover {
+			// background-color: #21262d;
+			text-decoration: underline;
+		}
+	}
 }
 .suggestion-name {
-  padding: 2px 4px;
-  border-radius: $border-radius;
-  cursor: pointer;
-  flex: 0 0 80%;
+	padding: 2px 4px;
+	border-radius: $border-radius;
+	cursor: pointer;
+	flex: 0 0 80%;
 }
 .suggestion-id {
-  flex: 0 0 20%;
-  text-align: end;
+	flex: 0 0 20%;
+	text-align: end;
 }
 
 .save-failed {
-  animation: 3s ease-in-out save-failed;
+	animation: 3s ease-in-out save-failed;
 }
 .save-successful {
-  animation: 3s ease-in-out save-successful;
+	animation: 3s ease-in-out save-successful;
 }
 
 @keyframes save-failed {
-  from {
-    border-color: $red;
-  }
-  to {
-    border-color: $border-color;
-  }
+	from {
+		border-color: $red;
+	}
+	to {
+		border-color: $border-color;
+	}
 }
 @keyframes save-successful {
-  from {
-    border-color: $green;
-  }
-  to {
-    border-color: $border-color;
-  }
+	from {
+		border-color: $green;
+	}
+	to {
+		border-color: $border-color;
+	}
 }

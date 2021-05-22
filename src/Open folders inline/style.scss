@@ -1,12 +1,12 @@
 @use 'sass:math';
 
 div.folders-inline-icon {
-  cursor: pointer;
-  user-select: none;
+	cursor: pointer;
+	user-select: none;
 }
 div.folders-inline-icon-div {
-  display: inline;
+	display: inline;
 }
 li.activity.folder > ul > li > ul li {
-  margin-left: 24px;
+	margin-left: 24px;
 }

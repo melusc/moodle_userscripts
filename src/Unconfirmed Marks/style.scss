@@ -1,100 +1,100 @@
 @mixin keyframe($animation_name) {
-  @-webkit-keyframes #{$animation_name} {
-    @content;
-  }
+	@-webkit-keyframes #{$animation_name} {
+		@content;
+	}
 
-  @-moz-keyframes #{$animation_name} {
-    @content;
-  }
+	@-moz-keyframes #{$animation_name} {
+		@content;
+	}
 
-  @-o-keyframes #{$animation_name} {
-    @content;
-  }
+	@-o-keyframes #{$animation_name} {
+		@content;
+	}
 
-  @keyframes #{$animation_name} {
-    @content;
-  }
+	@keyframes #{$animation_name} {
+		@content;
+	}
 }
 
 #module-marks {
-  * {
-    box-sizing: border-box;
-  }
+	* {
+		box-sizing: border-box;
+	}
 
-  line-height: 1.15;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  cursor: default;
-  -moz-tab-size: 4;
-  tab-size: 4;
-  -webkit-tap-highlight-color: transparent;
-  word-break: break-word;
+	line-height: 1.15;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+	cursor: default;
+	-moz-tab-size: 4;
+	tab-size: 4;
+	-webkit-tap-highlight-color: transparent;
+	word-break: break-word;
 
-  .login {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: max-content;
+	.login {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		width: max-content;
 
-    input,
-    button {
-      flex: 0 0 100%;
-      margin: 3px 0;
+		input,
+		button {
+			flex: 0 0 100%;
+			margin: 3px 0;
 
-      padding: 0.2em 0.5em;
-    }
-  }
+			padding: 0.2em 0.5em;
+		}
+	}
 
-  .ucmr-title,
-  .ucmr-error {
-    font-size: large;
-    font-weight: 450;
-  }
+	.ucmr-title,
+	.ucmr-error {
+		font-size: large;
+		font-weight: 450;
+	}
 
-  .ucmr-title {
-    margin-bottom: 10px;
-  }
+	.ucmr-title {
+		margin-bottom: 10px;
+	}
 
-  .ucmr-error {
-    color: #ff4136;
-  }
+	.ucmr-error {
+		color: #ff4136;
+	}
 
-  .ucmr-circle-notch {
-    width: 1em;
-    height: 1em;
+	.ucmr-circle-notch {
+		width: 1em;
+		height: 1em;
 
-    animation: ucmr-spin 2s infinite linear;
-  }
-  .ucmr-row {
-    display: flex;
-    flex-direction: row;
-  }
+		animation: ucmr-spin 2s infinite linear;
+	}
+	.ucmr-row {
+		display: flex;
+		flex-direction: row;
+	}
 
-  $table-entries: (
-    course: 30%,
-    name: 45%,
-    date: 15%,
-    mark: 10%,
-  );
+	$table-entries: (
+		course: 30%,
+		name: 45%,
+		date: 15%,
+		mark: 10%
+	);
 
-  @each $name, $val in $table-entries {
-    .ucmr-#{$name} {
-      flex-basis: $val;
-    }
-  }
+	@each $name, $val in $table-entries {
+		.ucmr-#{$name} {
+			flex-basis: $val;
+		}
+	}
 }
 @include keyframe(ucmr-spin) {
-  0% {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-  }
+	0% {
+		-webkit-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-ms-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	100% {
+		-webkit-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-ms-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+	}
 }

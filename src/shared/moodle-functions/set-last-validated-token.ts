@@ -1,6 +1,3 @@
 export const setLastValidatedToken = (): void => {
-  GM_setValue(
-      'lastValidatedToken',
-      Date.now(),
-  );
+	GM_setValue('lastValidatedToken', Date.now());
 };

@@ -1,64 +1,154 @@
 {
-  "author": "",
-  "dependencies": {
-    "@babel/runtime": "^7.14.0",
-    "dayjs": "^1.10.4",
-    "dompurify": "^2.2.8",
-    "file-saver": "^2.0.5",
-    "htm": "^3.0.4",
-    "immer": "^9.0.2",
-    "jszip": "^3.6.0",
-    "nanoid": "^3.1.23",
-    "preact": "^10.5.13"
-  },
-  "description": "",
-  "devDependencies": {
-    "@babel/core": "^7.14.3",
-    "@babel/eslint-plugin": "^7.13.16",
-    "@babel/plugin-transform-react-jsx": "^7.14.3",
-    "@babel/plugin-transform-runtime": "^7.14.3",
-    "@types/tampermonkey": "^4.0.0",
-    "@typescript-eslint/eslint-plugin": "^4.24.0",
-    "@typescript-eslint/parser": "^4.24.0",
-    "babel-loader": "^8.2.2",
-    "babel-plugin-replace-identifiers": "^0.1.1",
-    "clean-webpack-plugin": "^3.0.0",
-    "concurrently": "^6.1.0",
-    "csso-loader": "^0.3.1",
-    "eslint": "^7.26.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-config-preact": "^1.1.4",
-    "eslint-plugin-unicorn": "^32.0.1",
-    "gulp": "^4.0.2",
-    "gulp-cached": "^1.1.1",
-    "gulp-cli": "^2.3.0",
-    "gulp-rename": "^2.0.0",
-    "gulp-svgmin": "^3.0.0",
-    "prettier": "^2.3.0",
-    "sass": "^1.33.0",
-    "sass-loader": "^11.1.1",
-    "serve": "^11.3.2",
-    "terser-webpack-plugin": "^5.1.2",
-    "ts-loader": "^9.2.1",
-    "typescript": "^4.2.4",
-    "typescript-plugin-css-modules": "^3.2.0",
-    "webpack": "^5.37.1",
-    "webpack-cli": "^4.7.0",
-    "webpack-glob-entry": "^2.1.1"
-  },
-  "license": "ISC",
-  "name": "moodle_userscript",
-  "private": true,
-  "scripts": {
-    "build": "npm run lint && npm run webpack",
-    "gulp": "gulp start",
-    "serve": "serve dist",
-    "start": "concurrently npm:gulp npm:webpack:w -r -k",
-    "test": "eslint -c .eslintrc.json --cache --cache-location .eslint-cache/  \"{*,**/*}.{ts,tsx,js,jsx}\"",
-    "lint": "eslint -c .eslintrc.json --cache --cache-location .eslint-cache/  --fix \"{*,**/*}.{ts,tsx,js,jsx}\"",
-    "webpack": "webpack -c production.config.js --env PROD",
-    "webpack:w": "webpack -c production.config.js -w"
-  },
-  "sideEffects": false,
-  "version": "1.0.0"
+	"author": "melusc",
+	"dependencies": {
+		"@babel/runtime": "^7.14.0",
+		"dayjs": "^1.10.4",
+		"dompurify": "^2.2.8",
+		"file-saver": "^2.0.5",
+		"htm": "^3.0.4",
+		"immer": "^9.0.2",
+		"jszip": "^3.6.0",
+		"nanoid": "^3.1.23",
+		"preact": "^10.5.13"
+	},
+	"description": "",
+	"devDependencies": {
+		"@babel/plugin-transform-react-jsx": "^7.14.3",
+		"@babel/plugin-transform-runtime": "^7.14.3",
+		"@types/tampermonkey": "^4.0.0",
+		"@typescript-eslint/parser": "^4.24.0",
+		"babel-loader": "^8.2.2",
+		"babel-plugin-replace-identifiers": "^0.1.1",
+		"clean-webpack-plugin": "^3.0.0",
+		"concurrently": "^6.1.0",
+		"csso-loader": "^0.3.1",
+		"eslint-config-xo-react": "^0.25.0",
+		"gulp": "^4.0.2",
+		"gulp-cached": "^1.1.1",
+		"gulp-cli": "^2.3.0",
+		"gulp-rename": "^2.0.0",
+		"gulp-svgmin": "^3.0.0",
+		"prettier": "^2.3.0",
+		"sass": "^1.33.0",
+		"sass-loader": "^11.1.1",
+		"serve": "^11.3.2",
+		"terser-webpack-plugin": "^5.1.2",
+		"ts-loader": "^9.2.1",
+		"type-fest": "^1.1.3",
+		"typescript": "^4.2.4",
+		"typescript-plugin-css-modules": "^3.2.0",
+		"webpack": "^5.37.1",
+		"webpack-cli": "^4.7.0",
+		"webpack-glob-entry": "^2.1.1",
+		"xo": "^0.40.1"
+	},
+	"license": "MIT",
+	"name": "moodle_userscript",
+	"prettier": {
+		"arrowParens": "avoid",
+		"bracketSpacing": false,
+		"singleQuote": true,
+		"trailingComma": "none",
+		"useTabs": true
+	},
+	"private": true,
+	"scripts": {
+		"build": "npm run lint && npm run webpack",
+		"gulp": "gulp start",
+		"lint": "prettier -w \"{*,**/*}.{ts,tsx,js,jsx,scss}\" \"!dist/**\" && xo --fix",
+		"serve": "serve dist",
+		"start": "concurrently npm:gulp npm:webpack:w -r -k",
+		"test": "prettier -w \"{*,**/*}.{ts,tsx,js,jsx,scss}\" \"!dist/**\" && xo",
+		"webpack": "webpack -c production.config.js --env PROD",
+		"webpack:w": "webpack -c production.config.js -w"
+	},
+	"version": "1.0.0",
+	"xo": {
+		"env": [
+			"es2021",
+			"browser",
+			"greasemonkey"
+		],
+		"extends": [
+			"xo-react"
+		],
+		"globals": [
+			"GM_addValueChangeListener",
+			"GM_notification"
+		],
+		"overrides": [
+			{
+				"env": [
+					"es2021",
+					"node"
+				],
+				"files": [
+					"./*.js"
+				],
+				"rules": {
+					"unicorn/prefer-module": "off"
+				}
+			},
+			{
+				"files": [
+					"**/*.{ts,tsx}"
+				],
+				"rules": {
+					"@typescript-eslint/no-unused-vars": [
+						"error",
+						{
+							"varsIgnorePattern": "^h$|^Fragment$"
+						}
+					],
+					"no-unused-vars": "off"
+				}
+			}
+		],
+		"parser": "@typescript-eslint/parser",
+		"rules": {
+			"//": [
+				"off",
+				{
+					"import/no-extraneous-dependencies": "Disabled because it wants me to install htm_preact since I import from htm/preact (https://github.com/benmosher/eslint-plugin-import/issues/2065)",
+					"no-mixed-spaces-and-tabs": "https://prettier.io/docs/en/options.html#tabs",
+					"react/prop-types": "Preact has no such thing"
+				}
+			],
+			"import/extensions": "off",
+			"import/no-extraneous-dependencies": "off",
+			"max-depth": "off",
+			"new-cap": [
+				"error",
+				{
+					"capIsNewExceptionPattern": "^GM_"
+				}
+			],
+			"no-await-in-loop": "off",
+			"no-mixed-spaces-and-tabs": [
+				"error",
+				"smart-tabs"
+			],
+			"no-unused-vars": [
+				"error",
+				{
+					"varsIgnorePattern": "^h$|^Fragment$"
+				}
+			],
+			"node/file-extension-in-import": "off",
+			"react/prop-types": "off",
+			"react/react-in-jsx-scope": "off",
+			"prefer-template": "error",
+			"react/no-unknown-property": [
+				"error",
+				{
+					"ignore": [
+						"class",
+						"stroke-linecap",
+						"stroke-linejoin",
+						"stroke-width"
+					]
+				}
+			]
+		}
+	}
 }

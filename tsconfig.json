@@ -1,18 +1,18 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact",
-    "module": "ES2020",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "outDir": "./dist/",
-    "plugins": [
-      {
-        "name": "typescript-plugin-css-modules"
-      }
-    ],
-    "strict": true,
-    "target": "ES2020"
-  }
+	"compilerOptions": {
+		"allowJs": true,
+		"jsx": "react-jsx",
+		"jsxImportSource": "preact",
+		"module": "ES2020",
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"outDir": "./dist/",
+		"plugins": [
+			{
+				"name": "typescript-plugin-css-modules"
+			}
+		],
+		"strict": true,
+		"target": "ES2020"
+	}
 }

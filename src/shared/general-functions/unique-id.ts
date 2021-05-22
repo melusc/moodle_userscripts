@@ -1,2 +1,2 @@
 let counter = 0;
-export const uniqueId = (): string => `${ ++counter }`;
+export const uniqueId = (): string => `${++counter}`;

@@ -1,9 +1,9 @@
-import { render, h, Component, Fragment, createRef } from 'preact';
+import {render, h, Component, Fragment, createRef} from 'preact';
 
-import { getCourses } from '../shared/moodle-functions/index.ts';
-import { quickSort } from '../shared/general-functions/index.ts';
+import {getCourses} from '../shared/moodle-functions';
+import {quickSort} from '../shared/general-functions';
 
-import { removeElementFromStorage } from './shared.js';
+import {removeElementFromStorage} from './shared.js';
 import style from './settingspage.scss';
 
 /**
@@ -12,34 +12,27 @@ import style from './settingspage.scss';
  * @param {Object[]} arr The courses
  * @return The sorted arr
  */
-const sortCoursesArray = array => quickSort(
-  array,
-  (
-    {
-      courseName: courseNameA,
-      isReplaced: isReplacedA,
-      replacedName: replacedNameA,
-    },
-    {
-      courseName: courseNameB,
-      isReplaced: isReplacedB,
-      replacedName: replacedNameB,
-    }
-  ) => {
-    const lowerA = ( isReplacedA
-      ? replacedNameA
-      : courseNameA ).toLowerCase();
-    const lowerB = ( isReplacedB
-      ? replacedNameB
-      : courseNameB ).toLowerCase();
+const sortCoursesArray = array =>
+	quickSort(
+		array,
+		(
+			{
+				courseName: courseNameA,
+				isReplaced: isReplacedA,
+				replacedName: replacedNameA
+			},
+			{
+				courseName: courseNameB,
+				isReplaced: isReplacedB,
+				replacedName: replacedNameB
+			}
+		) => {
+			const lowerA = (isReplacedA ? replacedNameA : courseNameA).toLowerCase();
+			const lowerB = (isReplacedB ? replacedNameB : courseNameB).toLowerCase();
 
-    return lowerA < lowerB
-      ? -1
-      : lowerA > lowerB
-        ? 1
-        : 0;
-  }
-);
+			return lowerA < lowerB ? -1 : (lowerA > lowerB ? 1 : 0);
+		}
+	);
 
 /**
  * Check if course is replaced
@@ -48,9 +41,9 @@ const sortCoursesArray = array => quickSort(
  * @returns {string|boolean} False if course is not replaced
  */
 const checkIsCourseReplaced = id => {
-  const replacers = GM_getValue( 'replace' ) ?? {};
+	const replacers = GM_getValue('replace') ?? {};
 
-  return typeof replacers[ id ] === 'string' && replacers[ id ];
+	return typeof replacers[id] === 'string' && replacers[id];
 };
 
 /**
@@ -58,7 +51,7 @@ const checkIsCourseReplaced = id => {
  * @param {string|number} id The course id
  * @returns {boolean} true if course is removed
  */
-const checkIsCourseRemoved = id => ( GM_getValue( 'remove' ) ?? [] ).includes( id );
+const checkIsCourseRemoved = id => (GM_getValue('remove') ?? []).includes(id);
 
 /**
  * Add item to removers
@@ -66,15 +59,9 @@ const checkIsCourseRemoved = id => ( GM_getValue( 'remove' ) ?? [] ).includes( i
  * @returns {void}
  */
 const setRemoved = id => {
-  const { removers } = removeElementFromStorage(
-    id,
-    { updateRemovers: false }
-  );
-  removers.push( id );
-  GM_setValue(
-    'remove',
-    removers
-  );
+	const {removers} = removeElementFromStorage(id, {updateRemovers: false});
+	removers.push(id);
+	GM_setValue('remove', removers);
 };
 
 /**
@@ -84,342 +71,328 @@ const setRemoved = id => {
  * @param {string|null|undefined|number} _oldVal
  * @returns {void}
  */
-const setReplaced = (
-  id, rawNewValue, rawOldValue
-) => {
-  const { replacers } = removeElementFromStorage(
-    id,
-    {
-      updateReplacers: false,
-    }
-  );
+const setReplaced = (id, rawNewValue, rawOldValue) => {
+	const {replacers} = removeElementFromStorage(id, {
+		updateReplacers: false
+	});
 
-  const newValue = ( rawNewValue ?? '' ).trim();
-  const oldValue = ( rawOldValue ?? '' ).trim();
+	const newValue = (rawNewValue ?? '').trim();
+	const oldValue = (rawOldValue ?? '').trim();
 
-  if ( newValue !== '' && newValue !== oldValue ) {
-    replacers[ id ] = newValue;
-  }
+	if (newValue !== '' && newValue !== oldValue) {
+		replacers[id] = newValue;
+	}
 
-  GM_setValue(
-    'replace',
-    replacers
-  );
+	GM_setValue('replace', replacers);
 };
 
-const SvgCheck = () => <svg
-  fill="none"
-  stroke="currentColor"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  stroke-width="2"
-  class="icon svg-icon-check"
-  viewBox="0 0 24 24"
->
-  <path d="M5 12l5 5L20 7" />
-</svg>;
-const SvgX = () => <svg
-  fill="none"
-  stroke="currentColor"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  stroke-width="2"
-  class="icon svg-icon-x"
-  viewBox="0 0 24 24"
->
-  <path d="M18 6L6 18M6 6l12 12" />
-</svg>;
-const SvgArrowBack = () => <svg
-  fill="none"
-  stroke="currentColor"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  stroke-width="2"
-  class="icon svg-icon-arrow-back"
-  viewBox="0 0 24 24"
->
-  <path d="M9 11l-4 4 4 4m-4-4h11a4 4 0 000-8h-1" />
-</svg>;
-const SidebarRow = ( { item, handleClick, toggleItem, resetItem } ) => {
-  const { courseName, isReplaced, replacedName, isRemoved } = item;
-  return (
-    <div
-      class={`row${ isRemoved
-        ? ' removed'
-        : '' }`}
-      onClick={event_ => {
-        handleClick(
-          event_,
-          item
-        );
-      }}
-    >
-      <span>
-        <span
-          onClick={event_ => {
-            toggleItem(
-              event_,
-              item
-            );
-          }}
-        >
-          {isRemoved
-            ? <SvgX />
-            : <SvgCheck />}
-        </span>
-        {isReplaced
-          ? <>
-            {replacedName}
-            <span
-              onClick={event_ => {
-                resetItem(
-                  event_,
-                  item
-                );
-              }}
-            >
-              <SvgArrowBack />
-            </span>
-          </>
-          : courseName
-        }
-      </span>
-    </div>
-  );
+const SvgCheck = () => (
+	<svg
+		fill="none"
+		stroke="currentColor"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		stroke-width="2"
+		class="icon svg-icon-check"
+		viewBox="0 0 24 24"
+	>
+		<path d="M5 12l5 5L20 7"/>
+	</svg>
+);
+const SvgX = () => (
+	<svg
+		fill="none"
+		stroke="currentColor"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		stroke-width="2"
+		class="icon svg-icon-x"
+		viewBox="0 0 24 24"
+	>
+		<path d="M18 6L6 18M6 6l12 12"/>
+	</svg>
+);
+const SvgArrowBack = () => (
+	<svg
+		fill="none"
+		stroke="currentColor"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		stroke-width="2"
+		class="icon svg-icon-arrow-back"
+		viewBox="0 0 24 24"
+	>
+		<path d="M9 11l-4 4 4 4m-4-4h11a4 4 0 000-8h-1"/>
+	</svg>
+);
+const SidebarRow = ({item, handleClick, toggleItem, resetItem}) => {
+	const {courseName, isReplaced, replacedName, isRemoved} = item;
+	return (
+		<div
+			class={`row${isRemoved ? ' removed' : ''}`}
+			onClick={event_ => {
+				handleClick(event_, item);
+			}}
+		>
+			<span>
+				<span
+					onClick={event_ => {
+						toggleItem(event_, item);
+					}}
+				>
+					{isRemoved ? <SvgX/> : <SvgCheck/>}
+				</span>
+				{isReplaced ? (
+					<>
+						{replacedName}
+						<span
+							onClick={event_ => {
+								resetItem(event_, item);
+							}}
+						>
+							<SvgArrowBack/>
+						</span>
+					</>
+				) : (
+					courseName
+				)}
+			</span>
+		</div>
+	);
 };
 
-const Sidebar = ( { courses, loadingCourses, ...rest } ) => <div class="outer-sidebar">
-  <div class="sidebar">
-    {loadingCourses && <div>Loading courses...</div>}
-    {courses.map( course => <SidebarRow key={course.courseId} item={course} {...rest} /> )}
-  </div>
-</div>;
+const Sidebar = ({courses, loadingCourses, ...rest}) => (
+	<div class="outer-sidebar">
+		<div class="sidebar">
+			{loadingCourses && <div>Loading courses...</div>}
+			{courses.map(course => (
+				<SidebarRow key={course.courseId} item={course} {...rest}/>
+			))}
+		</div>
+	</div>
+);
 class Main extends Component {
-  render = ( {
-    selected: { isSelected, courseName, isReplaced, replacedName },
-    replaceInputRef,
-    handleSave,
-    loggedOut,
-    loggedOutCallback,
-    loggedOutInputs,
-  } ) => <div class="outer-main">
-    <div class="main">
-      {loggedOut
-        ? <div class="replace-flex-input">
-          <h5>Login</h5>
-          <input placeholder="Username" ref={loggedOutInputs.username} />
-          <input
-            placeholder="Password"
-            ref={loggedOutInputs.password}
-            type="password"
-          />
-          <button class="btn-save" type="button" onClick={loggedOutCallback}>
-              Login
-          </button>
-        </div>
-        : <>
-          <div class="section-title">Rename course</div>
-          <div class="replace-flex-inputs">
-            <div>
-              {isSelected
-                ? `Selected: ${ courseName }`
-                : 'Select course to the left'}
-            </div>
-            <input
-              class="replace-input"
-              placeholder="Select course to the left"
-              disabled={!isSelected}
-              ref={replaceInputRef}
-              onKeyDown={handleSave}
-              value={
-                isSelected
-                  ? isReplaced === false
-                    ? courseName
-                    : replacedName
-                  : ''
-              }
-            />
-            <button
-              class="btn-save"
-              disabled={!isSelected}
-              onClick={handleSave}
-              type="button"
-            >
-                Save
-            </button>
-          </div>
-        </>
-      }
-    </div>
-  </div>
-  ;
+	render = () => {
+		const {
+			selected: {isSelected, courseName, isReplaced, replacedName},
+			replaceInputRef,
+			handleSave,
+			loggedOut,
+			loggedOutCallback,
+			loggedOutInputs
+		} = this.props;
+
+		return (
+			<div class="outer-main">
+				<div class="main">
+					{loggedOut ? (
+						<div class="replace-flex-input">
+							<h5>Login</h5>
+							<input ref={loggedOutInputs.username} placeholder="Username"/>
+							<input
+								ref={loggedOutInputs.password}
+								placeholder="Password"
+								type="password"
+							/>
+							<button
+								class="btn-save"
+								type="button"
+								onClick={loggedOutCallback}
+							>
+								Login
+							</button>
+						</div>
+					) : (
+						<>
+							<div class="section-title">Rename course</div>
+							<div class="replace-flex-inputs">
+								<div>
+									{isSelected ?
+										`Selected: ${courseName}` :
+										'Select course to the left'}
+								</div>
+								<input
+									ref={replaceInputRef}
+									class="replace-input"
+									placeholder="Select course to the left"
+									disabled={!isSelected}
+									value={
+										isSelected ?
+											(isReplaced === false ?
+												courseName :
+												replacedName) :
+											'' // eslint-disable-line react/jsx-indent
+										// react/jsx-indent wants 9 tabs instead of 11 for some reason
+									}
+									onKeyDown={handleSave}
+								/>
+								<button
+									class="btn-save"
+									disabled={!isSelected}
+									type="button"
+									onClick={handleSave}
+								>
+									Save
+								</button>
+							</div>
+						</>
+					)}
+				</div>
+			</div>
+		);
+	};
 }
 
 class SettingsPage extends Component {
-  state = {
-    courses: [],
-    loadingCourses: true,
-    selected: { isSelected: false },
+	state = {
+		courses: [],
+		loadingCourses: true,
+		selected: {isSelected: false},
 
-    loggedOut: false,
-    loggedOutCallback: undefined,
-  };
+		loggedOut: false,
+		loggedOutCallback: undefined
+	};
 
-  replaceInputRef = createRef();
+	replaceInputRef = createRef();
 
-  inputs = { username: createRef(), password: createRef() };
+	inputs = {username: createRef(), password: createRef()};
 
-  render = (
-    _properties, { courses, selected, loggedOut, loadingCourses }
-  ) => <div class="container">
-    <Sidebar
-      courses={courses}
-      handleClick={this.handleSidebarClick}
-      toggleItem={this.toggleItem}
-      resetItem={this.resetItem}
-      loadingCourses={loadingCourses}
-    />
-    <Main
-      selected={selected}
-      replaceInputRef={this.replaceInputRef}
-      handleSave={this.handleSave}
-      loggedOut={loggedOut}
-      loggedOutCallback={this.loggedOutCallbackHandler}
-      loggedOutInputs={this.inputs}
-    />
-  </div>
-  ;
+	render = () => {
+		const {courses, selected, loggedOut, loadingCourses} = this.state;
 
-  loggedOutCallbackHandler = () => {
-    const username = this.inputs.username.current.value.trim();
-    const password = this.inputs.password.current.value;
+		return (
+			<div class="container">
+				<Sidebar
+					courses={courses}
+					handleClick={this.handleSidebarClick}
+					toggleItem={this.toggleItem}
+					resetItem={this.resetItem}
+					loadingCourses={loadingCourses}
+				/>
+				<Main
+					selected={selected}
+					replaceInputRef={this.replaceInputRef}
+					handleSave={this.handleSave}
+					loggedOut={loggedOut}
+					loggedOutCallback={this.loggedOutCallbackHandler}
+					loggedOutInputs={this.inputs}
+				/>
+			</div>
+		);
+	};
 
-    this.state.loggedOutCallback( { username, password } );
-  };
+	loggedOutCallbackHandler = () => {
+		const username = this.inputs.username.current.value.trim();
+		const password = this.inputs.password.current.value;
 
-  componentDidMount = () => {
-    getCourses(
-      false,
-      this.setState.bind( this )
-    ).then( coursesObject => {
-      const courses = Object.entries( coursesObject ).map( ( [ courseId, courseName ] ) => {
-        const isReplaced = checkIsCourseReplaced( courseId );
+		this.state.loggedOutCallback({username, password});
+	};
 
-        // { courseName, courseId, isReplaced, replacedName, isRemoved }
-        return {
-          courseName,
-          courseId,
-          isReplaced: isReplaced !== false,
-          replacedName: isReplaced, // Only checks this if isReplaced is true, anyway
-          isRemoved: checkIsCourseRemoved( courseId ),
-        };
-      } );
+	componentDidMount = () => {
+		getCourses(false, this.setState.bind(this)).then(coursesObject => {
+			const courses = Object.entries(coursesObject).map(
+				([courseId, courseName]) => {
+					const isReplaced = checkIsCourseReplaced(courseId);
 
-      sortCoursesArray( courses );
+					// { courseName, courseId, isReplaced, replacedName, isRemoved }
+					return {
+						courseName,
+						courseId,
+						isReplaced: isReplaced !== false,
+						replacedName: isReplaced, // Only checks this if isReplaced is true, anyway
+						isRemoved: checkIsCourseRemoved(courseId)
+					};
+				}
+			);
 
-      this.setState( { courses, loadingCourses: false } );
-    } );
-  };
+			sortCoursesArray(courses);
 
-  handleSave = event_ => {
-    if ( event_.type !== 'keydown' || event_.key === 'Enter' ) {
-      const input = this.replaceInputRef.current.value;
+			this.setState({courses, loadingCourses: false});
+		});
+	};
 
-      const { courseId, courseName } = this.state.selected;
+	handleSave = event_ => {
+		if (event_.type !== 'keydown' || event_.key === 'Enter') {
+			const input = this.replaceInputRef.current.value;
 
-      setReplaced(
-        courseId,
-        input,
-        courseName
-      );
+			const {courseId, courseName} = this.state.selected;
 
-      this.setState( () => ( { selected: { isSelected: false } } ) );
+			setReplaced(courseId, input, courseName);
 
-      this.updateCourseById( courseId );
-    }
-  };
+			this.setState(() => ({selected: {isSelected: false}}));
 
-  toggleItem = (
-    event_, { isRemoved, courseId }
-  ) => {
-    event_.stopImmediatePropagation();
-    if ( isRemoved ) {
-      removeElementFromStorage( courseId );
-    }
-    else {
-      setRemoved( courseId );
-    }
+			this.updateCourseById(courseId);
+		}
+	};
 
-    this.updateCourseById( courseId );
+	toggleItem = (event_, {isRemoved, courseId}) => {
+		event_.stopImmediatePropagation();
+		if (isRemoved) {
+			removeElementFromStorage(courseId);
+		} else {
+			setRemoved(courseId);
+		}
 
-    this.removeSelectedIfEqualId( courseId );
-  };
+		this.updateCourseById(courseId);
 
-  resetItem = (
-    event_, item
-  ) => {
-    const { courseId } = item;
-    event_.stopImmediatePropagation();
-    this.removeSelectedIfEqualId( courseId );
+		this.removeSelectedIfEqualId(courseId);
+	};
 
-    removeElementFromStorage( courseId );
+	resetItem = (event_, item) => {
+		const {courseId} = item;
+		event_.stopImmediatePropagation();
+		this.removeSelectedIfEqualId(courseId);
 
-    this.updateCourseById( courseId );
-  };
+		removeElementFromStorage(courseId);
 
-  removeSelectedIfEqualId = id => {
-    this.setState( ( { selected } ) => {
-      if ( selected.courseId === id ) {
-        return { selected: { isSelected: false } };
-      }
+		this.updateCourseById(courseId);
+	};
 
-      return {};
-    } );
-  };
+	removeSelectedIfEqualId = id => {
+		this.setState(({selected}) => {
+			if (selected.courseId === id) {
+				return {selected: {isSelected: false}};
+			}
 
-  updateCourseById = id => {
-    this.setState( ( { courses } ) => {
-      for ( const course of courses ) {
-        if ( course.courseId === id ) {
-          course.isRemoved = checkIsCourseRemoved( id );
-          const isReplaced = checkIsCourseReplaced( id );
-          course.isReplaced = isReplaced !== false;
-          course.replacedName = isReplaced;
-          break;
-        }
-      }
+			return {};
+		});
+	};
 
-      sortCoursesArray( courses );
-      return { courses };
-    } );
-  };
+	updateCourseById = id => {
+		this.setState(({courses}) => {
+			for (const course of courses) {
+				if (course.courseId === id) {
+					course.isRemoved = checkIsCourseRemoved(id);
+					const isReplaced = checkIsCourseReplaced(id);
+					course.isReplaced = isReplaced !== false;
+					course.replacedName = isReplaced;
+					break;
+				}
+			}
 
-  handleSidebarClick = (
-    event_, item
-  ) => {
-    if ( item.isRemoved ) {
-      removeElementFromStorage(
-        item.courseId,
-        { updateReplacers: false }
-      );
-      this.updateCourseById( item.courseId );
-    }
+			sortCoursesArray(courses);
+			return {courses};
+		});
+	};
 
-    this.setState(
-      { selected: { isSelected: true, ...item } },
-      () => {
-        const input = this.replaceInputRef.current;
-        if ( input ) {
-          input.focus();
-          input.scrollIntoView( {
-            behavior: 'smooth',
-            block: 'center',
-            inline: 'center',
-          } );
-        }
-      }
-    );
-  };
+	handleSidebarClick = (event_, item) => {
+		if (item.isRemoved) {
+			removeElementFromStorage(item.courseId, {updateReplacers: false});
+			this.updateCourseById(item.courseId);
+		}
+
+		this.setState({selected: {isSelected: true, ...item}}, () => {
+			const input = this.replaceInputRef.current;
+			if (input) {
+				input.focus();
+				input.scrollIntoView({
+					behavior: 'smooth',
+					block: 'center',
+					inline: 'center'
+				});
+			}
+		});
+	};
 }
 
 /**
@@ -429,32 +402,25 @@ class SettingsPage extends Component {
  * @returns {void}
  */
 export const setupSettingsPage = () => {
-  const { head, body } = document;
-  while ( head.lastChild ) {
-    head.lastChild.remove();
-  }
+	const {head, body} = document;
+	while (head.lastChild) {
+		head.lastChild.remove();
+	}
 
-  while ( body.lastChild ) {
-    body.lastChild.remove();
-  }
+	while (body.lastChild) {
+		body.lastChild.remove();
+	}
 
-  history.replaceState(
-    {},
-    '',
-    '/cleanMoodlePreact'
-  );
+	history.replaceState({}, '', '/cleanMoodlePreact');
 
-  document.title = 'Clean Moodle Setup';
+	document.title = 'Clean Moodle Setup';
 
-  GM_addStyle( style );
+	GM_addStyle(style);
 
-  render(
-    <SettingsPage />,
-    body
-  );
+	render(<SettingsPage/>, body);
 
-  const link = document.createElement( 'link' );
-  link.rel = 'shortcut icon';
-  link.href = '/theme/image.php/classic/theme/1588340020/favicon';
-  head.append( link );
+	const link = document.createElement('link');
+	link.rel = 'shortcut icon';
+	link.href = '/theme/image.php/classic/theme/1588340020/favicon';
+	head.append(link);
 };
