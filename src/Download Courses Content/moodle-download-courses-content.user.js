@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.05.22a
+// @version   2021.05.29a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JqltE

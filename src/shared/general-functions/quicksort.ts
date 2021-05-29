@@ -1,25 +1,37 @@
 type ComparisonFunction<T> = (leftItem: T, rightItem: T) => number;
 
 const swap = <T>(array: T[], index1: number, index2: number): void => {
-	[array[index1], array[index2]] = [array[index2], array[index1]];
+	const left = array[index1];
+	const right = array[index2];
+
+	if (left && right) {
+		[array[index1], array[index2]] = [right, left];
+	}
 };
 
 const sortingUsingPivot = <T>(
 	array: T[],
 	comparisonFunction: ComparisonFunction<T>,
-	left: number,
-	right: number
+	l: number,
+	r: number
 ): number => {
-	const pivot = array[(right + left) >>> 1];
-	let l = left;
-	let r = right;
+	const pivot = array[(r + l) >> 1];
+
+	if (!pivot) {
+		throw new Error(
+			`pivot was out of bounds: [${JSON.stringify(array)}][${(r + l) >> 1}]`
+		);
+	}
 
 	while (l <= r) {
-		while (comparisonFunction(array[l], pivot) < 0) {
+		let left: T | undefined;
+
+		while ((left = array[l]) && comparisonFunction(left, pivot) < 0) {
 			++l;
 		}
 
-		while (comparisonFunction(array[r], pivot) > 0) {
+		let right: T | undefined;
+		while ((right = array[r]) && comparisonFunction(right, pivot) > 0) {
 			--r;
 		}
 

@@ -14,16 +14,16 @@ type GetUserCoursesResponse =
 		message: string;
 	  }
 	| {
-		responses: Array<
-		| {
-			error: false;
-			data: string;
+		responses: [
+			| {
+				error: false;
+				data: string;
 				  }
-		| {
-			error: true;
-			exception: string;
+			| {
+				error: true;
+				exception: string;
 				  }
-		>;
+		];
 	  };
 
 let courses: Courses | undefined;

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   2021.05.22a
+// @version   2021.05.29a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/Jqlt0
@@ -95,8 +95,9 @@ const generateImageURL = (() => {
 	};
 
 	return (mimetype: string, defaultValue: string) => {
-		if (mimetype in imageURLs) {
-			return `/theme/image.php/classic/core/1601902087/f/${imageURLs[mimetype]}`;
+		const icon = imageURLs[mimetype];
+		if (icon) {
+			return `/theme/image.php/classic/core/1601902087/f/${icon}`;
 		}
 
 		return defaultValue;
@@ -141,13 +142,17 @@ const Folder = ({
 		}
 	}
 
-	const root = filePaths['/'].sort((a, b) => {
-		const aL = a.filename.toLowerCase();
-		const bL = b.filename.toLowerCase();
+	const root = filePaths['/'];
+	if (root) {
+		root.sort((a, b) => {
+			const aL = a.filename.toLowerCase();
+			const bL = b.filename.toLowerCase();
 
-		return aL < bL ? -1 : (aL > bL ? 1 : 0);
-	});
-	delete filePaths['/'];
+			return aL < bL ? -1 : (aL > bL ? 1 : 0);
+		});
+
+		delete filePaths['/'];
+	}
 
 	const entries = Object.entries(filePaths).sort((a, b) => {
 		const aL = a[0].toLowerCase();
@@ -185,7 +190,7 @@ const Folder = ({
 						/>
 					</li>
 				))}
-				{root.map(({fileurl, mimetype, filename}) => {
+				{root?.map(({fileurl, mimetype, filename}) => {
 					const fileURL = new URL(fileurl, 'https://moodle.ksasz.ch');
 					fileURL.pathname = fileURL.pathname.replace(/^\/webservice/, '');
 

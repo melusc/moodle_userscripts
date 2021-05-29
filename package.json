@@ -15,6 +15,7 @@
 	"devDependencies": {
 		"@babel/plugin-transform-react-jsx": "^7.14.3",
 		"@babel/plugin-transform-runtime": "^7.14.3",
+		"@sindresorhus/tsconfig": "^1.0.2",
 		"@types/tampermonkey": "^4.0.0",
 		"@typescript-eslint/parser": "^4.25.0",
 		"babel-loader": "^8.2.2",
@@ -94,12 +95,6 @@
 					"**/*.{ts,tsx}"
 				],
 				"rules": {
-					"@typescript-eslint/no-unused-vars": [
-						"error",
-						{
-							"varsIgnorePattern": "^h$|^Fragment$"
-						}
-					],
 					"no-unused-vars": "off"
 				}
 			}
@@ -135,8 +130,6 @@
 				}
 			],
 			"node/file-extension-in-import": "off",
-			"react/prop-types": "off",
-			"react/react-in-jsx-scope": "off",
 			"prefer-template": "error",
 			"react/no-unknown-property": [
 				"error",
@@ -148,7 +141,14 @@
 						"stroke-width"
 					]
 				}
-			]
+			],
+			"react/prop-types": "off"
+		},
+		"settings": {
+			"react": {
+				"pragma": "h",
+				"pragmaFrag": "Fragment"
+			}
 		}
 	}
 }
