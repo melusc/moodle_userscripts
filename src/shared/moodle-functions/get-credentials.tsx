@@ -10,12 +10,12 @@ type Credentials = {
 
 type LoginState =
 	| {
-		loggedOut: true;
-		loggedOutCallback: (argument0: Credentials) => void;
+			loggedOut: true;
+			loggedOutCallback: (argument0: Credentials) => void;
 	  }
 	| {
-		loggedOut: false;
-		loggedOutCallback: undefined;
+			loggedOut: false;
+			loggedOutCallback: undefined;
 	  };
 
 let frontPageLoginSetState: ComponentInterface['setState'];

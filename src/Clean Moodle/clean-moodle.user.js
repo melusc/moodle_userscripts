@@ -166,8 +166,8 @@ const testDiff = (oldValue, newValue) => {
 	const addedOrChanged = isArray ?
 		newArray.filter(value => !oldValue.includes(value)) :
 		newArray.filter(
-			value =>
-				!oldArray.includes(value) || oldValue[value] !== newValue[value]
+				value =>
+					!oldArray.includes(value) || oldValue[value] !== newValue[value]
 		  );
 	const removedVals = oldArray.filter(value => !newArray.includes(value));
 

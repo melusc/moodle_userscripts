@@ -31,8 +31,8 @@ type GetContentsModuleContentsIsFile = {
 };
 
 type GetContentsModuleContentsIsFileSanitized = Except<
-GetContentsModuleContentsIsFile,
-'filepath'
+	GetContentsModuleContentsIsFile,
+	'filepath'
 > & {
 	filepath: string[];
 };
@@ -43,12 +43,12 @@ type GetContentsModuleContents =
 
 type GetContentsModule = (
 	| {
-		contents: GetContentsModuleContents[];
-		contentsinfo: unknown;
-		url: string;
+			contents: GetContentsModuleContents[];
+			contentsinfo: unknown;
+			url: string;
 	  }
 	| {
-		description: string;
+			description: string;
 	  }
 ) & {
 	afterlink: null; // Could only find null here, I don't use it anyway

@@ -221,8 +221,7 @@ class Main extends Component {
 											(isReplaced === false ?
 												courseName :
 												replacedName) :
-											'' // eslint-disable-line react/jsx-indent
-										// react/jsx-indent wants 9 tabs instead of 11 for some reason
+											''
 									}
 									onKeyDown={handleSave}
 								/>

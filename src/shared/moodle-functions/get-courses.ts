@@ -9,21 +9,21 @@ type Courses = Promise<CoursesObject>;
 
 type GetUserCoursesResponse =
 	| {
-		exception: string;
-		errorcode: string;
-		message: string;
+			exception: string;
+			errorcode: string;
+			message: string;
 	  }
 	| {
-		responses: [
-			| {
-				error: false;
-				data: string;
+			responses: [
+				| {
+						error: false;
+						data: string;
 				  }
-			| {
-				error: true;
-				exception: string;
+				| {
+						error: true;
+						exception: string;
 				  }
-		];
+			];
 	  };
 
 let courses: Courses | undefined;

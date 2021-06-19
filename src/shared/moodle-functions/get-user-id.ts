@@ -5,14 +5,14 @@ import {setLastValidatedToken} from './set-last-validated-token';
 
 type GetUserIdResponse =
 	| {
-		exception: string;
-		errorcode: string;
-		message: string;
+			exception: string;
+			errorcode: string;
+			message: string;
 	  }
 	| {
-		userid: number;
+			userid: number;
 
-		// There's more, but that's not useful here
+			// There's more, but that's not useful here
 	  };
 
 let userId: number | undefined; // Cache userId

@@ -6,12 +6,12 @@ let cachedToken: Promise<string> | undefined;
 
 type LoginResponse =
 	| {
-		token: string;
-		privatetoken: string;
+			token: string;
+			privatetoken: string;
 	  }
 	| {
-		error: string;
-		errorcode: string;
+			error: string;
+			errorcode: string;
 	  };
 
 export const login = async (

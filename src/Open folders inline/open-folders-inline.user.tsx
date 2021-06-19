@@ -25,47 +25,47 @@ import style from './style.scss';
 GM_addStyle(style);
 
 const getPageContent = async (noCache = false) =>
-	login(noCache).then(async (wstoken): Promise<
-	false | GetContentsResponse[]
-	> => {
-		const courseId = new URLSearchParams(location.search).get('id');
+	login(noCache).then(
+		async (wstoken): Promise<false | GetContentsResponse[]> => {
+			const courseId = new URLSearchParams(location.search).get('id');
 
-		if (!courseId) {
-			return false;
-		}
+			if (!courseId) {
+				return false;
+			}
 
-		const requestParameters = new URLSearchParams({
-			courseid: courseId,
-			'options[0][name]': 'includestealthmodules',
-			'options[0][value]': '1',
-			moodlewsrestformat: 'json',
-			wsfunction: 'core_course_get_contents',
-			wstoken
-		});
-
-		return fetch('/webservice/rest/server.php', {
-			method: 'POST',
-			headers: {
-				'content-type': 'application/x-www-form-urlencoded'
-			},
-			body: requestParameters.toString()
-		})
-			.then(
-				async (
-					response
-				): Promise<GetContentsResponse[] | GetContentsResponseFailed> =>
-					response.json()
-			)
-			.then(responseJSON => {
-				if (!Array.isArray(responseJSON) && 'exception' in responseJSON) {
-					logout();
-					return getPageContent(true);
-				}
-
-				setLastValidatedToken();
-				return responseJSON;
+			const requestParameters = new URLSearchParams({
+				courseid: courseId,
+				'options[0][name]': 'includestealthmodules',
+				'options[0][value]': '1',
+				moodlewsrestformat: 'json',
+				wsfunction: 'core_course_get_contents',
+				wstoken
 			});
-	});
+
+			return fetch('/webservice/rest/server.php', {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/x-www-form-urlencoded'
+				},
+				body: requestParameters.toString()
+			})
+				.then(
+					async (
+						response
+					): Promise<GetContentsResponse[] | GetContentsResponseFailed> =>
+						response.json()
+				)
+				.then(responseJSON => {
+					if (!Array.isArray(responseJSON) && 'exception' in responseJSON) {
+						logout();
+						return getPageContent(true);
+					}
+
+					setLastValidatedToken();
+					return responseJSON;
+				});
+		}
+	);
 
 const generateImageURL = (() => {
 	const imageURLs: Record<string, string> = {
