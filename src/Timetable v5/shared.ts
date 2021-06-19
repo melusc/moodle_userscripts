@@ -1,16 +1,11 @@
-const parseTimeToString = int => {
-	int = Number(int);
-
-	if (Number.isNaN(int)) {
-		return false;
-	}
-
+const parseTimeToString = (int: number) => {
 	const minutes = int % 60;
 	const hours = Math.floor(int / 60);
 
-	return `${hours.toString().padStart(2, '0')}:${minutes
-		.toString()
-		.padStart(2, '0')}`;
+	const sHours = `${hours}`.padStart(2, '0');
+	const sMinutes = `${minutes}`.padStart(2, '0');
+
+	return `${sHours}:${sMinutes}`;
 };
 
 // This was moved here because it should be shared

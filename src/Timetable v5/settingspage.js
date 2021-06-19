@@ -2,7 +2,7 @@ import {render, Component, Fragment, h, createRef} from 'preact';
 import {produce} from 'immer';
 import {getCourses} from '../shared/moodle-functions';
 import {uniqueId} from '../shared/general-functions';
-import {parseTimeToString, moodleIcon} from './shared.js';
+import {parseTimeToString, moodleIcon} from './shared';
 import settingsPageStyle from './settingspage.scss';
 
 const title = 'Moodle timetable v5';
@@ -734,7 +734,7 @@ const SettingsPage = (() => {
 						elementToFocus =
 							target.dataset.type === 'content' ?
 								currentRow.previousElementSibling?.querySelector(
-									'div.table-cell.entry > [data-type="id"]'
+										'div.table-cell.entry > [data-type="id"]'
 								  ) :
 								target.parentNode.querySelector('[data-type="content"]');
 					} else if (target.dataset.type === 'content') {
@@ -755,7 +755,7 @@ const SettingsPage = (() => {
 					if (shiftKey) {
 						elementToFocus = target.classList.contains('time-from') ?
 							currentRow.previousElementSibling?.querySelector(
-								'div.table-cell.time > .time-to'
+									'div.table-cell.time > .time-to'
 							  ) :
 							target.parentNode.querySelector('.time-from');
 					} else if (target.classList.contains('time-from')) {
