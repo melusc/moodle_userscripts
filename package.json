@@ -115,6 +115,7 @@
 					"*/indent": "Prettier is better at handling a mix of regular js, ts-specifics, and jsx. When prettier indents it is more consistent (especially non-vanilla js).",
 					"import/no-extraneous-dependencies": "Disabled because it wants me to install htm_preact since I import from htm/preact (https://github.com/benmosher/eslint-plugin-import/issues/2065)",
 					"no-mixed-spaces-and-tabs": "https://prettier.io/docs/en/options.html#tabs",
+					"react/jsx-curly-newline": "Let prettier handle it",
 					"react/prop-types": "Preact has no such thing"
 				}
 			],
@@ -148,6 +149,7 @@
 					"avoidEscape": true
 				}
 			],
+			"react/jsx-curly-newline": "off",
 			"react/jsx-indent": "off",
 			"react/no-unknown-property": [
 				"error",

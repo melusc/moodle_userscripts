@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.06.19a
+// @version   2021.06.21a
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -20,21 +20,11 @@ import {Component, h, render} from 'preact';
 import {initSettingsPage} from './settingspage.js';
 
 import frontPageStyle from './frontpage.scss';
-import {notificationIconUrl} from './consts';
+import {TimetableStates, Lang, notificationIconUrl} from './consts';
 import {parseTimeToString} from './shared';
 
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
-}
-
-const enum TimetableStates {
-	before,
-	after,
-	during,
-	empty,
-	init,
-	holiday,
-	weekend
 }
 
 type TimetableStorageValues = {
@@ -47,22 +37,27 @@ type TimetableStorageValuesWeek = Record<string, TimetableStorageValues[]>;
 
 const TimetableRow = ({
 	values,
-	isNow
+	isNow = false
 }: {
-	values: Partial<TimetableStorageValues>; // Because {content: 'No school should be valid'} or even {} (free lesson)
-	isNow: boolean;
+	values: Partial<TimetableStorageValues>; // Because {content: 'No school'} should be valid or even {} (free lesson)
+	isNow?: boolean;
 }) => {
 	const {from, to, id} = values;
-	const content = values.content ?? 'Free lesson';
+	const content = values.content ?? Lang.freeLesson;
 
 	return (
 		<div class="tt-tr">
 			<div class="tt-th">
-				{isNow ? 'Now' : 'Next'}
+				{isNow ? Lang.now : Lang.next}
 				{from !== undefined &&
 					to !== undefined &&
 					` (${parseTimeToString(from)} - ${parseTimeToString(to)})`}
-				{':' /* Otherwise it looks like part of a ternary operator */}
+				{
+					':'
+					/* To make it obvious that this
+						is not part of a ternary operator
+						(at a quick glance) */
+				}
 			</div>
 			<div class="tt-td">
 				{typeof id === 'string' ? (
@@ -94,8 +89,8 @@ const getCourses = (
 	const date = new Date();
 
 	/* Make monday 0 and friday 4 (sunday -1)
-		 it shouldn't get here if weekend
-		 but if it does it can handle that */
+		it shouldn't get here if weekend
+		but if it does it can handle that */
 	const dayOfWeek = date.getDay() - 1;
 
 	const values = valuesWeek?.[dayOfWeek];
@@ -126,8 +121,8 @@ const getCourses = (
 	let currentCourseIdx = 0;
 	let currentCourse: TimetableStorageValues | undefined;
 
-	// Continue iterating through the courses while "now"
-	// is after the course, meaning it has already taken place
+	/* Continue iterating through the courses while "now"
+		is after the course, meaning it has already taken place */
 	while (
 		(currentCourse = values[currentCourseIdx]) &&
 		currentCourse.to < minutesOfDay
@@ -204,7 +199,10 @@ class FrontPage extends Component {
 	updateCourses = (calledFromTimeout?: boolean) => {
 		this.timeout.clear(); // If exit early it should not fire in future
 
-		// Holiday before weekend
+		/* If it is both holiday
+			and weekend, holiday outweighs
+			and gets displayed, thats
+			why check isHoliday first */
 		if (isHoliday()) {
 			this.setState({
 				timetableState: TimetableStates.holiday
@@ -241,11 +239,15 @@ class FrontPage extends Component {
 				courses
 			} as FrontPageState);
 
-			if (nextCourse) {
-				// Run at end of current course
-				// Or if now is before school
-				// run at start of next course
-				const diff = (currentCourse?.to ?? nextCourse.from) - minutesOfDay; // In minutes
+			/* The current course ends at currentCourse.to,
+				thats when we want a notification
+				If it is currently before school though,
+				we want it to notify when school starts,
+				thats when we use nextCourse.from */
+			const nextNotificationTimeInMinutes =
+				currentCourse?.to ?? nextCourse?.from;
+			if (typeof nextNotificationTimeInMinutes === 'number') {
+				const diff = nextNotificationTimeInMinutes - minutesOfDay; // In minutes
 				this.timeout.set(diff * 60 * 1000); // In milliseconds
 			}
 
@@ -269,6 +271,7 @@ class FrontPage extends Component {
 
 	render = () => {
 		const {timetableState, courses} = this.state;
+		const [currentCourse, nextCourse] = courses;
 		return (
 			<div>
 				<div class="mod-indent-outer">
@@ -281,24 +284,24 @@ class FrontPage extends Component {
 								{timetableState === TimetableStates.init && <div>Loading</div>}
 
 								{timetableState === TimetableStates.after && (
-									<div>No school anymore</div>
+									<div>{Lang.afterSchool}</div>
 								)}
 								{timetableState === TimetableStates.weekend && (
-									<div class="tt-title">Weekend</div>
+									<div class="tt-title">{Lang.weekend}</div>
 								)}
 								{timetableState === TimetableStates.holiday && (
-									<div class="tt-title">Holiday</div>
+									<div class="tt-title">{Lang.holiday}</div>
 								)}
 
 								{timetableState === TimetableStates.empty && (
 									<div>
-										{'Today\'s timetable is empty, you can update it '}
+										{Lang.emptyBeforeAnchor}
 										<a
 											href="/timetable/v5"
 											rel="noopener noreferrer"
 											target="_blank"
 										>
-											here
+											{Lang.emptyInAnchor}
 										</a>
 									</div>
 								)}
@@ -306,29 +309,33 @@ class FrontPage extends Component {
 									{(timetableState === TimetableStates.before ||
 										timetableState === TimetableStates.during) && (
 										<div class="tt-tbody">
-											{timetableState === TimetableStates.before && (
-												<TimetableRow isNow values={{content: 'No lesson'}}/>
-											)}
-											{courses.map((item, index) => {
-												// If before school is already handled above
-												if (item === undefined) {
-													return;
-												}
-
-												return (
-													<TimetableRow
-														// Item.from is locally unique
-														key={item.from}
-														values={item}
-														isNow={index === 0}
-													/>
-												);
-											})}
+											{
+												/* If currentCourse is undefined
+													it is currently before school
+													in that case we show "No school" instead */
+												<TimetableRow
+													isNow
+													values={currentCourse ?? {content: Lang.noSchool}}
+												/>
+											}
+											{
+												/* If nextCourse is undefined
+												  there is no next lesson (next lesson
+													is free, after school),
+													so instead we show "no school" */
+												<TimetableRow
+													values={nextCourse ?? {content: Lang.noSchool}}
+												/>
+											}
 										</div>
 									)}
 								</div>
 							</div>
-							<hr/>
+							{
+								<hr/>
+								/* Comment to point out that this
+								isn't a boring old closing tag */
+							}
 						</div>
 					</div>
 				</div>
