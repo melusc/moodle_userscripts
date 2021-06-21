@@ -347,10 +347,10 @@ class SettingsPage extends Component {
 					// No default
 				}
 			} else {
-				this.setState({notificationString: 'You haven\'t submitted an icon'});
+				this.setState({notificationString: "You haven't submitted an icon"});
 			}
 		} else {
-			this.setState({notificationString: 'You haven\'t selected a course'});
+			this.setState({notificationString: "You haven't selected a course"});
 		}
 	};
 

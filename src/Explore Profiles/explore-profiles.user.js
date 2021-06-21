@@ -771,7 +771,7 @@ const unescapeHTML = string =>
 		.replace(/&quot;/g, '"')
 		.replace(
 			/&#039;|&apos;/g /* Second one just in case because I don't know how moodle escapes apostrophies */,
-			'\''
+			"'"
 		);
 
 /**

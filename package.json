@@ -95,6 +95,14 @@
 					"**/*.{ts,tsx}"
 				],
 				"rules": {
+					"@typescript-eslint/indent": "off",
+					"@typescript-eslint/quotes": [
+						"error",
+						"single",
+						{
+							"avoidEscape": true
+						}
+					],
 					"no-unused-vars": "off"
 				}
 			}
@@ -110,7 +118,6 @@
 					"react/prop-types": "Preact has no such thing"
 				}
 			],
-			"@typescript-eslint/indent": "off",
 			"import/extensions": "off",
 			"import/no-extraneous-dependencies": "off",
 			"indent": "off",
@@ -134,6 +141,13 @@
 			],
 			"node/file-extension-in-import": "off",
 			"prefer-template": "error",
+			"quotes": [
+				"error",
+				"single",
+				{
+					"avoidEscape": true
+				}
+			],
 			"react/jsx-indent": "off",
 			"react/no-unknown-property": [
 				"error",
