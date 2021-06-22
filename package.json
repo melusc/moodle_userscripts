@@ -41,7 +41,7 @@
 		"webpack": "^5.39.1",
 		"webpack-cli": "^4.7.2",
 		"webpack-glob-entry": "^2.1.1",
-		"xo": "^0.40.2"
+		"xo": "^0.40.3"
 	},
 	"license": "MIT",
 	"name": "moodle_userscript",
