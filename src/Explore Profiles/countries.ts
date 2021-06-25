@@ -1,4 +1,4 @@
-const countries = {
+const countries: Record<string, string> = {
 	AD: 'Andorra',
 	AE: 'United Arab Emirates',
 	AF: 'Afghanistan',
@@ -250,4 +250,6 @@ const countries = {
 	ZW: 'Zimbabwe'
 };
 
-export default countries;
+Object.freeze(countries);
+
+export {countries};
