@@ -3,7 +3,7 @@ import {render, h, Component, Fragment, createRef} from 'preact';
 import {getCourses} from '../shared/moodle-functions';
 import {quickSort} from '../shared/general-functions';
 
-import {removeElementFromStorage} from './shared.js';
+import {removeElementFromStorage} from './shared';
 import style from './settingspage.scss';
 
 /**

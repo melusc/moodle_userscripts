@@ -1,5 +1,5 @@
 /**
- * @param {string|number} id The courseid
+ * @param {string} id The courseid
  * @param {object} param1 The object
  *
  * param {boolean} param1.updateReplacers Update the replacers in storage
@@ -11,14 +11,17 @@
  * @returns {array} returnObj.removers The updated removers
  */
 export const removeElementFromStorage = (
-	id,
+	id: string,
 	{updateReplacers = true, updateRemovers = true} = {}
 ) => {
 	const removersSet = new Set(GM_getValue('remove'));
 	removersSet.delete(id);
 	const removers = [...removersSet];
 
-	const replacers = GM_getValue('replace') ?? {};
+	const replacers =
+		GM_getValue<Record<string, string> | undefined>('replace') ?? {};
+
+	// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 	delete replacers[id];
 
 	if (updateRemovers) {
