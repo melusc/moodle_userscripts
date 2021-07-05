@@ -18,7 +18,7 @@
 		"@babel/plugin-transform-runtime": "^7.14.5",
 		"@sindresorhus/tsconfig": "^1.0.2",
 		"@types/dompurify": "^2.2.2",
-		"@types/tampermonkey": "^4.0.1",
+		"@types/tampermonkey": "^4.0.2",
 		"@typescript-eslint/parser": "^4.28.1",
 		"babel-loader": "^8.2.2",
 		"babel-plugin-replace-identifiers": "^0.1.1",
