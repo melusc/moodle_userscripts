@@ -18,7 +18,7 @@ type GetUserIdResponse =
 let userId: number | undefined; // Cache userId
 
 export const getUserId = async (
-	loginReturnState = defaultLoginReturnState
+	loginReturnState = defaultLoginReturnState,
 ): Promise<number> => {
 	if (userId !== undefined) {
 		return userId;
@@ -28,15 +28,15 @@ export const getUserId = async (
 		.then(async (wstoken: string): Promise<GetUserIdResponse> => {
 			const bodyParameters = new URLSearchParams({
 				wsfunction: 'core_webservice_get_site_info',
-				wstoken
+				wstoken,
 			});
 
 			return fetch('/webservice/rest/server.php?moodlewsrestformat=json', {
 				method: 'POST',
 				headers: {
-					'content-type': 'application/x-www-form-urlencoded'
+					'content-type': 'application/x-www-form-urlencoded',
 				},
-				body: bodyParameters.toString()
+				body: bodyParameters.toString(),
 			}).then(async (response): Promise<GetUserIdResponse> => response.json());
 		})
 		.then((responseJSON: GetUserIdResponse) => {

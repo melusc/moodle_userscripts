@@ -16,7 +16,7 @@ const ERROR_MSG = {
 	invalidSelector: 'Invalid option selected',
 	invalidURL: 'Invalid URL submitted',
 	notImage: 'File was not an image',
-	statusCode: (status, statusText) => `Error ${status}: ${statusText}`
+	statusCode: (status, statusText) => `Error ${status}: ${statusText}`,
 };
 
 const SvgX = ({class: _class, ...properties}) => (
@@ -36,7 +36,7 @@ const SvgX = ({class: _class, ...properties}) => (
 const Icon = ({
 	iconVals: {hasIcon, isXML, rawXML, dataURI},
 	delIcon,
-	renderX = false
+	renderX = false,
 }) =>
 	hasIcon && (
 		<>
@@ -112,7 +112,7 @@ const Main = ({
 	loggedOut,
 	loggedOutCallback,
 	formRef,
-	reset
+	reset,
 }) => {
 	const fileReference = useRef(null);
 	const fileButtonClick = () => {
@@ -214,12 +214,12 @@ const Main = ({
 								({
 									courseName,
 									courseId: currentCourseId,
-									iconVals: {hasIcon}
+									iconVals: {hasIcon},
 								}) =>
-									hasIcon &&
-									(!isSelected || courseId !== currentCourseId) && (
+									hasIcon
+									&& (!isSelected || courseId !== currentCourseId) && (
 										<option value={currentCourseId}>{courseName}</option>
-									)
+									),
 							)}
 						</select>
 						<button class="btn-save" type="button" onClick={handleSave}>
@@ -237,7 +237,7 @@ const Notification = ({handleClick, notificationString}) => {
 		scroll({
 			top: 0,
 			left: 0,
-			behavior: 'smooth'
+			behavior: 'smooth',
 		});
 	}, []);
 
@@ -263,8 +263,8 @@ class SettingsPage extends Component {
 		notificationString: undefined,
 
 		inputVals: {
-			current: false
-		}
+			current: false,
+		},
 	};
 
 	form = createRef();
@@ -276,7 +276,7 @@ class SettingsPage extends Component {
 			inputVals: {current, val},
 			loggedOut,
 			loggedOutCallback,
-			notificationString
+			notificationString,
 		} = this.state;
 
 		return (
@@ -437,7 +437,7 @@ class SettingsPage extends Component {
 				.map(([courseId, courseName]) => ({
 					courseId,
 					courseName,
-					iconVals: getIcon(courseId)
+					iconVals: getIcon(courseId),
 				}));
 
 			this.setState({courses});
@@ -449,7 +449,7 @@ class SettingsPage extends Component {
 
 		this.setState({
 			inputVals: {current: false},
-			...(resetSelected && {selected: {isSelected: false}})
+			...(resetSelected && {selected: {isSelected: false}}),
 		});
 	};
 
@@ -480,11 +480,11 @@ class SettingsPage extends Component {
 							this.setState({
 								notificationString: ERROR_MSG.statusCode(
 									response.status,
-									response.statusText
-								)
+									response.statusText,
+								),
 							});
 						}
-					}
+					},
 				});
 			} catch {
 				this.setState({notificationString: ERROR_MSG.invalidURL});
@@ -514,7 +514,7 @@ class SettingsPage extends Component {
 					const object = {};
 
 					const {rawByteString} = fr.result.match(
-						/^data:[\w+/]+;base64,(?<rawByteString>.+)$/
+						/^data:[\w+/]+;base64,(?<rawByteString>.+)$/,
 					).groups;
 					if (blobLike.type === 'image/svg+xml') {
 						const rawXML = decodeURI(atob(rawByteString));
@@ -549,7 +549,7 @@ class SettingsPage extends Component {
 			GM_setValue('pointers', pointers);
 			this.updateCourseById(courseId);
 			this.reset();
-		}
+		},
 	};
 }
 

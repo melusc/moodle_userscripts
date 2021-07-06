@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.06.25a
+// @version   2021.07.06a
 // @author    lusc
 // @updateURL https://git.io/JqltR
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -20,7 +20,7 @@ import {
 	setLastValidatedToken,
 	login,
 	logout,
-	getUserId
+	getUserId,
 } from '../shared/moodle-functions';
 
 import style from './style.scss';
@@ -60,7 +60,7 @@ type MainState = {
 
 // State used by all
 const mainState = proxy<MainState | (Partial<MainState> & {loaded: false})>({
-	loaded: false
+	loaded: false,
 });
 
 const notificationState = proxy<{
@@ -111,7 +111,7 @@ const Header = () => {
 		firstaccess,
 		lastaccess,
 		isContact,
-		isUserProfile
+		isUserProfile,
 	} = snap;
 
 	return (
@@ -204,9 +204,9 @@ const Header = () => {
 													/>
 												)}
 												<span class="header-button-title">
-													{isContact ?
-														'Remove from contacts' :
-														'Add to contacts'}
+													{isContact
+														? 'Remove from contacts'
+														: 'Add to contacts'}
 												</span>
 											</span>
 											<span class="loading-icon icon-no-margin">
@@ -323,7 +323,7 @@ const Main = () => {
 		id,
 		firstaccess,
 		lastaccess,
-		isUserProfile
+		isUserProfile,
 	} = snap;
 
 	return (
@@ -338,7 +338,7 @@ const Main = () => {
 							// and is trusted anyway
 							// eslint-disable-next-line react/no-danger
 							dangerouslySetInnerHTML={{
-								__html: DOMPurify.sanitize(description)
+								__html: DOMPurify.sanitize(description),
 							}}
 							class="description"
 						/>
@@ -351,7 +351,7 @@ const Main = () => {
 					/>
 					<div class="profile_tree">
 						{[email, country, city, url, interests].some(
-							item => typeof item !== 'undefined'
+							item => typeof item !== 'undefined',
 						) && (
 							<section class="node_category card d-inline-block w-100 mb-3">
 								<div class="card-body">
@@ -408,7 +408,7 @@ const Main = () => {
 																	<li key={interest}>
 																		<a
 																			href={`https://moodle.ksasz.ch/tag/index.php?tag=${encodeURIComponent(
-																				interest
+																				interest,
 																			)}`}
 																			class="badge badge-info"
 																		>
@@ -695,7 +695,7 @@ const clearNode = (node: Element) => {
  */
 const getProfilesInRange = async (
 	start: number,
-	range: number
+	range: number,
 ): Promise<UserDataResponse[]> =>
 	login().then(async wstoken => {
 		let lower = start;
@@ -707,14 +707,14 @@ const getProfilesInRange = async (
 
 		const bodyParameters = new URLSearchParams({
 			wsfunction: 'core_user_get_course_user_profiles',
-			wstoken
+			wstoken,
 		});
 
 		for (let index = 0; index <= upper - lower; ++index) {
 			bodyParameters.set(`userlist[${index}][userid]`, `${lower + index}`);
 			bodyParameters.set(
 				`userlist[${index}][courseid]`,
-				'32' // Allgemeine informationen
+				'32', // Allgemeine informationen
 			);
 		}
 
@@ -724,9 +724,9 @@ const getProfilesInRange = async (
 				method: 'POST',
 				body: bodyParameters.toString(),
 				headers: {
-					'content-type': 'application/x-www-form-urlencoded'
-				}
-			}
+					'content-type': 'application/x-www-form-urlencoded',
+				},
+			},
 		)
 			.then(async response => response.json())
 			.then(async (response: UserDataResponse[]) => {
@@ -749,7 +749,7 @@ const unescapeHTML = (html: string) =>
 		.replace(/&quot;/g, '"')
 		.replace(
 			/&#039;|&apos;/g /* Second one just in case because I don't know how moodle escapes apostrophies */,
-			"'"
+			"'",
 		);
 
 const getRandomProfile = async (): Promise<UserDataResponse> => {
@@ -770,7 +770,7 @@ const getRandomProfile = async (): Promise<UserDataResponse> => {
 
 const getProfile = async (
 	currentId: number,
-	action: number
+	action: number,
 ): Promise<UserDataResponse> => {
 	const actionSign = Math.sign(action);
 
@@ -816,8 +816,8 @@ const getProfile = async (
 const fetchNewProfile = async (action: number | 'rand') => {
 	const id = Number(new URL(location.href).searchParams.get('id'));
 
-	const profile =
-		action === 'rand' ? await getRandomProfile() : await getProfile(id, action);
+	const profile
+		= action === 'rand' ? await getRandomProfile() : await getProfile(id, action);
 
 	if (id !== profile.id) {
 		const url = new URL(location.href);
@@ -867,11 +867,11 @@ const fetchNewProfile = async (action: number | 'rand') => {
 		country: COUNTRY_CODES[profile.country ?? ''],
 		courses: profile.enrolledcourses?.map(({id, fullname}) => ({
 			id,
-			coursename: unescapeHTML(fullname.trim())
+			coursename: unescapeHTML(fullname.trim()),
 		})),
 		fullname: profile.fullname?.trim(),
 		interests: profile.interests?.split(',')?.map(interest => interest.trim()),
-		image: profile.profileimageurl
+		image: profile.profileimageurl,
 	} as MainState);
 
 	if (!mainState.loaded) {
@@ -891,7 +891,7 @@ const fetchNewProfile = async (action: number | 'rand') => {
 		}
 
 		let li = document.querySelector<HTMLLIElement>(
-			'li[aria-labelledby="label_2_34"], li[aria-labelledby="label_2_31"]'
+			'li[aria-labelledby="label_2_34"], li[aria-labelledby="label_2_31"]',
 		);
 
 		if (li) {
@@ -904,7 +904,7 @@ const fetchNewProfile = async (action: number | 'rand') => {
 			li.tabIndex = -1;
 
 			const courseSidebar = document.querySelector<HTMLLIElement>(
-				'li[aria-labelledby="label_2_4"]'
+				'li[aria-labelledby="label_2_4"]',
 			);
 
 			if (courseSidebar) {
@@ -925,7 +925,7 @@ const runOnce = () => {
 	if (GM_getValue<number | undefined>('highest') === undefined) {
 		GM_setValue(
 			'highest',
-			1959 // Highest + 10 at time of creation
+			1959, // Highest + 10 at time of creation
 			// This number only really matters for rand anyway
 		);
 	}
@@ -933,7 +933,7 @@ const runOnce = () => {
 	GM_addStyle(style);
 
 	const navbar = document.querySelector<HTMLUListElement>(
-		'ul.navbar-nav.d-none.d-md-flex'
+		'ul.navbar-nav.d-none.d-md-flex',
 	);
 
 	if (navbar) {
@@ -945,7 +945,7 @@ const runOnce = () => {
 			['Next profile', 1],
 			['Random profile', 'rand'],
 			['-10 profiles', -10],
-			['+10 profiles', 10]
+			['+10 profiles', 10],
 		] as const;
 
 		render(
@@ -963,7 +963,7 @@ const runOnce = () => {
 					</button>
 				))}
 			</>,
-			buttons
+			buttons,
 		);
 
 		navbar.after(buttons);

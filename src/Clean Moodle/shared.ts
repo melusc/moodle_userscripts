@@ -12,14 +12,14 @@
  */
 export const removeElementFromStorage = (
 	id: string,
-	{updateReplacers = true, updateRemovers = true} = {}
+	{updateReplacers = true, updateRemovers = true} = {},
 ) => {
 	const removersSet = new Set(GM_getValue('remove'));
 	removersSet.delete(id);
 	const removers = [...removersSet];
 
-	const replacers =
-		GM_getValue<Record<string, string> | undefined>('replace') ?? {};
+	const replacers
+		= GM_getValue<Record<string, string> | undefined>('replace') ?? {};
 
 	// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 	delete replacers[id];

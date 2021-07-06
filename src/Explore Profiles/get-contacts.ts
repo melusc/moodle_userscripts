@@ -13,20 +13,20 @@ type CoreMessageGetUserContactsResponse =
 
 export const getContacts = async (
 	noCache: boolean,
-	userId: number
-): Promise<number[]> => {
-	return login(noCache)
+	userId: number,
+): Promise<number[]> =>
+	login(noCache)
 		.then(async token =>
 			fetch(
 				'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json',
 				{
 					headers: {
-						'content-type': 'application/x-www-form-urlencoded'
+						'content-type': 'application/x-www-form-urlencoded',
 					},
 					body: `userid=${userId}&wsfunction=core_message_get_user_contacts&wstoken=${token}`,
-					method: 'POST'
-				}
-			).then(async response => response.json())
+					method: 'POST',
+				},
+			).then(async response => response.json()),
 		)
 		.then((response: CoreMessageGetUserContactsResponse) => {
 			if ('exception' in response) {
@@ -38,4 +38,3 @@ export const getContacts = async (
 
 			return response.map(({id}) => id);
 		});
-};

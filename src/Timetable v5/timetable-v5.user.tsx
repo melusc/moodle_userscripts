@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.06.21a
+// @version   2021.07.06a
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -37,7 +37,7 @@ type TimetableStorageValuesWeek = Record<string, TimetableStorageValues[]>;
 
 const TimetableRow = ({
 	values,
-	isNow = false
+	isNow = false,
 }: {
 	values: Partial<TimetableStorageValues>; // Because {content: 'No school'} should be valid or even {} (free lesson)
 	isNow?: boolean;
@@ -49,9 +49,9 @@ const TimetableRow = ({
 		<div class="tt-tr">
 			<div class="tt-th">
 				{isNow ? Lang.now : Lang.next}
-				{from !== undefined &&
-					to !== undefined &&
-					` (${parseTimeToString(from)} - ${parseTimeToString(to)})`}
+				{from !== undefined
+					&& to !== undefined
+					&& ` (${parseTimeToString(from)} - ${parseTimeToString(to)})`}
 				{
 					':'
 					/* To make it obvious that this
@@ -77,13 +77,13 @@ const TimetableRow = ({
 };
 
 const getCourses = (
-	minutesOfDay: number
+	minutesOfDay: number,
 ): Readonly<{
 	state: TimetableStates;
 	courses?: Array<TimetableStorageValues | undefined>;
 }> => {
 	const valuesWeek = GM_getValue<TimetableStorageValuesWeek | undefined>(
-		'days'
+		'days',
 	);
 
 	const date = new Date();
@@ -97,7 +97,7 @@ const getCourses = (
 
 	if (values === undefined || values.length === 0) {
 		return {
-			state: TimetableStates.empty
+			state: TimetableStates.empty,
 		};
 	}
 
@@ -105,7 +105,7 @@ const getCourses = (
 
 	if (!lastValue || lastValue.to <= minutesOfDay) {
 		return {
-			state: TimetableStates.after
+			state: TimetableStates.after,
 		};
 	}
 
@@ -114,7 +114,7 @@ const getCourses = (
 	if (!firstValue || firstValue.from > minutesOfDay) {
 		return {
 			state: TimetableStates.before,
-			courses: [undefined, firstValue]
+			courses: [undefined, firstValue],
 		};
 	}
 
@@ -124,15 +124,15 @@ const getCourses = (
 	/* Continue iterating through the courses while "now"
 		is after the course, meaning it has already taken place */
 	while (
-		(currentCourse = values[currentCourseIdx]) &&
-		currentCourse.to < minutesOfDay
+		(currentCourse = values[currentCourseIdx])
+		&& currentCourse.to < minutesOfDay
 	) {
 		++currentCourseIdx;
 	}
 
 	return {
 		state: TimetableStates.during,
-		courses: [currentCourse, values[currentCourseIdx + 1]]
+		courses: [currentCourse, values[currentCourseIdx + 1]],
 	};
 };
 
@@ -147,7 +147,7 @@ const notify = (value: TimetableStorageValues) => {
 			timeout: 4000,
 			onclick: () => {
 				open(id ? `/course/view.php?id=${id}` : '/');
-			}
+			},
 		});
 	}
 };
@@ -177,7 +177,7 @@ type FrontPageState = {
 class FrontPage extends Component {
 	state: FrontPageState = {
 		courses: [],
-		timetableState: TimetableStates.init
+		timetableState: TimetableStates.init,
 	};
 
 	timeout = {
@@ -193,7 +193,7 @@ class FrontPage extends Component {
 		},
 		clear: () => {
 			clearTimeout(this.timeout._t);
-		}
+		},
 	};
 
 	updateCourses = (calledFromTimeout?: boolean) => {
@@ -205,14 +205,14 @@ class FrontPage extends Component {
 			why check isHoliday first */
 		if (isHoliday()) {
 			this.setState({
-				timetableState: TimetableStates.holiday
+				timetableState: TimetableStates.holiday,
 			} as FrontPageState);
 			return;
 		}
 
 		if (!isWeekday()) {
 			this.setState({
-				timetableState: TimetableStates.weekend
+				timetableState: TimetableStates.weekend,
 			} as FrontPageState);
 			return;
 		}
@@ -220,23 +220,23 @@ class FrontPage extends Component {
 		const date = new Date();
 
 		// prettier-ignore
-		const minutesOfDay =
-			(date.getHours() * 60) +
-			date.getMinutes() +
-			(date.getSeconds() / 60) +
-			(date.getMilliseconds() / 60 / 1000);
+		const minutesOfDay
+			= (date.getHours() * 60)
+			+ date.getMinutes()
+			+ (date.getSeconds() / 60)
+			+ (date.getMilliseconds() / 60 / 1000);
 
 		const {courses, state} = getCourses(minutesOfDay);
 
 		this.setState({
-			timetableState: state
+			timetableState: state,
 		} as FrontPageState);
 
 		if (courses) {
 			const [currentCourse, nextCourse] = courses;
 
 			this.setState({
-				courses
+				courses,
 			} as FrontPageState);
 
 			/* The current course ends at currentCourse.to,
@@ -244,8 +244,8 @@ class FrontPage extends Component {
 				If it is currently before school though,
 				we want it to notify when school starts,
 				thats when we use nextCourse.from */
-			const nextNotificationTimeInMinutes =
-				currentCourse?.to ?? nextCourse?.from;
+			const nextNotificationTimeInMinutes
+				= currentCourse?.to ?? nextCourse?.from;
 			if (typeof nextNotificationTimeInMinutes === 'number') {
 				const diff = nextNotificationTimeInMinutes - minutesOfDay; // In minutes
 				this.timeout.set(diff * 60 * 1000); // In milliseconds
@@ -306,8 +306,8 @@ class FrontPage extends Component {
 									</div>
 								)}
 								<div class="tt-table">
-									{(timetableState === TimetableStates.before ||
-										timetableState === TimetableStates.during) && (
+									{(timetableState === TimetableStates.before
+										|| timetableState === TimetableStates.during) && (
 										<div class="tt-tbody">
 											{
 												/* If currentCourse is undefined
@@ -356,7 +356,7 @@ const initFrontpage = () => {
 	GM_addStyle(frontPageStyle);
 
 	const main = document.querySelector<HTMLUListElement>(
-		'#region-main-box ul.section'
+		'#region-main-box ul.section',
 	);
 
 	if (main) {
@@ -370,9 +370,9 @@ const initFrontpage = () => {
 	}
 };
 
-const functionToRun = /^\/timetable\/v5/i.test(location.pathname) ?
-	initSettingsPage :
-	initFrontpage;
+const functionToRun = /^\/timetable\/v5/i.test(location.pathname)
+	? initSettingsPage
+	: initFrontpage;
 
 if (document.readyState === 'complete') {
 	functionToRun();

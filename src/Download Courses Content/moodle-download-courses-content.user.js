@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.05.29a
+// @version   2021.07.06a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JqltE
@@ -49,10 +49,10 @@ const initDownload = (event_, noChache = false) => {
 			{
 				method: 'POST',
 				headers: {
-					'content-type': 'application/x-www-form-urlencoded'
+					'content-type': 'application/x-www-form-urlencoded',
 				},
-				body
-			}
+				body,
+			},
 		)
 			.then(response => response.json())
 			.then(jsonPageContent => {
@@ -82,10 +82,10 @@ const initDownload = (event_, noChache = false) => {
 								const filename = sanitizeFileName(content.filename);
 								const date = new Date(timeModified * 1000);
 
-								const zipFileName =
-									modname === 'resource' ?
-										`${sectionName}/${filename}` :
-										`${sectionName}/${folderName}${filepath}${filename}`;
+								const zipFileName
+									= modname === 'resource'
+										? `${sectionName}/${filename}`
+										: `${sectionName}/${folderName}${filepath}${filename}`;
 
 								zipFile.file(
 									zipFileName,
@@ -93,10 +93,10 @@ const initDownload = (event_, noChache = false) => {
 										body,
 										method: 'POST',
 										headers: {
-											'content-type': 'application/x-www-form-urlencoded'
-										}
+											'content-type': 'application/x-www-form-urlencoded',
+										},
 									}).then(response => response.blob()),
-									{date}
+									{date},
 								);
 							}
 						} else if (modname === 'url') {
@@ -119,9 +119,9 @@ const initDownload = (event_, noChache = false) => {
 										},
 										onload({finalUrl}) {
 											resolve(`[InternetShortcut]\nURL=${finalUrl}`);
-										}
+										},
 									});
-								})
+								}),
 							);
 						}
 					}
@@ -135,24 +135,24 @@ const initDownload = (event_, noChache = false) => {
 							type: 'blob',
 							compression: 'DEFLATE',
 							compressionOptions: {
-								level: 9
+								level: 9,
 							},
-							comment: 'https://github.com/melusc/moodle_userscripts'
+							comment: 'https://github.com/melusc/moodle_userscripts',
 						},
 						metadata => {
 							target.textContent = `${metadata.percent.toFixed(2)}%`;
-						}
+						},
 					)
 					.then(blob => {
 						saveAs(
 							blob,
 							`course-${courseId}_${date.getFullYear()}${padStart(
-								date.getMonth() + 1
+								date.getMonth() + 1,
 							)}${padStart(date.getDate())}-${padStart(
-								date.getHours()
+								date.getHours(),
 							)}${padStart(date.getMinutes())}${padStart(
-								date.getSeconds()
-							)}.zip`
+								date.getSeconds(),
+							)}.zip`,
 						);
 
 						target.disabled = false;

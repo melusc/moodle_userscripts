@@ -22,7 +22,7 @@ type GetUserCoursesResponse =
 				| {
 						error: true;
 						exception: string;
-				  }
+				  },
 			];
 	  };
 
@@ -30,34 +30,34 @@ let courses: Courses | undefined;
 
 export const getCourses = async (
 	noCache = false,
-	loginReturnState = defaultLoginReturnState
+	loginReturnState = defaultLoginReturnState,
 ): Promise<CoursesObject> => {
 	if (noCache || !courses) {
 		courses = Promise.all([
 			login(noCache, loginReturnState),
-			getUserId(loginReturnState)
+			getUserId(loginReturnState),
 		])
 			.then(async ([wstoken, userid]) => {
 				const bodyParameters = new URLSearchParams({
 					'requests[0][function]': 'core_enrol_get_users_courses',
 					'requests[0][arguments]': JSON.stringify({
 						userid,
-						returnusercount: false
+						returnusercount: false,
 					}),
-					wstoken
+					wstoken,
 				});
 
 				return fetch(
-					'/webservice/rest/server.php' +
-						'?moodlewsrestformat=json' +
-						'&wsfunction=tool_mobile_call_external_functions',
+					'/webservice/rest/server.php'
+						+ '?moodlewsrestformat=json'
+						+ '&wsfunction=tool_mobile_call_external_functions',
 					{
 						method: 'POST',
 						body: bodyParameters.toString(),
 						headers: {
-							'content-type': 'application/x-www-form-urlencoded'
-						}
-					}
+							'content-type': 'application/x-www-form-urlencoded',
+						},
+					},
 				).then(async response => response.json());
 			})
 			.then((responseJSON: GetUserCoursesResponse) => {

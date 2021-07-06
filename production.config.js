@@ -13,45 +13,45 @@ const babelConfig = {
 				'@babel/plugin-transform-react-jsx',
 				{
 					pragma: 'h',
-					pragmaFrag: 'Fragment'
-				}
+					pragmaFrag: 'Fragment',
+				},
 			],
 			[
 				'babel-plugin-replace-identifiers',
 				{
 					// Tampermonkey's Proxy (which also a builtin) doesn't have Proxy#revocable for some reason
 					// It's a bit hacky, but I don't know why Proxy doesn't have revocable because unsafeWindow.Proxy does
-					Proxy: 'unsafeWindow.Proxy'
-				}
-			]
-		]
-	}
+					Proxy: 'unsafeWindow.Proxy',
+				},
+			],
+		],
+	},
 };
 
 module.exports = (environment = {}) => ({
 	resolve: {
 		alias: {
 			react: 'preact/compat',
-			'react-dom': 'preact/compat'
+			'react-dom': 'preact/compat',
 		},
-		extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss', '.css']
+		extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss', '.css'],
 	},
 	mode: 'production',
 	entry: entry(
 		entry.basePath('src'),
-		path.resolve(__dirname, 'src/**/*.user.{js,jsx,ts,tsx}')
+		path.resolve(__dirname, 'src/**/*.user.{js,jsx,ts,tsx}'),
 	),
 	output: {
 		path: path.resolve(__dirname, 'dist'),
-		filename: '[name].user.js'
+		filename: '[name].user.js',
 	},
 	plugins: [new CleanWebpackPlugin()],
 	cache: {
 		type: 'filesystem',
 		cacheDirectory: path.resolve(__dirname, '.cache'),
 		buildDependencies: {
-			config: [__filename]
-		}
+			config: [__filename],
+		},
 	},
 	optimization: {
 		usedExports: true,
@@ -60,35 +60,35 @@ module.exports = (environment = {}) => ({
 			new TerserPlugin({
 				terserOptions: {
 					format: {
-						comments: /^\s*==\/?UserScript==|^\s*@(?!see|ts-ignore)[\w-]/
+						comments: /^\s*==\/?UserScript==|^\s*@(?!see|ts-ignore)[\w-]/,
 					},
 					compress: {
-						passes: 3
-					}
-				}
-			})
-		]
+						passes: 3,
+					},
+				},
+			}),
+		],
 	},
 	module: {
 		rules: [
 			{
 				test: /\.jsx?$/,
-				use: [babelConfig]
+				use: [babelConfig],
 			},
 			{
 				test: /\.tsx?$/,
-				use: ['ts-loader']
+				use: ['ts-loader'],
 			},
 			{
 				test: /\.css$/,
 				type: 'asset/source',
-				use: ['csso-loader']
+				use: ['csso-loader'],
 			},
 			{
 				test: /\.scss$/,
 				type: 'asset/source',
-				use: ['csso-loader', 'sass-loader']
-			}
-		]
-	}
+				use: ['csso-loader', 'sass-loader'],
+			},
+		],
+	},
 });

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.05.29a
+// @version   2021.07.06a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -59,18 +59,18 @@ class SchulNetzMarks extends Component {
 		errorMsg: '',
 		loggedOut: false,
 		bottomHR:
-			GM_getValue<boolean | undefined>('bottomHR') ??
-			(() => {
+			GM_getValue<boolean | undefined>('bottomHR')
+			?? (() => {
 				GM_setValue('bottomHR', false);
 
 				return false;
-			})()
+			})(),
 	};
 
 	inputs = {
 		login: createRef<HTMLInputElement>(),
 		password: createRef<HTMLInputElement>(),
-		page: createRef<HTMLInputElement>()
+		page: createRef<HTMLInputElement>(),
 	};
 
 	render = () => {
@@ -183,26 +183,26 @@ class SchulNetzMarks extends Component {
 					timeout: 10_000,
 					onerror: reject,
 					onabort: reject,
-					ontimeout: reject
+					ontimeout: reject,
 				});
-			}
+			},
 		);
 
 		const frontPage = loginPage
 			.then(async response => {
 				const parsed = new DOMParser().parseFromString(
 					response.responseText,
-					'text/html'
+					'text/html',
 				);
 
 				const loginHashElement = parsed.querySelector<HTMLInputElement>(
-					'input[name="loginhash"]'
+					'input[name="loginhash"]',
 				);
 
 				if (!loginHashElement) {
 					this.setState({
 						error: true,
-						errorMsg: 'Could not get loginhash.'
+						errorMsg: 'Could not get loginhash.',
 					} as SchulNetzMarksState);
 
 					return;
@@ -211,7 +211,7 @@ class SchulNetzMarks extends Component {
 				const data = new URLSearchParams({
 					loginhash: loginHashElement.value,
 					login,
-					passwort: password
+					passwort: password,
 				});
 
 				return new Promise<Tampermonkey.Response<string>>((resolve, reject) => {
@@ -220,13 +220,13 @@ class SchulNetzMarks extends Component {
 						url: `https://www.schul-netz.com/${page}/index.php?pageid=`,
 						data: data.toString(),
 						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded'
+							'Content-Type': 'application/x-www-form-urlencoded',
 						},
 						timeout: 10_000,
 						onload: resolve,
 						onerror: reject,
 						onabort: reject,
-						ontimeout: reject
+						ontimeout: reject,
 					});
 				});
 			})
@@ -255,20 +255,20 @@ class SchulNetzMarks extends Component {
 
 				const parsed = new DOMParser().parseFromString(
 					response.responseText,
-					'text/html'
+					'text/html',
 				);
 
 				const h3 = [
-					...parsed.querySelectorAll<HTMLHeadingElement>('h3.tabletitle')
+					...parsed.querySelectorAll<HTMLHeadingElement>('h3.tabletitle'),
 				].find(
 					item =>
-						item.textContent?.toLowerCase().trim() === 'ihre letzten noten'
+						item.textContent?.toLowerCase().trim() === 'ihre letzten noten',
 				);
 
 				if (!h3 || !h3.parentElement) {
 					this.setState({
 						error: true,
-						errorMsg: 'Could not find marks table.'
+						errorMsg: 'Could not find marks table.',
 					});
 					return;
 				}
@@ -278,7 +278,7 @@ class SchulNetzMarks extends Component {
 				if (!(table instanceof HTMLTableElement)) {
 					this.setState({
 						error: true,
-						errorMsg: 'Table was not a table.'
+						errorMsg: 'Table was not a table.',
 					});
 
 					return;
@@ -290,7 +290,7 @@ class SchulNetzMarks extends Component {
 
 				for (const row of rows) {
 					const [course, name, date, mark] = [...row.children].map(child =>
-						child.textContent?.trim()
+						child.textContent?.trim(),
 					);
 
 					if (/sie haben alle noten bestätigt./i.test(course ?? '')) {
@@ -309,7 +309,7 @@ class SchulNetzMarks extends Component {
 				this.setState({loading: false});
 
 				const anchor = [
-					...parsed.querySelectorAll<HTMLAnchorElement>('a.mdl-menu__item')
+					...parsed.querySelectorAll<HTMLAnchorElement>('a.mdl-menu__item'),
 				].find(item => item.textContent?.toLowerCase()?.trim() === 'abmelden');
 
 				const logoutPath = anchor?.getAttribute('href');
@@ -318,7 +318,7 @@ class SchulNetzMarks extends Component {
 					GM_xmlhttpRequest({
 						method: 'GET',
 						url: `https://www.schul-netz.com/${page}/${logoutPath}`,
-						anonymous: true
+						anonymous: true,
 					});
 				}
 			})
@@ -331,7 +331,7 @@ class SchulNetzMarks extends Component {
 
 const init = () => {
 	const main = document.querySelector<HTMLUListElement>(
-		'#region-main ul.section'
+		'#region-main ul.section',
 	);
 	if (!main) {
 		return;

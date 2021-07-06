@@ -74,7 +74,7 @@
 		course: 30%,
 		name: 45%,
 		date: 15%,
-		mark: 10%
+		mark: 10%,
 	);
 
 	@each $name, $val in $table-entries {

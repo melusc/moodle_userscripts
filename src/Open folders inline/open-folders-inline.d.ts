@@ -92,5 +92,5 @@ export {
 	GetContentsModuleContents,
 	GetContentsModuleContentsIsFile,
 	GetContentsModuleContentsNonFile,
-	GetContentsModuleContentsIsFileSanitized
+	GetContentsModuleContentsIsFileSanitized,
 };

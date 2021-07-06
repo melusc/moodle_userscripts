@@ -40,12 +40,12 @@ const defaultTimes = () =>
 		{from: '13:10', to: '13:55'},
 		{from: '13:55', to: '14:40'},
 		{from: '14:50', to: '15:35'},
-		{from: '15:35', to: '16:15'}
+		{from: '15:35', to: '16:15'},
 	].map(item => ({
 		...item,
 		key: uniqueId(),
 		parsedfrom: parseStringToTime(item.from),
-		parsedto: parseStringToTime(item.to)
+		parsedto: parseStringToTime(item.to),
 	}));
 
 const validateTimeOrder = array =>
@@ -110,7 +110,7 @@ const filterCourses = (array, inputText) => {
 		if (regex.test(item.name)) {
 			result.push({
 				...item,
-				index: item.name.toLowerCase().indexOf(inputText)
+				index: item.name.toLowerCase().indexOf(inputText),
 			});
 		}
 	}
@@ -202,9 +202,9 @@ const Table = ({content, handleFocus}) => (
 					<span
 						contentEditable
 						class={`time-input time-from${
-							timeStringIsValid(from) && fromvalid !== false ?
-								'' :
-								' invalid-input'
+							timeStringIsValid(from) && fromvalid !== false
+								? ''
+								: ' invalid-input'
 						}`}
 					>
 						{from}
@@ -277,7 +277,7 @@ const SettingsPage = (() => {
 					parsedto: to,
 					id,
 					content,
-					key: uniqueId()
+					key: uniqueId(),
 				}));
 			} else {
 				array[index] = defaultTimes();
@@ -303,17 +303,17 @@ const SettingsPage = (() => {
 				height: undefined,
 				inputText: '',
 				idInput: undefined,
-				contentInput: undefined
+				contentInput: undefined,
 			},
 			courses: [],
 
 			loggedOut: false,
-			loggedOutCallback: undefined
+			loggedOutCallback: undefined,
 		};
 
 		inputs = {
 			username: createRef(),
-			password: createRef()
+			password: createRef(),
 		};
 
 		saveButtonRef = createRef();
@@ -323,7 +323,7 @@ const SettingsPage = (() => {
 				activeDay,
 				tables,
 				courses,
-				focusedElement: {top, left, height, inputText}
+				focusedElement: {top, left, height, inputText},
 			} = this.state;
 
 			return (
@@ -445,7 +445,7 @@ const SettingsPage = (() => {
 					}),
 					() => {
 						focusTarget(contentInput);
-					}
+					},
 				);
 			}
 		};
@@ -455,7 +455,7 @@ const SettingsPage = (() => {
 				const courses = Object.entries(coursesObject).map(([id, fullname]) => ({
 					id,
 					name: fullname,
-					key: uniqueId()
+					key: uniqueId(),
 				}));
 
 				this.setState({courses});
@@ -491,7 +491,7 @@ const SettingsPage = (() => {
 				if (inputType === 'id') {
 					idInput = target;
 					contentInput = target.parentNode.querySelector(
-						'[data-type="content"]'
+						'[data-type="content"]',
 					);
 				} else if (inputType === 'content') {
 					idInput = target.parentNode.querySelector('[data-type="id"]');
@@ -518,8 +518,8 @@ const SettingsPage = (() => {
 						height,
 						inputText,
 						idInput,
-						contentInput
-					}
+						contentInput,
+					},
 				});
 			}
 		};
@@ -565,7 +565,7 @@ const SettingsPage = (() => {
 
 			if (anyInvalid) {
 				this.setState({
-					activeDay: dayInvalid
+					activeDay: dayInvalid,
 				});
 				saveButton.classList.add('save-failed');
 			} else {
@@ -582,7 +582,7 @@ const SettingsPage = (() => {
 			if (iconRemoveRow) {
 				const currentRow = target.closest('.table-row');
 				const rowIndex = [...target.closest('.table').children].indexOf(
-					currentRow
+					currentRow,
 				);
 
 				this.setState(
@@ -590,7 +590,7 @@ const SettingsPage = (() => {
 						const {activeDay, tables} = state;
 
 						tables[activeDay].splice(rowIndex, 1);
-					})
+					}),
 				);
 			}
 		};
@@ -617,7 +617,7 @@ const SettingsPage = (() => {
 					}
 
 					return {
-						activeDay
+						activeDay,
 					};
 				});
 			}
@@ -631,7 +631,7 @@ const SettingsPage = (() => {
 
 						tables[activeDay].push({key: uniqueId()});
 					}),
-					resolve
+					resolve,
 				);
 			});
 
@@ -652,7 +652,7 @@ const SettingsPage = (() => {
 				classList,
 				textContent: rawText,
 				dataset: targetDataset,
-				parentNode: parent
+				parentNode: parent,
 			} = target;
 			const currentRow = target.closest('.table-row');
 
@@ -661,7 +661,7 @@ const SettingsPage = (() => {
 			}
 
 			const currentRowIndex = [...currentRow.parentNode.children].indexOf(
-				currentRow
+				currentRow,
 			);
 			const {anchorOffset} = getSelection();
 
@@ -684,7 +684,7 @@ const SettingsPage = (() => {
 					}),
 					() => {
 						focusTarget(target, anchorOffset);
-					}
+					},
 				);
 			} else if (parent.classList.contains('entry')) {
 				this.handleTableFocus(event_);
@@ -704,7 +704,7 @@ const SettingsPage = (() => {
 					}),
 					() => {
 						focusTarget(target, anchorOffset);
-					}
+					},
 				);
 			}
 		};
@@ -714,7 +714,7 @@ const SettingsPage = (() => {
 
 			if (key === 'Tab') {
 				this.handleTableFocus({
-					target: document.activeElement
+					target: document.activeElement,
 				});
 			}
 		};
@@ -731,42 +731,42 @@ const SettingsPage = (() => {
 					const currentRow = target.closest('.table-row');
 
 					if (shiftKey) {
-						elementToFocus =
-							target.dataset.type === 'content' ?
-								currentRow.previousElementSibling?.querySelector(
-										'div.table-cell.entry > [data-type="id"]'
-								  ) :
-								target.parentNode.querySelector('[data-type="content"]');
+						elementToFocus
+							= target.dataset.type === 'content'
+								? currentRow.previousElementSibling?.querySelector(
+										'div.table-cell.entry > [data-type="id"]',
+								  )
+								: target.parentNode.querySelector('[data-type="content"]');
 					} else if (target.dataset.type === 'content') {
-						elementToFocus =
-							target.parentNode.querySelector('[data-type="id"]');
+						elementToFocus
+							= target.parentNode.querySelector('[data-type="id"]');
 					} else {
 						elementToFocus = this.conditionallyCreateRow(
-							currentRow.nextElementSibling
+							currentRow.nextElementSibling,
 						).then(() =>
 							currentRow.nextElementSibling?.querySelector(
-								'div.table-cell.entry > [data-type="content"]'
-							)
+								'div.table-cell.entry > [data-type="content"]',
+							),
 						);
 					}
 				} else if (target.closest('.time')) {
 					const currentRow = target.closest('.table-row');
 
 					if (shiftKey) {
-						elementToFocus = target.classList.contains('time-from') ?
-							currentRow.previousElementSibling?.querySelector(
-									'div.table-cell.time > .time-to'
-							  ) :
-							target.parentNode.querySelector('.time-from');
+						elementToFocus = target.classList.contains('time-from')
+							? currentRow.previousElementSibling?.querySelector(
+									'div.table-cell.time > .time-to',
+							  )
+							: target.parentNode.querySelector('.time-from');
 					} else if (target.classList.contains('time-from')) {
 						elementToFocus = target.parentNode.querySelector('.time-to');
 					} else {
 						elementToFocus = this.conditionallyCreateRow(
-							currentRow.nextElementSibling
+							currentRow.nextElementSibling,
 						).then(() =>
 							currentRow.nextElementSibling?.querySelector(
-								'div.table-cell.time > .time-from'
-							)
+								'div.table-cell.time > .time-from',
+							),
 						);
 					}
 				}
@@ -775,7 +775,7 @@ const SettingsPage = (() => {
 					focusTarget(elementToFocus_);
 
 					this.handleTableFocus({
-						target: elementToFocus_
+						target: elementToFocus_,
 					});
 				});
 			}

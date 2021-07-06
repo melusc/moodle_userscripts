@@ -13,13 +13,13 @@ const sortingUsingPivot = <T>(
 	array: T[],
 	comparisonFunction: ComparisonFunction<T>,
 	l: number,
-	r: number
+	r: number,
 ): number => {
 	const pivot = array[(r + l) >> 1];
 
 	if (!pivot) {
 		throw new Error(
-			`pivot was out of bounds: [${JSON.stringify(array)}][${(r + l) >> 1}]`
+			`pivot was out of bounds: [${JSON.stringify(array)}][${(r + l) >> 1}]`,
 		);
 	}
 
@@ -58,7 +58,7 @@ export const quickSort = <T>(
 	array: T[],
 	comparisonFunction: ComparisonFunction<T>,
 	left = 0,
-	right = array.length - 1
+	right = array.length - 1,
 ): T[] => {
 	if (array.length > 1) {
 		const index = sortingUsingPivot<T>(array, comparisonFunction, left, right);

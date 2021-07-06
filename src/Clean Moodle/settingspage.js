@@ -19,19 +19,19 @@ const sortCoursesArray = array =>
 			{
 				courseName: courseNameA,
 				isReplaced: isReplacedA,
-				replacedName: replacedNameA
+				replacedName: replacedNameA,
 			},
 			{
 				courseName: courseNameB,
 				isReplaced: isReplacedB,
-				replacedName: replacedNameB
-			}
+				replacedName: replacedNameB,
+			},
 		) => {
 			const lowerA = (isReplacedA ? replacedNameA : courseNameA).toLowerCase();
 			const lowerB = (isReplacedB ? replacedNameB : courseNameB).toLowerCase();
 
 			return lowerA < lowerB ? -1 : (lowerA > lowerB ? 1 : 0);
-		}
+		},
 	);
 
 /**
@@ -73,7 +73,7 @@ const setRemoved = id => {
  */
 const setReplaced = (id, rawNewValue, rawOldValue) => {
 	const {replacers} = removeElementFromStorage(id, {
-		updateReplacers: false
+		updateReplacers: false,
 	});
 
 	const newValue = (rawNewValue ?? '').trim();
@@ -179,7 +179,7 @@ class Main extends Component {
 			handleSave,
 			loggedOut,
 			loggedOutCallback,
-			loggedOutInputs
+			loggedOutInputs,
 		} = this.props;
 
 		return (
@@ -207,9 +207,9 @@ class Main extends Component {
 							<div class="section-title">Rename course</div>
 							<div class="replace-flex-inputs">
 								<div>
-									{isSelected ?
-										`Selected: ${courseName}` :
-										'Select course to the left'}
+									{isSelected
+										? `Selected: ${courseName}`
+										: 'Select course to the left'}
 								</div>
 								<input
 									ref={replaceInputRef}
@@ -217,11 +217,11 @@ class Main extends Component {
 									placeholder="Select course to the left"
 									disabled={!isSelected}
 									value={
-										isSelected ?
-											(isReplaced === false ?
-												courseName :
-												replacedName) :
-											''
+										isSelected
+											? (isReplaced === false
+												? courseName
+												: replacedName)
+											: ''
 									}
 									onKeyDown={handleSave}
 								/>
@@ -249,7 +249,7 @@ class SettingsPage extends Component {
 		selected: {isSelected: false},
 
 		loggedOut: false,
-		loggedOutCallback: undefined
+		loggedOutCallback: undefined,
 	};
 
 	replaceInputRef = createRef();
@@ -299,9 +299,9 @@ class SettingsPage extends Component {
 						courseId,
 						isReplaced: isReplaced !== false,
 						replacedName: isReplaced, // Only checks this if isReplaced is true, anyway
-						isRemoved: checkIsCourseRemoved(courseId)
+						isRemoved: checkIsCourseRemoved(courseId),
 					};
-				}
+				},
 			);
 
 			sortCoursesArray(courses);
@@ -387,7 +387,7 @@ class SettingsPage extends Component {
 				input.scrollIntoView({
 					behavior: 'smooth',
 					block: 'center',
-					inline: 'center'
+					inline: 'center',
 				});
 			}
 		});

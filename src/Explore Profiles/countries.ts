@@ -247,7 +247,7 @@ const countries: Record<string, string> = {
 	YT: 'Mayotte',
 	ZA: 'South Africa',
 	ZM: 'Zambia',
-	ZW: 'Zimbabwe'
+	ZW: 'Zimbabwe',
 };
 
 Object.freeze(countries);

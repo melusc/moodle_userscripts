@@ -11,7 +11,7 @@ export const enum Lang {
 	emptyInAnchor = 'here',
 
 	now = 'Now',
-	next = 'Next'
+	next = 'Next',
 }
 
 export const enum TimetableStates {
@@ -21,5 +21,5 @@ export const enum TimetableStates {
 	empty,
 	init,
 	holiday,
-	weekend
+	weekend,
 }

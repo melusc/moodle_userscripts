@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.06.25a
+// @version   2021.07.06a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JqltW
@@ -29,7 +29,7 @@ const isFrontpage = !/^\/cleanmoodlepreact/i.test(location.pathname);
 
 const getSidebar = () =>
 	document.querySelector<HTMLUListElement>(
-		'li[aria-labelledby="label_2_4"] ul[role="group"]'
+		'li[aria-labelledby="label_2_4"] ul[role="group"]',
 	);
 
 const SvgSettingsGear = () => (
@@ -53,7 +53,7 @@ const SvgSettingsGear = () => (
 );
 const getCourseElementFromSidebar = (id: string) =>
 	getSidebar()?.querySelector<HTMLAnchorElement>(
-		`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"]`
+		`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"]`,
 	);
 
 const testForInexistantCourse = (id: string) => {
@@ -63,7 +63,7 @@ const testForInexistantCourse = (id: string) => {
 
 			// eslint-disable-next-line no-alert
 			alert(
-				`You appear to not be in the course with the id "${id}" anymore.\nThe course will not be checked for anymore`
+				`You appear to not be in the course with the id "${id}" anymore.\nThe course will not be checked for anymore`,
 			);
 		}
 	});
@@ -90,7 +90,7 @@ const replace = (id: string, newValue?: string) => {
 		/* Because custom icons can use a span with an svg in it
 			 so we need to be more specific about which span */
 		const span = anchor.querySelector<HTMLSpanElement>(
-			'span.item-content-wrap'
+			'span.item-content-wrap',
 		);
 
 		if (span) {
@@ -127,7 +127,7 @@ const sortSidebar = () => {
 	}
 
 	const children = [
-		...sidebar.querySelectorAll<HTMLLIElement>(':scope > li.type_course')
+		...sidebar.querySelectorAll<HTMLLIElement>(':scope > li.type_course'),
 	];
 
 	quickSort(children, (a, b) => {
@@ -156,7 +156,7 @@ const cleanFrontpage = () => {
 	}
 
 	const replaceObject = GM_getValue<Record<string, string> | undefined>(
-		'replace'
+		'replace',
 	);
 
 	if (typeof replaceObject === 'object') {
@@ -182,7 +182,7 @@ const cleanFrontpage = () => {
 
 const testDiff = <T extends string[] | Record<string, string>>(
 	oldValue: T,
-	newValue: T
+	newValue: T,
 ): {addedOrChanged: string[]; removedVals: string[]} => {
 	// If for some reason one is an array and the other isn't
 	if (Array.isArray(oldValue) !== Array.isArray(newValue)) {
@@ -201,7 +201,7 @@ const testDiff = <T extends string[] | Record<string, string>>(
 		const newArray = Object.keys(newValue);
 
 		const addedOrChanged = newArray.filter(
-			value => !oldArray.includes(value) || oldValue[value] !== newValue[value]
+			value => !oldArray.includes(value) || oldValue[value] !== newValue[value],
 		);
 		const removedVals = oldArray.filter(value => !newArray.includes(value));
 
@@ -209,7 +209,7 @@ const testDiff = <T extends string[] | Record<string, string>>(
 	}
 
 	throw new Error(
-		'Exactly one of oldValue and newValue was an array when both or none should have been.'
+		'Exactly one of oldValue and newValue was an array when both or none should have been.',
 	);
 };
 
@@ -217,7 +217,7 @@ const refresh = <T extends string[] | Record<string, string>>(
 	name: string,
 	oldValue: T,
 	newValue: T,
-	remote: boolean
+	remote: boolean,
 ) => {
 	const sidebar = getSidebar();
 
@@ -278,7 +278,7 @@ const refresh = <T extends string[] | Record<string, string>>(
 										</span>
 									</a>
 								</p>,
-								li
+								li,
 							);
 						}
 					}

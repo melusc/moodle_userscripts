@@ -5,7 +5,7 @@ const rename = require('gulp-rename');
 
 const paths = {
 	svg: ['./src/**/*.svg', '!./src/**/*.min.svg'],
-	svgDest: './src'
+	svgDest: './src',
 };
 
 const minSvg = () =>
@@ -21,16 +21,16 @@ const minSvg = () =>
 					{removeDimensions: true},
 					{
 						removeAttrs: {
-							attrs: ['class']
-						}
-					}
-				]
-			})
+							attrs: ['class'],
+						},
+					},
+				],
+			}),
 		)
 		.pipe(
 			rename(path => {
 				path.extname = '.min.svg';
-			})
+			}),
 		)
 		.pipe(dest(paths.svgDest));
 

@@ -16,7 +16,7 @@ type LoginResponse =
 
 export const login = async (
 	noCache = false,
-	loginReturnState = defaultLoginReturnState
+	loginReturnState = defaultLoginReturnState,
 ): Promise<string> => {
 	if (!noCache && cachedToken) {
 		return cachedToken;
@@ -25,10 +25,10 @@ export const login = async (
 	const storedToken = GM_getValue<string | undefined>('token');
 	const lastValidated = GM_getValue<number | undefined>('lastValidatedToken');
 	if (
-		!cachedToken &&
-		storedToken &&
-		lastValidated &&
-		Date.now() - lastValidated < 18_000_000
+		!cachedToken
+		&& storedToken
+		&& lastValidated
+		&& Date.now() - lastValidated < 18_000_000
 		// Less than 5h
 	) {
 		// To make it a Promise and as such "thenable"
@@ -41,15 +41,15 @@ export const login = async (
 				const loginParameters = new URLSearchParams({
 					username,
 					password,
-					service: 'moodle_mobile_app'
+					service: 'moodle_mobile_app',
 				});
 
 				return fetch('/login/token.php', {
 					method: 'POST',
 					body: loginParameters.toString(),
 					headers: {
-						'content-type': 'application/x-www-form-urlencoded'
-					}
+						'content-type': 'application/x-www-form-urlencoded',
+					},
 				})
 					.then(async response => response.json())
 					.then((responseJSON: LoginResponse) => {
@@ -63,7 +63,7 @@ export const login = async (
 
 						return responseJSON.token;
 					});
-			}
+			},
 		);
 	}
 

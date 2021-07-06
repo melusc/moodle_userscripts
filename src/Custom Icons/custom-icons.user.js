@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.05.29a
+// @version   2021.07.06a
 // @author    lusc
 // @updateURL https://git.io/Jqlt8
 // @include   *://moodle.ksasz.ch/*
@@ -28,8 +28,8 @@ if (typeof GM_getValue('pointers') !== 'object') {
 const isFrontpage = !/^\/customiconspreact/i.test(location.pathname);
 
 const getSidebar = context =>
-	context.querySelector('li[aria-labelledby="label_2_4"] ul[role="group"]') ??
-	context.querySelector('#label_3_21')?.closest('ul[role="group"]');
+	context.querySelector('li[aria-labelledby="label_2_4"] ul[role="group"]')
+	?? context.querySelector('#label_3_21')?.closest('ul[role="group"]');
 
 const getDataURI = id => {
 	const pointers = GM_getValue('pointers');
@@ -73,7 +73,7 @@ const getBlobURL = id => {
 		}
 
 		const blob = new Blob([uintArray], {
-			type: mediaType
+			type: mediaType,
 		});
 
 		return {blobURL: URL.createObjectURL(blob), isXML: false};
@@ -87,7 +87,7 @@ const testIfUserLeftCourse = id => {
 
 			// eslint-disable-next-line no-alert
 			alert(
-				`You appear to not be in the course with the id "${id}" anymore.\nThe course will not be checked for anymore`
+				`You appear to not be in the course with the id "${id}" anymore.\nThe course will not be checked for anymore`,
 			);
 		}
 	});
@@ -95,7 +95,7 @@ const testIfUserLeftCourse = id => {
 
 const applyIcon = (id, sidebar) => {
 	const anchor = sidebar.querySelector(
-		`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"]`
+		`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"]`,
 	);
 
 	if (anchor) {
@@ -121,8 +121,8 @@ const applyIcon = (id, sidebar) => {
 
 				img.classList.add('icon', 'navicon');
 				img.setAttribute('aria-hidden', true);
-				img.style =
-					'fill: var(--svg-fill, inherit);stroke: var(--svg-fill, inherit);-moz-context-properties: fill, stroke;';
+				img.style
+					= 'fill: var(--svg-fill, inherit);stroke: var(--svg-fill, inherit);-moz-context-properties: fill, stroke;';
 
 				img.tabIndex = -1;
 				img.src = blobURLObject.blobURL;
@@ -131,7 +131,7 @@ const applyIcon = (id, sidebar) => {
 					() => {
 						URL.revokeObjectURL(blobURLObject.blobURL);
 					},
-					{once: true}
+					{once: true},
 				);
 				anchor.firstElementChild.replaceWith(img);
 			}
@@ -148,7 +148,7 @@ const refresh = (
 	oldValue = {},
 	// eslint-disable-next-line default-param-last
 	newValue = {},
-	remote
+	remote,
 ) => {
 	/* If the user clears the storage newValue will be undefined,
     so default to empty object.
@@ -160,13 +160,13 @@ const refresh = (
 		const oldEntries = Object.entries(oldValue);
 		const newEntries = Object.entries(newValue);
 		const changedOrAdded = newEntries.filter(
-			([key, value]) => !(key in oldValue) && oldValue[key] !== value
+			([key, value]) => !(key in oldValue) && oldValue[key] !== value,
 		);
 		const removed = oldEntries.filter(([key]) => !(key in newValue));
 
 		for (const [id] of removed) {
 			const img = sidebar.querySelector(
-				`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"] > .icon.navicon`
+				`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"] > .icon.navicon`,
 			);
 
 			if (img && (img.nodeName === 'SPAN' || img.nodeName === 'IMG')) {
@@ -178,7 +178,7 @@ const refresh = (
 					'fa',
 					'fa-graduation-cap',
 					'fa-fw',
-					'navicon'
+					'navicon',
 				);
 				icon.setAttribute('aria-hidden', true);
 				icon.tabIndex = -1;

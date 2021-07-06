@@ -26,7 +26,7 @@ class FrontPageLogin extends Component {
 
 	inputs = {
 		username: createRef<HTMLInputElement>(),
-		password: createRef<HTMLInputElement>()
+		password: createRef<HTMLInputElement>(),
 	};
 
 	render = () => {
@@ -72,7 +72,7 @@ class FrontPageLogin extends Component {
 		if (username && password && this.state?.loggedOutCallback) {
 			this.state.loggedOutCallback({
 				username,
-				password
+				password,
 			});
 		}
 	};
@@ -96,7 +96,7 @@ export const defaultLoginReturnState = (state: LoginState): void => {
 };
 
 export const getCredentials = async (
-	loginReturnState = defaultLoginReturnState
+	loginReturnState = defaultLoginReturnState,
 ): Promise<Credentials> =>
 	new Promise(resolve => {
 		const callback = ({username, password}: Credentials) => {
@@ -120,7 +120,7 @@ export const getCredentials = async (
 		} else {
 			loginReturnState({
 				loggedOut: true,
-				loggedOutCallback: callback
+				loggedOutCallback: callback,
 			} as LoginState);
 		}
 	});
