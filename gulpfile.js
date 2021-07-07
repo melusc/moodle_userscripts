@@ -16,14 +16,10 @@ const minSvg = () =>
 				multipass: true,
 				precision: 3,
 				plugins: [
-					{sortAttrs: true},
-					{removeScriptElement: true},
-					{removeDimensions: true},
-					{
-						removeAttrs: {
-							attrs: ['class'],
-						},
-					},
+					'sortAttrs',
+					'removeScriptElement',
+					'removeDimensions',
+					{name: 'removeAttrs', params: {attrs: ['class']}},
 				],
 			}),
 		)
