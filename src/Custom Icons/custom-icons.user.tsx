@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.07.07a
+// @version   2021.07.07b
 // @author    lusc
 // @updateURL https://git.io/Jqlt8
 // @include   *://moodle.ksasz.ch/*
@@ -15,11 +15,16 @@
 // @connect   *
 // ==/UserScript==
 
+// Stop webpack from removing the metadata above
 import {render, html} from 'htm/preact';
 import {getCourses} from '../shared/moodle-functions';
 import {Pointers, Values} from './custom-icons.d';
 import {setupSettingsPage} from './settingspage.js';
 import {deleteIconFromStorage} from './shared';
+
+if (location.protocol !== 'https:') {
+	location.protocol = 'https:';
+}
 
 const defaultPointers = GM_getValue('pointers');
 if (Object.prototype.toString.call(defaultPointers) !== '[object Object]') {
@@ -194,6 +199,7 @@ const refresh = (
 					'fa-graduation-cap',
 					'fa-fw',
 					'navicon',
+
 				);
 				icon.setAttribute('aria-hidden', 'true');
 				icon.tabIndex = -1;
