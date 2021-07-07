@@ -4,7 +4,7 @@ import {html} from 'htm/preact';
 import {nanoid} from 'nanoid';
 import {getCourses} from '../shared/moodle-functions';
 import style from './style.scss';
-import {deleteIconFromStorage} from './shared.js';
+import {deleteIconFromStorage} from './shared';
 
 const FILE_CONSTANT = 'FILE';
 const COPY_CONSTANT = 'COPY';

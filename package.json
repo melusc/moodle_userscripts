@@ -98,6 +98,7 @@
 				],
 				"rules": {
 					"@typescript-eslint/indent": "off",
+					"@typescript-eslint/no-explicit-any": "error",
 					"@typescript-eslint/quotes": [
 						"error",
 						"single",
