@@ -199,7 +199,6 @@ const refresh = (
 					'fa-graduation-cap',
 					'fa-fw',
 					'navicon',
-
 				);
 				icon.setAttribute('aria-hidden', 'true');
 				icon.tabIndex = -1;
