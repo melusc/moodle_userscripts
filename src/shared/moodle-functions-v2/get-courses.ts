@@ -33,10 +33,6 @@ export const getCourses_throwable = async (
 	// Let it throw
 	const userId = await getUserId_throwable(wstoken);
 
-	if (!userId) {
-		throw new Error('UserId was undefined');
-	}
-
 	const bodyParameters = new URLSearchParams({
 		'requests[0][function]': 'core_enrol_get_users_courses',
 		'requests[0][arguments]': JSON.stringify({
@@ -58,7 +54,7 @@ export const getCourses_throwable = async (
 	});
 
 	if (!response.ok) {
-		throw new Error('Response was not ok');
+		throw new Error(`Response was not ok: ${response.status}`);
 	}
 
 	const responseJSON = (await response.json()) as GetUserCoursesResponse;

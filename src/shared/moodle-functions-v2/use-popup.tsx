@@ -1,13 +1,13 @@
 import {render, h} from 'preact';
 import {useRef, useState} from 'preact/hooks';
-import {unmountComponentAtNode} from 'preact/compat';
 
-import genericPopupSCSS from './use-popup.scss';
 import {login_throwable} from './login';
 import {getCourses_throwable} from './get-courses';
 import {getCredentials, getToken} from './storage-util';
 import {logout} from './logout';
 import {getUserId_throwable} from './get-user-id';
+
+import genericPopupSCSS from './use-popup.scss';
 
 const GenericPopup = (props: {cb: (arg0: string) => void; title: string}) => {
 	const usernameRef = useRef<HTMLInputElement>(null);
@@ -102,7 +102,6 @@ export const popupLogin = async (title: string): Promise<string> =>
 
 		const callback = (token: string) => {
 			style.remove();
-			unmountComponentAtNode(div);
 			div.remove();
 
 			resolve(token);
