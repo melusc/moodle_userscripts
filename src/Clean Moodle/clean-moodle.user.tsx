@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.07.06a
+// @version   2021.07.09a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JqltW
@@ -15,10 +15,10 @@
 
 import {render, h} from 'preact';
 
-import {getCourses} from '../shared/moodle-functions';
+import {popupGetCourses} from '../shared/moodle-functions-v2';
 import {quickSort} from '../shared/general-functions';
 
-import {setupSettingsPage} from './settingspage.js';
+import {setupSettingsPage} from './settingspage';
 import {removeElementFromStorage} from './shared';
 
 if (location.protocol !== 'https:') {
@@ -57,7 +57,7 @@ const getCourseElementFromSidebar = (id: string) =>
 	);
 
 const testForInexistantCourse = (id: string) => {
-	void getCourses().then(courses => {
+	void popupGetCourses('Clean Moodle').then(courses => {
 		if (!(id in courses)) {
 			removeElementFromStorage(id);
 
@@ -245,7 +245,7 @@ const refresh = <T extends string[] | Record<string, string>>(
 			// Removing anchors leaves the sidebar still sorted
 
 			if (removedVals.length > 0) {
-				void getCourses().then(coursesObject => {
+				void popupGetCourses('Clean Moodle').then(coursesObject => {
 					for (const id of removedVals) {
 						const fullname = coursesObject[id];
 

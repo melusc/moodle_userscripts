@@ -14,7 +14,7 @@ export const removeElementFromStorage = (
 	id: string,
 	{updateReplacers = true, updateRemovers = true} = {},
 ) => {
-	const removersSet = new Set(GM_getValue('remove'));
+	const removersSet = new Set(GM_getValue<string[] | undefined>('remove'));
 	removersSet.delete(id);
 	const removers = [...removersSet];
 
