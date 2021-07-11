@@ -46,7 +46,7 @@ const GenericPopup = (props: {cb: (arg0: string) => void; title: string}) => {
 
 	return isLoggedOut ? (
 		<div class="vertical-horizontal-center">
-			<div class="card">
+			<div class="card shadow">
 				<div class="card-body">
 					<h5 class="card-title">Login - {props.title}</h5>
 					<div class="mb-3">

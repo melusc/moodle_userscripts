@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.07.09a
+// @version   2021.07.11a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JqltW
