@@ -51,7 +51,7 @@
 		"arrowParens": "avoid",
 		"bracketSpacing": false,
 		"singleQuote": true,
-		"trailingComma": "es5",
+		"trailingComma": "all",
 		"useTabs": true
 	},
 	"private": true,
@@ -154,6 +154,12 @@
 			],
 			"react/jsx-curly-newline": "off",
 			"react/jsx-indent": "off",
+			"react/jsx-tag-spacing": [
+				"error",
+				{
+					"beforeSelfClosing": "always"
+				}
+			],
 			"react/no-unknown-property": [
 				"error",
 				{

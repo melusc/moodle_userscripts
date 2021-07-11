@@ -112,7 +112,7 @@ export const popupLogin = async (title: string): Promise<string> =>
 
 		document.body.append(div);
 
-		render(<GenericPopup cb={callback} title={title}/>, div);
+		render(<GenericPopup cb={callback} title={title} />, div);
 	});
 
 export const popupGetToken = async (title: string): Promise<string> => {

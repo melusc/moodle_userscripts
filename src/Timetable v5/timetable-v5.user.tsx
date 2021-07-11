@@ -277,7 +277,7 @@ class FrontPage extends Component {
 				<div class="mod-indent-outer">
 					<div class="contentwithoutlink">
 						<div class="no-overflow">
-							<hr/>
+							<hr />
 							<div class="tt-body">
 								<div class="tt-title">Timetable</div>
 
@@ -332,7 +332,7 @@ class FrontPage extends Component {
 								</div>
 							</div>
 							{
-								<hr/>
+								<hr />
 								/* Comment to point out that this
 								isn't a boring old closing tag */
 							}
@@ -366,7 +366,7 @@ const initFrontpage = () => {
 		li.className = 'activity label modtype_label';
 		main.prepend(li);
 
-		render(<FrontPage/>, li);
+		render(<FrontPage />, li);
 	}
 };
 

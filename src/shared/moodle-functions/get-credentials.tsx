@@ -91,7 +91,7 @@ export const defaultLoginReturnState = (state: LoginState): void => {
 		div.className = 'shared-login-popup';
 		document.body.append(div);
 		GM_addStyle(frontPageCss);
-		render(<FrontPageLogin/>, div);
+		render(<FrontPageLogin />, div);
 	}
 };
 

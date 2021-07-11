@@ -81,7 +81,7 @@ class SchulNetzMarks extends Component {
 				<div class="contentwithoutlink">
 					<div class="ucmr-title">Unconfirmed Marks</div>
 
-					{loading && !error && <SvgCircleNotch/>}
+					{loading && !error && <SvgCircleNotch />}
 					{!loggedOut && !error && Array.isArray(marks) ? (
 						<div>
 							{marks.map(({key, course, name, date, mark}) => (
@@ -132,7 +132,7 @@ class SchulNetzMarks extends Component {
 						<div class="ucmr-error">{errorMsg ?? 'Something went wrong'}</div>
 					)}
 
-					{bottomHR && <hr/>}
+					{bottomHR && <hr />}
 				</div>
 			</div>
 		);
@@ -350,7 +350,7 @@ const init = () => {
 		main.prepend(li);
 	}
 
-	render(<SchulNetzMarks/>, li);
+	render(<SchulNetzMarks />, li);
 
 	GM_addStyle(style);
 };

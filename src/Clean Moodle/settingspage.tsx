@@ -93,7 +93,7 @@ const SvgCheck = () => (
 		class="icon svg-icon-check"
 		viewBox="0 0 24 24"
 	>
-		<path d="m5 12 5 5L20 7"/>
+		<path d="m5 12 5 5L20 7" />
 	</svg>
 );
 const SvgX = () => (
@@ -106,7 +106,7 @@ const SvgX = () => (
 		class="icon svg-icon-x"
 		viewBox="0 0 24 24"
 	>
-		<path d="M18 6 6 18M6 6l12 12"/>
+		<path d="M18 6 6 18M6 6l12 12" />
 	</svg>
 );
 const SvgArrowBack = () => (
@@ -119,7 +119,7 @@ const SvgArrowBack = () => (
 		class="icon svg-icon-arrow-back"
 		viewBox="0 0 24 24"
 	>
-		<path d="m9 11-4 4 4 4m-4-4h11a4 4 0 0 0 0-8h-1"/>
+		<path d="m9 11-4 4 4 4m-4-4h11a4 4 0 0 0 0-8h-1" />
 	</svg>
 );
 const SidebarRow = ({
@@ -131,15 +131,15 @@ const SidebarRow = ({
 	course: Course;
 	handleClick: (
 		event_: JSX.TargetedMouseEvent<HTMLDivElement>,
-		item: Course
+		item: Course,
 	) => void;
 	toggleItem: (
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		item: Course
+		item: Course,
 	) => void;
 	resetItem: (
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		item: Course
+		item: Course,
 	) => void;
 }) => {
 	const {courseName, replacedName, isRemoved} = course;
@@ -156,7 +156,7 @@ const SidebarRow = ({
 						toggleItem(event_, course);
 					}}
 				>
-					{isRemoved ? <SvgX/> : <SvgCheck/>}
+					{isRemoved ? <SvgX /> : <SvgCheck />}
 				</span>
 				{replacedName === undefined ? (
 					courseName
@@ -168,7 +168,7 @@ const SidebarRow = ({
 								resetItem(event_, course);
 							}}
 						>
-							<SvgArrowBack/>
+							<SvgArrowBack />
 						</span>
 					</>
 				)}
@@ -186,22 +186,22 @@ const Sidebar = ({
 	loadingCourses: boolean;
 	handleClick: (
 		event_: JSX.TargetedMouseEvent<HTMLDivElement>,
-		item: Course
+		item: Course,
 	) => void;
 	toggleItem: (
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		item: Course
+		item: Course,
 	) => void;
 	resetItem: (
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		item: Course
+		item: Course,
 	) => void;
 }) => (
 	<div class="outer-sidebar">
 		<div class="sidebar">
 			{loadingCourses && <div>Loading courses...</div>}
 			{courses.map(course => (
-				<SidebarRow key={course.courseId} course={course} {...rest}/>
+				<SidebarRow key={course.courseId} course={course} {...rest} />
 			))}
 		</div>
 	</div>
@@ -233,7 +233,7 @@ const Main = (props: {
 				{props.loggedOut ? (
 					<div class="replace-flex-input">
 						<h5>Login</h5>
-						<input ref={loggedOutInputs.username} placeholder="Username"/>
+						<input ref={loggedOutInputs.username} placeholder="Username" />
 						<input
 							ref={loggedOutInputs.password}
 							placeholder="Password"
@@ -606,7 +606,7 @@ export const setupSettingsPage = () => {
 
 	GM_addStyle(style);
 
-	render(<SettingsPage/>, body);
+	render(<SettingsPage />, body);
 
 	const link = document.createElement('link');
 	link.rel = 'shortcut icon';

@@ -83,9 +83,9 @@ const Notification = () => {
 		<div class="epr-notification">
 			<div class="epr-centered">
 				<div class="epr-spinner">
-					<div class="bounce1"/>
-					<div class="bounce2"/>
-					<div class="bounce3"/>
+					<div class="bounce1" />
+					<div class="bounce2" />
+					<div class="bounce3" />
 				</div>
 				<div class="epr-text-center">
 					{'Checking '}
@@ -255,9 +255,9 @@ const Header = () => {
 											method="post"
 											action="https://moodle.ksasz.ch/user/profile.php"
 										>
-											<input type="hidden" name="edit" value="1"/>
-											<input type="hidden" name="reset" value="1"/>
-											<input type="hidden" name="id" value={USER_ID}/>
+											<input type="hidden" name="edit" value="1" />
+											<input type="hidden" name="reset" value="1" />
+											<input type="hidden" name="id" value={USER_ID} />
 											<input
 												type="hidden"
 												name="sesskey"
@@ -278,8 +278,8 @@ const Header = () => {
 											method="post"
 											action="https://moodle.ksasz.ch/user/profile.php"
 										>
-											<input type="hidden" name="edit" value="1"/>
-											<input type="hidden" name="id" value={USER_ID}/>
+											<input type="hidden" name="edit" value="1" />
+											<input type="hidden" name="id" value={USER_ID} />
 											<input
 												type="hidden"
 												name="sesskey"
@@ -298,7 +298,7 @@ const Header = () => {
 								</>
 							)}
 						</div>
-						<div id="course-header"/>
+						<div id="course-header" />
 					</div>
 				</div>
 			</div>
@@ -328,9 +328,9 @@ const Main = () => {
 
 	return (
 		<section id="region-main" class="region-main-content" aria-label="Content">
-			<span class="notifications" id="user-notifications"/>
+			<span class="notifications" id="user-notifications" />
 			<div role="main">
-				<span id="maincontent"/>
+				<span id="maincontent" />
 				<div class="userprofile">
 					{typeof description !== 'undefined' && description !== '' && (
 						<div
@@ -882,12 +882,12 @@ const fetchNewProfile = async (action: number | 'rand') => {
 
 		if (pageHeader) {
 			clearNode(pageHeader);
-			render(<Header/>, pageHeader);
+			render(<Header />, pageHeader);
 		}
 
 		if (regionMainBox) {
 			clearNode(regionMainBox);
-			render(<Main/>, regionMainBox);
+			render(<Main />, regionMainBox);
 		}
 
 		let li = document.querySelector<HTMLLIElement>(
@@ -912,14 +912,14 @@ const fetchNewProfile = async (action: number | 'rand') => {
 			}
 		}
 
-		render(<Sidebar/>, li);
+		render(<Sidebar />, li);
 	}
 };
 
 const runOnce = () => {
 	const notification = document.createElement('div');
 
-	render(<Notification/>, notification);
+	render(<Notification />, notification);
 	document.body.append(notification);
 
 	if (GM_getValue<number | undefined>('highest') === undefined) {

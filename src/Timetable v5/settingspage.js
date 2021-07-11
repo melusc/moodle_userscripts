@@ -223,13 +223,13 @@ const Table = ({content, handleFocus}) => (
 					<span contentEditable data-type="content">
 						{content}
 					</span>
-					<hr/>
+					<hr />
 					<span contentEditable data-type="id">
 						{id}
 					</span>
 				</div>
 				<div class="table-cell remove-row">
-					<SvgIconX/>
+					<SvgIconX />
 				</div>
 			</div>
 		))}
@@ -243,11 +243,11 @@ const ButtonGrid = ({handleClick, handleSave, saveButtonRef, day}) => (
 	<>
 		<div class="day-controls" onClick={handleClick}>
 			<div class="caret-input caret-back">
-				<SvgIconCaretBack/>
+				<SvgIconCaretBack />
 			</div>
 			<div>{day}</div>
 			<div class="caret-input caret-forward">
-				<SvgIconCaretForward/>
+				<SvgIconCaretForward />
 			</div>
 		</div>
 		<button
@@ -382,7 +382,7 @@ const SettingsPage = (() => {
 								/>
 								<div class="row-icon-add-row">
 									<div class="icon-add-row" onClick={this.createRow}>
-										<SvgIconAdd/>
+										<SvgIconAdd />
 									</div>
 								</div>
 							</div>
@@ -810,7 +810,7 @@ const initSettingsPage = () => {
 	root.id = 'root';
 	body.append(root);
 
-	render(<SettingsPage/>, root);
+	render(<SettingsPage />, root);
 };
 
 export {initSettingsPage};
