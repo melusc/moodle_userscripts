@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.07.07b
+// @version   2021.07.11a
 // @author    lusc
 // @updateURL https://git.io/Jqlt8
 // @include   *://moodle.ksasz.ch/*
@@ -15,18 +15,18 @@
 // @connect   *
 // ==/UserScript==
 
-// Stop webpack from removing the metadata above
 import {render, html} from 'htm/preact';
-import {getCourses} from '../shared/moodle-functions';
+import {popupGetCourses} from '../shared/moodle-functions-v2';
 import {Pointers, Values} from './custom-icons.d';
-import {setupSettingsPage} from './settingspage.js';
+import {setupSettingsPage} from './settingspage';
 import {deleteIconFromStorage} from './shared';
 
+// Stop webpack from removing the metadata above
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
 }
 
-const defaultPointers = GM_getValue('pointers');
+const defaultPointers = GM_getValue<Pointers | undefined>('pointers');
 if (Object.prototype.toString.call(defaultPointers) !== '[object Object]') {
 	GM_setValue('pointers', {});
 	GM_setValue('values', {});
@@ -39,7 +39,7 @@ const getSidebar = () =>
 		'li[aria-labelledby="label_2_4"] ul[role="group"]',
 	);
 
-const getDataURI = (id: string): false | Values[string] => {
+const getDataURI = (id: string): Values[string] | false => {
 	const pointers = GM_getValue<Pointers>('pointers');
 
 	const uuid = pointers[id];
@@ -56,47 +56,47 @@ const getDataURI = (id: string): false | Values[string] => {
 const getBlobURL = (
 	id: string,
 ):
-	| false
 	| {
 			rawXML: string;
 	  }
 	| {
-			blobURL: string;
-	  } => {
-	const dataURI = getDataURI(id);
+			url: string;
+	  }
+	| false => {
+	const icon = getDataURI(id);
 
-	if (dataURI === false) {
+	if (icon === false) {
 		return false;
 	}
 
-	if ('rawXML' in dataURI) {
-		return dataURI;
+	if ('rawXML' in icon) {
+		return icon;
 	}
 
-	const {mediaType, rawByteString} = dataURI;
-	const byteString = atob(rawByteString);
+	if ('dataURI' in icon) {
+		return {
+			url: icon.dataURI,
+		};
+	}
 
-	const encoder = new TextEncoder();
-	const uintArray = encoder.encode(byteString);
+	const {mediaType, rawByteString} = icon;
 
-	const blob = new Blob([uintArray], {
-		type: mediaType,
-	});
-
-	return {blobURL: URL.createObjectURL(blob)};
+	return {
+		url: `data:${mediaType};base64,${rawByteString}`,
+	};
 };
 
-const testIfUserLeftCourse = (id: string) => {
-	void getCourses().then(courses => {
-		if (!(id in courses)) {
-			deleteIconFromStorage(id);
+const testIfUserLeftCourse = async (id: string) => {
+	const courses = await popupGetCourses('Custom Icons');
 
-			// eslint-disable-next-line no-alert
-			alert(
-				`You appear to not be in the course with the id "${id}" anymore.\nThe course will not be checked for anymore`,
-			);
-		}
-	});
+	if (!(id in courses)) {
+		deleteIconFromStorage(id);
+
+		// eslint-disable-next-line no-alert
+		alert(
+			`You appear to not be in the course with the id "${id}" anymore.\nThe course will not be checked for anymore`,
+		);
+	}
 };
 
 const applyIcon = (id: string) => {
@@ -111,53 +111,72 @@ const applyIcon = (id: string) => {
 	);
 
 	if (!anchor) {
-		testIfUserLeftCourse(id);
+		void testIfUserLeftCourse(id);
 
 		return;
 	}
 
-	if (anchor.firstElementChild) {
-		const blobURLObject = getBlobURL(id);
+	if (!anchor.firstElementChild) {
+		return;
+	}
 
-		if (typeof blobURLObject !== 'object') {
-			return;
-		}
+	const iconObject = getBlobURL(id);
 
-		if ('rawXML' in blobURLObject) {
-			const span = document.createElement('span');
+	if (!iconObject) {
+		resetIcon(id);
 
-			span.classList.add('icon', 'navicon');
-			span.style.display = 'inline-block';
-			span.style.color = 'var(--svg-fill, inherit)';
-			span.tabIndex = -1;
+		deleteIconFromStorage(id);
 
-			const rawXMLArray: string[] & {
-				raw?: string[];
-			} = [blobURLObject.rawXML];
-			rawXMLArray.raw = [blobURLObject.rawXML];
+		return;
+	}
 
-			render(html(rawXMLArray as TemplateStringsArray), span);
+	if ('rawXML' in iconObject) {
+		const span = document.createElement('span');
 
-			anchor.firstElementChild.replaceWith(span);
-		} else {
-			const img = new Image();
+		span.classList.add('icon', 'navicon');
+		span.style.display = 'inline-block';
+		span.style.color = 'var(--svg-fill, inherit)';
+		span.tabIndex = -1;
 
-			img.classList.add('icon', 'navicon');
-			img.setAttribute('aria-hidden', 'true');
-			img.style.cssText
-				= 'fill: var(--svg-fill, inherit);stroke: var(--svg-fill, inherit);-moz-context-properties: fill, stroke;';
+		render(
+			html(
+				Object.assign([iconObject.rawXML], {
+					raw: [iconObject.rawXML],
+				}),
+			),
+			span,
+		);
 
-			img.tabIndex = -1;
-			img.src = blobURLObject.blobURL;
-			img.addEventListener(
-				'load',
-				() => {
-					URL.revokeObjectURL(blobURLObject.blobURL);
-				},
-				{once: true},
-			);
-			anchor.firstElementChild.replaceWith(img);
-		}
+		anchor.firstElementChild.replaceWith(span);
+	} else {
+		const img = new Image();
+
+		img.classList.add('icon', 'navicon');
+		img.setAttribute('aria-hidden', 'true');
+		img.style.cssText
+			= 'fill: var(--svg-fill, inherit);stroke: var(--svg-fill, inherit);-moz-context-properties: fill, stroke;';
+
+		img.tabIndex = -1;
+		img.src = iconObject.url;
+		anchor.firstElementChild.replaceWith(img);
+	}
+};
+
+const resetIcon = (id: string) => {
+	const sidebar = getSidebar();
+
+	const img = sidebar?.querySelector<HTMLImageElement>(
+		`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"] > .icon.navicon`,
+	);
+
+	// Test nodeName to not update an icon accidentally
+	if (img && (img.nodeName === 'SPAN' || img.nodeName === 'IMG')) {
+		const icon = document.createElement('i');
+
+		icon.classList.add('icon', 'fa', 'fa-graduation-cap', 'fa-fw', 'navicon');
+		icon.setAttribute('aria-hidden', 'true');
+		icon.tabIndex = -1;
+		img.replaceWith(icon);
 	}
 };
 
@@ -179,31 +198,14 @@ const refresh = (
 	if (remote && sidebar) {
 		const oldEntries = Object.entries(oldValue);
 		const newEntries = Object.entries(newValue);
+
 		const changedOrAdded = newEntries.filter(
-			([key, value]) => !(key in oldValue) && oldValue[key] !== value,
+			([key, value]) => !(key in oldValue) || oldValue[key] !== value,
 		);
 		const removed = oldEntries.filter(([key]) => !(key in newValue));
 
 		for (const [id] of removed) {
-			const img = sidebar.querySelector<HTMLImageElement>(
-				`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"] > .icon.navicon`,
-			);
-
-			// Test nodeName to not update an icon accidentally
-			if (img && (img.nodeName === 'SPAN' || img.nodeName === 'IMG')) {
-				const icon = document.createElement('i');
-
-				icon.classList.add(
-					'icon',
-					'fa',
-					'fa-graduation-cap',
-					'fa-fw',
-					'navicon',
-				);
-				icon.setAttribute('aria-hidden', 'true');
-				icon.tabIndex = -1;
-				img.replaceWith(icon);
-			}
+			resetIcon(id);
 		}
 
 		for (const [id] of changedOrAdded) {

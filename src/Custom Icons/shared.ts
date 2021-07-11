@@ -5,19 +5,22 @@ export const deleteIconFromStorage = (id: string) => {
 	const values = GM_getValue<Values | undefined>('values');
 
 	if (pointers && values) {
-		const uuid = pointers[id];
+		// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+		delete pointers[id];
 
-		if (uuid) {
-			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-			delete pointers[id];
-
-			if (!Object.values(pointers).includes(uuid)) {
+		/* Remove all entries from values that don't have a pointer */
+		const pointerValues = new Set(Object.values(pointers));
+		for (const key of Object.keys(values)) {
+			if (!pointerValues.has(key)) {
 				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-				delete values[uuid];
-				GM_setValue('values', values);
+				delete values[key];
 			}
-
-			GM_setValue('pointers', pointers);
 		}
+
+		GM_setValue('values', values);
+		GM_setValue('pointers', pointers);
+	} else {
+		GM_setValue('pointers', {});
+		GM_setValue('values', {});
 	}
 };
