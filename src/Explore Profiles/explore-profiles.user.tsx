@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.07.07a
+// @version   2021.07.11a
 // @author    lusc
 // @updateURL https://git.io/JqltR
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -890,9 +890,16 @@ const fetchNewProfile = async (action: number | 'rand') => {
 			render(<Main />, regionMainBox);
 		}
 
-		let li = document.querySelector<HTMLLIElement>(
-			'li[aria-labelledby="label_2_34"], li[aria-labelledby="label_2_31"]',
-		);
+		let li = document.evaluate(
+			'//li' // Get all li elements
+				+ '[@class="type_system depth_2 contains_branch"]' // That have class "type_system depth_2 contains_branch"
+				+ '[.//span[text()="Users"]]' // That have a span with text "Users"
+				+ '[.//span[text()="Blogs"]]', // That have a span with text "Blogs"
+			document.body,
+			null,
+			XPathResult.FIRST_ORDERED_NODE_TYPE,
+			null,
+		).singleNodeValue as HTMLLIElement | null;
 
 		if (li) {
 			clearNode(li);
