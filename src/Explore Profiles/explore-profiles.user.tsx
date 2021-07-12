@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.07.11a
+// @version   2021.07.12a
 // @author    lusc
 // @updateURL https://git.io/JqltR
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -75,7 +75,7 @@ const Notification = () => {
 		return null;
 	}
 
-	if (to !== undefined && to > from) {
+	if (to !== undefined && to < from) {
 		[from, to] = [to, from];
 	}
 
