@@ -56,7 +56,7 @@
 	}
 
 	.ucmr-error {
-		color: #ff4136;
+		color: #ea4335;
 	}
 
 	.ucmr-circle-notch {
@@ -66,21 +66,8 @@
 		animation: ucmr-spin 2s infinite linear;
 	}
 	.ucmr-row {
-		display: flex;
-		flex-direction: row;
-	}
-
-	$table-entries: (
-		course: 30%,
-		name: 45%,
-		date: 15%,
-		mark: 10%,
-	);
-
-	@each $name, $val in $table-entries {
-		.ucmr-#{$name} {
-			flex-basis: $val;
-		}
+		display: grid;
+		grid-template-columns: 30% 45% 15% 10%;
 	}
 }
 @include keyframe(ucmr-spin) {

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.07.06a
+// @version   2021.07.12a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -10,6 +10,7 @@
 // @grant     GM_getValue
 // @grant     GM_addStyle
 // @grant     GM_deleteValue
+// @grant     GM_addValueChangeListener
 // @run-at    document-start
 // @connect   www.schul-netz.com
 // ==/UserScript==
@@ -34,6 +35,15 @@ const SvgCircleNotch = () => (
 		/>
 	</svg>
 );
+
+const enum States {
+	loading,
+	error,
+	marks,
+	noMarks,
+	loggedOut,
+}
+
 type MarksRow = {
 	key: string;
 	course: string;
@@ -43,21 +53,20 @@ type MarksRow = {
 };
 
 type SchulNetzMarksState = {
-	marks: MarksRow[] | false;
-	loading: boolean;
-	error: boolean;
-	errorMsg: string;
-	loggedOut: boolean;
+	marks: MarksRow[];
+	errorMsg?: string;
 	bottomHR: boolean;
+	state: States;
 };
 
-class SchulNetzMarks extends Component {
+class SchulNetzMarks extends Component<
+	Record<string, unknown>,
+	SchulNetzMarksState
+> {
 	state: SchulNetzMarksState = {
 		marks: [],
-		loading: true,
-		error: false,
-		errorMsg: '',
-		loggedOut: false,
+		state: States.loading,
+		errorMsg: undefined,
 		bottomHR:
 			GM_getValue<boolean | undefined>('bottomHR')
 			?? (() => {
@@ -74,15 +83,16 @@ class SchulNetzMarks extends Component {
 	};
 
 	render = () => {
-		const {marks, loading, error, errorMsg, loggedOut, bottomHR} = this.state;
+		const {marks, state, errorMsg, bottomHR} = this.state;
 
 		return (
 			<div class="mod-indent-outer">
 				<div class="contentwithoutlink">
 					<div class="ucmr-title">Unconfirmed Marks</div>
 
-					{loading && !error && <SvgCircleNotch />}
-					{!loggedOut && !error && Array.isArray(marks) ? (
+					{state === States.loading && <SvgCircleNotch />}
+
+					{state === States.marks && (
 						<div>
 							{marks.map(({key, course, name, date, mark}) => (
 								<div key={key} class="ucmr-row">
@@ -93,10 +103,13 @@ class SchulNetzMarks extends Component {
 								</div>
 							))}
 						</div>
-					) : (
+					)}
+
+					{state === States.noMarks && (
 						<div>Sie haben alle Noten bestätigt.</div>
 					)}
-					{loggedOut && (
+
+					{state === States.loggedOut && (
 						<div class="login">
 							<input
 								ref={this.inputs.login}
@@ -104,6 +117,8 @@ class SchulNetzMarks extends Component {
 								class="form-control"
 								placeholder="Username"
 								type="text"
+								value={GM_getValue<string | undefined>('login')}
+								onKeyDown={this.onLoggedOutKeydown}
 							/>
 							<input
 								ref={this.inputs.password}
@@ -111,6 +126,8 @@ class SchulNetzMarks extends Component {
 								class="form-control"
 								placeholder="Password"
 								type="password"
+								value={GM_getValue<string | undefined>('password')}
+								onKeyDown={this.onLoggedOutKeydown}
 							/>
 							<input
 								ref={this.inputs.page}
@@ -118,6 +135,8 @@ class SchulNetzMarks extends Component {
 								class="form-control"
 								placeholder="Page (ausserschwyz, einsiedeln...)"
 								type="text"
+								value={GM_getValue<string | undefined>('page')}
+								onKeyDown={this.onLoggedOutKeydown}
 							/>
 							<button
 								class="btn btn-primary"
@@ -128,7 +147,8 @@ class SchulNetzMarks extends Component {
 							</button>
 						</div>
 					)}
-					{error && (
+
+					{state === States.error && (
 						<div class="ucmr-error">{errorMsg ?? 'Something went wrong'}</div>
 					)}
 
@@ -136,6 +156,12 @@ class SchulNetzMarks extends Component {
 				</div>
 			</div>
 		);
+	};
+
+	onLoggedOutKeydown: h.JSX.KeyboardEventHandler<HTMLInputElement> = event_ => {
+		if (event_.key === 'Enter') {
+			this.handleLogin();
+		}
 	};
 
 	handleLogin = () => {
@@ -147,9 +173,15 @@ class SchulNetzMarks extends Component {
 			GM_setValue('login', login);
 			GM_setValue('password', password);
 			GM_setValue('page', page);
-			this.setState({loggedOut: false, loading: true});
+			this.setState({
+				state: States.loading,
+			});
 
-			this.getMarks();
+			void this.getMarks({
+				login,
+				password,
+				page,
+			});
 		}
 	};
 
@@ -159,66 +191,127 @@ class SchulNetzMarks extends Component {
 		const page = GM_getValue<string | undefined>('page');
 
 		if (login && password && page) {
-			this.getMarks();
+			void this.getMarks({
+				login,
+				password,
+				page,
+			});
 		} else {
-			this.setState({loggedOut: true, loading: false});
+			this.setState({
+				state: States.loggedOut,
+			});
 		}
 	};
 
 	componentDidMount = () => {
 		this.checkCredentials();
+
+		GM_addValueChangeListener('bottomHR', () => {
+			const bottomHR = GM_getValue<unknown>('bottomHR');
+
+			if (typeof bottomHR === 'boolean') {
+				this.setState({
+					bottomHR,
+				});
+			} else {
+				// This below will call this very function and update state there
+				GM_setValue('bottomHR', false);
+			}
+		});
 	};
 
-	getMarks = () => {
-		const login = GM_getValue<string>('login');
-		const password = GM_getValue<string>('password');
-		const page = GM_getValue<string>('page');
+	logout = (credentialsToRemove: Array<'login' | 'password' | 'page'> = []) => {
+		for (const value of credentialsToRemove) {
+			GM_deleteValue(value);
+		}
 
-		const loginPage = new Promise<Tampermonkey.Response<string>>(
-			(resolve, reject) => {
-				GM_xmlhttpRequest<string>({
-					method: 'GET',
-					url: `https://www.schul-netz.com/${page}/loginto.php`,
-					onload: resolve,
-					timeout: 10_000,
-					onerror: reject,
-					onabort: reject,
-					ontimeout: reject,
-				});
-			},
+		this.setState({
+			state: States.loggedOut,
+		});
+	};
+
+	getMarks = async ({
+		login,
+		password,
+		page,
+	}: {
+		login: string;
+		password: string;
+		page: string;
+	}) => {
+		let loginPageResponse: Tampermonkey.Response<string>;
+		try {
+			loginPageResponse = await new Promise<Tampermonkey.Response<string>>(
+				(resolve, reject) => {
+					GM_xmlhttpRequest<string>({
+						method: 'GET',
+						url: `https://www.schul-netz.com/${page}/loginto.php`,
+						onload: resolve,
+						timeout: 10_000,
+						onerror: reject,
+						onabort: reject,
+						ontimeout: reject,
+					});
+				},
+			);
+		} catch (error: unknown) {
+			console.error(error);
+
+			this.setState({
+				state: States.error,
+				errorMsg: `An error occurred fetching "/${page}/loginto.php"`,
+			});
+
+			return;
+		}
+
+		if (loginPageResponse.status === 404) {
+			this.logout(['page']);
+
+			return;
+		}
+
+		if (loginPageResponse.status !== 200) {
+			this.setState({
+				state: States.error,
+				errorMsg: `An error occurred fetching "/${page}/loginto.php": "${loginPageResponse.statusText}"`,
+			});
+
+			return;
+		}
+
+		const parsedLoginPage = new DOMParser().parseFromString(
+			loginPageResponse.responseText,
+			'text/html',
 		);
 
-		const frontPage = loginPage
-			.then(async response => {
-				const parsed = new DOMParser().parseFromString(
-					response.responseText,
-					'text/html',
-				);
+		const loginHashElement = parsedLoginPage.querySelector<HTMLInputElement>(
+			'input[name="loginhash"]',
+		);
 
-				const loginHashElement = parsed.querySelector<HTMLInputElement>(
-					'input[name="loginhash"]',
-				);
+		if (!loginHashElement) {
+			this.setState({
+				state: States.error,
+				errorMsg: 'Could not get loginhash.',
+			});
 
-				if (!loginHashElement) {
-					this.setState({
-						error: true,
-						errorMsg: 'Could not get loginhash.',
-					} as SchulNetzMarksState);
+			return;
+		}
 
-					return;
-				}
+		const loginRequestBody = new URLSearchParams({
+			loginhash: loginHashElement.value,
+			login,
+			passwort: password,
+		});
 
-				const data = new URLSearchParams({
-					loginhash: loginHashElement.value,
-					login,
-					passwort: password,
-				});
-
-				return new Promise<Tampermonkey.Response<string>>((resolve, reject) => {
+		let frontPageResponse: Tampermonkey.Response<string>;
+		try {
+			frontPageResponse = await new Promise<Tampermonkey.Response<string>>(
+				(resolve, reject) => {
 					GM_xmlhttpRequest<string>({
 						method: 'POST',
 						url: `https://www.schul-netz.com/${page}/index.php?pageid=`,
-						data: data.toString(),
+						data: loginRequestBody.toString(),
 						headers: {
 							'Content-Type': 'application/x-www-form-urlencoded',
 						},
@@ -228,104 +321,103 @@ class SchulNetzMarks extends Component {
 						onabort: reject,
 						ontimeout: reject,
 					});
+				},
+			);
+		} catch (error: unknown) {
+			console.error(error);
+
+			/* If the creds are incorrect it won't throw
+				 That scenario is handled below */
+			this.setState({
+				state: States.error,
+				errorMsg: 'An error occurred trying to log in.',
+			});
+			return;
+		}
+
+		if (/loginto\.php/i.test(frontPageResponse.finalUrl)) {
+			this.logout(['password']);
+
+			return;
+		}
+
+		const parsedFrontPage = new DOMParser().parseFromString(
+			frontPageResponse.responseText,
+			'text/html',
+		);
+
+		const table = parsedFrontPage.evaluate(
+			'.//h3' // Find all h3
+				+ '[contains(@class, "tabletitle")]' // That have the className "tabletitle"
+				+ '[text() = "Ihre letzten Noten"]' // That have the text "Ihre letzten Noten"
+				+ '/..' // Go to parent
+				+ '/following-sibling::table', // And find all siblings of parent that are a table
+			parsedFrontPage.body,
+			null,
+			XPathResult.FIRST_ORDERED_NODE_TYPE,
+			null,
+		).singleNodeValue as HTMLTableElement | null;
+
+		if (table === null) {
+			this.setState({
+				state: States.error,
+				errorMsg: 'Could not find table with marks.',
+			});
+
+			return;
+		}
+
+		const {rows} = table;
+		const marks: MarksRow[] = [];
+		let allConfirmed = false;
+
+		for (const row of rows) {
+			const [course, name, date, mark] = [...row.children].map(child =>
+				child.textContent?.trim(),
+			);
+
+			if (/sie haben alle noten bestätigt./i.test(course ?? '')) {
+				this.setState({state: States.noMarks});
+				allConfirmed = true;
+				break;
+			}
+
+			if (course && name && date && mark) {
+				marks.push({
+					course,
+					name,
+					date,
+					mark,
+					key: uniqueId(),
 				});
-			})
-			.catch(error => {
-				console.error(error);
-				this.setState({loggedOut: true, loading: false});
-				for (const value of ['login', 'password', 'page']) {
-					GM_deleteValue(value);
-				}
+			}
+		}
+
+		if (!allConfirmed) {
+			this.setState({
+				marks,
+				state: States.marks,
 			});
+		}
 
-		void frontPage
-			.then(response => {
-				if (typeof response !== 'object') {
-					return;
-				}
+		const anchor = parsedFrontPage.evaluate(
+			'//a' // Find all anchors
+				+ '[contains(@class, "mdl-menu__item")]' // That have class "mdl-menu__item"
+				+ '[contains(text(), "Abmelden")]', // That have text "Abmelden"
+			parsedFrontPage.body,
+			null,
+			XPathResult.FIRST_ORDERED_NODE_TYPE,
+			null,
+		).singleNodeValue as HTMLAnchorElement | null;
 
-				if (new URL(response.finalUrl).pathname.endsWith('loginto.php')) {
-					for (const value of ['login', 'password', 'page']) {
-						GM_deleteValue(value);
-					}
+		const logoutPath = anchor?.getAttribute('href');
 
-					this.setState({loggedOut: true, loading: false});
-					return;
-				}
-
-				const parsed = new DOMParser().parseFromString(
-					response.responseText,
-					'text/html',
-				);
-
-				const h3 = [
-					...parsed.querySelectorAll<HTMLHeadingElement>('h3.tabletitle'),
-				].find(
-					item =>
-						item.textContent?.toLowerCase().trim() === 'ihre letzten noten',
-				);
-
-				if (!h3 || !h3.parentElement) {
-					this.setState({
-						error: true,
-						errorMsg: 'Could not find marks table.',
-					});
-					return;
-				}
-
-				const table = h3.parentElement.nextElementSibling;
-
-				if (!(table instanceof HTMLTableElement)) {
-					this.setState({
-						error: true,
-						errorMsg: 'Table was not a table.',
-					});
-
-					return;
-				}
-
-				const {rows} = table;
-				const marks: MarksRow[] = [];
-				let allConfirmed = false;
-
-				for (const row of rows) {
-					const [course, name, date, mark] = [...row.children].map(child =>
-						child.textContent?.trim(),
-					);
-
-					if (/sie haben alle noten bestätigt./i.test(course ?? '')) {
-						this.setState({marks: false} as SchulNetzMarksState);
-						allConfirmed = true;
-						break;
-					} else if (course && name && date && mark) {
-						marks.push({course, name, date, mark, key: uniqueId()});
-					}
-				}
-
-				if (!allConfirmed) {
-					this.setState({marks});
-				}
-
-				this.setState({loading: false});
-
-				const anchor = [
-					...parsed.querySelectorAll<HTMLAnchorElement>('a.mdl-menu__item'),
-				].find(item => item.textContent?.toLowerCase()?.trim() === 'abmelden');
-
-				const logoutPath = anchor?.getAttribute('href');
-
-				if (logoutPath) {
-					GM_xmlhttpRequest({
-						method: 'GET',
-						url: `https://www.schul-netz.com/${page}/${logoutPath}`,
-						anonymous: true,
-					});
-				}
-			})
-			.catch(error => {
-				console.error(error);
-				this.setState({error: true});
+		if (logoutPath) {
+			GM_xmlhttpRequest({
+				method: 'GET',
+				url: `https://www.schul-netz.com/${page}/${logoutPath}`,
 			});
+		}
 	};
 }
 
