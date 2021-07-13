@@ -22,6 +22,4 @@ To run these you need to have tampermonkey, greasemonkey or similar installed.
 
 ## About
 
-Currently, all these userscripts are written in es6+ and jsx with [preact](https://github.com/preactjs/preact).
-
-If settings are required for use, they are accessible by opening the extension's menu and click "Open settings".
+Currently, all these userscripts are written in typescript (except one), and jsx using [preact](https://github.com/preactjs/preact).
