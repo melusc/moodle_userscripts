@@ -3,43 +3,18 @@ const TerserPlugin = require('terser-webpack-plugin');
 const entry = require('webpack-glob-entry');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
-// For reuse
-const babelConfig = {
-	loader: 'babel-loader',
-	options: {
-		plugins: [
-			'@babel/plugin-transform-runtime',
-			[
-				'@babel/plugin-transform-react-jsx',
-				{
-					pragma: 'h',
-					pragmaFrag: 'Fragment',
-				},
-			],
-			[
-				'babel-plugin-replace-identifiers',
-				{
-					// Tampermonkey's Proxy (which also a builtin) doesn't have Proxy#revocable for some reason
-					// It's a bit hacky, but I don't know why Proxy doesn't have revocable because unsafeWindow.Proxy does
-					Proxy: 'unsafeWindow.Proxy',
-				},
-			],
-		],
-	},
-};
-
 module.exports = (environment = {}) => ({
 	resolve: {
 		alias: {
 			react: 'preact/compat',
 			'react-dom': 'preact/compat',
 		},
-		extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss', '.css'],
+		extensions: ['.ts', '.tsx', '.scss', '.css'],
 	},
 	mode: 'production',
 	entry: entry(
 		entry.basePath('src'),
-		path.resolve(__dirname, 'src/**/*.user.{js,jsx,ts,tsx}'),
+		path.resolve(__dirname, 'src/**/*.user.{ts,tsx}'),
 	),
 	output: {
 		path: path.resolve(__dirname, 'dist'),
@@ -72,8 +47,24 @@ module.exports = (environment = {}) => ({
 	module: {
 		rules: [
 			{
-				test: /\.jsx?$/,
-				use: [babelConfig],
+				// TODO: Remove this when https://github.com/Tampermonkey/tampermonkey/issues/1290 is resolved
+				// .js because immer is js
+				test: /\.js$/,
+				use: [
+					{
+						loader: 'babel-loader',
+						options: {
+							plugins: [
+								[
+									'babel-plugin-replace-identifiers',
+									{
+										Proxy: 'unsafeWindow.Proxy',
+									},
+								],
+							],
+						},
+					},
+				],
 			},
 			{
 				test: /\.tsx?$/,
