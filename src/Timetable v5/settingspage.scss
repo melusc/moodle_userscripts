@@ -1,8 +1,6 @@
 @use 'sass:color';
 @use "sass:math";
 
-@import 'sanitize';
-
 $red: #dc3545;
 $green: #198754;
 $black: #111;
@@ -10,13 +8,36 @@ $black: #111;
 $background-color: #171717;
 $secondary-background-color: #202020;
 
-$text: #f0f6fcb3;
+$text: #f0f6fc;
 $font-size: 20px;
 $line-height: math.div($font-size, 2) * 3;
 
 $border-color: #30363d;
 $border-style: 2px solid;
 $border-radius: 2px;
+
+@use './components/suggestions-popup' with (
+	$secondary-background-color: $secondary-background-color,
+	$border-color: $border-color,
+	$border-style: $border-style,
+	$border-radius: $border-radius,
+);
+
+@use './components/logged-out' with (
+	$secondary-background-color: $secondary-background-color,
+	$border-color: $border-color,
+	$border-style: $border-style,
+	$border-radius: $border-radius,
+	$text: $text,
+);
+
+@use './components/button-grid' with (
+	$text: $text,
+	$border-color: $border-color,
+	$border-style: $border-style,
+);
+
+@import 'sanitize';
 
 body {
 	padding-top: 0.3em;
@@ -61,6 +82,18 @@ body {
 	// flex: 1 1 0;
 	// border-radius: $border-radius;
 
+	input {
+		border: none;
+		background: none;
+		outline: none;
+		font: inherit;
+		color: inherit;
+
+		&.invalid-input {
+			color: $red;
+		}
+	}
+
 	&.time {
 		/* because this way the time inputs
     are as wide as possible */
@@ -72,7 +105,7 @@ body {
 		justify-content: center;
 	}
 
-	&.entry {
+	&.content {
 		border-top-right-radius: $border-radius;
 		border-bottom-right-radius: $border-radius;
 		display: flex;
@@ -83,15 +116,6 @@ body {
 
 		> * {
 			width: 100%;
-		}
-
-		[data-type='content']:empty::before {
-			content: 'Content';
-			color: #8b949e;
-		}
-		[data-type='id']:empty::before {
-			content: 'Course id';
-			color: #8b949e;
 		}
 	}
 
@@ -109,49 +133,6 @@ body {
 	}
 }
 
-.login-popup {
-	text-align: center;
-
-	.vertical-horizontal-center {
-		width: 100%;
-		height: 100%;
-		position: fixed;
-		z-index: 100000000;
-		top: 0;
-		left: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		pointer-events: none;
-	}
-	.card {
-		pointer-events: auto;
-		background-color: $secondary-background-color;
-		border: $border-color $border-style;
-		border-radius: $border-radius;
-		padding: 0.3em 1em;
-	}
-
-	input {
-		display: block;
-		cursor: text;
-	}
-
-	input,
-	button {
-		margin-top: 5px;
-		background: none;
-		color: $text;
-		border: $border-style $border-color;
-		border-radius: 2px;
-		padding: 0.2em 1.3em;
-		font-size: 90%;
-	}
-	button {
-		cursor: pointer;
-	}
-}
-
 .time-input {
 	margin-left: 0.5em;
 	margin-right: 0.5em;
@@ -162,42 +143,6 @@ body {
 	&.time-to {
 		text-align: left;
 	}
-}
-[contenteditable] {
-	cursor: text;
-}
-.grid-buttons {
-	display: grid;
-	grid-template-columns: 0.3fr auto 0.3fr;
-	justify-items: center;
-	column-gap: 5px;
-	width: 100%;
-	margin-bottom: 0.3em;
-	margin-top: 0.3em;
-}
-.day-controls {
-	display: flex;
-	justify-content: space-evenly;
-	align-items: center;
-	grid-column-start: 2;
-	user-select: none;
-	margin-right: 1.5em;
-}
-.caret-back,
-.caret-forward {
-	width: 1.5em;
-	height: 1.5em;
-	cursor: pointer;
-}
-.save-button {
-	cursor: pointer;
-	margin-left: auto;
-	background: none;
-	color: $text;
-	border: $border-style $border-color;
-	border-radius: 2px;
-	padding: 0.2em 1.3em;
-	font-size: 90%;
 }
 
 .icon-add-row {
@@ -215,74 +160,24 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding-bottom: 1em;
 }
-.table-hidden {
-	display: none;
-}
-.invalid-input {
-	color: $red;
-}
-.invalid-id {
-	border-bottom-color: $red;
-}
-.suggestions {
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 1;
-	background-color: $secondary-background-color;
-	border: $border-style $border-color;
-	border-radius: $border-radius;
-	padding: 12px 20px;
-	max-width: calc(35% - 2.7em);
 
-	.emphasised {
-		font-weight: bold;
-	}
-
-	&:empty {
-		display: none;
-	}
-
-	.suggestion {
-		display: flex;
-		width: 100%;
-
-		&:hover {
-			// background-color: #21262d;
-			text-decoration: underline;
-		}
-	}
-}
-.suggestion-name {
-	padding: 2px 4px;
-	border-radius: $border-radius;
-	cursor: pointer;
-	flex: 0 0 80%;
-}
-.suggestion-id {
-	flex: 0 0 20%;
-	text-align: end;
+.save-failed,
+.save-successful {
+	animation: 3s ease-in-out save-animation;
 }
 
 .save-failed {
-	animation: 3s ease-in-out save-failed;
+	--color: #{$red};
 }
 .save-successful {
-	animation: 3s ease-in-out save-successful;
+	--color: #{$green};
 }
 
-@keyframes save-failed {
+@keyframes save-animation {
 	from {
-		border-color: $red;
-	}
-	to {
-		border-color: $border-color;
-	}
-}
-@keyframes save-successful {
-	from {
-		border-color: $green;
+		border-color: var(--color);
 	}
 	to {
 		border-color: $border-color;

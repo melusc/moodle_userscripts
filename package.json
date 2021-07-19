@@ -24,6 +24,7 @@
 		"babel-loader": "^8.2.2",
 		"babel-plugin-replace-identifiers": "^0.1.1",
 		"clean-webpack-plugin": "^3.0.0",
+		"clsx": "^1.1.1",
 		"concurrently": "^6.2.0",
 		"csso-loader": "^0.3.1",
 		"eslint-config-xo-react": "^0.25.0",
@@ -117,14 +118,12 @@
 				"off",
 				{
 					"*/indent": "Prettier is better at handling a mix of regular js, ts-specifics, and jsx. When prettier indents it is more consistent (especially non-vanilla js).",
-					"import/no-extraneous-dependencies": "Disabled because it wants me to install htm_preact since I import from htm/preact (https://github.com/benmosher/eslint-plugin-import/issues/2065)",
 					"no-mixed-spaces-and-tabs": "https://prettier.io/docs/en/options.html#tabs",
 					"react/jsx-curly-newline": "Let prettier handle it",
 					"react/prop-types": "Preact has no such thing"
 				}
 			],
 			"import/extensions": "off",
-			"import/no-extraneous-dependencies": "off",
 			"indent": "off",
 			"max-depth": "off",
 			"new-cap": [

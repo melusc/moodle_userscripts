@@ -1,0 +1,43 @@
+$secondary-background-color: #202020 !default;
+
+$border-color: #30363d !default;
+$border-style: 2px solid !default;
+$border-radius: 2px !default;
+
+.suggestions {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	background-color: $secondary-background-color;
+	border: $border-style $border-color;
+	border-radius: $border-radius;
+	padding: 0.75em 1em;
+	max-width: calc(35% - 2.7em);
+
+	.emphasised {
+		font-weight: bold;
+	}
+
+	&:empty {
+		display: none;
+	}
+
+	.suggestion {
+		display: grid;
+		width: 100%;
+		grid-template-columns: 80% 20%;
+		cursor: pointer;
+
+		&:hover {
+			// background-color: #21262d;
+			text-decoration: underline;
+		}
+	}
+}
+.suggestion-name {
+	padding: 2px 4px;
+}
+.suggestion-id {
+	text-align: end;
+}

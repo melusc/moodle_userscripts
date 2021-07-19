@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.07.06a
+// @version   2021.07.19a
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 import {Component, h, render} from 'preact';
-import {initSettingsPage} from './settingspage.js';
+import {initSettingsPage} from './settingspage';
 
 import frontPageStyle from './frontpage.scss';
 import {TimetableStates, Lang, notificationIconUrl} from './consts';
