@@ -1,4 +1,5 @@
-import {login, logout, setLastValidatedToken} from '../shared/moodle-functions';
+import {popupGetToken, logout} from '../shared/moodle-functions-v2';
+import {title} from './consts';
 
 type CoreMessageGetUserContactsResponse =
 	| {
@@ -11,30 +12,33 @@ type CoreMessageGetUserContactsResponse =
 			// ...
 	  }>;
 
-export const getContacts = async (
-	noCache: boolean,
-	userId: number,
-): Promise<number[]> =>
-	login(noCache)
-		.then(async token =>
-			fetch(
-				'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json',
-				{
-					headers: {
-						'content-type': 'application/x-www-form-urlencoded',
-					},
-					body: `userid=${userId}&wsfunction=core_message_get_user_contacts&wstoken=${token}`,
-					method: 'POST',
-				},
-			).then(async response => response.json()),
-		)
-		.then((response: CoreMessageGetUserContactsResponse) => {
-			if ('exception' in response) {
-				logout();
-				return getContacts(true, userId);
-			}
+export const getContacts = async (userId: number): Promise<number[]> => {
+	const wstoken = await popupGetToken(title);
+	const body = new URLSearchParams({
+		userid: `${userId}`,
+		wsfunction: 'core_message_get_user_contacts',
+		wstoken,
+		moodlewsrestformat: 'json',
+	});
 
-			setLastValidatedToken();
+	const response = await fetch(
+		'https://moodle.ksasz.ch/webservice/rest/server.php',
+		{
+			headers: {
+				'content-type': 'application/x-www-form-urlencoded',
+			},
+			body,
+			method: 'POST',
+		},
+	);
 
-			return response.map(({id}) => id);
-		});
+	const responseJSON
+		= (await response.json()) as CoreMessageGetUserContactsResponse;
+
+	if ('exception' in responseJSON) {
+		logout();
+		return getContacts(userId);
+	}
+
+	return responseJSON.map(({id}) => id);
+};

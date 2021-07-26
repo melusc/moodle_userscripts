@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.07.12a
+// @version   2021.07.26a
 // @author    lusc
 // @updateURL https://git.io/JqltR
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -16,22 +16,24 @@ import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime.js';
 import DOMPurify from 'dompurify';
 import {render, Fragment, h} from 'preact';
 import {useSnapshot, proxy} from 'valtio';
-import {
-	setLastValidatedToken,
-	login,
-	logout,
-	getUserId,
-} from '../shared/moodle-functions';
 
-import style from './style.scss';
+import {
+	logout,
+	popupGetToken,
+	popupGetUserId,
+} from '../shared/moodle-functions-v2';
+
 import {countries as COUNTRY_CODES} from './countries';
 import {getContacts} from './get-contacts';
+import {title} from './consts';
+
+import style from './style.scss';
 
 import type {UserDataResponse} from './explore-profiles.d';
 
 dayjs.extend(dayjsPluginRelativeTime);
 
-let CONTACTS: number[]; // No `...| undefined` because it gets set asap
+let CONTACTS: number[];
 let USER_ID: number;
 
 type MainState = {
@@ -696,50 +698,49 @@ const clearNode = (node: Element) => {
 const getProfilesInRange = async (
 	start: number,
 	range: number,
-): Promise<UserDataResponse[]> =>
-	login().then(async wstoken => {
-		let lower = start;
-		let upper = start + range;
+): Promise<UserDataResponse[]> => {
+	const wstoken = await popupGetToken(title);
 
-		if (lower > upper) {
-			[lower, upper] = [upper, lower];
-		}
+	let lower = start;
+	let upper = start + range;
 
-		const bodyParameters = new URLSearchParams({
-			wsfunction: 'core_user_get_course_user_profiles',
-			wstoken,
-		});
+	if (lower > upper) {
+		[lower, upper] = [upper, lower];
+	}
 
-		for (let index = 0; index <= upper - lower; ++index) {
-			bodyParameters.set(`userlist[${index}][userid]`, `${lower + index}`);
-			bodyParameters.set(
-				`userlist[${index}][courseid]`,
-				'32', // Allgemeine informationen
-			);
-		}
-
-		return fetch(
-			'https://moodle.ksasz.ch/webservice/rest/server.php?moodlewsrestformat=json',
-			{
-				method: 'POST',
-				body: bodyParameters.toString(),
-				headers: {
-					'content-type': 'application/x-www-form-urlencoded',
-				},
-			},
-		)
-			.then(async response => response.json())
-			.then(async (response: UserDataResponse[]) => {
-				if ('errorcode' in response) {
-					logout();
-					return getProfilesInRange(start, range);
-				}
-
-				setLastValidatedToken();
-
-				return response;
-			});
+	const body = new URLSearchParams({
+		wsfunction: 'core_user_get_course_user_profiles',
+		wstoken,
+		moodlewsrestformat: 'json',
 	});
+
+	for (let index = 0; index <= upper - lower; ++index) {
+		body.set(`userlist[${index}][userid]`, `${lower + index}`);
+		body.set(
+			`userlist[${index}][courseid]`,
+			'32', // Allgemeine informationen
+		);
+	}
+
+	const response = await fetch(
+		'https://moodle.ksasz.ch/webservice/rest/server.php',
+		{
+			method: 'POST',
+			body,
+			headers: {
+				'content-type': 'application/x-www-form-urlencoded',
+			},
+		},
+	);
+	const responseJSON = (await response.json()) as UserDataResponse[];
+
+	if ('errorcode' in response) {
+		logout();
+		return getProfilesInRange(start, range);
+	}
+
+	return responseJSON;
+};
 
 const unescapeHTML = (html: string) =>
 	`${html}`
@@ -827,7 +828,7 @@ const fetchNewProfile = async (action: number | 'rand') => {
 	}
 
 	if (USER_ID === undefined) {
-		USER_ID = await getUserId();
+		USER_ID = await popupGetUserId(title);
 	}
 
 	notificationState.from = undefined;
@@ -836,7 +837,7 @@ const fetchNewProfile = async (action: number | 'rand') => {
 	document.title = `${profile.fullname}: Public profile`;
 
 	if (!Array.isArray(CONTACTS)) {
-		CONTACTS = await getContacts(false, USER_ID);
+		CONTACTS = await getContacts(USER_ID);
 	}
 
 	/* {
