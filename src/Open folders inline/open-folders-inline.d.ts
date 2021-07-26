@@ -1,49 +1,26 @@
 import {Except} from 'type-fest';
 
-type GetContentsModuleContentsNonFile = {
-	author: null;
-	filename: string;
-	filepath: null | string;
-	filesize: 0;
-	fileurl: string;
-	license: null;
-	sortorder: null | 0 | 1;
-	timecreated: null;
-	timemodified: number;
-	type: string;
-	userid: null;
-};
-
-type GetContentsModuleContentsIsFile = {
-	author: null | string;
+// It is not empty, but I don't use it
+type ContentNotFile = {}; // eslint-disable-line @typescript-eslint/ban-types
+type ContentIsFile = {
+	// ...
 	filename: string;
 	filepath: string;
-	filesize: number;
 	fileurl: string;
 	isexternalfile: false;
-	license: null | string;
 	mimetype: string;
-	sortorder: 0 | 1;
-	timecreated: number;
-	timemodified: number;
-	type: string;
-	userid: number;
+	// ...
 };
 
-type GetContentsModuleContentsIsFileSanitized = Except<
-	GetContentsModuleContentsIsFile,
-	'filepath'
-> & {
-	filepath: string[];
+type SanitizedContentFile = Except<ContentIsFile, 'filepath' | 'fileurl'> & {
+	filePath: string[]; // Different case than ContentIsFile, to indicate that it gets modified
+	fileUrl: string; // ^
+	imgPath: string;
 };
 
-type GetContentsModuleContents =
-	| GetContentsModuleContentsNonFile
-	| GetContentsModuleContentsIsFile;
-
-type GetContentsModule = (
+type Module = (
 	| {
-			contents: GetContentsModuleContents[];
+			contents: Array<ContentNotFile | ContentIsFile>;
 			contentsinfo: unknown;
 			url: string;
 	  }
@@ -51,33 +28,16 @@ type GetContentsModule = (
 			description: string;
 	  }
 ) & {
-	afterlink: null; // Could only find null here, I don't use it anyway
-	completion: number;
-	customdata: string;
+	// ...
 	id: number;
-	indent: number;
-	instance: number;
-	modicon: string;
-	modname: string;
-	modplural: string;
-	name: string;
-	noviewlink: boolean;
-	onclick: string;
-	uservisible: boolean;
-	visible: number;
-	visibleoncoursepage: number;
+	// ...
 };
 
-type GetContentsResponse = {
-	hiddenbynumsections: number;
+type ContentsResponse = {
+	// ...
 	id: number;
-	modules: GetContentsModule[];
-	name: string;
-	section: number;
-	summary: string;
-	summaryformat: number;
-	uservisible: boolean;
-	visible: number;
+	modules: Module[];
+	// ...
 };
 
 type GetContentsResponseFailed = {
@@ -86,11 +46,4 @@ type GetContentsResponseFailed = {
 	message: string;
 };
 
-export {
-	GetContentsResponse,
-	GetContentsResponseFailed,
-	GetContentsModuleContents,
-	GetContentsModuleContentsIsFile,
-	GetContentsModuleContentsNonFile,
-	GetContentsModuleContentsIsFileSanitized,
-};
+export {ContentsResponse, GetContentsResponseFailed, SanitizedContentFile};
