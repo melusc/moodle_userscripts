@@ -4,10 +4,16 @@ import {useEffect, useState} from 'preact/hooks';
 import {SanitizedContentFile} from './open-folders-inline';
 import {getSanitizedContents} from './page-content';
 
-const folderSetStates: Record<string, () => void> = {};
+const folderRefreshSetStates: Record<string, () => void> = {};
+export const refreshFolderById = (folderId: string) => {
+	folderRefreshSetStates[folderId]?.();
+};
 
-export const refreshByFolderId = (folderId: string) => {
-	folderSetStates[folderId]?.();
+const folderVisibilitySetStates: Record<string, () => void> = {};
+export const toggleFolderVisibilityById = (folderId: string): boolean => {
+	folderVisibilitySetStates[folderId]?.();
+
+	return folderId in folderVisibilitySetStates;
 };
 
 const FolderRoot = ({
@@ -123,21 +129,37 @@ export const Folder = ({
 		undefined,
 	);
 
+	const [isHidden, setIsHidden] = useState(false);
+
 	useEffect(() => {
 		const updateContents = async (noCache?: boolean) => {
 			const contents = await getSanitizedContents(sectionId, folderId, noCache);
 			if (contents) {
 				setContents(contents);
+				setIsHidden(false);
 			}
 		};
 
-		folderSetStates[folderId] = () => {
+		folderRefreshSetStates[folderId] = () => {
 			setContents(undefined);
+			setIsHidden(false);
 			void updateContents(true);
+		};
+
+		folderVisibilitySetStates[folderId] = () => {
+			setIsHidden(isHidden => !isHidden);
 		};
 
 		void updateContents();
 	}, [folderId, sectionId]);
 
-	return contents ? <FolderRoot isParent contents={contents} /> : null;
+	if (isHidden) {
+		return null;
+	}
+
+	return contents ? (
+		<FolderRoot isParent contents={contents} />
+	) : (
+		<div class="folder-loading">Loading</div>
+	);
 };
