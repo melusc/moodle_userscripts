@@ -4,8 +4,12 @@ const swap = <T>(array: T[], index1: number, index2: number): void => {
 	const left = array[index1];
 	const right = array[index2];
 
-	if (left && right) {
+	if (left !== undefined && right !== undefined) {
 		[array[index1], array[index2]] = [right, left];
+	} else {
+		throw new RangeError(
+			`index1 or index2 was out of range: [${index1}, ${index2}]`,
+		);
 	}
 };
 
@@ -17,7 +21,7 @@ const sortingUsingPivot = <T>(
 ): number => {
 	const pivot = array[(r + l) >> 1];
 
-	if (!pivot) {
+	if (pivot === undefined) {
 		throw new Error(
 			`pivot was out of bounds: [${JSON.stringify(array)}][${(r + l) >> 1}]`,
 		);
