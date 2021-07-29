@@ -100,16 +100,16 @@ const initDownload = async (target: HTMLButtonElement) => {
 		const {modules} = section;
 		const sectionName = sanitizeFileName(section.name);
 
-		for (const module of modules) {
-			const {modname} = module;
+		for (const module_ of modules) {
+			const {modname} = module_;
 			if (modname === 'resource' || modname === 'folder') {
-				const {contents} = module;
+				const {contents} = module_;
 
 				if (contents === undefined) {
 					continue;
 				}
 
-				const folderName = sanitizeFileName(module.name);
+				const folderName = sanitizeFileName(module_.name);
 
 				for (const content of contents) {
 					const {fileurl, filepath, timemodified: timeModified} = content;
@@ -129,7 +129,7 @@ const initDownload = async (target: HTMLButtonElement) => {
 					});
 				}
 			} else if (modname === 'url') {
-				const url = new URL(module.url);
+				const url = new URL(module_.url);
 				// For defaultURL no "redirect"
 				url.searchParams.delete('redirect');
 
@@ -139,7 +139,7 @@ const initDownload = async (target: HTMLButtonElement) => {
 
 				queue.push({
 					type: QueueTypes.link,
-					filename: `${sectionName}/${module.name}.url`,
+					filename: `${sectionName}/${module_.name}.url`,
 					url: url.href,
 					defaultURL,
 				});
