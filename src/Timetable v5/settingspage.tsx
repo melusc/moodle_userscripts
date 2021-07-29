@@ -1,9 +1,9 @@
 // Dependencies
 import {h, Component, render, Fragment, JSX, RefObject} from 'preact';
 import {produce} from 'immer';
+import clsx from 'clsx';
 
 // Shared across repo
-import clsx from 'clsx';
 import {uniqueId} from '../shared/general-functions';
 import {
 	getCourses_throwable,
