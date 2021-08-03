@@ -1,4 +1,5 @@
 import {h} from 'preact';
+import {numericBaseSensitiveCollator} from '../../shared/general-functions';
 
 import {Course, SettingsPageState} from '../settingspage.d';
 
@@ -18,10 +19,7 @@ const filterCourses = (array: Course[], inputText: string) => {
 	return result.sort(
 		(a, b) =>
 			a.index - b.index
-			|| a.name.localeCompare(b.name, 'en', {
-				sensitivity: 'base',
-				numeric: true,
-			})
+			|| numericBaseSensitiveCollator.compare(a.name, b.name)
 			|| Number(a.id) - Number(b.id),
 	);
 };

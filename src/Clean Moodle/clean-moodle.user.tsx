@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.07.29a
+// @version   2021.08.03a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JqltW
@@ -16,7 +16,10 @@
 import {render, h} from 'preact';
 
 import {popupGetCourses} from '../shared/moodle-functions-v2';
-import {quickSort} from '../shared/general-functions';
+import {
+	numericBaseSensitiveCollator,
+	quickSort,
+} from '../shared/general-functions';
 
 import {setupSettingsPage} from './settingspage';
 import {removeElementFromStorage} from './shared';
@@ -131,18 +134,18 @@ const sortSidebar = () => {
 	];
 
 	quickSort(children, (a, b) => {
-		const aText = a.firstElementChild?.textContent?.toLowerCase();
+		const aText = a.firstElementChild?.textContent;
 		//              ^ if we're on the courses page it has more text like "participants" or "grades"
 		// but we only want to sort it by the course's name
 		// normally it would sort it in the same way if we allowed the additional text
 		// but if two courses start with the same name it can sort it wrong
-		const bText = b.firstElementChild?.textContent?.toLowerCase();
+		const bText = b.firstElementChild?.textContent;
 
 		if (!aText || !bText) {
 			throw new Error('aText or bText was undefined');
 		}
 
-		return aText < bText ? -1 : (aText > bText ? 1 : 0);
+		return numericBaseSensitiveCollator.compare(aText, bText);
 	});
 
 	sidebar.prepend(...children);

@@ -1,6 +1,8 @@
 import {h, Fragment, JSX} from 'preact';
 import {useEffect, useState} from 'preact/hooks';
 
+import {numericBaseSensitiveCollator} from '../shared/general-functions';
+
 import {SanitizedContentFile} from './open-folders-inline';
 import {getSanitizedContents} from './page-content';
 
@@ -41,22 +43,16 @@ const FolderRoot = ({
 		}
 	}
 
-	const localeCompareOptions: Intl.CollatorOptions = {
-		sensitivity: 'base',
-		numeric: true,
-	};
 	const root = filePaths['/'];
 	root?.sort((a, b) =>
-		a.filename
-			.trim()
-			.localeCompare(b.filename.trim(), undefined, localeCompareOptions),
+		numericBaseSensitiveCollator.compare(a.filename.trim(), b.filename.trim()),
 	);
 
 	delete filePaths['/'];
 
 	const entries = Object.entries(filePaths);
 	entries.sort(([a], [b]) =>
-		a.trim().localeCompare(b.trim(), undefined, localeCompareOptions),
+		numericBaseSensitiveCollator.compare(a.trim(), b.trim()),
 	);
 
 	const handleClick: JSX.MouseEventHandler<HTMLElement> = event_ => {

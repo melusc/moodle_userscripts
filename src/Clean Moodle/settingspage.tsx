@@ -15,7 +15,10 @@ import {
 	logout,
 	getCredentials,
 } from '../shared/moodle-functions-v2';
-import {quickSort} from '../shared/general-functions';
+import {
+	numericBaseSensitiveCollator,
+	quickSort,
+} from '../shared/general-functions';
 
 import {removeElementFromStorage} from './shared';
 import style from './settingspage.scss';
@@ -28,10 +31,10 @@ const sortCoursesArray = (array: Course[]) =>
 			{courseName: courseNameA, replacedName: replacedNameA},
 			{courseName: courseNameB, replacedName: replacedNameB},
 		) => {
-			const lowerA = (replacedNameA ?? courseNameA).toLowerCase();
-			const lowerB = (replacedNameB ?? courseNameB).toLowerCase();
+			const textA = (replacedNameA ?? courseNameA).trim();
+			const textB = (replacedNameB ?? courseNameB).trim();
 
-			return lowerA < lowerB ? -1 : (lowerA > lowerB ? 1 : 0);
+			return numericBaseSensitiveCollator.compare(textA, textB);
 		},
 	);
 

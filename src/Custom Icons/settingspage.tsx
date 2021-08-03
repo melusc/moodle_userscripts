@@ -10,6 +10,8 @@ import {
 	getCredentials,
 	getToken,
 } from '../shared/moodle-functions-v2';
+import {numericBaseSensitiveCollator} from '../shared/general-functions';
+
 import {deleteIconFromStorage} from './shared';
 import style from './settingspage.scss';
 
@@ -17,10 +19,14 @@ import type {Pointers, Values} from './custom-icons.d';
 
 const sortCourses = (courses: Course[]) => {
 	courses.sort(({name: nameA, id: idA}, {name: nameB, id: idB}) => {
-		nameA = nameA.trim().toLowerCase();
-		nameB = nameB.trim().toLowerCase();
+		nameA = nameA.trim();
+		nameB = nameB.trim();
 
-		return nameA > nameB ? 1 : (nameA < nameB ? -1 : Number(idB) - Number(idA));
+		// Sorting should be stable so if nameA === nameB the lower id should come first
+		return (
+			numericBaseSensitiveCollator.compare(nameA, nameB)
+			|| Number(idB) - Number(idA)
+		);
 	});
 };
 
