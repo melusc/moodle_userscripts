@@ -40,6 +40,10 @@ const SuggestionsPopup = ({
 	const {left, height, top} = focusedElement;
 	const inputText = focusedElement.inputText.trim().toLowerCase();
 
+	if (inputText === '') {
+		return null;
+	}
+
 	return (
 		<div
 			class="suggestions"
@@ -56,7 +60,11 @@ const SuggestionsPopup = ({
 					<div
 						key={id}
 						class="suggestion"
-						onClick={() => {
+						onMouseDown={() => {
+							/* MouseDown because otherwise the event listener
+								 in settingspage for `focusout` will fire first and
+								 remove this before `onClick` even fires
+								 MouseDown fires before focusout */
 							onClick(id);
 						}}
 					>
