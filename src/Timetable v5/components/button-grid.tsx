@@ -3,29 +3,14 @@ import clsx, {ClassValue} from 'clsx';
 
 import {SvgIconCaretBack, SvgIconCaretForward} from '../icons';
 
-const enum Days {
-	Mo = 'Monday',
-	Tu = 'Tuesday',
-	We = 'Wednesday',
-	Th = 'Thursday',
-	Fr = 'Friday',
-}
+const getDay = (n: number): string => {
+	const result = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'][n];
 
-const getDay = (n: number): Days => {
-	switch (n) {
-		case 0:
-			return Days.Mo;
-		case 1:
-			return Days.Tu;
-		case 2:
-			return Days.We;
-		case 3:
-			return Days.Th;
-		case 4:
-			return Days.Fr;
-		default:
-			throw new Error(`n was out of range: ${n}`);
+	if (result === undefined) {
+		throw new Error(`n was out of range: ${n}`);
 	}
+
+	return result;
 };
 
 const ButtonGrid = ({
