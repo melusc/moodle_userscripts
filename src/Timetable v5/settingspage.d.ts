@@ -21,7 +21,7 @@ type TableOnInputSelectors = 'content' | 'from' | 'to' | 'id';
 type SingleDay = Array<{
 	from: number;
 	to: number;
-	content: string;
+	content?: string;
 	id?: string;
 }>;
 

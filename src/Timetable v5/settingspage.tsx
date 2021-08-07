@@ -97,7 +97,7 @@ const getTables = (): SettingsPageState['tables'] => {
 					num: to,
 				},
 				id: id ?? '',
-				content,
+				content: content ?? '',
 			}));
 		} else {
 			array[index] = defaultRows();
@@ -271,11 +271,13 @@ class SettingsPage extends Component<
 				row.push({
 					from: from.num,
 					to: to.num,
-					content,
+					content: content || undefined,
 					id: id || undefined, // If empty string there is no id (and it tests for undefined to determine that)
 				});
 			}
 		}
+
+		GM_setValue('days', {...rows});
 	};
 
 	handleTableFocus =
@@ -360,6 +362,13 @@ class SettingsPage extends Component<
 			this.setState({
 				focusedElement: undefined,
 			});
+		});
+
+		document.body.addEventListener('keydown', event_ => {
+			if (event_.key === 's' && event_.ctrlKey) {
+				event_.preventDefault();
+				this.handleSave();
+			}
 		});
 
 		const token = getToken();

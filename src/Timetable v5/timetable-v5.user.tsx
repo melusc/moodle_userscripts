@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.08.03b
+// @version   2021.08.07a
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -76,17 +76,23 @@ const TimetableRow = ({
 	);
 };
 
-const getCourses = (
-	minutesOfDay: number,
-): Readonly<{
+const getCourses = (): Readonly<{
 	state: TimetableStates;
 	courses?: Array<TimetableStorageValues | undefined>;
+	minutesOfDay: number;
 }> => {
 	const valuesWeek = GM_getValue<TimetableStorageValuesWeek | undefined>(
 		'days',
 	);
 
 	const date = new Date();
+
+	// prettier-ignore
+	const minutesOfDay
+	= (date.getHours() * 60)
+	+ date.getMinutes()
+	+ (date.getSeconds() / 60)
+	+ (date.getMilliseconds() / 60 / 1000);
 
 	/* Make monday 0 and friday 4 (sunday -1)
 		it shouldn't get here if weekend
@@ -98,6 +104,7 @@ const getCourses = (
 	if (values === undefined || values.length === 0) {
 		return {
 			state: TimetableStates.empty,
+			minutesOfDay,
 		};
 	}
 
@@ -106,6 +113,7 @@ const getCourses = (
 	if (!lastValue || lastValue.to <= minutesOfDay) {
 		return {
 			state: TimetableStates.after,
+			minutesOfDay,
 		};
 	}
 
@@ -115,6 +123,7 @@ const getCourses = (
 		return {
 			state: TimetableStates.before,
 			courses: [undefined, firstValue],
+			minutesOfDay,
 		};
 	}
 
@@ -122,7 +131,7 @@ const getCourses = (
 	let currentCourse: TimetableStorageValues | undefined;
 
 	/* Continue iterating through the courses while "now"
-		is after the course, meaning it has already taken place */
+	is after the course, meaning it has already taken place */
 	while (
 		(currentCourse = values[currentCourseIdx])
 		&& currentCourse.to < minutesOfDay
@@ -133,6 +142,7 @@ const getCourses = (
 	return {
 		state: TimetableStates.during,
 		courses: [currentCourse, values[currentCourseIdx + 1]],
+		minutesOfDay,
 	};
 };
 
@@ -155,7 +165,7 @@ const notify = (value: TimetableStorageValues) => {
 const isWeekday = (): boolean => {
 	const day = new Date().getDay();
 
-	return day !== 0 && day !== 6;
+	return (day !== 0 && day !== 6) || true;
 };
 
 const isHoliday = (): boolean => {
@@ -217,16 +227,7 @@ class FrontPage extends Component {
 			return;
 		}
 
-		const date = new Date();
-
-		// prettier-ignore
-		const minutesOfDay
-			= (date.getHours() * 60)
-			+ date.getMinutes()
-			+ (date.getSeconds() / 60)
-			+ (date.getMilliseconds() / 60 / 1000);
-
-		const {courses, state} = getCourses(minutesOfDay);
+		const {courses, state, minutesOfDay} = getCourses();
 
 		this.setState({
 			timetableState: state,
