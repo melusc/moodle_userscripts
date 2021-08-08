@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.08.07a
+// @version   2021.08.08a
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -165,7 +165,7 @@ const notify = (value: TimetableStorageValues) => {
 const isWeekday = (): boolean => {
 	const day = new Date().getDay();
 
-	return (day !== 0 && day !== 6) || true;
+	return day !== 0 && day !== 6;
 };
 
 const isHoliday = (): boolean => {
