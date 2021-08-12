@@ -57,10 +57,10 @@
 	"scripts": {
 		"build": "npm run lint && npm run webpack",
 		"gulp": "gulp start",
-		"lint": "prettier -w \"{*,**/*}.{ts,tsx,js,jsx,scss}\" \"!dist/**\" && xo --fix",
+		"lint": "prettier -w . \"!dist/**\" && xo --fix",
 		"serve": "serve dist",
 		"start": "concurrently npm:gulp npm:webpack:w -r -k",
-		"test": "prettier -w \"{*,**/*}.{ts,tsx,js,jsx,scss}\" \"!dist/**\" && xo",
+		"test": "xo",
 		"webpack": "webpack -c production.config.js --env PROD",
 		"webpack:w": "webpack -c production.config.js -w"
 	},
