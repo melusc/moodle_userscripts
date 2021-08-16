@@ -12,15 +12,16 @@ div.folders-inline-icon-div {
 	padding-left: none;
 }
 
+.folder-empty,
 .folder-loading {
 	// 1rem from ul, 24px from li
 	margin-left: calc(1rem + 24px);
+}
 
-	&::after {
-		content: '';
+.folder-loading::after {
+	content: '';
 
-		animation: folder-loading-dots 0.6s infinite linear alternate;
-	}
+	animation: folder-loading-dots 0.6s infinite linear alternate;
 }
 
 @keyframes folder-loading-dots {

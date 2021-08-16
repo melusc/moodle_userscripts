@@ -18,6 +18,35 @@ export const toggleFolderVisibilityById = (folderId: string): boolean => {
 	return folderId in folderVisibilitySetStates;
 };
 
+const FolderIcon = (props: {
+	isHidden: boolean;
+	base: string | undefined;
+	handleClick: JSX.MouseEventHandler<HTMLDivElement>;
+}) => {
+	const {handleClick, isHidden, base} = props;
+
+	return (
+		<div class="fp-filename-icon folders-inline-icon" onClick={handleClick}>
+			<div class="folders-inline-icon-div">
+				<i
+					class={`icon fa ${
+						isHidden ? 'fa-caret-right' : 'fa-caret-down'
+					} fa-fw navicon folders-inline-caret`}
+				/>
+				<img
+					alt=""
+					class="iconlarge activityicon"
+					role="presentation"
+					title={base}
+					aria-hidden="true"
+					src="/theme/image.php/classic/core/1601902087/f/folder-128"
+				/>
+			</div>
+			<span class="fp-filename">{base}</span>
+		</div>
+	);
+};
+
 const FolderRoot = ({
 	contents,
 	directoryDepth = 0,
@@ -51,11 +80,11 @@ const FolderRoot = ({
 	delete filePaths['/'];
 
 	const entries = Object.entries(filePaths);
-	entries.sort(([a], [b]) =>
-		numericBaseSensitiveCollator.compare(a.trim(), b.trim()),
+	entries.sort(([keyA], [keyB]) =>
+		numericBaseSensitiveCollator.compare(keyA.trim(), keyB.trim()),
 	);
 
-	const handleClick: JSX.MouseEventHandler<HTMLElement> = event_ => {
+	const handleClick: JSX.MouseEventHandler<HTMLDivElement> = event_ => {
 		event_.stopPropagation();
 
 		setHidden(isHidden => !isHidden);
@@ -66,24 +95,7 @@ const FolderRoot = ({
 	return (
 		<>
 			{!isParent && (
-				<div class="fp-filename-icon folders-inline-icon" onClick={handleClick}>
-					<div class="folders-inline-icon-div">
-						<i
-							class={`icon fa ${
-								isHidden ? 'fa-caret-right' : 'fa-caret-down'
-							} fa-fw navicon folders-inline-caret`}
-						/>
-						<img
-							alt=""
-							class="iconlarge activityicon"
-							role="presentation"
-							title={base}
-							aria-hidden="true"
-							src="/theme/image.php/classic/core/1601902087/f/folder-128"
-						/>
-					</div>
-					<span class="fp-filename">{base}</span>
-				</div>
+				<FolderIcon isHidden={isHidden} base={base} handleClick={handleClick} />
 			)}
 			{!shouldHide && (
 				<ul style={{listStyle: 'none'}}>
@@ -153,9 +165,13 @@ export const Folder = ({
 		return null;
 	}
 
-	return contents ? (
-		<FolderRoot isParent contents={contents} />
+	if (!contents) {
+		return <div class="folder-loading">Loading</div>;
+	}
+
+	return contents.length === 0 ? (
+		<div class="folder-empty">The folder was empty</div>
 	) : (
-		<div class="folder-loading">Loading</div>
+		<FolderRoot isParent contents={contents} />
 	);
 };
