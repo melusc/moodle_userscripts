@@ -1,4 +1,3 @@
-@import 'normalize';
 @import 'sanitize';
 
 $background: #202020;
@@ -72,7 +71,7 @@ body {
 	.row {
 		cursor: pointer;
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		color: $green;
 
 		&:hover {
@@ -88,13 +87,6 @@ body {
 	&:not([disabled]) {
 		cursor: pointer;
 	}
-}
-
-h5 {
-	font-size: 18.75px;
-	font-weight: 300;
-	margin: 0;
-	margin-bottom: 12px;
 }
 
 .icon {
@@ -130,11 +122,11 @@ h5 {
 .replace-flex-inputs {
 	display: flex;
 	flex-direction: column;
+	gap: 10px;
 	margin-top: 10px;
 
 	* {
 		align-self: flex-start;
-		margin-bottom: 10px;
 	}
 }
 
@@ -151,11 +143,10 @@ button {
 	background-color: #e9ecef;
 	border: 1px solid #8f959e;
 	border-radius: 0.25rem;
+	font-family: inherit;
 }
 button {
 	text-align: center;
-}
-button {
 	background-color: #1177d1;
 	color: $text;
 	margin-top: 10px;

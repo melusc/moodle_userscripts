@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.08.03a
+// @version   2021.08.16a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JqltW
@@ -187,11 +187,6 @@ const testDiff = <T extends string[] | Record<string, string>>(
 	oldValue: T,
 	newValue: T,
 ): {addedOrChanged: string[]; removedVals: string[]} => {
-	// If for some reason one is an array and the other isn't
-	if (Array.isArray(oldValue) !== Array.isArray(newValue)) {
-		location.reload();
-	}
-
 	if (Array.isArray(oldValue) && Array.isArray(newValue)) {
 		const addedOrChanged = newValue.filter(value => !oldValue.includes(value));
 		const removedVals = oldValue.filter(value => !newValue.includes(value));
@@ -211,6 +206,8 @@ const testDiff = <T extends string[] | Record<string, string>>(
 		return {addedOrChanged, removedVals};
 	}
 
+	// If for some reason one is an array and the other isn't
+	location.reload();
 	throw new Error(
 		'Exactly one of oldValue and newValue was an array when both or none should have been.',
 	);

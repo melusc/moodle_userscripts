@@ -1,12 +1,4 @@
-import {
-	render,
-	h,
-	Component,
-	Fragment,
-	createRef,
-	RefObject,
-	JSX,
-} from 'preact';
+import {render, h, Component, createRef, RefObject, JSX} from 'preact';
 
 import {
 	getCourses_throwable,
@@ -22,6 +14,7 @@ import {
 
 import {removeElementFromStorage} from './shared';
 import style from './settingspage.scss';
+import {SvgArrowBack, SvgCheck, SvgX} from './icons';
 
 /** Sort courses, mutates the array */
 const sortCoursesArray = (array: Course[]) =>
@@ -86,45 +79,6 @@ const setReplaced = (
 	GM_setValue('replace', replacers);
 };
 
-const SvgCheck = () => (
-	<svg
-		fill="none"
-		stroke="currentColor"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-		stroke-width="2"
-		class="icon svg-icon-check"
-		viewBox="0 0 24 24"
-	>
-		<path d="m5 12 5 5L20 7" />
-	</svg>
-);
-const SvgX = () => (
-	<svg
-		fill="none"
-		stroke="currentColor"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-		stroke-width="2"
-		class="icon svg-icon-x"
-		viewBox="0 0 24 24"
-	>
-		<path d="M18 6 6 18M6 6l12 12" />
-	</svg>
-);
-const SvgArrowBack = () => (
-	<svg
-		fill="none"
-		stroke="currentColor"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-		stroke-width="2"
-		class="icon svg-icon-arrow-back"
-		viewBox="0 0 24 24"
-	>
-		<path d="m9 11-4 4 4 4m-4-4h11a4 4 0 0 0 0-8h-1" />
-	</svg>
-);
 const SidebarRow = ({
 	course,
 	handleClick,
@@ -149,33 +103,28 @@ const SidebarRow = ({
 	return (
 		<div
 			class={`row${isRemoved ? ' removed' : ''}`}
+			title={courseName}
 			onClick={event_ => {
 				handleClick(event_, course);
 			}}
 		>
-			<span>
+			<span
+				onClick={event_ => {
+					toggleItem(event_, course);
+				}}
+			>
+				{isRemoved ? <SvgX /> : <SvgCheck />}
+			</span>
+			{replacedName ?? courseName}
+			{replacedName !== undefined && (
 				<span
 					onClick={event_ => {
-						toggleItem(event_, course);
+						resetItem(event_, course);
 					}}
 				>
-					{isRemoved ? <SvgX /> : <SvgCheck />}
+					<SvgArrowBack />
 				</span>
-				{replacedName === undefined ? (
-					courseName
-				) : (
-					<>
-						{replacedName}
-						<span
-							onClick={event_ => {
-								resetItem(event_, course);
-							}}
-						>
-							<SvgArrowBack />
-						</span>
-					</>
-				)}
-			</span>
+			)}
 		</div>
 	);
 };
@@ -210,78 +159,74 @@ const Sidebar = ({
 	</div>
 );
 
+const LoggedOut = (props: {
+	loggedOutInputs: {
+		username: RefObject<HTMLInputElement>;
+		password: RefObject<HTMLInputElement>;
+	};
+	loggedOutCallback: () => void;
+}) => {
+	const {loggedOutInputs, loggedOutCallback} = props;
+
+	return (
+		<div class="replace-flex-input">
+			<h5>Login</h5>
+			<input ref={loggedOutInputs.username} placeholder="Username" />
+			<input
+				ref={loggedOutInputs.password}
+				placeholder="Password"
+				type="password"
+			/>
+			<button class="btn-save" type="button" onClick={loggedOutCallback}>
+				Login
+			</button>
+		</div>
+	);
+};
+
 const Main = (props: {
 	selected: SettingsPageState['selected'];
 	replaceInputRef: RefObject<HTMLInputElement>;
 	handleKeydown: JSX.KeyboardEventHandler<HTMLInputElement>;
 	handleSaveClick: JSX.MouseEventHandler<HTMLButtonElement>;
-	loggedOutInputs: {
-		username: RefObject<HTMLInputElement>;
-		password: RefObject<HTMLInputElement>;
-	};
-	loggedOut: boolean;
-	loggedOutCallback: () => void;
 }) => {
-	const {
-		selected,
-		replaceInputRef,
-		handleSaveClick,
-		handleKeydown,
-		loggedOutInputs,
-	} = props;
+	const {selected, replaceInputRef, handleSaveClick, handleKeydown} = props;
 
 	return (
 		<div class="outer-main">
 			<div class="main">
-				{props.loggedOut ? (
-					<div class="replace-flex-input">
-						<h5>Login</h5>
-						<input ref={loggedOutInputs.username} placeholder="Username" />
-						<input
-							ref={loggedOutInputs.password}
-							placeholder="Password"
-							type="password"
-						/>
-						<button
-							class="btn-save"
-							type="button"
-							onClick={props.loggedOutCallback}
-						>
-							Login
-						</button>
+				<div class="section-title">Rename course</div>
+				<div class="replace-flex-inputs">
+					<div>
+						{selected.isSelected
+							? `Selected: ${selected.courseName}`
+							: 'Select course to the left'}
 					</div>
-				) : (
-					<>
-						<div class="section-title">Rename course</div>
-						<div class="replace-flex-inputs">
-							<div>
-								{selected.isSelected
-									? `Selected: ${selected.courseName}`
-									: 'Select course to the left'}
-							</div>
-							<input
-								ref={replaceInputRef}
-								class="replace-input"
-								placeholder="Select course to the left"
-								disabled={!selected.isSelected}
-								value={
-									selected.isSelected
-										? selected.replacedName ?? selected.courseName
-										: ''
-								}
-								onKeyDown={handleKeydown}
-							/>
-							<button
-								class="btn-save"
-								disabled={!selected.isSelected}
-								type="button"
-								onClick={handleSaveClick}
-							>
-								Save
-							</button>
-						</div>
-					</>
-				)}
+					<input
+						ref={replaceInputRef}
+						class="replace-input"
+						placeholder={
+							selected.isSelected
+								? `Leave empty to reset to ${selected.courseName}`
+								: 'Select course to the left'
+						}
+						disabled={!selected.isSelected}
+						value={
+							selected.isSelected
+								? selected.replacedName ?? selected.courseName
+								: ''
+						}
+						onKeyDown={handleKeydown}
+					/>
+					<button
+						class="btn-save"
+						disabled={!selected.isSelected}
+						type="button"
+						onClick={handleSaveClick}
+					>
+						Save
+					</button>
+				</div>
 			</div>
 		</div>
 	);
@@ -355,15 +300,19 @@ class SettingsPage extends Component<
 					resetItem={resetItem}
 					loadingCourses={loadingCourses}
 				/>
-				<Main
-					selected={selected}
-					replaceInputRef={replaceInputRef}
-					handleKeydown={handleMainKeydown}
-					handleSaveClick={handleSave}
-					loggedOut={loggedOut}
-					loggedOutCallback={loggedOutCallbackHandler}
-					loggedOutInputs={loggedOutInputs}
-				/>
+				{loggedOut ? (
+					<LoggedOut
+						loggedOutCallback={loggedOutCallbackHandler}
+						loggedOutInputs={loggedOutInputs}
+					/>
+				) : (
+					<Main
+						selected={selected}
+						replaceInputRef={replaceInputRef}
+						handleKeydown={handleMainKeydown}
+						handleSaveClick={handleSave}
+					/>
+				)}
 			</div>
 		);
 	};
