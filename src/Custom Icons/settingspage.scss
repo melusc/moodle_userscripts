@@ -1,7 +1,6 @@
 @use 'sass:color';
 @use "sass:math";
 
-@import 'normalize';
 @import 'sanitize';
 
 $bg: #202020;
@@ -116,6 +115,7 @@ select {
 	max-width: 100%;
 	min-width: max-content;
 	outline: none;
+	font: inherit;
 
 	&:disabled {
 		color: $darker-white;
