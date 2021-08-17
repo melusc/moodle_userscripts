@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.08.03a
+// @version   2021.08.17a
 // @author    lusc
 // @updateURL https://git.io/Jqlt8
 // @include   *://moodle.ksasz.ch/*
@@ -48,9 +48,9 @@ const getDataURI = (id: string): Values[string] | false => {
 		return false;
 	}
 
-	const object = GM_getValue<Values>('values')[uuid];
+	const values = GM_getValue<Values>('values');
 
-	return object ?? false;
+	return values[uuid] ?? false;
 };
 
 const getBlobURL = (
@@ -180,7 +180,7 @@ const resetIcon = (id: string) => {
 	}
 };
 
-const refresh = (
+const refresh = async (
 	_valueName: string,
 	// I have no control over the order
 	// eslint-disable-next-line @typescript-eslint/default-param-last
@@ -189,6 +189,14 @@ const refresh = (
 	newValue: Record<string, string> = {},
 	remote: boolean,
 ) => {
+	/* Because of race conditions
+		 Tampermonkey fires the changes in the order
+		 of modification
+		 Violentmonkey batches the modifications and fires
+		 the changes in alphabetical order (I think)
+		 This way it waits a bit and so both are updated afterwards */
+	await Promise.resolve();
+
 	/* If the user clears the storage newValue will be undefined,
     so default to empty object.
     If the user undoes the clearing oldValue will be undefined,
