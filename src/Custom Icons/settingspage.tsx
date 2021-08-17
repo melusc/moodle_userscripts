@@ -12,10 +12,17 @@ import {
 } from '../shared/moodle-functions-v2';
 import {numericBaseSensitiveCollator} from '../shared/general-functions';
 
-import {deleteIconFromStorage} from './shared';
+import {
+	deleteIconFromStorage,
+	getPointers,
+	getValues,
+	setPointer,
+	setValue,
+	updateDeprecatedSplitDataURI,
+} from './shared';
 import style from './settingspage.scss';
 
-import type {Pointers, Values} from './custom-icons.d';
+import type {Values} from './custom-icons.d';
 
 const sortCourses = (courses: Course[]) => {
 	courses.sort(({name: nameA, id: idA}, {name: nameB, id: idB}) => {
@@ -90,9 +97,10 @@ const errorMessageFromStatusCode = (status: number, statusText: string) =>
 	`Error ${status}: ${statusText}`;
 
 const getIcon = (id: string): Icon | undefined => {
-	const courseUUID = GM_getValue<Pointers | undefined>('pointers')?.[id];
+	const courseUUID = getPointers()[id];
+
 	if (courseUUID) {
-		const value = GM_getValue<Values | undefined>('values')?.[courseUUID];
+		const value = getValues()[courseUUID];
 
 		if (value) {
 			const result: Icon = {};
@@ -102,8 +110,7 @@ const getIcon = (id: string): Icon | undefined => {
 			} else if ('dataURI' in value) {
 				result.dataURI = value.dataURI;
 			} else {
-				console.warn('Using deprecated dataURI.');
-				result.dataURI = `data:${value.mediaType};base64,${value.rawByteString}`;
+				result.dataURI = updateDeprecatedSplitDataURI(courseUUID, value);
 			}
 
 			return result;
@@ -252,7 +259,14 @@ class Main extends Component<MainProps, MainState> {
 					<form ref={refs_.form}>
 						<h2>Change or add an icon</h2>
 						{selectedCourse ? (
-							<div>
+							<div
+								ref={div => {
+									div?.scrollIntoView({
+										behavior: 'smooth',
+										block: 'center',
+									});
+								}}
+							>
 								<RenderIcon icon={selectedCourse.icon} />
 								<span>{selectedCourse.name}</span>
 							</div>
@@ -497,8 +511,7 @@ class Main extends Component<MainProps, MainState> {
 
 				deleteIconFromStorage(id);
 
-				const pointers = GM_getValue<Pointers>('pointers');
-				const values = GM_getValue<Values>('values');
+				const values = getValues();
 
 				const groups = /^data:[\w+/]+;base64,(?<data>.+)$/.exec(result)?.groups;
 
@@ -534,12 +547,8 @@ class Main extends Component<MainProps, MainState> {
 					uuid = nanoid(5);
 				} while (uuid in values);
 
-				values[uuid] = object;
-
-				GM_setValue('values', values);
-
-				pointers[id] = uuid;
-				GM_setValue('pointers', pointers);
+				setValue(uuid, object);
+				setPointer(id, uuid);
 
 				this.props.updateCourseById(id);
 				this.resetSelected();
@@ -551,17 +560,16 @@ class Main extends Component<MainProps, MainState> {
 		fr.readAsDataURL(blob);
 	};
 
-	saveByCopy = (value: string, course: Course) => {
+	saveByCopy = (courseId: string, course: Course) => {
 		const {id} = course;
 
 		deleteIconFromStorage(id);
 
-		const pointers = GM_getValue<Pointers>('pointers');
-		const pointer = pointers[value];
+		const pointers = getPointers();
+		const pointerUUID = pointers[courseId];
 
-		if (pointer !== undefined) {
-			pointers[id] = pointer;
-			GM_setValue('pointers', pointers);
+		if (pointerUUID !== undefined) {
+			setPointer(id, pointerUUID);
 
 			this.resetSelected();
 			this.props.updateCourseById(id);
