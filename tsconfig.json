@@ -4,9 +4,8 @@
 		"jsx": "react",
 		"jsxFactory": "h",
 		"jsxFragmentFactory": "Fragment",
-		"lib": ["ES2020", "DOM.Iterable"],
-		"module": "ES2020",
-		"noImplicitAny": true,
+		"lib": ["esnext", "dom.iterable", "dom"],
+		"module": "esnext",
 		"outDir": "./dist/",
 		"plugins": [
 			{
