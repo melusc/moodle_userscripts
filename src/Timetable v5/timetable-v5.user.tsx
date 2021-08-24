@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.08.08a
+// @version   2021.08.24a
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -35,6 +35,14 @@ type TimetableStorageValues = {
 };
 type TimetableStorageValuesWeek = Record<string, TimetableStorageValues[]>;
 
+const getHref = (href: string): string => {
+	if (Number.isInteger(Number(href))) {
+		return `/course/view.php?id=${href}`;
+	}
+
+	return href;
+};
+
 const TimetableRow = ({
 	values,
 	isNow = false,
@@ -61,11 +69,7 @@ const TimetableRow = ({
 			</div>
 			<div class="tt-td">
 				{typeof id === 'string' ? (
-					<a
-						href={`/course/view.php?id=${id}`}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
+					<a href={getHref(id)} target="_blank" rel="noopener noreferrer">
 						{content}
 					</a>
 				) : (
@@ -76,23 +80,34 @@ const TimetableRow = ({
 	);
 };
 
+const getMinutesSinceMidnight = (): number => {
+	const now = new Date();
+
+	/* ((now)) - ((midnight)) doesn't work because it would be wrong when daylight savings changes
+	 * Instead we use the method below because this always returns what "you can see on the clock"
+	 * With daylight savings 08:00 might be 9 hours after midnight but we'd still want this to behave
+	 * like it's 8 hours since
+	 */
+
+	// prettier-ignore
+	return (
+		(now.getHours() * 60)
+		+ now.getMinutes()
+		+ (now.getSeconds() / 60)
+		+ (now.getMilliseconds() / 60 / 1000)
+	);
+};
+
 const getCourses = (): Readonly<{
 	state: TimetableStates;
 	courses?: Array<TimetableStorageValues | undefined>;
-	minutesOfDay: number;
 }> => {
 	const valuesWeek = GM_getValue<TimetableStorageValuesWeek | undefined>(
 		'days',
 	);
 
 	const date = new Date();
-
-	// prettier-ignore
-	const minutesOfDay
-	= (date.getHours() * 60)
-	+ date.getMinutes()
-	+ (date.getSeconds() / 60)
-	+ (date.getMilliseconds() / 60 / 1000);
+	const minutesOfDay = getMinutesSinceMidnight();
 
 	/* Make monday 0 and friday 4 (sunday -1)
 		it shouldn't get here if weekend
@@ -104,7 +119,6 @@ const getCourses = (): Readonly<{
 	if (values === undefined || values.length === 0) {
 		return {
 			state: TimetableStates.empty,
-			minutesOfDay,
 		};
 	}
 
@@ -113,7 +127,6 @@ const getCourses = (): Readonly<{
 	if (!lastValue || lastValue.to <= minutesOfDay) {
 		return {
 			state: TimetableStates.after,
-			minutesOfDay,
 		};
 	}
 
@@ -123,7 +136,6 @@ const getCourses = (): Readonly<{
 		return {
 			state: TimetableStates.before,
 			courses: [undefined, firstValue],
-			minutesOfDay,
 		};
 	}
 
@@ -142,7 +154,6 @@ const getCourses = (): Readonly<{
 	return {
 		state: TimetableStates.during,
 		courses: [currentCourse, values[currentCourseIdx + 1]],
-		minutesOfDay,
 	};
 };
 
@@ -184,7 +195,7 @@ type FrontPageState = {
 	timetableState: TimetableStates;
 };
 
-class FrontPage extends Component {
+class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 	state: FrontPageState = {
 		courses: [],
 		timetableState: TimetableStates.init,
@@ -223,22 +234,23 @@ class FrontPage extends Component {
 		if (!isWeekday()) {
 			this.setState({
 				timetableState: TimetableStates.weekend,
-			} as FrontPageState);
+			});
 			return;
 		}
 
-		const {courses, state, minutesOfDay} = getCourses();
+		const {courses, state} = getCourses();
+		const minutesOfDay = getMinutesSinceMidnight();
 
 		this.setState({
 			timetableState: state,
-		} as FrontPageState);
+		});
 
 		if (courses) {
 			const [currentCourse, nextCourse] = courses;
 
 			this.setState({
 				courses,
-			} as FrontPageState);
+			});
 
 			/* The current course ends at currentCourse.to,
 				thats when we want a notification
