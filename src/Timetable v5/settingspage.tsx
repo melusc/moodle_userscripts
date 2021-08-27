@@ -112,7 +112,7 @@ class SettingsPage extends Component<
 	Record<string, unknown>,
 	SettingsPageState
 > {
-	state: SettingsPageState = {
+	override state: SettingsPageState = {
 		day: getDayOfWeek(),
 		loggedOut: false,
 		courses: [],
@@ -357,7 +357,7 @@ class SettingsPage extends Component<
 		);
 	};
 
-	componentDidMount = async () => {
+	override componentDidMount = async () => {
 		document.body.addEventListener('focusout', () => {
 			this.setState({
 				focusedElement: undefined,

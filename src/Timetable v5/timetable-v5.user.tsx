@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.08.24a
+// @version   2021.08.27a
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -161,15 +161,33 @@ const notify = (value: TimetableStorageValues) => {
 	const {id, content} = value;
 
 	if (content) {
-		GM_notification({
+		const timeout = 4000;
+
+		/* If this is running in violentmonkey the function below returns an object
+		 * to remove the notification
+		 * https://violentmonkey.github.io/api/gm/#gm_notification
+		 *
+		 * If this is running in tampermonkey it uses the timeout value instead
+		 */
+
+		// eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+		const notification = GM_notification({
 			text: content,
 			title: 'Now',
 			image: notificationIconUrl,
-			timeout: 4000,
+			timeout,
 			onclick: () => {
-				open(id ? `/course/view.php?id=${id}` : '/');
+				if (id !== undefined) {
+					open(getHref(id));
+				}
 			},
-		});
+		}) as undefined | {remove: () => void};
+
+		if (notification) {
+			setTimeout(() => {
+				notification.remove();
+			}, timeout);
+		}
 	}
 };
 
@@ -196,34 +214,39 @@ type FrontPageState = {
 };
 
 class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
-	state: FrontPageState = {
+	override state: FrontPageState = {
 		courses: [],
 		timetableState: TimetableStates.init,
 	};
 
-	timeout = {
-		_t: 0,
-		set: (delay: number) => {
-			delay += 3; /* Due to rounding errors
-				It will never be accurate up to 3ms
-				but this way it never fires too early */
+	_timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-			const {timeout, updateCourses} = this;
-			timeout.clear();
-			timeout._t = setTimeout(updateCourses, delay, true);
-		},
-		clear: () => {
-			clearTimeout(this.timeout._t);
-		},
+	setTimeout = (nextNotificationTimeInMinutes: number) => {
+		const currentTimeInMinutes = getMinutesSinceMidnight();
+
+		const delayInMinutes = nextNotificationTimeInMinutes - currentTimeInMinutes;
+		const delay = delayInMinutes * 60 * 1000;
+
+		this.clearTimeout();
+
+		this._timeoutId = setTimeout(() => {
+			this.updateCourses(true);
+		}, delay + 200 /* Never fire too early due to rounding errors */);
+	};
+
+	clearTimeout = () => {
+		if (this._timeoutId !== undefined) {
+			clearTimeout(this._timeoutId);
+		}
 	};
 
 	updateCourses = (calledFromTimeout?: boolean) => {
-		this.timeout.clear(); // If exit early it should not fire in future
+		this.clearTimeout(); // If exit early it should not fire in future
 
 		/* If it is both holiday
-			and weekend, holiday outweighs
-			and gets displayed, thats
-			why check isHoliday first */
+		 * and weekend, holiday outweighs
+		 * and gets displayed, thats
+		 * why check isHoliday first */
 		if (isHoliday()) {
 			this.setState({
 				timetableState: TimetableStates.holiday,
@@ -239,7 +262,6 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 		}
 
 		const {courses, state} = getCourses();
-		const minutesOfDay = getMinutesSinceMidnight();
 
 		this.setState({
 			timetableState: state,
@@ -260,8 +282,7 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 			const nextNotificationTimeInMinutes
 				= currentCourse?.to ?? nextCourse?.from;
 			if (typeof nextNotificationTimeInMinutes === 'number') {
-				const diff = nextNotificationTimeInMinutes - minutesOfDay; // In minutes
-				this.timeout.set(diff * 60 * 1000); // In milliseconds
+				this.setTimeout(nextNotificationTimeInMinutes);
 			}
 
 			if (calledFromTimeout && currentCourse) {
@@ -270,7 +291,7 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 		}
 	};
 
-	componentDidMount = () => {
+	override componentDidMount = () => {
 		this.updateCourses();
 
 		const listener = () => {
