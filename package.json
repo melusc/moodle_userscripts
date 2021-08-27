@@ -15,7 +15,7 @@
 	"description": "",
 	"devDependencies": {
 		"@babel/core": "^7.15.0",
-		"@sindresorhus/tsconfig": "^1.0.2",
+		"@sindresorhus/tsconfig": "^2.0.0",
 		"@types/dompurify": "^2.2.3",
 		"@types/file-saver": "^2.0.3",
 		"@types/tampermonkey": "^4.0.2",
