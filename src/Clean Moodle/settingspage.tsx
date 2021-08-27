@@ -256,7 +256,7 @@ class SettingsPage extends Component<
 	Record<string, unknown>,
 	SettingsPageState
 > {
-	state: SettingsPageState = {
+	override state: SettingsPageState = {
 		courses: [],
 		loadingCourses: true,
 		selected: {isSelected: false},
@@ -412,7 +412,7 @@ class SettingsPage extends Component<
 		}
 	};
 
-	componentDidMount = () => {
+	override componentDidMount = () => {
 		void this.getToken().then(token => {
 			if (token) {
 				this.callCallbacksOnLogIn(token);

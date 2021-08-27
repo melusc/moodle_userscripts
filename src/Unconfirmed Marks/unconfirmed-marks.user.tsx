@@ -63,7 +63,7 @@ class SchulNetzMarks extends Component<
 	Record<string, unknown>,
 	SchulNetzMarksState
 > {
-	state: SchulNetzMarksState = {
+	override state: SchulNetzMarksState = {
 		marks: [],
 		state: States.loading,
 		errorMsg: undefined,
@@ -203,7 +203,7 @@ class SchulNetzMarks extends Component<
 		}
 	};
 
-	componentDidMount = () => {
+	override componentDidMount = () => {
 		this.checkCredentials();
 
 		GM_addValueChangeListener('bottomHR', () => {

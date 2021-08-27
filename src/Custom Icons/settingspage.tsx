@@ -236,7 +236,7 @@ const LoggedOut = (props: {
 };
 
 class Main extends Component<MainProps, MainState> {
-	state: MainState = {
+	override state: MainState = {
 		selected: FILE_TYPES.NONE,
 	};
 
@@ -619,7 +619,7 @@ class SettingsPage extends Component<
 	Record<string, unknown>,
 	SettingsPageState
 > {
-	state: SettingsPageState = {
+	override state: SettingsPageState = {
 		loggedOut: false,
 		courses: [],
 		selectedCourse: undefined,
@@ -679,7 +679,7 @@ class SettingsPage extends Component<
 		);
 	};
 
-	componentDidMount = async () => {
+	override componentDidMount = async () => {
 		const token = await this.getToken();
 		if (token) {
 			this.callbackAfterLoginHandler(token);

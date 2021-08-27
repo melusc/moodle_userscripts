@@ -22,7 +22,7 @@ let frontPageLoginSetState: ComponentInterface['setState'];
 let frontPageDefaultLoginState: LoginState;
 
 class FrontPageLogin extends Component {
-	state = frontPageDefaultLoginState;
+	override state = frontPageDefaultLoginState;
 
 	inputs = {
 		username: createRef<HTMLInputElement>(),
@@ -77,7 +77,7 @@ class FrontPageLogin extends Component {
 		}
 	};
 
-	componentDidMount = () => {
+	override componentDidMount = () => {
 		frontPageLoginSetState = this.setState.bind(this);
 	};
 }
