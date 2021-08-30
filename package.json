@@ -18,7 +18,7 @@
 		"@sindresorhus/tsconfig": "^2.0.0",
 		"@types/dompurify": "^2.2.3",
 		"@types/file-saver": "^2.0.3",
-		"@types/tampermonkey": "^4.0.3",
+		"@types/tampermonkey": "^4.0.5",
 		"babel-loader": "^8.2.2",
 		"babel-plugin-replace-identifiers": "^0.1.1",
 		"clean-webpack-plugin": "^3.0.0",
