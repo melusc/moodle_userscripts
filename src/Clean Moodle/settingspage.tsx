@@ -34,8 +34,12 @@ const sortCoursesArray = (array: Course[]) =>
 /**
  * Get the replaced name of a course or undefined
  */
-const getReplacedCourseName = (id: string): string | undefined => {
-	const replacers = GM_getValue<Record<string, string> | undefined>('replace');
+const getReplacedCourseName = async (
+	id: string,
+): Promise<string | undefined> => {
+	const replacers = await GM.getValue<Record<string, string> | undefined>(
+		'replace',
+	);
 
 	return replacers?.[id];
 };
@@ -43,24 +47,29 @@ const getReplacedCourseName = (id: string): string | undefined => {
 /**
  * Check if a course is being hidden
  */
-const checkIsCourseRemoved = (id: string): boolean =>
-	GM_getValue<string[] | undefined>('remove')?.includes(id) ?? false;
+const checkIsCourseRemoved = async (id: string): Promise<boolean> => {
+	const removers = await GM.getValue<string[] | undefined>('remove');
+
+	return removers?.includes(id) ?? false;
+};
 
 /**
  * Add item to removers
  */
-const setRemoved = (id: string) => {
-	const {removers} = removeElementFromStorage(id, {updateRemovers: false});
+const setRemoved = async (id: string) => {
+	const {removers} = await removeElementFromStorage(id, {
+		updateRemovers: false,
+	});
 
 	removers.push(id);
 
-	GM_setValue('remove', removers);
+	await GM.setValue('remove', removers);
 };
 
 /**
  * Set the new text for a course
  */
-const setReplaced = (
+const setReplaced = async (
 	id: string,
 	newValue: string | undefined = '',
 	oldValue: string | undefined = '',
@@ -68,7 +77,7 @@ const setReplaced = (
 	newValue = newValue.trim();
 	oldValue = oldValue.trim();
 
-	const {replacers} = removeElementFromStorage(id, {
+	const {replacers} = await removeElementFromStorage(id, {
 		updateReplacers: false,
 	});
 
@@ -76,7 +85,7 @@ const setReplaced = (
 		replacers[id] = newValue;
 	}
 
-	GM_setValue('replace', replacers);
+	await GM.setValue('replace', replacers);
 };
 
 const SidebarRow = ({
@@ -333,8 +342,8 @@ class SettingsPage extends Component<
 			courses.push({
 				courseName,
 				courseId,
-				replacedName: getReplacedCourseName(courseId),
-				isRemoved: checkIsCourseRemoved(courseId),
+				replacedName: await getReplacedCourseName(courseId),
+				isRemoved: await checkIsCourseRemoved(courseId),
 			});
 		}
 
@@ -422,49 +431,46 @@ class SettingsPage extends Component<
 
 	handleMainKeydown: JSX.KeyboardEventHandler<HTMLInputElement> = event_ => {
 		if (event_.key === 'Enter') {
-			this.handleSave();
+			void this.handleSave();
 		}
 	};
 
-	handleSave = () => {
+	handleSave = async () => {
 		const input = this.replaceInputRef.current?.value;
 
 		if (input === undefined) {
 			return;
 		}
 
-		this.setState(({selected}): Pick<SettingsPageState, 'selected'> | null => {
-			if (!selected.isSelected) {
-				return null;
-			}
+		const selected = this.state.selected;
+		if (!selected.isSelected) {
+			return;
+		}
 
-			const {courseId, courseName} = selected;
+		const {courseId, courseName} = selected;
 
-			setReplaced(courseId, input, courseName);
+		await setReplaced(courseId, input, courseName);
 
-			this.updateCourseById(courseId);
+		await this.updateCourseById(courseId);
 
-			return {selected: {isSelected: false}};
-		});
+		this.setState({selected: {isSelected: false}});
 	};
 
-	toggleCourseRemoved = (
+	toggleCourseRemoved = async (
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
 		{isRemoved, courseId}: Course,
 	) => {
 		event_.stopImmediatePropagation();
-		if (isRemoved) {
-			removeElementFromStorage(courseId);
-		} else {
-			setRemoved(courseId);
-		}
+		await (isRemoved
+			? removeElementFromStorage(courseId)
+			: setRemoved(courseId));
 
-		this.updateCourseById(courseId);
+		await this.updateCourseById(courseId);
 
 		this.removeSelectedIfEqualId(courseId);
 	};
 
-	resetCourse = (
+	resetCourse = async (
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
 		item: Course,
 	) => {
@@ -472,9 +478,9 @@ class SettingsPage extends Component<
 		event_.stopImmediatePropagation();
 		this.removeSelectedIfEqualId(courseId);
 
-		removeElementFromStorage(courseId);
+		await removeElementFromStorage(courseId);
 
-		this.updateCourseById(courseId);
+		await this.updateCourseById(courseId);
 	};
 
 	removeSelectedIfEqualId = (id: string) => {
@@ -487,14 +493,17 @@ class SettingsPage extends Component<
 		});
 	};
 
-	updateCourseById = (id: string) => {
+	updateCourseById = async (id: string) => {
+		const isRemoved = await checkIsCourseRemoved(id);
+		const replacedName = await getReplacedCourseName(id);
+
 		this.setState(({courses}): Pick<SettingsPageState, 'courses'> => {
 			for (const [i, course] of courses.entries()) {
 				if (course.courseId === id) {
 					courses[i] = {
 						...course,
-						isRemoved: checkIsCourseRemoved(id),
-						replacedName: getReplacedCourseName(id),
+						isRemoved,
+						replacedName,
 					};
 
 					break;
@@ -507,13 +516,13 @@ class SettingsPage extends Component<
 		});
 	};
 
-	handleSidebarClick = (
+	handleSidebarClick = async (
 		_event: JSX.TargetedMouseEvent<HTMLDivElement>,
 		course: Course,
 	) => {
 		if (course.isRemoved) {
-			removeElementFromStorage(course.courseId, {updateReplacers: false});
-			this.updateCourseById(course.courseId);
+			await removeElementFromStorage(course.courseId, {updateReplacers: false});
+			await this.updateCourseById(course.courseId);
 		}
 
 		this.setState(

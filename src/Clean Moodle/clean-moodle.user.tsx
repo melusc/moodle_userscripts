@@ -1,14 +1,11 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.09.05a
+// @version   2021.09.05b
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JqltW
-// @grant     GM_setValue
 // @grant     GM.setValue
-// @grant     GM_getValue
 // @grant     GM.getValue
-// @grant     GM_deleteValue
 // @grant     GM.deleteValue
 // @grant     GM_addStyle
 // @grant     GM_registerMenuCommand
@@ -62,17 +59,16 @@ const getCourseElementFromSidebar = (id: string) =>
 		`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"]`,
 	);
 
-const testForInexistantCourse = (id: string) => {
-	void popupGetCourses('Clean Moodle').then(courses => {
-		if (!(id in courses)) {
-			removeElementFromStorage(id);
+const testForInexistantCourse = async (id: string) => {
+	const courses = await popupGetCourses('Clean Moodle');
+	if (!(id in courses)) {
+		await removeElementFromStorage(id);
 
-			// eslint-disable-next-line no-alert
-			alert(
-				`You appear to not be in the course with the id "${id}" anymore.\nThe course will not be checked for anymore`,
-			);
-		}
-	});
+		// eslint-disable-next-line no-alert
+		alert(
+			`You appear to not be in the course with the id "${id}" anymore.\nThe course will not be checked for anymore`,
+		);
+	}
 };
 
 /**
@@ -84,7 +80,7 @@ const replace = (id: string, newValue?: string) => {
 	const anchor = getCourseElementFromSidebar(id);
 
 	if (!anchor) {
-		testForInexistantCourse(id);
+		void testForInexistantCourse(id);
 		return;
 	}
 
@@ -118,7 +114,7 @@ const remove = (id: string) => {
 			li.remove();
 		}
 	} else {
-		testForInexistantCourse(id);
+		void testForInexistantCourse(id);
 	}
 };
 
@@ -154,14 +150,14 @@ const sortSidebar = () => {
 	sidebar.prepend(...children);
 };
 
-const cleanFrontpage = () => {
+const cleanFrontpage = async () => {
 	const sidebar = getSidebar();
 
 	if (!sidebar) {
 		return;
 	}
 
-	const replaceObject = GM_getValue<Record<string, string> | undefined>(
+	const replaceObject = await GM.getValue<Record<string, string> | undefined>(
 		'replace',
 	);
 
@@ -171,16 +167,16 @@ const cleanFrontpage = () => {
 			replace(...item);
 		}
 	} else {
-		GM_setValue('replace', {});
+		void GM.setValue('replace', {});
 	}
 
-	const removeArray = GM_getValue<string[] | undefined>('remove');
+	const removeArray = await GM.getValue<string[] | undefined>('remove');
 	if (Array.isArray(removeArray)) {
 		for (const id of removeArray) {
 			remove(id);
 		}
 	} else {
-		GM_setValue('remove', []);
+		void GM.setValue('remove', []);
 	}
 
 	sortSidebar();
@@ -303,7 +299,7 @@ const setupFrontpage = () => {
 	});
 
 	if (sidebar) {
-		cleanFrontpage();
+		void cleanFrontpage();
 
 		GM_addValueChangeListener('replace', refresh);
 		GM_addValueChangeListener('remove', refresh);
