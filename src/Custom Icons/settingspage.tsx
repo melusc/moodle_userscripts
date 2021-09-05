@@ -1,7 +1,6 @@
 import {render, h, Component, Fragment, JSX, createRef} from 'preact';
 import {useEffect, useRef} from 'preact/hooks';
 import {html} from 'htm/preact';
-import {nanoid} from 'nanoid';
 
 import {
 	login_throwable,
@@ -14,11 +13,9 @@ import {numericBaseSensitiveCollator} from '../shared/general-functions';
 
 import {
 	deleteIconFromStorage,
-	getPointers,
-	getValues,
-	setPointer,
-	setValue,
-	updateDeprecatedSplitDataURI,
+	addEntry,
+	copyEntry,
+	getValueFromId,
 } from './shared';
 import style from './settingspage.scss';
 
@@ -96,25 +93,19 @@ const enum ERROR_MSG {
 const errorMessageFromStatusCode = (status: number, statusText: string) =>
 	`Error ${status}: ${statusText}`;
 
-const getIcon = (id: string): Icon | undefined => {
-	const courseUUID = getPointers()[id];
+const getIcon = async (id: string): Promise<Icon | undefined> => {
+	const value = await getValueFromId(id);
 
-	if (courseUUID) {
-		const value = getValues()[courseUUID];
+	if (value) {
+		const result: Icon = {};
 
-		if (value) {
-			const result: Icon = {};
-
-			if ('rawXML' in value) {
-				result.rawXML = value.rawXML;
-			} else if ('dataURI' in value) {
-				result.dataURI = value.dataURI;
-			} else {
-				result.dataURI = updateDeprecatedSplitDataURI(courseUUID, value);
-			}
-
-			return result;
+		if ('rawXML' in value) {
+			result.rawXML = value.rawXML;
+		} else {
+			result.dataURI = value.dataURI;
 		}
+
+		return result;
 	}
 
 	return undefined;
@@ -392,7 +383,7 @@ class Main extends Component<MainProps, MainState> {
 		this.resetForm();
 	};
 
-	save = () => {
+	save = async () => {
 		const {notify, selectedCourse: course} = this.props;
 
 		if (course === undefined) {
@@ -412,7 +403,7 @@ class Main extends Component<MainProps, MainState> {
 				const value = this.refs_.copy.current?.value;
 
 				if (value) {
-					this.saveByCopy(value, course);
+					await this.saveByCopy(value, course);
 				} else {
 					notify(ERROR_MSG.noImage);
 				}
@@ -506,12 +497,8 @@ class Main extends Component<MainProps, MainState> {
 				notify(ERROR_MSG.notImage);
 			});
 
-			img.addEventListener('load', () => {
+			img.addEventListener('load', async () => {
 				const {id} = course;
-
-				deleteIconFromStorage(id);
-
-				const values = getValues();
 
 				const groups = /^data:[\w+/]+;base64,(?<data>.+)$/.exec(result)?.groups;
 
@@ -540,15 +527,7 @@ class Main extends Component<MainProps, MainState> {
 					};
 				}
 
-				let uuid = '';
-
-				// Avoid collisions
-				do {
-					uuid = nanoid(5);
-				} while (uuid in values);
-
-				setValue(uuid, object);
-				setPointer(id, uuid);
+				await addEntry(id, object);
 
 				this.props.updateCourseById(id);
 				this.resetSelected();
@@ -560,20 +539,13 @@ class Main extends Component<MainProps, MainState> {
 		fr.readAsDataURL(blob);
 	};
 
-	saveByCopy = (courseId: string, course: Course) => {
+	saveByCopy = async (courseId: string, course: Course) => {
 		const {id} = course;
 
-		deleteIconFromStorage(id);
+		await copyEntry(id, courseId);
 
-		const pointers = getPointers();
-		const pointerUUID = pointers[courseId];
-
-		if (pointerUUID !== undefined) {
-			setPointer(id, pointerUUID);
-
-			this.resetSelected();
-			this.props.updateCourseById(id);
-		}
+		this.resetSelected();
+		this.props.updateCourseById(id);
 	};
 }
 
@@ -698,10 +670,10 @@ class SettingsPage extends Component<
 		});
 	};
 
-	resetIcon = (id: string) => {
-		deleteIconFromStorage(id);
+	resetIcon = async (id: string) => {
+		await deleteIconFromStorage(id);
 
-		this.updateCourseById(id);
+		await this.updateCourseById(id);
 
 		this.resetSelectedIfEqualId(id);
 	};
@@ -740,7 +712,9 @@ class SettingsPage extends Component<
 		}
 	};
 
-	updateCourseById = (id: string) => {
+	updateCourseById = async (id: string) => {
+		const icon = await getIcon(id);
+
 		this.setState(({courses}): Pick<SettingsPageState, 'courses'> => {
 			const updatedCourses = [...courses];
 
@@ -748,7 +722,7 @@ class SettingsPage extends Component<
 				if (course.id === id) {
 					updatedCourses[i] = {
 						...course,
-						icon: getIcon(id),
+						icon,
 					};
 
 					break;
@@ -825,7 +799,7 @@ class SettingsPage extends Component<
 			courses.push({
 				id,
 				name: courseName,
-				icon: getIcon(id),
+				icon: await getIcon(id),
 			});
 		}
 

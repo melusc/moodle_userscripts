@@ -1,15 +1,12 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.09.05a
+// @version   2021.09.05b
 // @author    lusc
 // @updateURL https://git.io/Jqlt8
 // @include   *://moodle.ksasz.ch/*
-// @grant     GM_setValue
 // @grant     GM.setValue
-// @grant     GM_getValue
 // @grant     GM.getValue
 // @grant     GM_addStyle
-// @grant     GM_deleteValue
 // @grant     GM.deleteValue
 // @grant     GM_addValueChangeListener
 // @grant     GM_registerMenuCommand
@@ -19,15 +16,19 @@
 // ==/UserScript==
 
 import {render, html} from 'htm/preact';
+
 import {popupGetCourses} from '../shared/moodle-functions-v2';
+
 import {setupSettingsPage} from './settingspage';
 import {
 	deleteIconFromStorage,
+	DispatchType,
 	getPointers,
-	getValues,
+	getValueFromId,
 	StorageKeys,
-	updateDeprecatedSplitDataURI,
 } from './shared';
+
+import type {ValidIconObject} from './custom-icons.d';
 
 // Stop webpack from removing the metadata above
 if (location.protocol !== 'https:') {
@@ -41,50 +42,11 @@ const getSidebar = () =>
 		'li[aria-labelledby="label_2_4"] ul[role="group"]',
 	);
 
-const getBlobURL = (
-	id: string,
-):
-	| {
-			rawXML: string;
-	  }
-	| {
-			dataURI: string;
-	  }
-	| false => {
-	const pointers = getPointers();
-	const uuid = pointers[id];
-
-	if (!uuid) {
-		return false;
-	}
-
-	const values = getValues();
-	const icon = values[uuid];
-
-	if (icon === undefined) {
-		return false;
-	}
-
-	if ('rawXML' in icon) {
-		return icon;
-	}
-
-	if ('dataURI' in icon) {
-		return icon;
-	}
-
-	const dataURI = updateDeprecatedSplitDataURI(uuid, icon);
-
-	return {
-		dataURI,
-	};
-};
-
 const testIfUserLeftCourse = async (id: string) => {
 	const courses = await popupGetCourses('Custom Icons');
 
 	if (!(id in courses)) {
-		deleteIconFromStorage(id);
+		await deleteIconFromStorage(id);
 
 		// eslint-disable-next-line no-alert
 		alert(
@@ -93,7 +55,7 @@ const testIfUserLeftCourse = async (id: string) => {
 	}
 };
 
-const applyIcon = (id: string) => {
+const applyIcon = async (id: string, icon?: ValidIconObject) => {
 	const sidebar = getSidebar();
 
 	if (!sidebar) {
@@ -114,17 +76,21 @@ const applyIcon = (id: string) => {
 		return;
 	}
 
-	const iconObject = getBlobURL(id);
+	if (!icon) {
+		const storageIcon = await getValueFromId(id);
 
-	if (!iconObject) {
-		resetIcon(id);
+		if (!storageIcon) {
+			resetIcon(id);
 
-		deleteIconFromStorage(id);
+			void deleteIconFromStorage(id);
 
-		return;
+			return;
+		}
+
+		icon = storageIcon;
 	}
 
-	if ('rawXML' in iconObject) {
+	if ('rawXML' in icon) {
 		const span = document.createElement('span');
 
 		span.classList.add('icon', 'navicon');
@@ -134,8 +100,8 @@ const applyIcon = (id: string) => {
 
 		render(
 			html(
-				Object.assign([iconObject.rawXML], {
-					raw: [iconObject.rawXML],
+				Object.assign([icon.rawXML], {
+					raw: [icon.rawXML],
 				}),
 			),
 			span,
@@ -151,7 +117,7 @@ const applyIcon = (id: string) => {
 			= 'fill: var(--svg-fill, inherit);stroke: var(--svg-fill, inherit);-moz-context-properties: fill, stroke;';
 
 		img.tabIndex = -1;
-		img.src = iconObject.dataURI;
+		img.src = icon.dataURI;
 		anchor.firstElementChild.replaceWith(img);
 	}
 };
@@ -174,36 +140,41 @@ const resetIcon = (id: string) => {
 	}
 };
 
-const refresh = (
+const refresh = async (
 	_valueName: string,
 	_oldValue: Record<string, string>,
-	changed: [cacheBuster: number, changed: string[]],
+	changed:
+		| [
+				type: DispatchType,
+				id: string,
+				optionalObject: ValidIconObject | undefined,
+				cacheBuster: number,
+		  ]
+		| undefined,
 	remote: boolean,
 ) => {
-	if (remote) {
-		// Don't rely on pointers updating first,
-		// instead wait a bit and let pointers update as well
-		setTimeout(() => {
-			const pointers = getPointers();
-			for (const courseId of changed[1]) {
-				if (courseId in pointers) {
-					applyIcon(courseId);
-				} else {
-					resetIcon(courseId);
-				}
-			}
-		});
+	if (!remote || !changed) {
+		return;
+	}
+
+	const [type, id, optionalObject] = changed;
+
+	if (type === DispatchType.deleted) {
+		resetIcon(id);
+	} else {
+		void applyIcon(id, optionalObject);
 	}
 };
 
-const updateIcons = () => {
+const updateIcons = async () => {
 	const sidebar = getSidebar();
 
 	if (sidebar) {
-		const pointers = Object.keys(getPointers());
+		const pointers = await getPointers();
+		const pointerKeys = Object.keys(pointers);
 
-		for (const id of pointers) {
-			applyIcon(id);
+		for (const id of pointerKeys) {
+			await applyIcon(id);
 		}
 
 		GM_addValueChangeListener(StorageKeys.changed, refresh);
@@ -218,7 +189,7 @@ const runOnceOnFrontPage = () => {
 
 		addEventListener('customIconsPreact', updateIcons);
 
-		updateIcons();
+		void updateIcons();
 	}
 };
 

@@ -7,12 +7,20 @@
  * There are solutions (like simply using fetch) but
  * there is no reason to not just use the dataURI like that
  */
-type DeprecatedValue = {
+export type DeprecatedValue = {
 	rawByteString: string;
 	mediaType: string;
 };
 
-type Values = Record<
+export type ValidIconObject =
+	| {
+			rawXML: string;
+	  }
+	| {
+			dataURI: string;
+	  };
+
+export type Values = Record<
 	string,
 	| {
 			rawXML: string;
@@ -23,6 +31,4 @@ type Values = Record<
 	  }
 >;
 
-type Pointers = Record<string, string>;
-
-export {Values, Pointers};
+export type Pointers = Record<string, string>;
