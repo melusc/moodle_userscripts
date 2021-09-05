@@ -14,7 +14,7 @@
 	},
 	"description": "",
 	"devDependencies": {
-		"@babel/core": "^7.15.0",
+		"@babel/core": "^7.15.5",
 		"@sindresorhus/tsconfig": "^2.0.0",
 		"@types/dompurify": "^2.2.3",
 		"@types/file-saver": "^2.0.3",
