@@ -1,9 +1,9 @@
-export const logout = (removeCredentials = false): void => {
-	GM_deleteValue('token');
+export const logout = async (removeCredentials = false): Promise<void> => {
+	await GM.deleteValue('token');
 
 	if (removeCredentials) {
 		for (const key of ['username', 'password']) {
-			GM_deleteValue(key);
+			await GM.deleteValue(key);
 		}
 	}
 };

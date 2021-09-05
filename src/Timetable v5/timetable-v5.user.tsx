@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2021.08.27a
+// @version   2021.09.05a
 // @author    lusc
 // @updateURL https://git.io/Jqlt4
 // @include   *://moodle.ksasz.ch/
@@ -8,8 +8,11 @@
 // @include   *://moodle.ksasz.ch/timetable/v5*
 // @grant     GM_addValueChangeListener
 // @grant     GM_setValue
+// @grant     GM.setValue
 // @grant     GM_getValue
+// @grant     GM.getValue
 // @grant     GM_deleteValue
+// @grant     GM.deleteValue
 // @grant     GM_registerMenuCommand
 // @grant     GM_addStyle
 // @grant     GM_notification

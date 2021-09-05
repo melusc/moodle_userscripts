@@ -1,13 +1,16 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.08.24a
+// @version   2021.09.05a
 // @author    lusc
 // @updateURL https://git.io/JqltR
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
 // @grant     GM_addStyle
 // @grant     GM_setValue
+// @grant     GM.setValue
 // @grant     GM_getValue
+// @grant     GM.getValue
 // @grant     GM_deleteValue
+// @grant     GM.deleteValue
 // @run-at    document-start
 // ==/UserScript==
 
@@ -735,7 +738,7 @@ const getProfilesInRange = async (
 	const responseJSON = (await response.json()) as UserDataResponse[];
 
 	if ('errorcode' in response) {
-		logout();
+		await logout();
 		return getProfilesInRange(start, range);
 	}
 

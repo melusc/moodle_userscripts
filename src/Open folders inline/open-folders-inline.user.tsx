@@ -1,12 +1,15 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   2021.08.16a
+// @version   2021.09.05a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/Jqlt0
 // @grant     GM_setValue
+// @grant     GM.setValue
 // @grant     GM_getValue
+// @grant     GM.getValue
 // @grant     GM_deleteValue
+// @grant     GM.deleteValue
 // @grant     GM_addStyle
 // @run-at    document-start
 // ==/UserScript==

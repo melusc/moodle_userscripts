@@ -322,7 +322,7 @@ class SettingsPage extends Component<
 		try {
 			coursesObject = await getCourses_throwable(token);
 		} catch {
-			this.handleLogOut(false, this.setCourses);
+			await this.handleLogOut(false, this.setCourses);
 
 			return;
 		}
@@ -360,7 +360,7 @@ class SettingsPage extends Component<
 
 				this.callCallbacksOnLogIn(token);
 			} catch {
-				this.handleLogOut(true);
+				await this.handleLogOut(true);
 			}
 		}
 	};
@@ -373,11 +373,11 @@ class SettingsPage extends Component<
 		}
 	};
 
-	handleLogOut = (
+	handleLogOut = async (
 		removeCredentials?: boolean,
 		cb?: (token: string) => void,
 	) => {
-		logout(removeCredentials);
+		await logout(removeCredentials);
 
 		if (cb) {
 			this.callbacksOnLoggedIn.add(cb);
@@ -389,16 +389,16 @@ class SettingsPage extends Component<
 	};
 
 	getToken = async (): Promise<string | undefined> => {
-		const token = getToken();
+		const token = await getToken();
 
 		if (token) {
 			return token;
 		}
 
-		const creds = getCredentials();
+		const creds = await getCredentials();
 
 		if (!creds) {
-			this.handleLogOut(true);
+			await this.handleLogOut(true);
 
 			return undefined;
 		}
@@ -406,7 +406,7 @@ class SettingsPage extends Component<
 		try {
 			return await login_throwable(creds);
 		} catch {
-			this.handleLogOut(true);
+			await this.handleLogOut(true);
 
 			return undefined;
 		}

@@ -116,22 +116,22 @@ export const popupLogin = async (title: string): Promise<string> =>
 	});
 
 export const popupGetToken = async (title: string): Promise<string> => {
-	const token = getToken();
+	const token = await getToken();
 
 	if (token) {
 		return token;
 	}
 
-	const creds = getCredentials();
+	const creds = await getCredentials();
 
 	if (creds) {
 		try {
 			return await login_throwable(creds);
 		} catch {
-			logout(true);
+			await logout(true);
 		}
 	} else {
-		logout(true);
+		await logout(true);
 	}
 
 	return popupLogin(title);
@@ -145,7 +145,7 @@ export const popupGetCourses = async (
 	try {
 		return await getCourses_throwable(token);
 	} catch {
-		logout();
+		await logout();
 
 		return popupGetCourses(title);
 	}
@@ -157,7 +157,7 @@ export const popupGetUserId = async (title: string): Promise<number> => {
 	try {
 		return await getUserId_throwable(token);
 	} catch {
-		logout();
+		await logout();
 
 		return popupGetUserId(title);
 	}

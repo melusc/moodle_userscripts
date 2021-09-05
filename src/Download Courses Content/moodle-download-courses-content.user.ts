@@ -1,12 +1,15 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.08.07a
+// @version   2021.09.05a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JqltE
 // @grant     GM_getValue
+// @grant     GM.getValue
 // @grant     GM_setValue
+// @grant     GM.setValue
 // @grant     GM_deleteValue
+// @grant     GM.deleteValue
 // @grant     GM_addStyle
 // @grant     GM_xmlhttpRequest
 // @run-at    document-start
@@ -84,7 +87,7 @@ const initDownload = async (target: HTMLButtonElement) => {
 	const jsonPageContent = (await pageContentResponse.json()) as Response;
 
 	if ('exception' in jsonPageContent) {
-		logout();
+		await logout();
 		void initDownload(target);
 		return;
 	}

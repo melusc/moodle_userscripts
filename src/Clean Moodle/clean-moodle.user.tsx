@@ -1,12 +1,15 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.08.16a
+// @version   2021.09.05a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JqltW
 // @grant     GM_setValue
+// @grant     GM.setValue
 // @grant     GM_getValue
+// @grant     GM.getValue
 // @grant     GM_deleteValue
+// @grant     GM.deleteValue
 // @grant     GM_addStyle
 // @grant     GM_registerMenuCommand
 // @grant     GM_addValueChangeListener

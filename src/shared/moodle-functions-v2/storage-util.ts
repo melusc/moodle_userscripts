@@ -1,11 +1,14 @@
-export const getCredentials = ():
+export const getCredentials = async (): Promise<
 	| {
 			username: string;
 			password: string;
 	  }
-	| undefined => {
-	const username = GM_getValue<string | undefined>('username');
-	const password = GM_getValue<string | undefined>('password');
+	| undefined
+> => {
+	const [username, password] = await Promise.all([
+		GM.getValue<string | undefined>('username'),
+		GM.getValue<string | undefined>('password'),
+	]);
 
 	if (username && password) {
 		return {
@@ -17,4 +20,4 @@ export const getCredentials = ():
 	return undefined;
 };
 
-export const getToken = () => GM_getValue<string | undefined>('token');
+export const getToken = async () => GM.getValue<string | undefined>('token');

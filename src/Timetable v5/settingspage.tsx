@@ -371,7 +371,7 @@ class SettingsPage extends Component<
 			}
 		});
 
-		const token = getToken();
+		const token = await getToken();
 
 		if (token) {
 			this.callbackAfterLoginHandler(token);
@@ -379,7 +379,7 @@ class SettingsPage extends Component<
 			return;
 		}
 
-		const creds = getCredentials();
+		const creds = await getCredentials();
 
 		if (creds) {
 			try {
@@ -390,7 +390,7 @@ class SettingsPage extends Component<
 			} catch {}
 		}
 
-		this.logout(true);
+		await this.logout(true);
 	};
 
 	handleTableInput =
@@ -472,8 +472,8 @@ class SettingsPage extends Component<
 		);
 	};
 
-	logout = (removeCreds?: boolean, cb?: (token: string) => void) => {
-		logout(removeCreds);
+	logout = async (removeCreds?: boolean, cb?: (token: string) => void) => {
+		await logout(removeCreds);
 
 		if (cb) {
 			this.callbacksAfterLogin.add(cb);
@@ -501,7 +501,7 @@ class SettingsPage extends Component<
 			});
 			this.callbackAfterLoginHandler(token);
 		} catch {
-			this.logout(true);
+			await this.logout(true);
 		}
 	};
 
@@ -511,7 +511,7 @@ class SettingsPage extends Component<
 		try {
 			coursesObject = await getCourses_throwable(token);
 		} catch {
-			this.logout(false, this.fetchCourses);
+			await this.logout(false, this.fetchCourses);
 
 			return;
 		}

@@ -36,7 +36,7 @@ export const getContacts = async (userId: number): Promise<number[]> => {
 		= (await response.json()) as CoreMessageGetUserContactsResponse;
 
 	if ('exception' in responseJSON) {
-		logout();
+		await logout();
 		return getContacts(userId);
 	}
 
