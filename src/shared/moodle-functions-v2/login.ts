@@ -41,9 +41,11 @@ export const login_throwable = async ({
 		throw new Error('Token was invalid');
 	}
 
-	GM_setValue('token', responseJSON.token);
-	GM_setValue('username', username);
-	GM_setValue('password', password);
+	await Promise.all([
+		GM.setValue('token', responseJSON.token),
+		GM.setValue('username', username),
+		GM.setValue('password', password),
+	]);
 
 	return responseJSON.token;
 };
