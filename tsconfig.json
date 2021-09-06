@@ -7,11 +7,6 @@
 		"lib": ["esnext", "dom.iterable", "dom"],
 		"module": "esnext",
 		"outDir": "./dist/",
-		"plugins": [
-			{
-				"name": "typescript-plugin-css-modules"
-			}
-		],
 		"target": "esnext",
 		"types": ["preact", "tampermonkey"]
 	},
