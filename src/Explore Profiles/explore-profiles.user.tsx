@@ -1,15 +1,12 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.09.05a
+// @version   2021.09.06a
 // @author    lusc
 // @updateURL https://git.io/JqltR
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
 // @grant     GM_addStyle
-// @grant     GM_setValue
 // @grant     GM.setValue
-// @grant     GM_getValue
 // @grant     GM.getValue
-// @grant     GM_deleteValue
 // @grant     GM.deleteValue
 // @run-at    document-start
 // ==/UserScript==
@@ -61,6 +58,17 @@ type MainState = {
 		coursename: string;
 	}>;
 	interests?: string[];
+};
+
+const getHighest = async () => {
+	let highest = await GM.getValue<number | undefined>('highest');
+
+	if (highest === undefined) {
+		highest = 2136;
+		await GM.setValue('highest', highest);
+	}
+
+	return highest;
 };
 
 // State used by all
@@ -757,7 +765,7 @@ const unescapeHTML = (html: string) =>
 		);
 
 const getRandomProfile = async (): Promise<UserDataResponse> => {
-	const highest = GM_getValue<number>('highest');
+	const highest = await getHighest();
 	const randProfile = Math.floor(Math.random() * (highest + 1)) + 1;
 
 	notificationState.from = randProfile;
@@ -780,9 +788,10 @@ const getProfile = async (
 
 	let newId = currentId + action;
 
+	const currentHighest = await getHighest();
 	if (newId < 1) {
-		newId = GM_getValue<number>('highest');
-	} else if (newId > GM_getValue<number>('highest')) {
+		newId = currentHighest;
+	} else if (newId > currentHighest) {
 		newId = 1;
 	}
 
@@ -797,8 +806,8 @@ const getProfile = async (
 
 	const highest = profiles[profiles.length - 1];
 
-	if (highest && highest.id > GM_getValue<number>('highest') - 10) {
-		GM_setValue('highest', highest.id + 10);
+	if (highest && highest.id > currentHighest - 10) {
+		await GM.setValue('highest', highest.id + 10);
 	}
 
 	const profile = actionSign < 0 ? profiles[profiles.length - 1] : profiles[0];
@@ -932,14 +941,6 @@ const runOnce = () => {
 
 	render(<Notification />, notification);
 	document.body.append(notification);
-
-	if (GM_getValue<number | undefined>('highest') === undefined) {
-		GM_setValue(
-			'highest',
-			1959, // Highest + 10 at time of creation
-			// This number only really matters for rand anyway
-		);
-	}
 
 	GM_addStyle(style);
 
