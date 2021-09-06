@@ -49,7 +49,7 @@ const getPageContent = async (
 		| GetContentsResponseFailed;
 
 	if (!Array.isArray(responseJSON) && 'exception' in responseJSON) {
-		logout();
+		await logout();
 		return getPageContent();
 	}
 
