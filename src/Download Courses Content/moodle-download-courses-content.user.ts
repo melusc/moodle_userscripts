@@ -1,14 +1,11 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2021.09.05a
+// @version   2021.09.06a
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JqltE
-// @grant     GM_getValue
 // @grant     GM.getValue
-// @grant     GM_setValue
 // @grant     GM.setValue
-// @grant     GM_deleteValue
 // @grant     GM.deleteValue
 // @grant     GM_addStyle
 // @grant     GM_xmlhttpRequest
