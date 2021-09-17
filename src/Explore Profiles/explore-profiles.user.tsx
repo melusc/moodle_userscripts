@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.09.06b
+// @version   2021.09.17a
 // @author    lusc
 // @updateURL https://git.io/JqltR
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
