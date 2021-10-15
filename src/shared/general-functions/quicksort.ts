@@ -19,11 +19,13 @@ const sortingUsingPivot = <T>(
 	l: number,
 	r: number,
 ): number => {
+	// eslint-disable-next-line no-bitwise
 	const pivot = array[(r + l) >> 1];
 
 	if (pivot === undefined) {
 		throw new Error(
-			`pivot was out of bounds: [${JSON.stringify(array)}][${(r + l) >> 1}]`,
+			// eslint-disable-next-line no-bitwise
+			`pivot was out of bounds: ${JSON.stringify(array)}[${(r + l) >> 1}]`,
 		);
 	}
 
