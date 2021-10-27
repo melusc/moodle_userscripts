@@ -19,6 +19,7 @@ module.exports = (environment = {}) => ({
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: '[name].user.js',
+		hashFunction: 'xxhash64',
 	},
 	plugins: [new CleanWebpackPlugin()],
 	cache: {
