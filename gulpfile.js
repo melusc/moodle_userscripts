@@ -15,11 +15,12 @@ const minSvg = () =>
 			svgmin({
 				multipass: true,
 				precision: 3,
+				full: true,
 				plugins: [
 					'sortAttrs',
 					'removeScriptElement',
 					'removeDimensions',
-					{name: 'removeAttrs', params: {attrs: ['class']}},
+					{name: 'removeAttrs', params: {attrs: '(class|role)'}},
 				],
 			}),
 		)
