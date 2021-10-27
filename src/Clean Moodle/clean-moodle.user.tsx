@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.10.15a
+// @version   2021.10.27a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JqltW
@@ -76,7 +76,7 @@ const testForInexistantCourse = async (id: string) => {
  * @param {number|string} id The id of the course to replace
  * @param {[string]} newValue The new value, defaults to the anchors title (for resetting it)
  */
-const replace = (id: string, newValue?: string) => {
+const setCourseText = (id: string, newValue?: string) => {
 	const anchor = getCourseElementFromSidebar(id);
 
 	if (!anchor) {
@@ -102,16 +102,19 @@ const replace = (id: string, newValue?: string) => {
 };
 
 /**
- * Removes a course from the sidebar by the id
+ * Sets the visibility of a course by id
  * @param {string} id The id of the course to remove
  */
-const remove = (id: string) => {
+const setCourseVisibility = (id: string, visible = false) => {
 	const anchor = getCourseElementFromSidebar(id);
 
 	if (anchor) {
 		const li = anchor.closest<HTMLLIElement>('li.type_course');
+
+		// If the current page is the same as the current course link
+		// don't remove it
 		if (li && !li?.classList.contains('contains_branch')) {
-			li.remove();
+			li.classList.toggle('hide', !visible);
 		}
 	} else {
 		void testForInexistantCourse(id);
@@ -164,7 +167,7 @@ const cleanFrontpage = async () => {
 	if (typeof replaceObject === 'object') {
 		const replaceEntries = Object.entries(replaceObject);
 		for (const item of replaceEntries) {
-			replace(...item);
+			setCourseText(...item);
 		}
 	} else {
 		void GM.setValue('replace', {});
@@ -173,7 +176,7 @@ const cleanFrontpage = async () => {
 	const removeArray = await GM.getValue<string[] | undefined>('remove');
 	if (Array.isArray(removeArray)) {
 		for (const id of removeArray) {
-			remove(id);
+			setCourseVisibility(id);
 		}
 	} else {
 		void GM.setValue('remove', []);
@@ -226,12 +229,12 @@ const refresh = <T extends string[] | Record<string, string>>(
 		if (name === 'replace') {
 			for (const item of removedVals) {
 				// Defaults to the anchor title which is exactly what we want
-				replace(item);
+				setCourseText(item);
 			}
 
 			if (!Array.isArray(newValue)) {
 				for (const item of addedOrChanged) {
-					replace(item, newValue[item]);
+					setCourseText(item, newValue[item]);
 				}
 			}
 
@@ -239,53 +242,12 @@ const refresh = <T extends string[] | Record<string, string>>(
 			// Adding anchors leaves the sidebar potentially (slightly) unsorted
 		} else if (name === 'remove') {
 			for (const item of addedOrChanged) {
-				remove(item);
+				setCourseVisibility(item);
 			}
 			// Removing anchors leaves the sidebar still sorted
 
-			if (removedVals.length > 0) {
-				void popupGetCourses('Clean Moodle').then(coursesObject => {
-					for (const id of removedVals) {
-						const fullname = coursesObject[id];
-
-						if (!getCourseElementFromSidebar(id)) {
-							const li = document.createElement('li');
-							li.className = 'type_course depth_3 item_with_icon';
-							li.tabIndex = -1;
-							sidebar.prepend(li);
-
-							render(
-								<p
-									class="tree_item hasicon"
-									role="treeitem"
-									id={`expandable_branch_20_${id}`}
-									tabIndex={-1}
-									aria-selected="false"
-								>
-									<a
-										tabIndex={-1}
-										title={fullname}
-										href={`https://moodle.ksasz.ch/course/view.php?id=${id}`}
-									>
-										<i
-											class="icon fa fa-graduation-cap fa-fw navicon"
-											aria-hidden="true"
-											tabIndex={-1}
-										/>
-										<span class="item-content-wrap" tabIndex={-1}>
-											{fullname}
-										</span>
-									</a>
-								</p>,
-								li,
-							);
-						}
-					}
-
-					sortSidebar();
-
-					dispatchEvent(new Event('customIconsPreact'));
-				});
+			for (const item of removedVals) {
+				setCourseVisibility(item, true);
 			}
 		}
 	}
