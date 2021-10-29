@@ -131,7 +131,6 @@ class SettingsPage extends Component<
 
 	render = () => {
 		const {
-			state,
 			loggedOutCallback,
 			handleButtonNavigate,
 			handleSave,
@@ -143,7 +142,7 @@ class SettingsPage extends Component<
 			handleTableFocus,
 		} = this;
 		const {loggedOut, focusedElement, courses, day, tables, saveValidity}
-			= state;
+			= this.state;
 
 		return (
 			<>
@@ -280,8 +279,8 @@ class SettingsPage extends Component<
 		GM_setValue('days', {...rows});
 	};
 
-	handleTableFocus =
-		(
+	handleTableFocus
+		= (
 			idRef?: RefObject<HTMLInputElement>,
 			contentRef?: RefObject<HTMLInputElement>,
 			index?: number,
@@ -393,8 +392,8 @@ class SettingsPage extends Component<
 		await this.logout(true);
 	};
 
-	handleTableInput =
-		(
+	handleTableInput
+		= (
 			selector: TableOnInputSelectors,
 			index: number,
 		): JSX.GenericEventHandler<HTMLInputElement> =>

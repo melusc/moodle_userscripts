@@ -239,8 +239,8 @@ class Main extends Component<MainProps, MainState> {
 	};
 
 	render = () => {
-		const {state, refs_, props, handleInput, resetForm: reset} = this;
-		const {selected} = state;
+		const {refs_, props, handleInput, resetForm: reset} = this;
+		const {selected} = this.state;
 		const {selectedCourse, courses} = props;
 		const file = refs_.file.current?.files?.[0];
 
@@ -609,7 +609,6 @@ class SettingsPage extends Component<
 
 	render = () => {
 		const {
-			state,
 			resetIcon,
 			selectCourse,
 			loggedOutCallback,
@@ -618,7 +617,7 @@ class SettingsPage extends Component<
 			notify,
 		} = this;
 		const {loggedOut, selectedCourse, courses, isCoursesLoading, notification}
-			= state;
+			= this.state;
 
 		return (
 			<>
