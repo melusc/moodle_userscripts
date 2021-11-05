@@ -19,8 +19,6 @@ import {
 } from './shared';
 import style from './settingspage.scss';
 
-import type {Values} from './custom-icons.d';
-
 const sortCourses = (courses: Course[]) => {
 	courses.sort(({name: nameA, id: idA}, {name: nameB, id: idB}) => {
 		nameA = nameA.trim();
@@ -479,12 +477,37 @@ class Main extends Component<MainProps, MainState> {
 
 	saveWithFileHandler = (blob: Blob, course: Course) => {
 		const {notify} = this.props;
+		const {id} = course;
 
 		const fr = new FileReader();
 
 		fr.addEventListener('error', () => {
 			notify(ERROR_MSG.error);
 		});
+
+		// Avoid unnecessary steps if svg
+		// Read as text to not have to convert from base64
+		if (blob.type === 'image/svg+xml') {
+			fr.addEventListener('load', async () => {
+				const result = fr.result as string | null;
+
+				if (typeof result !== 'string') {
+					return;
+				}
+
+				await addEntry(id, {
+					rawXML: result,
+				});
+
+				this.props.updateCourseById(id);
+				this.resetSelected();
+			});
+
+			fr.readAsText(blob);
+
+			return;
+		}
+
 		fr.addEventListener('load', () => {
 			const result = fr.result as string | null;
 
@@ -498,8 +521,6 @@ class Main extends Component<MainProps, MainState> {
 			});
 
 			img.addEventListener('load', async () => {
-				const {id} = course;
-
 				const groups = /^data:[\w+/]+;base64,(?<data>.+)$/.exec(result)?.groups;
 
 				if (!groups) {
@@ -513,21 +534,9 @@ class Main extends Component<MainProps, MainState> {
 					return;
 				}
 
-				let object: Values[string];
-
-				if (blob.type === 'image/svg+xml') {
-					const rawXML = decodeURI(atob(data));
-
-					object = {
-						rawXML,
-					};
-				} else {
-					object = {
-						dataURI: result,
-					};
-				}
-
-				await addEntry(id, object);
+				await addEntry(id, {
+					dataURI: result,
+				});
 
 				this.props.updateCourseById(id);
 				this.resetSelected();
