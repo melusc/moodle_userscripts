@@ -49,7 +49,7 @@ export const getPointers = async (): Promise<Pointers> => {
 		await GM.setValue(StorageKeys.pointers, pointers);
 	}
 
-	return {...pointers};
+	return pointers;
 };
 
 /**
@@ -74,7 +74,7 @@ export const getValues = async (): Promise<Values> => {
 		await GM.setValue(StorageKeys.values, values);
 	}
 
-	return {...values};
+	return values;
 };
 
 /**
