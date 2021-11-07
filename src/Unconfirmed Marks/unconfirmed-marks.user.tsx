@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.11.07a
+// @version   2021.11.07b
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -182,11 +182,14 @@ class SchulNetzMarks extends Component<
 	override componentDidMount = () => {
 		this.loginFromStorage();
 
-		GM_addValueChangeListener('bottomHR', (_, newValue: boolean) => {
-			this.setState({
-				bottomHR: Boolean(newValue),
-			});
-		});
+		GM_addValueChangeListener(
+			'bottomHR',
+			(_name, _oldValue, newValue: boolean) => {
+				this.setState({
+					bottomHR: Boolean(newValue),
+				});
+			},
+		);
 
 		GM_registerMenuCommand('Toggle divider', () => {
 			GM_setValue('bottomHR', !GM_getValue('bottomHR'));
