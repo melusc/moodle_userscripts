@@ -1,21 +1,3 @@
-@mixin keyframe($animation_name) {
-	@-webkit-keyframes #{$animation_name} {
-		@content;
-	}
-
-	@-moz-keyframes #{$animation_name} {
-		@content;
-	}
-
-	@-o-keyframes #{$animation_name} {
-		@content;
-	}
-
-	@keyframes #{$animation_name} {
-		@content;
-	}
-}
-
 #module-marks {
 	* {
 		box-sizing: border-box;
@@ -24,13 +6,11 @@
 	line-height: 1.15;
 	-ms-text-size-adjust: 100%;
 	-webkit-text-size-adjust: 100%;
-	cursor: default;
-	-moz-tab-size: 4;
-	tab-size: 4;
+
 	-webkit-tap-highlight-color: transparent;
 	word-break: break-word;
 
-	.login {
+	.login-form {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -70,7 +50,7 @@
 		grid-template-columns: 30% 45% 15% 10%;
 	}
 }
-@include keyframe(ucmr-spin) {
+@keyframes ucmr-spin {
 	0% {
 		-webkit-transform: rotate(0deg);
 		-moz-transform: rotate(0deg);

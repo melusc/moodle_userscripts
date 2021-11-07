@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.10.15a
+// @version   2021.11.07a
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -11,13 +11,14 @@
 // @grant     GM_addStyle
 // @grant     GM_deleteValue
 // @grant     GM_addValueChangeListener
+// @grant     GM_registerMenuCommand
 // @run-at    document-start
 // @connect   www.schul-netz.com
 // ==/UserScript==
 
 import {render, Component, h, createRef} from 'preact';
-import {uniqueId} from '../shared/general-functions';
 import style from './style.scss';
+import {getMarks, MarksRow} from './get-marks';
 
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
@@ -44,14 +45,6 @@ const enum States {
 	loggedOut,
 }
 
-type MarksRow = {
-	key: string;
-	course: string;
-	name: string;
-	date: string;
-	mark: string;
-};
-
 type SchulNetzMarksState = {
 	marks: MarksRow[];
 	errorMsg?: string;
@@ -67,17 +60,11 @@ class SchulNetzMarks extends Component<
 		marks: [],
 		state: States.loading,
 		errorMsg: undefined,
-		bottomHR:
-			GM_getValue<boolean | undefined>('bottomHR')
-			?? (() => {
-				GM_setValue('bottomHR', false);
-
-				return false;
-			})(),
+		bottomHR: Boolean(GM_getValue<boolean>('bottomHR')),
 	};
 
 	inputs = {
-		login: createRef<HTMLInputElement>(),
+		username: createRef<HTMLInputElement>(),
 		password: createRef<HTMLInputElement>(),
 		page: createRef<HTMLInputElement>(),
 	};
@@ -110,15 +97,14 @@ class SchulNetzMarks extends Component<
 					)}
 
 					{state === States.loggedOut && (
-						<div class="login">
+						<form class="login-form" onSubmit={this.handleLogin}>
 							<input
-								ref={this.inputs.login}
+								ref={this.inputs.username}
 								required
 								class="form-control"
 								placeholder="Username"
 								type="text"
-								value={GM_getValue<string | undefined>('login')}
-								onKeyDown={this.onLoggedOutKeydown}
+								value={GM_getValue<string | undefined>('username')}
 							/>
 							<input
 								ref={this.inputs.password}
@@ -127,7 +113,6 @@ class SchulNetzMarks extends Component<
 								placeholder="Password"
 								type="password"
 								value={GM_getValue<string | undefined>('password')}
-								onKeyDown={this.onLoggedOutKeydown}
 							/>
 							<input
 								ref={this.inputs.page}
@@ -136,16 +121,11 @@ class SchulNetzMarks extends Component<
 								placeholder="Page (ausserschwyz, einsiedeln...)"
 								type="text"
 								value={GM_getValue<string | undefined>('page')}
-								onKeyDown={this.onLoggedOutKeydown}
 							/>
-							<button
-								class="btn btn-primary"
-								type="button"
-								onClick={this.handleLogin}
-							>
+							<button class="btn btn-primary" type="submit">
 								Save
 							</button>
-						</div>
+						</form>
 					)}
 
 					{state === States.error && (
@@ -158,19 +138,15 @@ class SchulNetzMarks extends Component<
 		);
 	};
 
-	onLoggedOutKeydown: h.JSX.KeyboardEventHandler<HTMLInputElement> = event_ => {
-		if (event_.key === 'Enter') {
-			this.handleLogin();
-		}
-	};
+	handleLogin: h.JSX.GenericEventHandler<HTMLElement> = event_ => {
+		event_.preventDefault();
 
-	handleLogin = () => {
-		const login = this.inputs.login.current?.value;
+		const username = this.inputs.username.current?.value;
 		const password = this.inputs.password.current?.value;
 		const page = this.inputs.page.current?.value;
 
-		if (login && password && page) {
-			GM_setValue('login', login);
+		if (username && password && page) {
+			GM_setValue('username', username);
 			GM_setValue('password', password);
 			GM_setValue('page', page);
 			this.setState({
@@ -178,21 +154,21 @@ class SchulNetzMarks extends Component<
 			});
 
 			void this.getMarks({
-				login,
+				username,
 				password,
 				page,
 			});
 		}
 	};
 
-	checkCredentials = () => {
-		const login = GM_getValue<string | undefined>('login');
+	loginFromStorage = () => {
+		const username = GM_getValue<string | undefined>('username');
 		const password = GM_getValue<string | undefined>('password');
 		const page = GM_getValue<string | undefined>('page');
 
-		if (login && password && page) {
+		if (username && password && page) {
 			void this.getMarks({
-				login,
+				username,
 				password,
 				page,
 			});
@@ -204,23 +180,22 @@ class SchulNetzMarks extends Component<
 	};
 
 	override componentDidMount = () => {
-		this.checkCredentials();
+		this.loginFromStorage();
 
-		GM_addValueChangeListener('bottomHR', () => {
-			const bottomHR = GM_getValue<unknown>('bottomHR');
+		GM_addValueChangeListener('bottomHR', (_, newValue: boolean) => {
+			this.setState({
+				bottomHR: Boolean(newValue),
+			});
+		});
 
-			if (typeof bottomHR === 'boolean') {
-				this.setState({
-					bottomHR,
-				});
-			} else {
-				// This below will call this very function and update state there
-				GM_setValue('bottomHR', false);
-			}
+		GM_registerMenuCommand('Toggle divider', () => {
+			GM_setValue('bottomHR', !GM_getValue('bottomHR'));
 		});
 	};
 
-	logout = (credentialsToRemove: Array<'login' | 'password' | 'page'> = []) => {
+	logout = (
+		credentialsToRemove: Array<'username' | 'password' | 'page'> = [],
+	) => {
 		for (const value of credentialsToRemove) {
 			GM_deleteValue(value);
 		}
@@ -231,193 +206,46 @@ class SchulNetzMarks extends Component<
 	};
 
 	getMarks = async ({
-		login,
+		username,
 		password,
 		page,
 	}: {
-		login: string;
+		username: string;
 		password: string;
 		page: string;
 	}) => {
-		let loginPageResponse: Tampermonkey.Response<string>;
-		try {
-			loginPageResponse = await new Promise<Tampermonkey.Response<string>>(
-				(resolve, reject) => {
-					GM_xmlhttpRequest<string>({
-						method: 'GET',
-						url: `https://www.schul-netz.com/${page}/loginto.php`,
-						onload: resolve,
-						timeout: 10_000,
-						onerror: reject,
-						onabort: reject,
-						ontimeout: reject,
-					});
-				},
-			);
-		} catch (error: unknown) {
-			console.error(error);
-
-			this.setState({
-				state: States.error,
-				errorMsg: `An error occurred fetching "/${page}/loginto.php"`,
-			});
-
-			return;
-		}
-
-		if (loginPageResponse.status === 404) {
-			this.logout(['page']);
-
-			return;
-		}
-
-		if (loginPageResponse.status !== 200) {
-			this.setState({
-				state: States.error,
-				errorMsg: `An error occurred fetching "/${page}/loginto.php": "${loginPageResponse.statusText}"`,
-			});
-
-			return;
-		}
-
-		const parsedLoginPage = new DOMParser().parseFromString(
-			loginPageResponse.responseText,
-			'text/html',
-		);
-
-		const loginHashElement = parsedLoginPage.querySelector<HTMLInputElement>(
-			'input[name="loginhash"]',
-		);
-
-		if (!loginHashElement) {
-			this.setState({
-				state: States.error,
-				errorMsg: 'Could not get loginhash.',
-			});
-
-			return;
-		}
-
-		const loginRequestBody = new URLSearchParams({
-			loginhash: loginHashElement.value,
-			login,
-			passwort: password,
+		const marksResult = await getMarks({
+			username,
+			password,
+			page,
 		});
 
-		let frontPageResponse: Tampermonkey.Response<string>;
-		try {
-			frontPageResponse = await new Promise<Tampermonkey.Response<string>>(
-				(resolve, reject) => {
-					GM_xmlhttpRequest<string>({
-						method: 'POST',
-						url: `https://www.schul-netz.com/${page}/index.php?pageid=`,
-						data: loginRequestBody.toString(),
-						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded',
-						},
-						timeout: 10_000,
-						onload: resolve,
-						onerror: reject,
-						onabort: reject,
-						ontimeout: reject,
-					});
-				},
-			);
-		} catch (error: unknown) {
-			console.error(error);
-
-			/* If the creds are incorrect it won't throw
-				 That scenario is handled below */
-			this.setState({
-				state: States.error,
-				errorMsg: 'An error occurred trying to log in.',
-			});
-			return;
-		}
-
-		if (/loginto\.php/i.test(frontPageResponse.finalUrl)) {
-			this.logout(['password']);
-
-			return;
-		}
-
-		const parsedFrontPage = new DOMParser().parseFromString(
-			frontPageResponse.responseText,
-			'text/html',
-		);
-
-		const table = parsedFrontPage.evaluate(
-			'.//h3' // Find all h3
-				+ '[contains(@class, "tabletitle")]' // That have the className "tabletitle"
-				+ '[text() = "Ihre letzten Noten"]' // That have the text "Ihre letzten Noten"
-				+ '/..' // Go to parent
-				+ '/following-sibling::table', // And find all siblings of parent that are a table
-			parsedFrontPage.body,
-			null,
-			XPathResult.FIRST_ORDERED_NODE_TYPE,
-			null,
-		).singleNodeValue as HTMLTableElement | null;
-
-		if (table === null) {
-			this.setState({
-				state: States.error,
-				errorMsg: 'Could not find table with marks.',
-			});
-
-			return;
-		}
-
-		const {rows} = table;
-		const marks: MarksRow[] = [];
-		let allConfirmed = false;
-
-		for (const row of rows) {
-			const [course, name, date, mark] = [...row.children].map(child =>
-				child.textContent?.trim(),
-			);
-
-			if (/sie haben alle noten bestätigt./i.test(course ?? '')) {
-				this.setState({state: States.noMarks});
-				allConfirmed = true;
-				break;
+		if (marksResult.error) {
+			if (marksResult.shouldLogOut) {
+				this.logout(marksResult.credentialsToRemove);
+				return;
 			}
 
-			if (course && name && date && mark) {
-				marks.push({
-					course,
-					name,
-					date,
-					mark,
-					key: uniqueId(),
-				});
-			}
-		}
-
-		if (!allConfirmed) {
 			this.setState({
-				marks,
-				state: States.marks,
+				state: States.error,
+				errorMsg: marksResult.errorMsg,
 			});
+
+			return;
 		}
 
-		const anchor = parsedFrontPage.evaluate(
-			'//a' // Find all anchors
-				+ '[contains(@class, "mdl-menu__item")]' // That have class "mdl-menu__item"
-				+ '[contains(text(), "Abmelden")]', // That have text "Abmelden"
-			parsedFrontPage.body,
-			null,
-			XPathResult.FIRST_ORDERED_NODE_TYPE,
-			null,
-		).singleNodeValue as HTMLAnchorElement | null;
-
-		const logoutPath = anchor?.getAttribute('href');
-
-		if (logoutPath) {
-			GM_xmlhttpRequest({
-				method: 'GET',
-				url: `https://www.schul-netz.com/${page}/${logoutPath}`,
+		if (marksResult.marks === null) {
+			this.setState({
+				state: States.noMarks,
 			});
+
+			return;
 		}
+
+		this.setState({
+			marks: marksResult.marks,
+			state: States.marks,
+		});
 	};
 }
 
