@@ -36,7 +36,7 @@ $border-radius: 2px;
 @use './components/button-grid' with
 	($text: $text, $border-color: $border-color, $border-style: $border-style);
 
-@import 'sanitize';
+@import '../shared/styles/reset';
 
 body {
 	padding-top: 0.3em;

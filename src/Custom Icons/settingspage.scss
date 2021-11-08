@@ -1,7 +1,7 @@
 @use 'sass:color';
 @use 'sass:math';
 
-@import 'sanitize';
+@import '../shared/styles/reset';
 
 $bg: #202020;
 $secondary-bg: #141414;
