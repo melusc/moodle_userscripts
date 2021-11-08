@@ -1,0 +1,34 @@
+name: Build Userscripts
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-userscripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 17
+        uses: actions/setup-node@v2
+        with:
+          node-version: '17'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Check code style
+        run: |
+          yarn run xo
+          yarn prettier -c . "!{**/*,*}.{js,ts}{x,}"
+
+      - name: Build
+        run: yarn run webpack
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: userscript-out
