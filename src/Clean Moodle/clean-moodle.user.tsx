@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2021.10.27a
+// @version   1.0.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
-// @updateURL https://git.io/JqltW
+// @updateURL https://git.io/JXgeW
 // @grant     GM.setValue
 // @grant     GM.getValue
 // @grant     GM.deleteValue

@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2021.10.15a
+// @version   1.0.0
 // @author    lusc
-// @updateURL https://git.io/JqltR
+// @updateURL https://git.io/JXzjB
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
 // @grant     GM_addStyle
 // @grant     GM.setValue

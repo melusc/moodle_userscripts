@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2021.11.07b
+// @version   1.0.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
-// @updateURL https://git.io/JqltZ
+// @updateURL https://git.io/JXzhC
 // @grant     GM_xmlhttpRequest
 // @grant     GM_setValue
 // @grant     GM_getValue

@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2021.11.05a
+// @version   1.0.0
 // @author    lusc
-// @updateURL https://git.io/Jqlt8
+// @updateURL https://git.io/JXgei
 // @include   *://moodle.ksasz.ch/*
 // @grant     GM.setValue
 // @grant     GM.getValue

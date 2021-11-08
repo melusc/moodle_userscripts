@@ -6,19 +6,19 @@ To run these you need to have tampermonkey, greasemonkey or similar installed.
 
 ## Quick Installation
 
-[Clean Moodle](https://git.io/JqltW)
+[Clean Moodle](https://git.io/JXgeW)
 
-[Custom Icons](https://git.io/Jqlt8)
+[Custom Icons](https://git.io/JXgei)
 
-[Timetable in Moodle](https://git.io/Jqlt4)
+[Timetable in Moodle](https://git.io/JXzjr)
 
-[Explore Profiles](https://git.io/JqltR)
+[Explore Profiles](https://git.io/JXzjB)
 
-[Open folders inline](https://git.io/Jqlt0)
+[Open folders inline](https://git.io/JXgvE)
 
-[Unconfirmed Marks](https://git.io/JqltZ)
+[Unconfirmed Marks](https://git.io/JXzhC)
 
-[Download Course's Content](https://git.io/JqltE)
+[Download Course's Content](https://git.io/JXzhy)
 
 ## About
 
