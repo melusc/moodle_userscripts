@@ -5804,10 +5804,10 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-valtio@^1.2.5:
-  version "1.2.5"
-  resolved "https://registry.npmjs.org/valtio/-/valtio-1.2.5.tgz"
-  integrity sha512-2r6ijmG5+YfS+sfEkoHB6C1czgn7MXzxPwY/3u0t/wmsr2N4B1yF57i0J/hBOCYkdYkbsYfBRVi7xRK+CAEsyA==
+valtio@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/valtio/-/valtio-1.2.6.tgz#f80d38df0cd967374035c722bb9b12699bdf5ef0"
+  integrity sha512-TnGAdGAnbzj+K3WA8tKql6O6+7qXSDSYVoaWHFQp27twoNVyfJPPtHObZ79WLZ7I6N+aeWEO0bdO3yjq+GOWew==
   dependencies:
     proxy-compare "2.0.2"
 
