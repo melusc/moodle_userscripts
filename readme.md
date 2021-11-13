@@ -1,8 +1,8 @@
 # Moodle Userscripts
 
-Here you can find some useful userscripts for moodle. I have only tested them on my school's moodle.
+Here you can find some useful userscripts for moodle.
 
-To run these you need to have tampermonkey, greasemonkey or similar installed.
+To run these you need to have violentmonkey, tampermonkey, greasemonkey or similar installed in your browser.
 
 ## Quick Installation
 
@@ -22,4 +22,4 @@ To run these you need to have tampermonkey, greasemonkey or similar installed.
 
 ## About
 
-Currently, all these userscripts are written in typescript (except one), and jsx using [preact](https://github.com/preactjs/preact).
+Currently, all these userscripts are written in typescript and jsx using [preact](https://github.com/preactjs/preact).
