@@ -244,6 +244,11 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-1.2.0.tgz"
   integrity sha512-wdppn25U8z/2yiaT6YGquE6X8sSv7hNMWSXYSSU1jGv/yd6XqjXgTDJ8KP4NgjTXfJ3GbRjeeb8RTV7a/VpM+w==
 
+"@lusc/tsconfig@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@lusc/tsconfig/-/tsconfig-1.0.0.tgz#e169910ef888386ad26acf9389f0c0931d789bdc"
+  integrity sha512-p2AKvylOpbMJy0XrDpsgeV3UByp5KZbd6cmAPGTUR9WLtmhD7IH2h0fhQPw5R0pindNXM3gRyuOZrFcZLICEcw==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
@@ -264,11 +269,6 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
-
-"@sindresorhus/tsconfig@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/@sindresorhus/tsconfig/-/tsconfig-2.0.0.tgz"
-  integrity sha512-1nsyWtFtPpVjEnNzp2rd03BVz84BYHeW7LNYvmcj3q4jAgJL2hl0XBp3WmDFFPjFLF3w+L0XEYqhjWUTU+TCzw==
 
 "@trysound/sax@0.2.0":
   version "0.2.0"

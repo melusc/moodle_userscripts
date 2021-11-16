@@ -1,14 +1,8 @@
 {
 	"compilerOptions": {
 		"declaration": false,
-		"jsx": "react",
-		"jsxFactory": "h",
-		"jsxFragmentFactory": "Fragment",
-		"lib": ["esnext", "dom.iterable", "dom"],
-		"module": "esnext",
 		"outDir": "./dist/",
-		"target": "esnext",
 		"types": ["preact", "tampermonkey"]
 	},
-	"extends": "@sindresorhus/tsconfig"
+	"extends": "@lusc/tsconfig"
 }
