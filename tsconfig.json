@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"declaration": false,
 		"outDir": "./dist/",
-		"types": ["preact", "tampermonkey"]
+		"types": ["tampermonkey"]
 	},
 	"extends": "@lusc/tsconfig"
 }
