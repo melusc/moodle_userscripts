@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   1.0.1
+// @version   1.1.0
 // @author    lusc
 // @updateURL https://git.io/JXgei
 // @include   *://moodle.ksasz.ch/*
@@ -39,7 +39,7 @@ const isFrontpage = !/^\/customiconspreact/i.test(location.pathname);
 
 const getSidebar = () =>
 	document.querySelector<HTMLUListElement>(
-		'li[aria-labelledby="label_2_4"] ul[role="group"]',
+		'li[aria-labelledby$="label_2_4"] ul[role="group"]',
 	);
 
 const testIfUserLeftCourse = async (id: string) => {

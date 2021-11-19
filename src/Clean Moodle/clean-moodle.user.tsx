@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.0.1
+// @version   1.1.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JXgeW
@@ -32,7 +32,7 @@ const isFrontpage = !/^\/cleanmoodlepreact/i.test(location.pathname);
 
 const getSidebar = () =>
 	document.querySelector<HTMLUListElement>(
-		'li[aria-labelledby="label_2_4"] ul[role="group"]',
+		'li[aria-labelledby$="label_2_4"] ul[role="group"]',
 	);
 
 const SvgSettingsGear = () => (
