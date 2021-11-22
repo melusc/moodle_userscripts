@@ -26,7 +26,7 @@ module.exports = (environment = {}) => ({
 		type: 'filesystem',
 		cacheDirectory: path.resolve(__dirname, '.cache'),
 		buildDependencies: {
-			config: [__filename],
+			config: [__filename, path.resolve(__dirname, 'tsconfig.json')],
 		},
 	},
 	optimization: {
