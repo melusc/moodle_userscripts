@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   1.0.0
+// @version   1.0.1
 // @author    lusc
 // @updateURL https://git.io/JXzjB
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -745,7 +745,7 @@ const getProfilesInRange = async (
 	);
 	const responseJSON = (await response.json()) as UserDataResponse[];
 
-	if ('errorcode' in response) {
+	if ('errorcode' in responseJSON) {
 		await logout();
 		return getProfilesInRange(start, range);
 	}
