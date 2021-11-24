@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   1.0.0
+// @version   1.1.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -23,19 +23,6 @@ import {getMarks, MarksRow} from './get-marks';
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
 }
-
-const SvgCircleNotch = () => (
-	<svg
-		aria-hidden="true"
-		class="ucmr-circle-notch ucmr-spin"
-		viewBox="0 0 512 512"
-	>
-		<path
-			fill="currentColor"
-			d="M288 39.056v16.659c0 10.804 7.281 20.159 17.686 23.066C383.204 100.434 440 171.518 440 256c0 101.689-82.295 184-184 184-101.689 0-184-82.295-184-184 0-84.47 56.786-155.564 134.312-177.219C216.719 75.874 224 66.517 224 55.712V39.064c0-15.709-14.834-27.153-30.046-23.234C86.603 43.482 7.394 141.206 8.003 257.332c.72 137.052 111.477 246.956 248.531 246.667C393.255 503.711 504 392.788 504 256c0-115.633-79.14-212.779-186.211-240.236C302.678 11.889 288 23.456 288 39.056z"
-		/>
-	</svg>
-);
 
 const enum States {
 	loading,
@@ -75,9 +62,20 @@ class SchulNetzMarks extends Component<
 		return (
 			<div class="mod-indent-outer">
 				<div class="contentwithoutlink">
-					<div class="ucmr-title">Unconfirmed Marks</div>
+					<div class="ucmr-title">
+						Unconfirmed Marks
+						{(state === States.marks || state === States.noMarks) && (
+							<i
+								role="button"
+								class="icon fa fa-refresh fa-fw ml-1"
+								onClick={this.refresh}
+							/>
+						)}
+					</div>
 
-					{state === States.loading && <SvgCircleNotch />}
+					{state === States.loading && (
+						<i class="icon fa fa-circle-o-notch fa-fw fa-spin" />
+					)}
 
 					{state === States.marks && (
 						<div>
@@ -138,6 +136,11 @@ class SchulNetzMarks extends Component<
 		);
 	};
 
+	refresh: h.JSX.MouseEventHandler<HTMLElement> = event_ => {
+		event_.preventDefault();
+		this.loginFromStorage();
+	};
+
 	handleLogin: h.JSX.GenericEventHandler<HTMLElement> = event_ => {
 		event_.preventDefault();
 
@@ -161,10 +164,20 @@ class SchulNetzMarks extends Component<
 		}
 	};
 
+	reset = () => {
+		this.setState({
+			state: States.loading,
+			errorMsg: undefined,
+			marks: [],
+		});
+	};
+
 	loginFromStorage = () => {
 		const username = GM_getValue<string | undefined>('username');
 		const password = GM_getValue<string | undefined>('password');
 		const page = GM_getValue<string | undefined>('page');
+
+		this.reset();
 
 		if (username && password && page) {
 			void this.getMarks({
