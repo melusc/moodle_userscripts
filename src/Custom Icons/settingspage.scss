@@ -75,6 +75,14 @@ html {
 
 		&:hover {
 			text-decoration: underline;
+
+			.icon {
+				display: none;
+			}
+
+			.svg-icon-x {
+				display: initial;
+			}
 		}
 
 		&[data-removed='false'] {
@@ -147,6 +155,8 @@ select {
 	width: 1em;
 	cursor: pointer;
 
+	display: none;
+
 	&.svg-clear,
 	&.svg-del-icon {
 		color: $red;
@@ -169,8 +179,8 @@ select {
 }
 
 .icon {
-	height: 16px;
-	width: 16px;
+	height: 1em;
+	width: 1em;
 	margin-right: 5px;
 
 	&:not(span) {

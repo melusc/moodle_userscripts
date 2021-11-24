@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   1.1.0
+// @version   1.2.0
 // @author    lusc
 // @updateURL https://git.io/JXgei
 // @include   *://moodle.ksasz.ch/*
