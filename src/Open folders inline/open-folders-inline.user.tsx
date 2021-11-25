@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   1.0.0
+// @version   1.0.1
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JXgvE
@@ -12,6 +12,7 @@
 // ==/UserScript==
 
 import {render, h} from 'preact';
+import domReady from '@wordpress/dom-ready';
 
 import {Folder, toggleFolderVisibilityById} from './folder';
 import {RefreshIcon, toggleRefreshVisibility} from './refresh-icon';
@@ -86,8 +87,4 @@ const init = () => {
 		?.addEventListener('click', handleClick);
 };
 
-if (document.readyState === 'complete') {
-	init();
-} else {
-	addEventListener('DOMContentLoaded', init, {once: true});
-}
+domReady(init);

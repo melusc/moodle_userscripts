@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   1.0.1
+// @version   1.0.2
 // @author    lusc
 // @updateURL https://git.io/JXzjr
 // @include   *://moodle.ksasz.ch/
@@ -20,8 +20,9 @@
 // ==/UserScript==
 
 import {Component, h, render} from 'preact';
-import {initSettingsPage} from './settingspage';
+import domReady from '@wordpress/dom-ready';
 
+import {initSettingsPage} from './settingspage';
 import frontPageStyle from './frontpage.scss';
 import {TimetableStates, Lang, notificationIconUrl} from './consts';
 import {parseTimeToString} from './shared';
@@ -407,12 +408,8 @@ const initFrontpage = () => {
 	}
 };
 
-const functionToRun = /^\/timetable\/v5/i.test(location.pathname)
+const init = /^\/timetable\/v5/i.test(location.pathname)
 	? initSettingsPage
 	: initFrontpage;
 
-if (document.readyState === 'complete') {
-	functionToRun();
-} else {
-	addEventListener('DOMContentLoaded', functionToRun, {once: true});
-}
+domReady(init);

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   1.0.1
+// @version   1.0.2
 // @author    lusc
 // @updateURL https://git.io/JXzjB
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -16,6 +16,7 @@ import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime.js';
 import DOMPurify from 'dompurify';
 import {render, Fragment, h} from 'preact';
 import {useSnapshot, proxy} from 'valtio';
+import domReady from '@wordpress/dom-ready';
 
 import {
 	logout,
@@ -985,8 +986,4 @@ const runOnce = () => {
 	}
 };
 
-if (document.readyState === 'complete') {
-	runOnce();
-} else {
-	addEventListener('DOMContentLoaded', runOnce, {once: true});
-}
+domReady(runOnce);

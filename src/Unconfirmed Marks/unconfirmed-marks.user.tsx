@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   1.1.0
+// @version   1.1.1
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -17,6 +17,8 @@
 // ==/UserScript==
 
 import {render, Component, h, createRef} from 'preact';
+import domReady from '@wordpress/dom-ready';
+
 import style from './style.scss';
 import {getMarks, MarksRow} from './get-marks';
 
@@ -291,8 +293,4 @@ const init = () => {
 	GM_addStyle(style);
 };
 
-if (document.readyState === 'complete') {
-	init();
-} else {
-	addEventListener('DOMContentLoaded', init, {once: true});
-}
+domReady(init);

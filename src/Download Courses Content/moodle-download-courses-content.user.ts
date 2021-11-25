@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   1.0.0
+// @version   1.0.1
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JXzhy
@@ -15,6 +15,8 @@
 
 import {saveAs} from 'file-saver';
 import JSZip from 'jszip';
+import domReady from '@wordpress/dom-ready';
+
 import {popupGetToken, logout} from '../shared/moodle-functions-v2';
 import type {Response} from './responses.d';
 
@@ -251,8 +253,4 @@ const init = () => {
 	});
 };
 
-if (document.readyState === 'complete') {
-	init();
-} else {
-	addEventListener('DOMContentLoaded', init, {once: true});
-}
+domReady(init);

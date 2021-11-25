@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.1.0
+// @version   1.1.1
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JXgeW
@@ -14,6 +14,7 @@
 // ==/UserScript==
 
 import {render, h} from 'preact';
+import domReady from '@wordpress/dom-ready';
 
 import {popupGetCourses} from '../shared/moodle-functions-v2';
 import {
@@ -278,11 +279,7 @@ const setupFrontpage = () => {
 };
 
 if (!/^\/customicons/i.test(location.pathname)) {
-	const functionToRun = isFrontpage ? setupFrontpage : setupSettingsPage;
+	const init = isFrontpage ? setupFrontpage : setupSettingsPage;
 
-	if (document.readyState === 'complete') {
-		functionToRun();
-	} else {
-		addEventListener('DOMContentLoaded', functionToRun, {once: true});
-	}
+	domReady(init);
 }

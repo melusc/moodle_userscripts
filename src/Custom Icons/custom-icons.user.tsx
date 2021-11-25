@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   1.2.0
+// @version   1.2.1
 // @author    lusc
 // @updateURL https://git.io/JXgei
 // @include   *://moodle.ksasz.ch/*
@@ -16,6 +16,7 @@
 // ==/UserScript==
 
 import {render, html} from 'htm/preact';
+import domReady from '@wordpress/dom-ready';
 
 import {popupGetCourses} from '../shared/moodle-functions-v2';
 
@@ -194,11 +195,7 @@ const runOnceOnFrontPage = () => {
 };
 
 if (!/^\/cleanmoodle/i.test(location.pathname)) {
-	const functionToRun = isFrontpage ? runOnceOnFrontPage : setupSettingsPage;
+	const init = isFrontpage ? runOnceOnFrontPage : setupSettingsPage;
 
-	if (document.readyState === 'complete') {
-		functionToRun();
-	} else {
-		addEventListener('DOMContentLoaded', functionToRun, {once: true});
-	}
+	domReady(init);
 }
