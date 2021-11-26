@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.1.1
+// @version   1.2.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JXgeW
@@ -28,6 +28,8 @@ import {removeElementFromStorage} from './shared';
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
 }
+
+const {isArray} = Array;
 
 const isFrontpage = !/^\/cleanmoodlepreact/i.test(location.pathname);
 
@@ -175,7 +177,7 @@ const cleanFrontpage = async () => {
 	}
 
 	const removeArray = await GM.getValue<string[] | undefined>('remove');
-	if (Array.isArray(removeArray)) {
+	if (isArray(removeArray)) {
 		for (const id of removeArray) {
 			setCourseVisibility(id);
 		}
@@ -186,73 +188,49 @@ const cleanFrontpage = async () => {
 	sortSidebar();
 };
 
-const testDiff = <T extends string[] | Record<string, string>>(
-	oldValue: T,
-	newValue: T,
-): {addedOrChanged: string[]; removedVals: string[]} => {
-	if (Array.isArray(oldValue) && Array.isArray(newValue)) {
-		const addedOrChanged = newValue.filter(value => !oldValue.includes(value));
-		const removedVals = oldValue.filter(value => !newValue.includes(value));
-
-		return {addedOrChanged, removedVals};
+const refreshReplaced = (
+	oldValue: Record<string, string>,
+	newValue: Record<string, string>,
+) => {
+	for (const key of Object.keys(oldValue)) {
+		if (!(key in newValue)) {
+			setCourseText(key);
+		}
 	}
 
-	if (!Array.isArray(oldValue) && !Array.isArray(newValue)) {
-		const oldArray = Object.keys(oldValue);
-		const newArray = Object.keys(newValue);
-
-		const addedOrChanged = newArray.filter(
-			value => !oldArray.includes(value) || oldValue[value] !== newValue[value],
-		);
-		const removedVals = oldArray.filter(value => !newArray.includes(value));
-
-		return {addedOrChanged, removedVals};
+	for (const key of Object.keys(newValue)) {
+		if (oldValue[key] !== newValue[key]) {
+			setCourseText(key, newValue[key]);
+		}
 	}
 
-	// If for some reason one is an array and the other isn't
-	location.reload();
-	throw new Error(
-		'Exactly one of oldValue and newValue was an array when both or none should have been.',
-	);
+	// Changing text leaves it potentially unsorted
+	sortSidebar();
 };
 
-const refresh = <T extends string[] | Record<string, string>>(
-	name: string,
-	oldValue: T,
-	newValue: T,
-	remote: boolean,
-) => {
-	const sidebar = getSidebar();
+const refreshRemoved = (oldValue: string[], newValue: string[]) => {
+	for (const id of oldValue) {
+		if (!newValue.includes(id)) {
+			setCourseVisibility(id, true);
+		}
+	}
 
-	if (remote && sidebar) {
-		const {removedVals, addedOrChanged} = testDiff(oldValue, newValue);
-
-		if (name === 'replace') {
-			for (const item of removedVals) {
-				// Defaults to the anchor title which is exactly what we want
-				setCourseText(item);
-			}
-
-			if (!Array.isArray(newValue)) {
-				for (const item of addedOrChanged) {
-					setCourseText(item, newValue[item]);
-				}
-			}
-
-			sortSidebar();
-			// Adding anchors leaves the sidebar potentially (slightly) unsorted
-		} else if (name === 'remove') {
-			for (const item of addedOrChanged) {
-				setCourseVisibility(item);
-			}
-			// Removing anchors leaves the sidebar still sorted
-
-			for (const item of removedVals) {
-				setCourseVisibility(item, true);
-			}
+	for (const id of newValue) {
+		if (!oldValue.includes(id)) {
+			setCourseVisibility(id);
 		}
 	}
 };
+
+const refresh
+	= <T,>( // eslint-disable-line @typescript-eslint/comma-dangle
+		cb: (oldValue: T, newValue: T) => void,
+	) =>
+	(_name: string, oldValue: T, newValue: T, remote: boolean) => {
+		if (remote && getSidebar()) {
+			cb(oldValue, newValue);
+		}
+	};
 
 const setupFrontpage = () => {
 	const sidebar = getSidebar();
@@ -264,8 +242,8 @@ const setupFrontpage = () => {
 	if (sidebar) {
 		void cleanFrontpage();
 
-		GM_addValueChangeListener('replace', refresh);
-		GM_addValueChangeListener('remove', refresh);
+		GM_addValueChangeListener('replace', refresh(refreshReplaced));
+		GM_addValueChangeListener('remove', refresh(refreshRemoved));
 
 		const p = sidebar.previousSibling;
 
