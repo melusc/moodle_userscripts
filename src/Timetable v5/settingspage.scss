@@ -16,25 +16,26 @@ $border-color: #30363d;
 $border-style: 2px solid;
 $border-radius: 2px;
 
-@use './components/suggestions-popup' with
-	(
-		$secondary-background-color: $secondary-background-color,
-		$border-color: $border-color,
-		$border-style: $border-style,
-		$border-radius: $border-radius
-	);
+@use './components/suggestions-popup' with (
+	$secondary-background-color: $secondary-background-color,
+	$border-color: $border-color,
+	$border-style: $border-style,
+	$border-radius: $border-radius
+);
 
-@use './components/logged-out' with
-	(
-		$secondary-background-color: $secondary-background-color,
-		$border-color: $border-color,
-		$border-style: $border-style,
-		$border-radius: $border-radius,
-		$text: $text
-	);
+@use './components/logged-out' with (
+	$secondary-background-color: $secondary-background-color,
+	$border-color: $border-color,
+	$border-style: $border-style,
+	$border-radius: $border-radius,
+	$text: $text
+);
 
-@use './components/button-grid' with
-	($text: $text, $border-color: $border-color, $border-style: $border-style);
+@use './components/button-grid' with (
+	$text: $text,
+	$border-color: $border-color,
+	$border-style: $border-style
+);
 
 @import '../shared/styles/reset';
 
