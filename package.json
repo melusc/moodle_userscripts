@@ -57,12 +57,12 @@
 	},
 	"private": true,
 	"scripts": {
-		"build": "yarn lint && yarn run webpack",
+		"build": "yarn fmt && yarn run webpack",
 		"gulp": "gulp start",
-		"lint": "prettier -w . && xo --fix",
+		"fmt": "prettier -w . && xo --fix",
+		"lint": "xo",
 		"serve": "serve dist",
 		"start": "concurrently yarn:gulp yarn:webpack:w -r -k",
-		"test": "xo",
 		"webpack": "webpack -c production.config.js --env PROD",
 		"webpack:w": "webpack -c production.config.js -w"
 	},
