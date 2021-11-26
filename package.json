@@ -34,7 +34,7 @@
 		"gulp-rename": "^2.0.0",
 		"gulp-svgmin": "^4.1.0",
 		"prettier": "^2.5.0",
-		"sass": "^1.43.4",
+		"sass": "^1.43.5",
 		"sass-loader": "^12.3.0",
 		"serve": "^13.0.2",
 		"terser-webpack-plugin": "^5.2.5",
