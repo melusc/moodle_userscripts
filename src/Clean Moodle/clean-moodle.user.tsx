@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.2.0
+// @version   1.2.1
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JXgeW
@@ -192,14 +192,9 @@ const refreshReplaced = (
 	oldValue: Record<string, string>,
 	newValue: Record<string, string>,
 ) => {
-	for (const key of Object.keys(oldValue)) {
-		if (!(key in newValue)) {
-			setCourseText(key);
-		}
-	}
-
-	for (const key of Object.keys(newValue)) {
+	for (const key of Object.keys({...oldValue, ...newValue})) {
 		if (oldValue[key] !== newValue[key]) {
+			// If key only exists in oldValue, newValue[key] is undefined and it resets the text
 			setCourseText(key, newValue[key]);
 		}
 	}
