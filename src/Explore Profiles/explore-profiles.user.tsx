@@ -772,7 +772,7 @@ const getRandomProfile = async (): Promise<UserDataResponse> => {
 	notificationState.from = randProfile;
 	notificationState.to = undefined;
 
-	const profile = (await getProfilesInRange(randProfile, 0))[0];
+	const [profile] = await getProfilesInRange(randProfile, 0);
 
 	if (profile) {
 		return profile;
