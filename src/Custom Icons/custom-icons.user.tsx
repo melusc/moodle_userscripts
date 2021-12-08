@@ -19,6 +19,7 @@ import {render, html} from 'htm/preact';
 import domReady from '@wordpress/dom-ready';
 
 import {popupGetCourses} from '../shared/moodle-functions-v2';
+import {getSidebar} from '../shared/general-functions';
 
 import {setupSettingsPage} from './settingspage';
 import {
@@ -37,11 +38,6 @@ if (location.protocol !== 'https:') {
 }
 
 const isFrontpage = !/^\/customiconspreact/i.test(location.pathname);
-
-const getSidebar = () =>
-	document.querySelector<HTMLUListElement>(
-		'li[aria-labelledby$="label_2_4"] ul[role="group"]',
-	);
 
 const testIfUserLeftCourse = async (id: string) => {
 	const courses = await popupGetCourses('Custom Icons');

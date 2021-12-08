@@ -20,6 +20,7 @@ import {popupGetCourses} from '../shared/moodle-functions-v2';
 import {
 	numericBaseSensitiveCollator,
 	quickSort,
+	getSidebar,
 } from '../shared/general-functions';
 
 import {setupSettingsPage} from './settingspage';
@@ -32,11 +33,6 @@ if (location.protocol !== 'https:') {
 const {isArray} = Array;
 
 const isFrontpage = !/^\/cleanmoodlepreact/i.test(location.pathname);
-
-const getSidebar = () =>
-	document.querySelector<HTMLUListElement>(
-		'li[aria-labelledby$="label_2_4"] ul[role="group"]',
-	);
 
 const SvgSettingsGear = () => (
 	<a
