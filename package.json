@@ -17,7 +17,7 @@
 	"devDependencies": {
 		"@babel/core": "^7.16.0",
 		"@lusc/tsconfig": "^1.0.0",
-		"@types/dompurify": "^2.3.1",
+		"@types/dompurify": "^2.3.2",
 		"@types/file-saver": "^2.0.4",
 		"@types/tampermonkey": "^4.0.5",
 		"babel-loader": "^8.2.3",
