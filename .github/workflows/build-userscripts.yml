@@ -22,8 +22,8 @@ jobs:
 
       - name: Check code style
         run: |
-          yarn run xo
-          yarn prettier -c . "!{**/*,*}.{js,ts}{x,}"
+          yarn run fmt
+          git diff --quiet
 
       - name: Build
         run: yarn run webpack
