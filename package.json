@@ -15,7 +15,7 @@
 	},
 	"description": "",
 	"devDependencies": {
-		"@babel/core": "^7.16.5",
+		"@babel/core": "^7.16.7",
 		"@lusc/tsconfig": "^1.0.0",
 		"@types/dompurify": "^2.3.2",
 		"@types/file-saver": "^2.0.4",
