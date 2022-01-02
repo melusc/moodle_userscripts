@@ -2,7 +2,7 @@
 
 Here you can find some useful userscripts for moodle.
 
-To run these you need to have violentmonkey, tampermonkey, greasemonkey or similar installed in your browser.
+To run these you need to have violentmonkey, tampermonkey [^tampermonkey], greasemonkey or similar installed in your browser.
 
 ## Quick Installation
 
@@ -23,3 +23,5 @@ To run these you need to have violentmonkey, tampermonkey, greasemonkey or simil
 ## About
 
 Currently, all these userscripts are written in typescript and jsx using [preact](https://github.com/preactjs/preact).
+
+[^tampermonkey]: Using [Unconfirmed Marks](https://git.io/JXzhC) currently doesn't work with Tampermonkey. See [issue](https://github.com/Tampermonkey/tampermonkey/issues/1290)

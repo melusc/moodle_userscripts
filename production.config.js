@@ -48,26 +48,6 @@ module.exports = (environment = {}) => ({
 	module: {
 		rules: [
 			{
-				// TODO: Remove this when https://github.com/Tampermonkey/tampermonkey/issues/1290 is resolved
-				// .js because immer is js
-				test: /\.js$/,
-				use: [
-					{
-						loader: 'babel-loader',
-						options: {
-							plugins: [
-								[
-									'babel-plugin-replace-identifiers',
-									{
-										Proxy: 'unsafeWindow.Proxy',
-									},
-								],
-							],
-						},
-					},
-				],
-			},
-			{
 				test: /\.tsx?$/,
 				use: ['ts-loader'],
 			},
