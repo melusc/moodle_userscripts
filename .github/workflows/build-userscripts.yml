@@ -23,7 +23,7 @@ jobs:
       - name: Check code style
         run: |
           yarn run fmt
-          git diff --quiet
+          git --no-pager diff --exit-code
 
       - name: Build
         run: yarn run webpack
