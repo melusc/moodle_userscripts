@@ -66,7 +66,9 @@ class SchulNetzMarks extends Component<
 				<div class="contentwithoutlink">
 					<div class="ucmr-title">
 						Unconfirmed Marks
-						{(state === States.marks || state === States.noMarks || state === States.error) && (
+						{(state === States.marks
+							|| state === States.noMarks
+							|| state === States.error) && (
 							<i
 								role="button"
 								class="icon fa fa-refresh fa-fw ml-1"
