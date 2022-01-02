@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   1.1.1
+// @version   1.1.2
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -66,7 +66,7 @@ class SchulNetzMarks extends Component<
 				<div class="contentwithoutlink">
 					<div class="ucmr-title">
 						Unconfirmed Marks
-						{(state === States.marks || state === States.noMarks) && (
+						{(state === States.marks || state === States.noMarks || state === States.error) && (
 							<i
 								role="button"
 								class="icon fa fa-refresh fa-fw ml-1"
