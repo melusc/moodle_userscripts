@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   1.0.2
+// @version   1.1.0
 // @author    lusc
 // @updateURL https://git.io/JXzjr
 // @include   *://moodle.ksasz.ch/
@@ -26,18 +26,15 @@ import {initSettingsPage} from './settingspage';
 import frontPageStyle from './frontpage.scss';
 import {TimetableStates, Lang, notificationIconUrl} from './consts';
 import {parseTimeToString} from './shared';
+import {
+	getCourses,
+	TimetableStorageValues,
+	TimetableStorageValuesWeek,
+} from './timetable';
 
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
 }
-
-type TimetableStorageValues = {
-	content?: string;
-	id?: string;
-	from: number;
-	to: number;
-};
-type TimetableStorageValuesWeek = Record<string, TimetableStorageValues[]>;
 
 const getHref = (href: string): string => {
 	if (Number.isInteger(Number(href))) {
@@ -84,83 +81,6 @@ const TimetableRow = ({
 	);
 };
 
-const getMinutesSinceMidnight = (): number => {
-	const now = new Date();
-
-	/* ((now)) - ((midnight)) doesn't work because it would be wrong when daylight savings changes
-	 * Instead we use the method below because this always returns what "you can see on the clock"
-	 * With daylight savings 08:00 might be 9 hours after midnight but we'd still want this to behave
-	 * like it's 8 hours since
-	 */
-
-	// prettier-ignore
-	return (
-		(now.getHours() * 60)
-		+ now.getMinutes()
-		+ (now.getSeconds() / 60)
-		+ (now.getMilliseconds() / 60 / 1000)
-	);
-};
-
-const getCourses = (): Readonly<{
-	state: TimetableStates;
-	courses?: Array<TimetableStorageValues | undefined>;
-}> => {
-	const valuesWeek = GM_getValue<TimetableStorageValuesWeek | undefined>(
-		'days',
-	);
-
-	const date = new Date();
-	const minutesOfDay = getMinutesSinceMidnight();
-
-	/* Make monday 0 and friday 4 (sunday -1)
-		it shouldn't get here if weekend
-		but if it does it can handle that */
-	const dayOfWeek = date.getDay() - 1;
-
-	const values = valuesWeek?.[dayOfWeek];
-
-	if (values === undefined || values.length === 0) {
-		return {
-			state: TimetableStates.empty,
-		};
-	}
-
-	const lastValue = values[values.length - 1];
-
-	if (!lastValue || lastValue.to <= minutesOfDay) {
-		return {
-			state: TimetableStates.after,
-		};
-	}
-
-	const firstValue = values[0];
-
-	if (!firstValue || firstValue.from > minutesOfDay) {
-		return {
-			state: TimetableStates.before,
-			courses: [undefined, firstValue],
-		};
-	}
-
-	let currentCourseIdx = 0;
-	let currentCourse: TimetableStorageValues | undefined;
-
-	/* Continue iterating through the courses while "now"
-	is after the course, meaning it has already taken place */
-	while (
-		(currentCourse = values[currentCourseIdx])
-		&& currentCourse.to < minutesOfDay
-	) {
-		++currentCourseIdx;
-	}
-
-	return {
-		state: TimetableStates.during,
-		courses: [currentCourse, values[currentCourseIdx + 1]],
-	};
-};
-
 const notify = (value: TimetableStorageValues) => {
 	const {id, content} = value;
 
@@ -185,7 +105,7 @@ const notify = (value: TimetableStorageValues) => {
 					open(getHref(id));
 				}
 			},
-		}) as undefined | {remove: () => void};
+		}) as undefined | {remove: () => void}; // Allow for timeout also with greasemonkey (which requires .remove)
 
 		if (notification) {
 			setTimeout(() => {
@@ -225,17 +145,14 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 
 	_timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-	setTimeout = (nextNotificationTimeInMinutes: number) => {
-		const currentTimeInMinutes = getMinutesSinceMidnight();
-
-		const delayInMinutes = nextNotificationTimeInMinutes - currentTimeInMinutes;
-		const delay = delayInMinutes * 60 * 1000;
-
+	setTimeout = (timeoutDuration?: number) => {
 		this.clearTimeout();
 
-		this._timeoutId = setTimeout(() => {
-			this.updateCourses(true);
-		}, delay + 200 /* Never fire too early due to rounding errors */);
+		if (timeoutDuration !== undefined) {
+			this._timeoutId = setTimeout(() => {
+				this.updateCourses(true);
+			}, timeoutDuration + 200 /* Never fire too early due to rounding errors */);
+		}
 	};
 
 	clearTimeout = () => {
@@ -248,46 +165,39 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 		this.clearTimeout(); // If exit early it should not fire in future
 
 		/* If it is both holiday
-		 * and weekend, holiday outweighs
-		 * and gets displayed, thats
-		 * why check isHoliday first */
+		 * and weekend, holiday outweighs */
 		if (isHoliday()) {
 			this.setState({
 				timetableState: TimetableStates.holiday,
-			} as FrontPageState);
+			});
 			return;
 		}
+
+		const {courses, state, timeToUpdate} = getCourses(
+			GM_getValue<TimetableStorageValuesWeek | undefined>('days'),
+		);
 
 		if (!isWeekday()) {
 			this.setState({
 				timetableState: TimetableStates.weekend,
 			});
+
+			this.setTimeout(timeToUpdate);
 			return;
 		}
-
-		const {courses, state} = getCourses();
 
 		this.setState({
 			timetableState: state,
 		});
 
+		this.setTimeout(timeToUpdate);
+
 		if (courses) {
-			const [currentCourse, nextCourse] = courses;
+			const [currentCourse] = courses;
 
 			this.setState({
 				courses,
 			});
-
-			/* The current course ends at currentCourse.to,
-				thats when we want a notification
-				If it is currently before school though,
-				we want it to notify when school starts,
-				thats when we use nextCourse.from */
-			const nextNotificationTimeInMinutes
-				= currentCourse?.to ?? nextCourse?.from;
-			if (typeof nextNotificationTimeInMinutes === 'number') {
-				this.setTimeout(nextNotificationTimeInMinutes);
-			}
 
 			if (calledFromTimeout && currentCourse) {
 				notify(currentCourse);
@@ -360,7 +270,10 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 												/* If nextCourse is undefined
 												  there is no next lesson (next lesson
 													is free, after school),
-													so instead we show "no school" */
+													so instead we show "No school" */
+												/* If currentCourse and nextCourse is undefined
+													`timetableState` is `TimetableStates.after` or `.empty`,
+													so it never is the case here */
 												<TimetableRow
 													values={nextCourse ?? {content: Lang.noSchool}}
 												/>
