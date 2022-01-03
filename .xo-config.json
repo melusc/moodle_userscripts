@@ -25,6 +25,14 @@
 				"no-unused-vars": "off",
 				"@typescript-eslint/naming-convention": "off"
 			}
+		},
+		{
+			"files": ["test/**/*"],
+			"plugins": ["jest"],
+			"extends": ["plugin:jest/recommended", "plugin:jest/style"],
+			"rules": {
+				"no-mixed-operators": "off"
+			}
 		}
 	],
 	"rules": {

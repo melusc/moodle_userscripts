@@ -17,7 +17,7 @@ module.exports = (environment = {}) => ({
 		path.resolve(__dirname, 'src/**/*.user.{ts,tsx}'),
 	),
 	output: {
-		path: path.resolve(__dirname, 'dist'),
+		path: path.resolve(__dirname, 'dist/userscript-out'),
 		filename: '[name].user.js',
 		hashFunction: 'xxhash64',
 	},

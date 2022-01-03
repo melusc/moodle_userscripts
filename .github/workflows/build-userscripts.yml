@@ -25,6 +25,9 @@ jobs:
           yarn run fmt
           git --no-pager diff --exit-code
 
+      - name: CI tests
+        run: yarn run test
+
       - name: Build
         run: yarn run webpack
 
@@ -32,5 +35,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./dist/userscript-out
           publish_branch: userscript-out
