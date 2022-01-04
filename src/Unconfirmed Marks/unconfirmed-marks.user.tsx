@@ -67,7 +67,10 @@ class SchulNetzMarks extends Component<
 			this.timeout.clear();
 
 			// Explicitely tell TypeScript setTimeout returns number
-			this.timeout.timeoutId = window.setTimeout(this.loginFromStorage, duration);
+			this.timeout.timeoutId = window.setTimeout(
+				this.loginFromStorage,
+				duration,
+			);
 		},
 		clear: () => {
 			const {timeoutId} = this.timeout;
