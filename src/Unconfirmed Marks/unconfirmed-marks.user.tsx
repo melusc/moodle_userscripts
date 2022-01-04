@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   1.2.1
+// @version   1.2.2
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -87,7 +87,7 @@ class SchulNetzMarks extends Component<
 		const {marks, state, errorMsg, bottomHR} = this.state;
 
 		return (
-			<div class="mod-indent-outer">
+			<div class="mod-indent-outer w-100">
 				<div class="contentwithoutlink">
 					<div class="ucmr-title">
 						Unconfirmed Marks

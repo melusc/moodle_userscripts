@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   1.1.0
+// @version   1.1.1
 // @author    lusc
 // @updateURL https://git.io/JXzjr
 // @include   *://moodle.ksasz.ch/
@@ -221,7 +221,7 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 		const [currentCourse, nextCourse] = courses;
 		return (
 			<div>
-				<div class="mod-indent-outer">
+				<div class="mod-indent-outer w-100">
 					<div class="contentwithoutlink">
 						<div class="no-overflow">
 							<hr />
