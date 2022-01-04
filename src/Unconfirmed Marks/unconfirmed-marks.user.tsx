@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   1.1.2
+// @version   1.2.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -56,6 +56,28 @@ class SchulNetzMarks extends Component<
 		username: createRef<HTMLInputElement>(),
 		password: createRef<HTMLInputElement>(),
 		page: createRef<HTMLInputElement>(),
+	};
+
+	timeout: {
+		set: (duration: number) => void;
+		clear: () => void;
+		timeoutId?: number | undefined;
+	} = {
+		set: (duration: number) => {
+			this.timeout.clear();
+
+			// Explicitely tell TypeScript setTimeout returns number
+			this.timeout.timeoutId = window.setTimeout(this.refresh, duration);
+		},
+		clear: () => {
+			const {timeoutId} = this.timeout;
+
+			if (timeoutId !== undefined) {
+				// Explicitely tell TypeScript clearTimeout expects number
+				window.clearTimeout(timeoutId);
+				delete this.timeout.timeoutId;
+			}
+		},
 	};
 
 	render = () => {
@@ -177,6 +199,8 @@ class SchulNetzMarks extends Component<
 	};
 
 	loginFromStorage = () => {
+		this.timeout.clear();
+
 		const username = GM_getValue<string | undefined>('username');
 		const password = GM_getValue<string | undefined>('password');
 		const page = GM_getValue<string | undefined>('page');
@@ -234,6 +258,8 @@ class SchulNetzMarks extends Component<
 		password: string;
 		page: string;
 	}) => {
+		this.timeout.clear();
+
 		const marksResult = await getMarks({
 			username,
 			password,
@@ -246,6 +272,10 @@ class SchulNetzMarks extends Component<
 				return;
 			}
 
+			// Update every 30 minutes
+			// Only if network error or similar
+			this.timeout.set(30 * 60 * 1000);
+
 			this.setState({
 				state: States.error,
 				errorMsg: marksResult.errorMsg,
@@ -253,6 +283,9 @@ class SchulNetzMarks extends Component<
 
 			return;
 		}
+
+		// Update every 30 minutes
+		this.timeout.set(30 * 60 * 1000);
 
 		if (marksResult.marks === null) {
 			this.setState({
