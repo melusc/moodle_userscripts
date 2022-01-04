@@ -177,20 +177,19 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 			GM_getValue<TimetableStorageValuesWeek | undefined>('days'),
 		);
 
+		this.setTimeout(timeToUpdate);
+
 		if (!isWeekday()) {
 			this.setState({
 				timetableState: TimetableStates.weekend,
 			});
 
-			this.setTimeout(timeToUpdate);
 			return;
 		}
 
 		this.setState({
 			timetableState: state,
 		});
-
-		this.setTimeout(timeToUpdate);
 
 		if (courses) {
 			const [currentCourse] = courses;
