@@ -83,7 +83,7 @@ class SchulNetzMarks extends Component<
 		},
 	};
 
-	render = () => {
+	render() {
 		const {marks, state, errorMsg, bottomHR} = this.state;
 
 		return (
@@ -163,7 +163,7 @@ class SchulNetzMarks extends Component<
 				</div>
 			</div>
 		);
-	};
+	}
 
 	refresh: h.JSX.MouseEventHandler<HTMLElement> = event_ => {
 		event_.preventDefault();
@@ -223,7 +223,7 @@ class SchulNetzMarks extends Component<
 		}
 	};
 
-	override componentDidMount = () => {
+	override componentDidMount() {
 		this.loginFromStorage();
 
 		GM_addValueChangeListener(
@@ -238,7 +238,7 @@ class SchulNetzMarks extends Component<
 		GM_registerMenuCommand('Toggle divider', () => {
 			GM_setValue('bottomHR', !GM_getValue('bottomHR'));
 		});
-	};
+	}
 
 	logout = (
 		credentialsToRemove: Array<'username' | 'password' | 'page'> = [],

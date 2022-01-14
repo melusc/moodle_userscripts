@@ -204,7 +204,7 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 		}
 	};
 
-	override componentDidMount = () => {
+	override componentDidMount() {
 		this.updateCourses();
 
 		const listener = () => {
@@ -214,9 +214,9 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 		GM_addValueChangeListener('days', listener);
 
 		GM_addValueChangeListener('isHoliday', listener);
-	};
+	}
 
-	render = () => {
+	render() {
 		const {timetableState, courses} = this.state;
 		const [currentCourse, nextCourse] = courses;
 		return (
@@ -291,7 +291,7 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 				</div>
 			</div>
 		);
-	};
+	}
 }
 
 const initFrontpage = () => {

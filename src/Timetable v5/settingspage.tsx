@@ -129,7 +129,7 @@ class SettingsPage extends Component<
 		this.callbacksAfterLogin.add(this.fetchCourses);
 	}
 
-	render = () => {
+	render() {
 		const {
 			loggedOutCallback,
 			handleButtonNavigate,
@@ -183,7 +183,7 @@ class SettingsPage extends Component<
 				/>
 			</>
 		);
-	};
+	}
 
 	resetSaveValidity = () => {
 		this.setState({
@@ -356,7 +356,7 @@ class SettingsPage extends Component<
 		);
 	};
 
-	override componentDidMount = async () => {
+	override async componentDidMount() {
 		document.body.addEventListener('focusout', () => {
 			this.setState({
 				focusedElement: undefined,
@@ -390,7 +390,7 @@ class SettingsPage extends Component<
 		}
 
 		await this.logout(true);
-	};
+	}
 
 	handleTableInput
 		= (

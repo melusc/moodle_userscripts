@@ -236,7 +236,7 @@ class Main extends Component<MainProps, MainState> {
 		copy: createRef<HTMLSelectElement>(),
 	};
 
-	render = () => {
+	render() {
 		const {refs_, props, handleInput, resetForm: reset} = this;
 		const {selected} = this.state;
 		const {selectedCourse, courses} = props;
@@ -344,7 +344,7 @@ class Main extends Component<MainProps, MainState> {
 				</div>
 			</div>
 		);
-	};
+	}
 
 	resetForm = () => {
 		this.refs_.form.current?.reset();
@@ -616,7 +616,7 @@ class SettingsPage extends Component<
 		this.callbacksAfterLogin.add(this.setCourses);
 	}
 
-	render = () => {
+	render() {
 		const {
 			resetIcon,
 			selectCourse,
@@ -657,9 +657,9 @@ class SettingsPage extends Component<
 				</div>
 			</>
 		);
-	};
+	}
 
-	override componentDidMount = async () => {
+	override async componentDidMount() {
 		const token = await this.getToken();
 		if (token) {
 			this.callbackAfterLoginHandler(token);
@@ -670,7 +670,7 @@ class SettingsPage extends Component<
 				this.notify(undefined);
 			}
 		});
-	};
+	}
 
 	notify = (notification: string | undefined) => {
 		this.setState({

@@ -287,7 +287,7 @@ class SettingsPage extends Component<
 		this.callbacksOnLoggedIn.add(this.setCourses);
 	}
 
-	render = () => {
+	render() {
 		const {courses, selected, loggedOut, loadingCourses} = this.state;
 		const {
 			handleSidebarClick,
@@ -324,7 +324,7 @@ class SettingsPage extends Component<
 				)}
 			</div>
 		);
-	};
+	}
 
 	setCourses = async (token: string) => {
 		let coursesObject: Record<string, string>;
@@ -421,13 +421,13 @@ class SettingsPage extends Component<
 		}
 	};
 
-	override componentDidMount = () => {
+	override componentDidMount() {
 		void this.getToken().then(token => {
 			if (token) {
 				this.callCallbacksOnLogIn(token);
 			}
 		});
-	};
+	}
 
 	handleMainKeydown: JSX.KeyboardEventHandler<HTMLInputElement> = event_ => {
 		if (event_.key === 'Enter') {
