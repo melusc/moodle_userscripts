@@ -34,8 +34,13 @@ import type {UserDataResponse} from './explore-profiles.d';
 
 dayjs.extend(dayjsPluginRelativeTime);
 
-let CONTACTS: number[];
+let CONTACTS: readonly number[];
 let USER_ID: number;
+
+// Typescript can't handle readonly arrays with Array.isArray
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isReadonlyArray = (arg0: any): arg0 is readonly any[] =>
+	Array.isArray(arg0);
 
 type MainState = {
 	loaded: boolean;
@@ -440,7 +445,7 @@ const Main = () => {
 								</div>
 							</section>
 						)}
-						{Array.isArray(courses) && courses.length > 0 && (
+						{isReadonlyArray(courses) && courses.length > 0 && (
 							<section class="node_category card d-inline-block w-100 mb-3">
 								<div class="card-body">
 									<h3 class="lead">Course details</h3>
@@ -849,7 +854,7 @@ const fetchNewProfile = async (action: number | 'rand') => {
 
 	document.title = `${profile.fullname}: Public profile`;
 
-	if (!Array.isArray(CONTACTS)) {
+	if (!isReadonlyArray(CONTACTS)) {
 		CONTACTS = await getContacts(USER_ID);
 	}
 
