@@ -1025,10 +1025,10 @@
   resolved "https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-1.6.0.tgz#2c275aa05c895eccebbfc34cfb223c6e8bd591a2"
   integrity sha512-ZkVeqEmRpBV2GHvjjUZqEai2PpUbuq8Bqd//vEYsp63J8WyexI8ppCqVS3Zs0QADf6aWuPdU+0XsPI647PVlQA==
 
-"@wordpress/dom-ready@^3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@wordpress/dom-ready/-/dom-ready-3.2.3.tgz#da3e547c0aeba4e92ae67be4e796418081c6952c"
-  integrity sha512-AvHrfYFflycWRX8CIU7UGty05aXrKvILwrNT2YRXmOmgh+POud98QQU54hitwL2cyVkWUt8dvCNRK4nnjBqqJQ==
+"@wordpress/dom-ready@^3.3.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/dom-ready/-/dom-ready-3.3.0.tgz#9cc2055bd804f0a0f94e10b58876c72f71a00937"
+  integrity sha512-iQD0/oCJPohKabnheW7TQCWrhzRIVLoytUYoyiLPa7OJnFS0PucJs9I4NpY5oNx3uMySc0QGTsOdPEeHiWXKeQ==
   dependencies:
     "@babel/runtime" "^7.16.0"
 
