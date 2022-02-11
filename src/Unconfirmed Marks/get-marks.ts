@@ -10,7 +10,7 @@ export type MarksRow = {
 
 type GetMarksSuccessful = {
 	error: false;
-	marks: MarksRow[] | null;
+	marks: MarksRow[] | undefined;
 };
 
 type GetMarksError = {
@@ -157,9 +157,10 @@ export const getMarks = async ({
 		null,
 		XPathResult.FIRST_ORDERED_NODE_TYPE,
 		null,
+		// eslint-disable-next-line @typescript-eslint/ban-types
 	).singleNodeValue as HTMLTableElement | null;
 
-	if (table === null) {
+	if (!table) {
 		return {
 			error: true,
 			shouldLogOut: false,
@@ -200,6 +201,7 @@ export const getMarks = async ({
 		null,
 		XPathResult.FIRST_ORDERED_NODE_TYPE,
 		null,
+		// eslint-disable-next-line @typescript-eslint/ban-types
 	).singleNodeValue as HTMLAnchorElement | null;
 
 	const logoutPath = anchor?.getAttribute('href');
@@ -214,6 +216,6 @@ export const getMarks = async ({
 
 	return {
 		error: false,
-		marks: allConfirmed || marks.length === 0 ? null : marks,
+		marks: allConfirmed || marks.length === 0 ? undefined : marks,
 	};
 };

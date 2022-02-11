@@ -918,6 +918,7 @@ const fetchNewProfile = async (action: number | 'rand') => {
 			null,
 			XPathResult.FIRST_ORDERED_NODE_TYPE,
 			null,
+			// eslint-disable-next-line @typescript-eslint/ban-types
 		).singleNodeValue as HTMLLIElement | null;
 
 		if (li) {

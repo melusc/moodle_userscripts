@@ -178,13 +178,13 @@ const initDownload = async (target: HTMLButtonElement) => {
 				GM_xmlhttpRequest({
 					url,
 					method: 'HEAD',
-					onerror: () => {
+					onerror() {
 						resolve(defaultFile);
 					},
-					ontimeout: () => {
+					ontimeout() {
 						resolve(defaultFile);
 					},
-					onload: ({finalUrl}) => {
+					onload({finalUrl}) {
 						resolve(`[InternetShortcut]\nURL=${finalUrl}`);
 					},
 				});

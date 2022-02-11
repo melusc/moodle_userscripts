@@ -457,10 +457,10 @@ class Main extends Component<MainProps, MainState> {
 			timeout: 15_000,
 			responseType: 'blob',
 			anonymous: true,
-			onerror: () => {
+			onerror() {
 				notify(ERROR_MSG.error);
 			},
-			ontimeout: () => {
+			ontimeout() {
 				notify(ERROR_MSG.timeout);
 			},
 			onload: response => {
@@ -489,6 +489,7 @@ class Main extends Component<MainProps, MainState> {
 		// Read as text to not have to convert from base64
 		if (blob.type === 'image/svg+xml') {
 			fr.addEventListener('load', async () => {
+				// eslint-disable-next-line @typescript-eslint/ban-types
 				const result = fr.result as string | null;
 
 				if (typeof result !== 'string') {
@@ -509,6 +510,7 @@ class Main extends Component<MainProps, MainState> {
 		}
 
 		fr.addEventListener('load', () => {
+			// eslint-disable-next-line @typescript-eslint/ban-types
 			const result = fr.result as string | null;
 
 			if (typeof result !== 'string') {

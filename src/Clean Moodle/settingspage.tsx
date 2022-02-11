@@ -484,13 +484,16 @@ class SettingsPage extends Component<
 	};
 
 	removeSelectedIfEqualId = (id: string) => {
-		this.setState(({selected}): Pick<SettingsPageState, 'selected'> | null => {
-			if (selected.isSelected && selected.courseId === id) {
-				return {selected: {isSelected: false}};
-			}
+		this.setState(
+			// eslint-disable-next-line @typescript-eslint/ban-types
+			({selected}): Pick<SettingsPageState, 'selected'> | null => {
+				if (selected.isSelected && selected.courseId === id) {
+					return {selected: {isSelected: false}};
+				}
 
-			return null;
-		});
+				return null;
+			},
+		);
 	};
 
 	updateCourseById = async (id: string) => {

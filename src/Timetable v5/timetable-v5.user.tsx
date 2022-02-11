@@ -100,7 +100,7 @@ const notify = (value: TimetableStorageValues) => {
 			title: 'Now',
 			image: notificationIconUrl,
 			timeout,
-			onclick: () => {
+			onclick() {
 				if (id !== undefined) {
 					open(getHref(id));
 				}
