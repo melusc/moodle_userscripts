@@ -26,12 +26,15 @@ if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
 }
 
+const expectNever = /* #__PURE__ */(_input: never): void => {/* compile-time check only, nothing here */};
+
 const enum States {
 	loading,
 	error,
 	marks,
 	noMarks,
 	loggedOut,
+	offline,
 }
 
 type SchulNetzMarksState = {
@@ -121,6 +124,10 @@ class SchulNetzMarks extends Component<
 
 					{state === States.noMarks && (
 						<div>Sie haben alle Noten bestätigt.</div>
+					)}
+
+					{state === States.offline && (
+						<div>Offline</div>
 					)}
 
 					{state === States.loggedOut && (
@@ -269,39 +276,60 @@ class SchulNetzMarks extends Component<
 			page,
 		});
 
-		if (marksResult.error) {
-			if (marksResult.shouldLogOut) {
-				this.logout(marksResult.credentialsToRemove);
-				return;
+		switch (marksResult.type) {
+			case 'error': {
+				// Update every 30 minutes
+				// Only if network error or similar
+				this.timeout.set(30 * 60 * 1000);
+
+				this.setState({
+					state: States.error,
+					errorMsg: marksResult.errorMsg,
+				});
+				break;
 			}
 
-			// Update every 30 minutes
-			// Only if network error or similar
-			this.timeout.set(30 * 60 * 1000);
+			case 'loggedout': {
+				this.logout(marksResult.credentialsToRemove);
+				break;
+			}
 
-			this.setState({
-				state: States.error,
-				errorMsg: marksResult.errorMsg,
-			});
+			case 'success': {
+				// Update every 30 minutes
+				this.timeout.set(30 * 60 * 1000);
 
-			return;
+				if (marksResult.marks === undefined) {
+					this.setState({
+						state: States.noMarks,
+					});
+
+					return;
+				}
+
+				this.setState({
+					marks: marksResult.marks,
+					state: States.marks,
+				});
+				break;
+			}
+
+			case 'offline': {
+				this.setState({
+					state: States.offline,
+				});
+
+				addEventListener('online', () => {
+					this.loginFromStorage();
+				}, {once: true});
+
+				break;
+			}
+
+			default: {
+				expectNever(marksResult);
+				// Nothing
+			}
 		}
-
-		// Update every 30 minutes
-		this.timeout.set(30 * 60 * 1000);
-
-		if (marksResult.marks === null) {
-			this.setState({
-				state: States.noMarks,
-			});
-
-			return;
-		}
-
-		this.setState({
-			marks: marksResult.marks,
-			state: States.marks,
-		});
 	};
 }
 

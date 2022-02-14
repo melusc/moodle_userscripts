@@ -9,26 +9,29 @@ export type MarksRow = {
 };
 
 type GetMarksSuccessful = {
-	error: false;
+	type: 'success';
 	marks: MarksRow[] | undefined;
 };
 
 type GetMarksError = {
-	error: true;
-	shouldLogOut: false;
+	type: 'error';
 	errorMsg: string;
 };
 
 type GetMarksLoggedOut = {
-	error: true;
-	shouldLogOut: true;
+	type: 'loggedout';
 	credentialsToRemove: Array<'username' | 'password' | 'page'>;
+};
+
+type GetMarksOffline = {
+	type: 'offline';
 };
 
 export type GetMarksResponse =
 	| GetMarksError
 	| GetMarksSuccessful
-	| GetMarksLoggedOut;
+	| GetMarksLoggedOut
+	| GetMarksOffline;
 
 export const getMarks = async ({
 	username,
@@ -57,25 +60,28 @@ export const getMarks = async ({
 	} catch (error: unknown) {
 		console.error(error);
 
+		if (!navigator.onLine) {
+			return {
+				type: 'offline',
+			};
+		}
+
 		return {
-			error: true,
-			shouldLogOut: false,
+			type: 'error',
 			errorMsg: `An error occurred fetching "/${page}/loginto.php"`,
 		};
 	}
 
 	if (loginPageResponse.status === 404) {
 		return {
-			error: true,
-			shouldLogOut: true,
+			type: 'loggedout',
 			credentialsToRemove: ['page'],
 		};
 	}
 
 	if (loginPageResponse.status !== 200) {
 		return {
-			error: true,
-			shouldLogOut: false,
+			type: 'error',
 			errorMsg: `An error occurred fetching "/${page}/loginto.php": "${loginPageResponse.statusText}"`,
 		};
 	}
@@ -91,8 +97,7 @@ export const getMarks = async ({
 
 	if (!loginHashElement) {
 		return {
-			error: true,
-			shouldLogOut: false,
+			type: 'error',
 			errorMsg: 'Could not get loginhash.',
 		};
 	}
@@ -128,16 +133,14 @@ export const getMarks = async ({
 		/* If the creds are incorrect it won't throw
 				 That scenario is handled below */
 		return {
-			error: true,
-			shouldLogOut: false,
+			type: 'error',
 			errorMsg: 'An error occurred trying to log in.',
 		};
 	}
 
 	if (/loginto\.php/i.test(frontPageResponse.finalUrl)) {
 		return {
-			error: true,
-			shouldLogOut: true,
+			type: 'loggedout',
 			credentialsToRemove: ['password'],
 		};
 	}
@@ -162,8 +165,7 @@ export const getMarks = async ({
 
 	if (!table) {
 		return {
-			error: true,
-			shouldLogOut: false,
+			type: 'error',
 			errorMsg: 'Could not find table with marks.',
 		};
 	}
@@ -215,7 +217,7 @@ export const getMarks = async ({
 	}
 
 	return {
-		error: false,
+		type: 'success',
 		marks: allConfirmed || marks.length === 0 ? undefined : marks,
 	};
 };
