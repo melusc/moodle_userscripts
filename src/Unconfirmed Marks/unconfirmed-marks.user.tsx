@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   1.2.3
+// @version   1.3.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/
 // @include   *://moodle.ksasz.ch/?*
@@ -26,7 +26,9 @@ if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
 }
 
-const expectNever = /* #__PURE__ */(_input: never): void => {/* compile-time check only, nothing here */};
+const expectNever = /* #__PURE__ */ (_input: never): void => {
+	/* Compile-time check only, nothing here */
+};
 
 const enum States {
 	loading,
@@ -126,9 +128,7 @@ class SchulNetzMarks extends Component<
 						<div>Sie haben alle Noten bestätigt.</div>
 					)}
 
-					{state === States.offline && (
-						<div>Offline</div>
-					)}
+					{state === States.offline && <div>Offline</div>}
 
 					{state === States.loggedOut && (
 						<form class="login-form" onSubmit={this.handleLogin}>
@@ -318,9 +318,13 @@ class SchulNetzMarks extends Component<
 					state: States.offline,
 				});
 
-				addEventListener('online', () => {
-					this.loginFromStorage();
-				}, {once: true});
+				addEventListener(
+					'online',
+					() => {
+						this.loginFromStorage();
+					},
+					{once: true},
+				);
 
 				break;
 			}
