@@ -45,6 +45,7 @@ export const getNextDay = (
 	let offsetDays = 1;
 	let values: TimetableStorageValuesWeek[string] | undefined;
 
+	// While the current value is either not defined or empty
 	while (
 		(!(values = valuesWeek[`${day}`]) || values.length === 0)
 		&& offsetDays <= 7
