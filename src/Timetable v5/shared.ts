@@ -7,11 +7,8 @@ export const parseTimeToString = (timeInMinutes: number): string => {
 	return `${hours}:${paddedMinutes}`;
 };
 
-const timeValidationRegex = new RegExp(
-	'^([0-1]?[0-9]' // 0 - 19 hours
-		+ '|2[0-3])' // Or 20 - 23 hours
-		+ ':([0-5][0-9])$', // 00 - 59 minutes
-);
+// ((0 - 19) or (20 - 23)):(00-59)
+const timeValidationRegex = /^([01]?\d|2[0-3]):([0-5]\d)$/;
 
 export const parseStringToTime = (string: string): number | false => {
 	string = string.trim();
