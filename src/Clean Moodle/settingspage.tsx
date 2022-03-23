@@ -7,10 +7,7 @@ import {
 	logout,
 	getCredentials,
 } from '../shared/moodle-functions-v2';
-import {
-	numericBaseSensitiveCollator,
-	quickSort,
-} from '../shared/general-functions';
+import {numericBaseSensitiveCollator} from '../shared/general-functions';
 
 import {removeElementFromStorage} from './shared';
 import style from './settingspage.scss';
@@ -18,8 +15,7 @@ import {SvgArrowBack, SvgCheck, SvgX} from './icons';
 
 /** Sort courses, mutates the array */
 const sortCoursesArray = (array: Course[]) =>
-	quickSort(
-		array,
+	array.sort(
 		(
 			{courseName: courseNameA, replacedName: replacedNameA},
 			{courseName: courseNameB, replacedName: replacedNameB},

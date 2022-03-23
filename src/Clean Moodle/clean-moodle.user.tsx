@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.2.1
+// @version   1.2.2
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JXgeW
@@ -19,7 +19,6 @@ import domReady from '@wordpress/dom-ready';
 import {popupGetCourses} from '../shared/moodle-functions-v2';
 import {
 	numericBaseSensitiveCollator,
-	quickSort,
 	getSidebar,
 } from '../shared/general-functions';
 
@@ -134,7 +133,7 @@ const sortSidebar = () => {
 		...sidebar.querySelectorAll<HTMLLIElement>(':scope > li.type_course'),
 	];
 
-	quickSort(children, (a, b) => {
+	children.sort((a, b) => {
 		const aText = a.firstElementChild?.textContent;
 		//              ^ if we're on the courses page it has more text like "participants" or "grades"
 		// but we only want to sort it by the course's name
