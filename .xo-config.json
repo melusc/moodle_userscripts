@@ -86,7 +86,14 @@
 			}
 		],
 		"react/prefer-stateless-function": "error",
-		"react/prop-types": "off"
+		"react/prop-types": "off",
+		"react/function-component-definition": [
+			"error",
+			{
+				"namedComponents": "arrow-function",
+				"unnamedComponents": "arrow-function"
+			}
+		]
 	},
 	"settings": {
 		"react": {
