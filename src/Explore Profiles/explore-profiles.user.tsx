@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   1.0.2
+// @version   1.1.0
 // @author    lusc
 // @updateURL https://git.io/JXzjB
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -759,16 +759,18 @@ const getProfilesInRange = async (
 	return responseJSON;
 };
 
+// Replace "&amp;" last
+// otherwise "&amp;lt;" would become "<"
 const unescapeHTML = (html: string) =>
 	`${html}`
-		.replace(/&amp;/g, '&')
 		.replace(/&lt;/g, '<')
 		.replace(/&gt;/g, '>')
 		.replace(/&quot;/g, '"')
 		.replace(
 			/&#039;|&apos;/g /* Second one just in case because I don't know how moodle escapes apostrophies */,
 			"'",
-		);
+		)
+		.replace(/&amp;/g, '&');
 
 const getRandomProfile = async (): Promise<UserDataResponse> => {
 	const highest = await getHighest();
