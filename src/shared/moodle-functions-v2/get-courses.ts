@@ -69,11 +69,11 @@ export const getCourses_throwable = async (
 		fullname: string;
 	}>;
 
-	const result: GetCoursesReturnValue = {};
+	cachedCourses = {};
 
 	for (const {id, fullname} of data) {
-		result[id] = fullname;
+		cachedCourses[id] = fullname;
 	}
 
-	return result;
+	return cachedCourses;
 };
