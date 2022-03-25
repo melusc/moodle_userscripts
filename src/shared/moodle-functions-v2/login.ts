@@ -47,5 +47,6 @@ export const login_throwable = async ({
 		GM.setValue('password', password),
 	]);
 
+	cachedToken = responseJSON.token;
 	return responseJSON.token;
 };
