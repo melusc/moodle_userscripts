@@ -2558,10 +2558,10 @@ eslint-config-prettier@^8.3.0:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.5.0.tgz#5a81680ec934beca02c7b1a61cf8ca34b66feab1"
   integrity sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==
 
-eslint-config-xo-react@^0.26.0:
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-xo-react/-/eslint-config-xo-react-0.26.0.tgz#8e3a50fe95b44ecaf832072d0e2a3ac3fc07fab2"
-  integrity sha512-vOcDWLrJDvkyprTHEalBwbPk01YH1Y9x3GPR+ZMhBWcIRQCP8wzcAUfsRQ6jXD2mal0Ywt+x0DWGMb+9RpvT5A==
+eslint-config-xo-react@^0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-xo-react/-/eslint-config-xo-react-0.27.0.tgz#aeb7593bf3d8fb9fc7fecfcbd7240f0daddb5cb0"
+  integrity sha512-wiV215xQIn71XZyyVfaOXHaFpR1B14IJttwOjMi/eqUK1s+ojJdHr7eHqTLaGUfh6FKgWha1QNwePlIXx7mBUg==
 
 eslint-config-xo-typescript@^0.50.0:
   version "0.50.0"
