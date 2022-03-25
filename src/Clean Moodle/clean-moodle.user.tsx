@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.2.2
+// @version   1.3.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JXgeW
@@ -113,6 +113,11 @@ const setCourseVisibility = (id: string, visible = false) => {
 		// don't remove it
 		if (li && !li.classList.contains('contains_branch')) {
 			li.classList.toggle('hide', !visible);
+			if (visible) {
+				li.classList.remove('hide', 'hidden');
+			} else {
+				li.classList.add('hide', 'hidden');
+			}
 		}
 	} else {
 		void testForInexistantCourse(id);
