@@ -10,7 +10,7 @@
 		"immer": "^9.0.12",
 		"jszip": "^3.8.0",
 		"nanoid": "^3.3.2",
-		"preact": "^10.6.6",
+		"preact": "^10.7.0",
 		"valtio": "^1.5.0"
 	},
 	"description": "",
