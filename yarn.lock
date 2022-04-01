@@ -7202,6 +7202,11 @@ urix@^0.1.0:
   resolved "https://registry.yarnpkg.com/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
 
+use-sync-external-store@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.0.0.tgz#d98f4a9c2e73d0f958e7e2d2c2bfb5f618cbd8fd"
+  integrity sha512-AFVsxg5GkFg8GDcxnl+Z0lMAz9rE8DGJCc28qnBuQF7lac57B5smLcT37aXpXIIPz75rW4g3eXHPjhHwdGskOw==
+
 use@^3.1.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
@@ -7241,12 +7246,13 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-valtio@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/valtio/-/valtio-1.4.0.tgz#361deb6aefaf28a607c691bf6de8580e319fa0f3"
-  integrity sha512-mKFSkBwHjmspIfaoLwAElSZvNC0A6eRbA7iM7Tx8kIxnrLYBIaaOMcztdIPLVrG4QHUQov0XwmoxeJIvqKFoWA==
+valtio@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/valtio/-/valtio-1.5.0.tgz#a881ca81ff729ad754523ebfe8a85a0afcaf5b5f"
+  integrity sha512-HfhX/BmRlIlV3AyBKv0nQ5I3SRKOB0giqhF8Gayb8Pnru0HvZQlzRstuXBppHtTBGmuJJOtCGv5jpdUfWEgeqA==
   dependencies:
     proxy-compare "2.1.0"
+    use-sync-external-store "1.0.0"
 
 value-or-function@^3.0.0:
   version "3.0.0"
