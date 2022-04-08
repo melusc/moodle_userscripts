@@ -47,11 +47,13 @@ body {
 	color: $text;
 	background-color: $background-color;
 }
+
 .container {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
+
 .table-center {
 	display: flex;
 	flex-direction: column;
@@ -65,15 +67,18 @@ body {
 	width: 100%;
 	margin-top: 0.5em;
 }
+
 .table-cell.remove-row {
 	color: $text;
 }
+
 .table-row {
 	display: flex;
 	width: 100%;
 	// align-items: center;
 	margin-bottom: 0.3em;
 }
+
 .table-cell {
 	width: 50%;
 	padding: 0.3em 1em;
@@ -140,6 +145,7 @@ body {
 	&.time-from {
 		text-align: right;
 	}
+
 	&.time-to {
 		text-align: left;
 	}
@@ -171,6 +177,7 @@ body {
 .save-failed {
 	--color: #{$red};
 }
+
 .save-successful {
 	--color: #{$green};
 }
@@ -179,6 +186,7 @@ body {
 	from {
 		border-color: var(--color);
 	}
+
 	to {
 		border-color: $border-color;
 	}

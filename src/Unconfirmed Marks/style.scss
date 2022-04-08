@@ -45,11 +45,13 @@
 
 		animation: ucmr-spin 2s infinite linear;
 	}
+
 	.ucmr-row {
 		display: grid;
 		grid-template-columns: 30% 45% 15% 10%;
 	}
 }
+
 @keyframes ucmr-spin {
 	0% {
 		-webkit-transform: rotate(0deg);
@@ -58,6 +60,7 @@
 		-o-transform: rotate(0deg);
 		transform: rotate(0deg);
 	}
+
 	100% {
 		-webkit-transform: rotate(360deg);
 		-moz-transform: rotate(360deg);

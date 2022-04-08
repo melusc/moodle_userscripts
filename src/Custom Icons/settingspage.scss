@@ -40,6 +40,7 @@ html {
 	--padding-horizontal: 0;
 	--padding-vertical: 0.5%;
 }
+
 @include media(768px) {
 	--sidebar-flex: 0 0 32%;
 	--main-flex: 0 0 68%;
@@ -51,6 +52,7 @@ html {
 	--sidebar-flex: 0 0 25%;
 	--main-flex: 0 0 75%;
 }
+
 @include media(1200px) {
 	--sidebar-flex: 0 0 20%;
 	--main-flex: 0 0 80%;
@@ -88,6 +90,7 @@ html {
 		&[data-removed='false'] {
 			color: $green;
 		}
+
 		&[data-removed='true'] {
 			color: $red;
 		}
@@ -102,6 +105,7 @@ h2 {
 h2 {
 	font-size: 1.875rem;
 }
+
 h3 {
 	font-size: 1.64rem;
 }
@@ -109,6 +113,7 @@ h3 {
 input {
 	margin-top: 5px;
 }
+
 input,
 button,
 select {
@@ -161,10 +166,12 @@ select {
 	&.svg-del-icon {
 		color: $red;
 	}
+
 	&.svg-del-icon {
 		margin-left: 0;
 		margin-right: 5px;
 	}
+
 	&.svg-close {
 		color: $dark-text;
 		grid-column-start: 3;
@@ -199,6 +206,7 @@ span.icon {
 	padding-left: var(--padding-horizontal);
 	padding-top: var(--padding-vertical);
 }
+
 .main {
 	padding: 1.25rem 2.25rem;
 	border: $border;
@@ -245,11 +253,13 @@ span.icon {
 	border-radius: 4px;
 	padding: 1em;
 }
+
 .notification-string {
 	grid-area: 2 / 2 / 3 / 3;
 	text-align: center;
 	color: $dark-text;
 }
+
 .blur {
 	filter: blur(4px);
 	overflow: hidden;

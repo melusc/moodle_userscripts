@@ -4,9 +4,11 @@ div.folders-inline-icon {
 	cursor: pointer;
 	user-select: none;
 }
+
 div.folders-inline-icon-div {
 	display: inline;
 }
+
 .folder-parent li {
 	margin-left: 24px;
 	padding-left: none;
@@ -28,12 +30,15 @@ div.folders-inline-icon-div {
 	0% {
 		content: '';
 	}
+
 	33% {
 		content: '.';
 	}
+
 	67% {
 		content: '..';
 	}
+
 	100% {
 		content: '...';
 	}
