@@ -11,7 +11,7 @@
 		"jszip": "^3.9.1",
 		"nanoid": "^3.3.2",
 		"preact": "^10.7.1",
-		"valtio": "^1.5.0"
+		"valtio": "^1.5.2"
 	},
 	"description": "",
 	"devDependencies": {
