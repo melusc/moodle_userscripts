@@ -142,7 +142,6 @@ export const Folder: FunctionalComponent<{
 
 		if (contents) {
 			setContents(contents);
-			setIsHidden(false);
 		}
 	};
 
@@ -170,7 +169,6 @@ export const Folder: FunctionalComponent<{
 					<RefreshIcon
 						onClick={() => {
 							setContents(undefined);
-							setIsHidden(false);
 							void fetchContents(folderId, sectionId, true);
 						}}
 					/>,
