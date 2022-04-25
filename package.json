@@ -64,7 +64,7 @@
 		"gulp": "gulp start",
 		"fmt": "prettier -w . && xo --fix",
 		"lint": "xo",
-		"serve": "serve dist",
+		"serve": "serve dist/userscript-out",
 		"start": "concurrently yarn:gulp yarn:webpack:w -r -k",
 		"webpack": "webpack -c production.config.js --env PROD",
 		"webpack:w": "webpack -c production.config.js -w"
