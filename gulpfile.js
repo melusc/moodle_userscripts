@@ -4,7 +4,7 @@ const cache = require('gulp-cached');
 const rename = require('gulp-rename');
 
 const paths = {
-  svg: ['./src/**/*.svg', '!./src/**/*.min.svg'],
+	svg: ['./src/**/*.svg', '!./src/**/*.min.svg'],
 	svgDest: './src',
 };
 
@@ -14,8 +14,8 @@ const minSvg = () =>
 		.pipe(
 			svgmin({
 				multipass: true,
-				precision: 3,
 				full: true,
+				precision: 3,
 				plugins: [
 					'sortAttrs',
 					'removeScriptElement',
