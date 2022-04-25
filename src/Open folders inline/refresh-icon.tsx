@@ -1,30 +1,17 @@
-import {h, JSX} from 'preact';
-import {useEffect, useState} from 'preact/hooks';
-import {refreshFolderById} from './folder';
+import {FunctionalComponent, h, JSX} from 'preact';
 
-const toggleRefreshSetStates: Record<string, () => void> = {};
-export const toggleRefreshVisibility = (folderId: string) => {
-	toggleRefreshSetStates[folderId]?.();
-};
-
-export const RefreshIcon = ({folderId}: {folderId: string}) => {
-	const [isHidden, setIsHidden] = useState(false);
-
-	useEffect(() => {
-		toggleRefreshSetStates[folderId] = () => {
-			setIsHidden(isHidden => !isHidden);
-		};
-	}, [folderId]);
-
+export const RefreshIcon: FunctionalComponent<{
+	onClick: () => void;
+}> = ({onClick}) => {
 	const handleClick: JSX.MouseEventHandler<HTMLSpanElement> = event_ => {
 		event_.stopPropagation();
 		// No propagation, so preventDefault because it is in an anchor
 		event_.preventDefault();
 
-		refreshFolderById(folderId);
+		onClick();
 	};
 
-	return isHidden ? null : (
+	return (
 		// Span for square hitbox
 		<span
 			style={{marginLeft: 5}}

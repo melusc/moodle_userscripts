@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   1.0.1
+// @version   2.0.0
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JXgvE
@@ -14,23 +14,24 @@
 import {render, h} from 'preact';
 import domReady from '@wordpress/dom-ready';
 
-import {Folder, toggleFolderVisibilityById} from './folder';
-import {RefreshIcon, toggleRefreshVisibility} from './refresh-icon';
+import {Folder} from './folder';
 
 import style from './style.scss';
 
 GM_addStyle(style);
 
-const handleClick = async (event_: MouseEvent): Promise<void> => {
-	if (event_.ctrlKey) {
+const handleClick = async (event: MouseEvent): Promise<void> => {
+	console.log(event);
+
+	if (event.ctrlKey) {
 		return;
 	}
 
-	if (!(event_.target instanceof Element)) {
+	if (!(event.target instanceof Element)) {
 		return;
 	}
 
-	const anchor = event_.target.closest('a');
+	const anchor = event.target.closest('a');
 	if (anchor?.pathname !== '/mod/folder/view.php') {
 		return;
 	}
@@ -40,7 +41,7 @@ const handleClick = async (event_: MouseEvent): Promise<void> => {
 		return;
 	}
 
-	const folderId = /\d+$/.exec(folder?.id)?.[0];
+	const folderId = /\d+$/.exec(folder.id)?.[0];
 	if (!folderId) {
 		console.error('Could not get folderId.');
 
@@ -50,7 +51,8 @@ const handleClick = async (event_: MouseEvent): Promise<void> => {
 	const section = anchor.closest('li.section.main');
 	const sectionId = section
 		?.getAttribute('aria-labelledby')
-		?.match(/(?<=-)\d+(?=-)/)?.[0];
+		?.match(/-(\d+)-/)?.[1];
+
 	if (!sectionId) {
 		console.error('sectionId was undefined.');
 
@@ -58,25 +60,15 @@ const handleClick = async (event_: MouseEvent): Promise<void> => {
 	}
 
 	/* It's an anchor, but we don't want it to open a page */
-	event_.preventDefault();
-
-	const folderAlreadyExists = toggleFolderVisibilityById(folderId);
-	if (folderAlreadyExists) {
-		toggleRefreshVisibility(folderId);
-
-		return;
-	}
-
-	const refresh = document.createElement('span');
-
-	render(<RefreshIcon folderId={folderId} />, refresh);
-
-	anchor.append(refresh);
+	event.preventDefault();
 
 	const container = document.createElement('span');
 	container.className = 'folder-parent';
 
-	render(<Folder sectionId={sectionId} folderId={folderId} />, container);
+	render(
+		<Folder sectionId={sectionId} folderId={folderId} anchor={anchor} />,
+		container,
+	);
 
 	folder.append(container);
 };
