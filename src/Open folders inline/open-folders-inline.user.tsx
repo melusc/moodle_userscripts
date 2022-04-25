@@ -21,8 +21,6 @@ import style from './style.scss';
 GM_addStyle(style);
 
 const handleClick = async (event: MouseEvent): Promise<void> => {
-	console.log(event);
-
 	if (event.ctrlKey) {
 		return;
 	}
