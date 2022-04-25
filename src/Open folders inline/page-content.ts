@@ -57,19 +57,8 @@ const getPageContent = async (
 	return responseJSON;
 };
 
-const sanitizedFilePath = (path: string): string[] => {
-	const split = path.trim().split(/\/+/);
-
-	const result: string[] = [];
-
-	for (const subPath of split) {
-		if (subPath) {
-			result.push(subPath);
-		}
-	}
-
-	return result;
-};
+const sanitizedFilePath = (path: string): string[] =>
+	path.trim().split(/\/+/).filter(Boolean);
 
 export const getSanitizedContents = async (
 	sectionId: string,
