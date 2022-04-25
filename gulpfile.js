@@ -4,7 +4,7 @@ const cache = require('gulp-cached');
 const rename = require('gulp-rename');
 
 const paths = {
-	svg: ['./src/**/*.svg', '!./src/**/*.min.svg'],
+  svg: ['./src/**/*.svg', '!./src/**/*.min.svg'],
 	svgDest: './src',
 };
 
