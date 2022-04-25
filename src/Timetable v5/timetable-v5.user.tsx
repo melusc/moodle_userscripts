@@ -19,7 +19,7 @@
 // @run-at    document-start
 // ==/UserScript==
 
-import {Component, h, render} from 'preact';
+import {Component, FunctionalComponent, h, render} from 'preact';
 import domReady from '@wordpress/dom-ready';
 
 import {initSettingsPage} from './settingspage';
@@ -44,13 +44,10 @@ const getHref = (href: string): string => {
 	return href;
 };
 
-const TimetableRow = ({
-	values,
-	isNow = false,
-}: {
+const TimetableRow: FunctionalComponent<{
 	values: Partial<TimetableStorageValues>; // Because {content: 'No school'} should be valid or even {} (free lesson)
 	isNow?: boolean;
-}) => {
+}> = ({values, isNow = false}) => {
 	const {from, to, id} = values;
 	const content = values.content ?? Lang.freeLesson;
 

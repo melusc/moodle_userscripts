@@ -1,4 +1,4 @@
-import {h} from 'preact';
+import {FunctionalComponent, h} from 'preact';
 import {numericBaseSensitiveCollator} from '../../shared/general-functions';
 
 import {Course, SettingsPageState} from '../settingspage.d';
@@ -24,15 +24,11 @@ const filterCourses = (array: Course[], inputText: string) => {
 	);
 };
 
-const SuggestionsPopup = ({
-	courses,
-	focusedElement,
-	onClick,
-}: {
+const SuggestionsPopup: FunctionalComponent<{
 	courses: Course[];
 	focusedElement: SettingsPageState['focusedElement'];
 	onClick: (id: string) => void;
-}) => {
+}> = ({courses, focusedElement, onClick}) => {
 	if (focusedElement === undefined) {
 		return null;
 	}

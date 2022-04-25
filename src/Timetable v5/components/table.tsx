@@ -1,4 +1,4 @@
-import {h, JSX, RefObject} from 'preact';
+import {FunctionalComponent, h, JSX, RefObject} from 'preact';
 import clsx from 'clsx';
 
 import {useRef} from 'preact/hooks';
@@ -10,13 +10,7 @@ import {
 } from '../settingspage.d';
 import TimeInput from './time-input';
 
-const TableRow = ({
-	row,
-	index,
-	onInput,
-	deleteRow,
-	handleFocus,
-}: {
+const TableRow: FunctionalComponent<{
 	row: TypeTableRow;
 	index: number;
 	onInput: (
@@ -29,7 +23,7 @@ const TableRow = ({
 		contentRef?: RefObject<HTMLInputElement> | undefined,
 		index?: number | undefined,
 	) => JSX.FocusEventHandler<HTMLElement>;
-}) => {
+}> = ({row, index, onInput, deleteRow, handleFocus}) => {
 	const {fromInvalid, from, toInvalid, to, content, id} = row;
 
 	const idRef = useRef<HTMLInputElement>(null);
@@ -87,12 +81,7 @@ const TableRow = ({
 	);
 };
 
-const Table = ({
-	rows,
-	handleFocus,
-	onInput,
-	deleteRow,
-}: {
+const Table: FunctionalComponent<{
 	rows: TypeTableRow[] | undefined;
 	onInput: (
 		target: TableOnInputSelectors,
@@ -104,7 +93,7 @@ const Table = ({
 		contentRef?: RefObject<HTMLInputElement> | undefined,
 		index?: number | undefined,
 	) => JSX.FocusEventHandler<HTMLElement>;
-}) => (
+}> = ({rows, handleFocus, onInput, deleteRow}) => (
 	<div>
 		{rows?.map((row, index) => (
 			<TableRow

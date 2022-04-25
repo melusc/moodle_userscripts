@@ -1,4 +1,12 @@
-import {render, h, Component, createRef, RefObject, JSX} from 'preact';
+import {
+	render,
+	h,
+	Component,
+	createRef,
+	RefObject,
+	JSX,
+	FunctionalComponent,
+} from 'preact';
 
 import {
 	getCourses_throwable,
@@ -84,12 +92,7 @@ const setReplaced = async (
 	await GM.setValue('replace', replacers);
 };
 
-const SidebarRow = ({
-	course,
-	handleClick,
-	toggleItem,
-	resetItem,
-}: {
+const SidebarRow: FunctionalComponent<{
 	course: Course;
 	handleClick: (
 		event_: JSX.TargetedMouseEvent<HTMLDivElement>,
@@ -103,7 +106,7 @@ const SidebarRow = ({
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
 		item: Course,
 	) => void;
-}) => {
+}> = ({course, handleClick, toggleItem, resetItem}) => {
 	const {courseName, replacedName, isRemoved} = course;
 	return (
 		<div
@@ -134,11 +137,7 @@ const SidebarRow = ({
 	);
 };
 
-const Sidebar = ({
-	courses,
-	loadingCourses,
-	...rest
-}: {
+const Sidebar: FunctionalComponent<{
 	courses: Course[];
 	loadingCourses: boolean;
 	handleClick: (
@@ -153,7 +152,7 @@ const Sidebar = ({
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
 		item: Course,
 	) => void;
-}) => (
+}> = ({courses, loadingCourses, ...rest}) => (
 	<div class="outer-sidebar">
 		<div class="sidebar">
 			{loadingCourses && <div>Loading courses...</div>}

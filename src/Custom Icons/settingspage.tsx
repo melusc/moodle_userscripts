@@ -1,4 +1,12 @@
-import {render, h, Component, Fragment, JSX, createRef} from 'preact';
+import {
+	render,
+	h,
+	Component,
+	Fragment,
+	JSX,
+	createRef,
+	FunctionalComponent,
+} from 'preact';
 import {useEffect, useRef} from 'preact/hooks';
 import {html} from 'htm/preact';
 
@@ -109,12 +117,11 @@ const getIcon = async (id: string): Promise<Icon | undefined> => {
 	return undefined;
 };
 
-const SvgX = ({
-	class: _class,
-	...props
-}: {
-	class?: string;
-} & JSX.DOMAttributes<SVGSVGElement>) => (
+const SvgX: FunctionalComponent<
+	{
+		class?: string;
+	} & JSX.DOMAttributes<SVGSVGElement>
+> = ({class: _class, ...props}) => (
 	<svg
 		fill="none"
 		stroke="currentColor"
@@ -149,13 +156,10 @@ const RenderIcon = (props: {icon: Icon | undefined}) => {
 	) : null);
 };
 
-const Notification = ({
-	content,
-	cb,
-}: {
+const Notification: FunctionalComponent<{
 	cb: () => void;
 	content: string | undefined;
-}) => {
+}> = ({content, cb}) => {
 	const notificationRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {

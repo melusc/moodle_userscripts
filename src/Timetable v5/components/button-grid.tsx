@@ -1,4 +1,4 @@
-import {h, Fragment} from 'preact';
+import {h, Fragment, FunctionalComponent} from 'preact';
 import clsx, {ClassValue} from 'clsx';
 
 import {SvgIconCaretBack, SvgIconCaretForward} from '../icons';
@@ -13,19 +13,13 @@ const getDay = (n: number): string => {
 	return result;
 };
 
-const ButtonGrid = ({
-	handleClick,
-	handleSave,
-	day,
-	saveButtonClass,
-	resetSaveValidity,
-}: {
+const ButtonGrid: FunctionalComponent<{
 	handleClick: (arg0: number) => void;
 	handleSave: () => void;
 	saveButtonClass?: ClassValue;
 	resetSaveValidity: () => void;
 	day: number;
-}) => (
+}> = ({handleClick, handleSave, day, saveButtonClass, resetSaveValidity}) => (
 	<>
 		<div class="day-controls">
 			<div
