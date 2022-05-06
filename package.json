@@ -15,7 +15,7 @@
 	},
 	"description": "",
 	"devDependencies": {
-		"@lusc/tsconfig": "^1.0.0",
+		"@lusc/tsconfig": "^1.1.0",
 		"@types/dompurify": "^2.3.3",
 		"@types/file-saver": "^2.0.5",
 		"@types/jest": "^27.4.1",
