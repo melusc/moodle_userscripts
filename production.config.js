@@ -15,10 +15,7 @@ const config = (environment = {}) => ({
 		extensions: ['.ts', '.tsx', '.scss', '.css'],
 	},
 	mode: 'production',
-	entry: entry(
-		entry.basePath('src'),
-		resolve('src/**/*.user.{ts,tsx}'),
-	),
+	entry: entry(entry.basePath('src'), resolve('src/**/*.user.{ts,tsx}')),
 	output: {
 		path: resolve('dist/userscript-out'),
 		filename: '[name].user.js',
