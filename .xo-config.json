@@ -4,13 +4,6 @@
 	"globals": ["GM_addValueChangeListener", "GM_notification"],
 	"overrides": [
 		{
-			"env": ["es2021", "node"],
-			"files": ["./*.js"],
-			"rules": {
-				"unicorn/prefer-module": "off"
-			}
-		},
-		{
 			"files": ["**/*.{ts,tsx}"],
 			"rules": {
 				"@typescript-eslint/indent": "off",
