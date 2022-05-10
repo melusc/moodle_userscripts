@@ -1,9 +1,12 @@
-const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
-const entry = require('webpack-glob-entry');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+import {fileURLToPath} from 'node:url';
 
-module.exports = (environment = {}) => ({
+import TerserPlugin from 'terser-webpack-plugin';
+import entry from 'webpack-glob-entry';
+import {CleanWebpackPlugin} from 'clean-webpack-plugin';
+
+const resolve = p => fileURLToPath(new URL(p, import.meta.url));
+
+const config = (environment = {}) => ({
 	resolve: {
 		alias: {
 			react: 'preact/compat',
@@ -14,19 +17,19 @@ module.exports = (environment = {}) => ({
 	mode: 'production',
 	entry: entry(
 		entry.basePath('src'),
-		path.resolve(__dirname, 'src/**/*.user.{ts,tsx}'),
+		resolve('src/**/*.user.{ts,tsx}'),
 	),
 	output: {
-		path: path.resolve(__dirname, 'dist/userscript-out'),
+		path: resolve('dist/userscript-out'),
 		filename: '[name].user.js',
 		hashFunction: 'xxhash64',
 	},
 	plugins: [new CleanWebpackPlugin()],
 	cache: {
 		type: 'filesystem',
-		cacheDirectory: path.resolve(__dirname, '.cache'),
+		cacheDirectory: resolve('.cache'),
 		buildDependencies: {
-			config: [__filename, path.resolve(__dirname, 'tsconfig.json')],
+			config: [resolve(import.meta.url), resolve('tsconfig.json')],
 		},
 	},
 	optimization: {
@@ -64,3 +67,5 @@ module.exports = (environment = {}) => ({
 		],
 	},
 });
+
+export default config;
