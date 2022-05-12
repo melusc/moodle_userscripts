@@ -40,12 +40,8 @@ const sortCoursesArray = (array: Course[]) =>
 /**
  * Get the replaced name of a course or undefined
  */
-const getReplacedCourseName = (
-	id: string,
-): string | undefined => {
-	const replacers = GM_getValue<Record<string, string> | undefined>(
-		'replace',
-	);
+const getReplacedCourseName = (id: string): string | undefined => {
+	const replacers = GM_getValue<Record<string, string> | undefined>('replace');
 
 	return replacers?.[id];
 };

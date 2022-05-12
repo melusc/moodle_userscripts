@@ -76,7 +76,7 @@ const testForInexistantCourse = async (id: string) => {
 	}
 
 	if (!courses.some(course => String(course.id) === id)) {
-		await removeElementFromStorage(id);
+		removeElementFromStorage(id);
 
 		// eslint-disable-next-line no-alert
 		alert(

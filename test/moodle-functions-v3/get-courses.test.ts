@@ -8,22 +8,28 @@ import {password, username} from './credentials.js';
 Moodle.extend(getCourses);
 
 describe('#getCourses', () => {
-	test('Invalid token', violentMonkeyContext(async () => {
-		const moodle = new Moodle();
-		await expect(async () => {
-			moodle.credentials.token = 'INVALID';
-			await moodle.getCourses();
-		}).rejects.toThrow();
-	}));
+	test(
+		'Invalid token',
+		violentMonkeyContext(async () => {
+			const moodle = new Moodle();
+			await expect(async () => {
+				moodle.credentials.token = 'INVALID';
+				await moodle.getCourses();
+			}).rejects.toThrow();
+		}),
+	);
 
-	test('Valid credentials', violentMonkeyContext(async () => {
-		const moodle = new Moodle();
-		await moodle.login({username, password});
+	test(
+		'Valid credentials',
+		violentMonkeyContext(async () => {
+			const moodle = new Moodle();
+			await moodle.login({username, password});
 
-		const courses = await moodle.getCourses();
-		expect(courses.find(({id}) => id === 32)).toStrictEqual({
-			id: 32,
-			name: 'Allgemeine Informationen',
-		});
-	}));
+			const courses = await moodle.getCourses();
+			expect(courses.find(({id}) => id === 32)).toStrictEqual({
+				id: 32,
+				name: 'Allgemeine Informationen',
+			});
+		}),
+	);
 });

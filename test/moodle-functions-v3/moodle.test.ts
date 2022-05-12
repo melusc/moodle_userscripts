@@ -1,7 +1,14 @@
 import {describe, expect, test} from '@jest/globals';
 import {violentMonkeyContext} from 'mock-violentmonkey';
-import {Moodle, ERR_INVALID_CREDENTIALS, ERR_NO_CREDENTIALS} from '../../src/shared/moodle-functions-v3/moodle.js';
-import {getUsername, getToken} from '../../src/shared/moodle-functions-v3/credentials.js';
+import {
+	Moodle,
+	ERR_INVALID_CREDENTIALS,
+	ERR_NO_CREDENTIALS,
+} from '../../src/shared/moodle-functions-v3/moodle.js';
+import {
+	getUsername,
+	getToken,
+} from '../../src/shared/moodle-functions-v3/credentials.js';
 import {username, password} from './credentials.js';
 
 describe('#login', () => {
