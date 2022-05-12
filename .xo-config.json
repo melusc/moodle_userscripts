@@ -86,6 +86,12 @@
 				"namedComponents": "arrow-function",
 				"unnamedComponents": "arrow-function"
 			}
+		],
+		"import/no-unassigned-import": [
+			"error",
+			{
+				"allow": ["**/moodle-functions-v3/*"]
+			}
 		]
 	},
 	"settings": {

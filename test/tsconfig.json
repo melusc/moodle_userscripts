@@ -2,7 +2,8 @@
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
 		"outDir": "../dist/test",
-		"rootDir": ".."
+		"rootDir": "..",
+		"types": ["tampermonkey"]
 	},
 	"include": ["**/*.test.ts"]
 }
