@@ -15,10 +15,10 @@
 	},
 	"description": "",
 	"devDependencies": {
+		"@jest/globals": "^28.1.0",
 		"@lusc/tsconfig": "^1.1.0",
 		"@types/dompurify": "^2.3.3",
 		"@types/file-saver": "^2.0.5",
-		"@types/jest": "^27.5.0",
 		"@types/tampermonkey": "^4.0.5",
 		"clean-webpack-plugin": "^4.0.0",
 		"concurrently": "^7.1.0",
@@ -54,7 +54,7 @@
 	"private": true,
 	"scripts": {
 		"build": "yarn fmt && yarn run webpack",
-		"test": "jest dist/test/test",
+		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js dist/test/test",
 		"pretest": "rimraf dist/test && tsc --project test/tsconfig.json",
 		"fmt": "prettier -w . && xo --fix",
 		"lint": "xo",
@@ -64,5 +64,8 @@
 		"webpack:w": "webpack -c production.config.js -w"
 	},
 	"type": "module",
-	"version": "1.0.0"
+	"version": "1.0.0",
+	"jest": {
+		"transform": {}
+	}
 }

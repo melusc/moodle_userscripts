@@ -1,12 +1,12 @@
+import {describe, expect, jest, test} from '@jest/globals';
+
 import {TimetableStates} from '../../src/Timetable v5/consts';
 import {
-	getNextDay,
 	getCourses,
 	getMinutesSinceMidnight,
 	getMsSinceMidnight,
+	getNextDay,
 } from '../../src/Timetable v5/timetable';
-
-type GetCourses = ReturnType<typeof getCourses>;
 
 describe('getNextDay', () => {
 	jest.useFakeTimers();
@@ -130,7 +130,7 @@ describe('getCourses', () => {
 			getCourses({
 				0: courses,
 			}),
-		).toStrictEqual<GetCourses>({
+		).toStrictEqual({
 			state: TimetableStates.during,
 			timeToUpdate: 59 * 60 * 1000,
 			courses,
@@ -156,7 +156,7 @@ describe('getCourses', () => {
 					},
 				],
 			}),
-		).toStrictEqual<GetCourses>({
+		).toStrictEqual({
 			state: TimetableStates.during,
 			timeToUpdate: 59 * 60 * 1000,
 			courses: [
@@ -182,7 +182,7 @@ describe('getCourses', () => {
 					},
 				],
 			}),
-		).toStrictEqual<GetCourses>({
+		).toStrictEqual({
 			state: TimetableStates.before,
 			timeToUpdate: 60 * 60 * 1000,
 			courses: [
@@ -222,7 +222,7 @@ describe('getCourses', () => {
 					},
 				],
 			}),
-		).toStrictEqual<GetCourses>({
+		).toStrictEqual({
 			state: TimetableStates.during,
 			timeToUpdate: 65 * 60 * 1000,
 			courses: [
@@ -256,14 +256,14 @@ describe('getCourses', () => {
 					},
 				],
 			}),
-		).toStrictEqual<GetCourses>({
+		).toStrictEqual({
 			state: TimetableStates.after,
 			timeToUpdate: 15 * 60 * 60 * 1000,
 		});
 	});
 
 	test('empty timetable', () => {
-		expect(getCourses({})).toStrictEqual<GetCourses>({
+		expect(getCourses({})).toStrictEqual({
 			state: TimetableStates.empty,
 			timeToUpdate: undefined,
 		});
@@ -282,7 +282,7 @@ describe('getCourses', () => {
 					},
 				],
 			}),
-		).toStrictEqual<GetCourses>({
+		).toStrictEqual({
 			state: TimetableStates.empty,
 			timeToUpdate: 16 * 60 * 60 * 1000,
 		});
@@ -301,7 +301,7 @@ describe('getCourses', () => {
 					},
 				],
 			}),
-		).toStrictEqual<GetCourses>({
+		).toStrictEqual({
 			state: TimetableStates.after,
 			timeToUpdate: (15 + 24 * 6) * 60 * 60 * 1000,
 		});
@@ -332,7 +332,7 @@ describe('getCourses', () => {
 					},
 				],
 			}),
-		).toStrictEqual<GetCourses>({
+		).toStrictEqual({
 			state: TimetableStates.during,
 			timeToUpdate: 60 * 60 * 1000,
 			courses: [
@@ -346,7 +346,7 @@ describe('getCourses', () => {
 	});
 
 	test('with undefined', () => {
-		expect(getCourses(undefined)).toStrictEqual<GetCourses>({
+		expect(getCourses(undefined)).toStrictEqual({
 			state: TimetableStates.empty,
 			timeToUpdate: undefined,
 		});
