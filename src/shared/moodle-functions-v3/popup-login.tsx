@@ -3,6 +3,7 @@ import {useRef, useState} from 'preact/hooks';
 
 import genericPopupSCSS from './popup-login.scss';
 import type {Moodle, RegisterFunction} from './moodle';
+import {getUsername} from './credentials';
 
 const GenericPopup: FunctionalComponent<{
 	cb: () => void;
@@ -52,6 +53,7 @@ const GenericPopup: FunctionalComponent<{
 						<input
 							ref={usernameRef}
 							required
+							defaultValue={getUsername()}
 							id="popup-username"
 							placeholder="Username"
 							class={`form-control${validities.username ? '' : ' is-invalid'}`}

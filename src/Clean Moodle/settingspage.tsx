@@ -8,18 +8,20 @@ import {
 	FunctionalComponent,
 } from 'preact';
 
+import {useRef} from 'preact/hooks';
 import {
-	getCourses_throwable,
-	getToken,
-	login_throwable,
-	logout,
-	getCredentials,
-} from '../shared/moodle-functions-v2';
+	Moodle,
+	getCourses,
+	Courses,
+	getUsername,
+} from '../shared/moodle-functions-v3';
 import {numericBaseSensitiveCollator} from '../shared/general-functions';
 
 import {removeElementFromStorage} from './shared';
 import style from './settingspage.scss';
 import {SvgArrowBack, SvgCheck, SvgX} from './icons';
+
+Moodle.extend(getCourses);
 
 /** Sort courses, mutates the array */
 const sortCoursesArray = (array: Course[]) =>
@@ -38,10 +40,10 @@ const sortCoursesArray = (array: Course[]) =>
 /**
  * Get the replaced name of a course or undefined
  */
-const getReplacedCourseName = async (
+const getReplacedCourseName = (
 	id: string,
-): Promise<string | undefined> => {
-	const replacers = await GM.getValue<Record<string, string> | undefined>(
+): string | undefined => {
+	const replacers = GM_getValue<Record<string, string> | undefined>(
 		'replace',
 	);
 
@@ -51,8 +53,8 @@ const getReplacedCourseName = async (
 /**
  * Check if a course is being hidden
  */
-const checkIsCourseRemoved = async (id: string): Promise<boolean> => {
-	const removers = await GM.getValue<string[] | undefined>('remove');
+const checkIsCourseRemoved = (id: string): boolean => {
+	const removers = GM_getValue<string[] | undefined>('remove');
 
 	return removers?.includes(id) ?? false;
 };
@@ -60,20 +62,20 @@ const checkIsCourseRemoved = async (id: string): Promise<boolean> => {
 /**
  * Add item to removers
  */
-const setRemoved = async (id: string) => {
-	const {removers} = await removeElementFromStorage(id, {
+const setRemoved = (id: string) => {
+	const {removers} = removeElementFromStorage(id, {
 		updateRemovers: false,
 	});
 
 	removers.push(id);
 
-	await GM.setValue('remove', removers);
+	GM_setValue('remove', removers);
 };
 
 /**
  * Set the new text for a course
  */
-const setReplaced = async (
+const setReplaced = (
 	id: string,
 	newValue: string | undefined = '',
 	oldValue: string | undefined = '',
@@ -81,7 +83,7 @@ const setReplaced = async (
 	newValue = newValue.trim();
 	oldValue = oldValue.trim();
 
-	const {replacers} = await removeElementFromStorage(id, {
+	const {replacers} = removeElementFromStorage(id, {
 		updateReplacers: false,
 	});
 
@@ -89,7 +91,7 @@ const setReplaced = async (
 		replacers[id] = newValue;
 	}
 
-	await GM.setValue('replace', replacers);
+	GM_setValue('replace', replacers);
 };
 
 const SidebarRow: FunctionalComponent<{
@@ -163,28 +165,38 @@ const Sidebar: FunctionalComponent<{
 	</div>
 );
 
-const LoggedOut = (props: {
-	loggedOutInputs: {
-		username: RefObject<HTMLInputElement>;
-		password: RefObject<HTMLInputElement>;
+const LoggedOut: FunctionalComponent<{
+	cb: (username: string, password: string) => void;
+}> = ({cb}) => {
+	const usernameRef = useRef<HTMLInputElement>(null);
+	const passwordRef = useRef<HTMLInputElement>(null);
+
+	const onSubmit: JSX.GenericEventHandler<HTMLFormElement> = event => {
+		event.preventDefault();
+
+		const username = usernameRef.current?.value;
+		const password = passwordRef.current?.value;
+
+		if (username && password) {
+			cb(username, password);
+		}
 	};
-	loggedOutCallback: () => void;
-}) => {
-	const {loggedOutInputs, loggedOutCallback} = props;
 
 	return (
-		<div class="replace-flex-input">
-			<h5>Login</h5>
-			<input ref={loggedOutInputs.username} placeholder="Username" />
-			<input
-				ref={loggedOutInputs.password}
-				placeholder="Password"
-				type="password"
-			/>
-			<button class="btn-save" type="button" onClick={loggedOutCallback}>
-				Login
-			</button>
-		</div>
+		<form onSubmit={onSubmit}>
+			<div class="replace-flex-input">
+				<h5>Login</h5>
+				<input
+					ref={usernameRef}
+					placeholder="Username"
+					defaultValue={getUsername()}
+				/>
+				<input ref={passwordRef} placeholder="Password" type="password" />
+				<button class="btn-save" type="submit">
+					Login
+				</button>
+			</div>
+		</form>
 	);
 };
 
@@ -260,6 +272,8 @@ class SettingsPage extends Component<
 	Record<string, unknown>,
 	SettingsPageState
 > {
+	moodle = new Moodle();
+
 	override state: SettingsPageState = {
 		courses: [],
 		loadingCourses: true,
@@ -269,19 +283,6 @@ class SettingsPage extends Component<
 
 	replaceInputRef = createRef<HTMLInputElement>();
 
-	loggedOutInputs = {
-		username: createRef<HTMLInputElement>(),
-		password: createRef<HTMLInputElement>(),
-	};
-
-	callbacksOnLoggedIn = new Set<(token: string) => void>();
-
-	constructor(...args: Array<Record<string, unknown>>) {
-		super(...args);
-
-		this.callbacksOnLoggedIn.add(this.setCourses);
-	}
-
 	render() {
 		const {courses, selected, loggedOut, loadingCourses} = this.state;
 		const {
@@ -289,7 +290,6 @@ class SettingsPage extends Component<
 			toggleCourseRemoved: toggleItem,
 			resetCourse: resetItem,
 			replaceInputRef,
-			loggedOutInputs,
 			loggedOutCallbackHandler,
 			handleMainKeydown,
 			handleSave,
@@ -305,10 +305,7 @@ class SettingsPage extends Component<
 					loadingCourses={loadingCourses}
 				/>
 				{loggedOut ? (
-					<LoggedOut
-						loggedOutCallback={loggedOutCallbackHandler}
-						loggedOutInputs={loggedOutInputs}
-					/>
+					<LoggedOut cb={loggedOutCallbackHandler} />
 				) : (
 					<Main
 						selected={selected}
@@ -321,116 +318,76 @@ class SettingsPage extends Component<
 		);
 	}
 
-	setCourses = async (token: string) => {
-		let coursesObject: Record<string, string>;
+	getCourses = async () => {
+		let courses: Courses;
 		try {
-			coursesObject = await getCourses_throwable(token);
+			courses = await this.moodle.getCourses();
 		} catch {
-			await this.handleLogOut(false, this.setCourses);
+			this.logout();
 
 			return;
 		}
 
-		const courses: Course[] = [];
+		const coursesExtended: Course[] = [];
 
-		for (const [courseId, courseName] of Object.entries(coursesObject)) {
-			courses.push({
-				courseName,
-				courseId,
-				replacedName: await getReplacedCourseName(courseId),
-				isRemoved: await checkIsCourseRemoved(courseId),
+		for (const {id, name} of courses) {
+			const id_ = String(id);
+			coursesExtended.push({
+				courseName: name,
+				courseId: id_,
+				replacedName: getReplacedCourseName(id_),
+				isRemoved: checkIsCourseRemoved(id_),
 			});
 		}
 
-		sortCoursesArray(courses);
+		sortCoursesArray(coursesExtended);
 
-		this.setState({courses, loadingCourses: false});
+		this.setState({courses: coursesExtended, loadingCourses: false});
 	};
 
-	loggedOutCallbackHandler = async () => {
-		const username = this.loggedOutInputs.username.current?.value.trim();
-		const password = this.loggedOutInputs.password.current?.value;
+	loggedOutCallbackHandler = async (username: string, password: string) => {
+		username = username.trim();
 
 		if (username && password) {
 			try {
-				const token = await login_throwable({
-					username,
-					password,
-				});
+				await this.moodle.login({username, password});
 
 				this.setState({
 					loggedOut: false,
 				});
 
-				this.callCallbacksOnLogIn(token);
+				void this.onLogin();
 			} catch {
-				await this.handleLogOut(true);
+				this.logout();
 			}
 		}
 	};
 
-	callCallbacksOnLogIn = (token: string) => {
-		for (const cb of this.callbacksOnLoggedIn) {
-			cb(token);
-
-			this.callbacksOnLoggedIn.delete(cb);
-		}
+	onLogin = async () => {
+		await this.getCourses();
 	};
 
-	handleLogOut = async (
-		removeCredentials?: boolean,
-		cb?: (token: string) => void,
-	) => {
-		await logout(removeCredentials);
-
-		if (cb) {
-			this.callbacksOnLoggedIn.add(cb);
-		}
+	logout = () => {
+		this.moodle.logout();
 
 		this.setState({
 			loggedOut: true,
 		});
 	};
 
-	getToken = async (): Promise<string | undefined> => {
-		const token = await getToken();
-
-		if (token) {
-			return token;
-		}
-
-		const creds = await getCredentials();
-
-		if (!creds) {
-			await this.handleLogOut(true);
-
-			return undefined;
-		}
-
-		try {
-			return await login_throwable(creds);
-		} catch {
-			await this.handleLogOut(true);
-
-			return undefined;
-		}
-	};
-
 	override componentDidMount() {
-		void this.getToken().then(token => {
-			if (token) {
-				this.callCallbacksOnLogIn(token);
-			}
+		this.moodle.login().then(this.onLogin, () => {
+			this.logout();
 		});
 	}
 
 	handleMainKeydown: JSX.KeyboardEventHandler<HTMLInputElement> = event_ => {
 		if (event_.key === 'Enter') {
-			void this.handleSave();
+			this.handleSave();
 		}
 	};
 
-	handleSave = async () => {
+	handleSave = () => {
 		const input = this.replaceInputRef.current?.value;
 
 		if (input === undefined) {
@@ -444,28 +401,31 @@ class SettingsPage extends Component<
 
 		const {courseId, courseName} = selected;
 
-		await setReplaced(courseId, input, courseName);
+		setReplaced(courseId, input, courseName);
 
-		await this.updateCourseById(courseId);
+		this.updateCourseById(courseId);
 
 		this.setState({selected: {isSelected: false}});
 	};
 
-	toggleCourseRemoved = async (
+	toggleCourseRemoved = (
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
 		{isRemoved, courseId}: Course,
 	) => {
 		event_.stopImmediatePropagation();
-		await (isRemoved
-			? removeElementFromStorage(courseId)
-			: setRemoved(courseId));
 
-		await this.updateCourseById(courseId);
+		if (isRemoved) {
+			removeElementFromStorage(courseId);
+		} else {
+			setRemoved(courseId);
+		}
+
+		this.updateCourseById(courseId);
 
 		this.removeSelectedIfEqualId(courseId);
 	};
 
-	resetCourse = async (
+	resetCourse = (
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
 		item: Course,
 	) => {
@@ -473,9 +433,9 @@ class SettingsPage extends Component<
 		event_.stopImmediatePropagation();
 		this.removeSelectedIfEqualId(courseId);
 
-		await removeElementFromStorage(courseId);
+		removeElementFromStorage(courseId);
 
-		await this.updateCourseById(courseId);
+		this.updateCourseById(courseId);
 	};
 
 	removeSelectedIfEqualId = (id: string) => {
@@ -491,9 +451,9 @@ class SettingsPage extends Component<
 		);
 	};
 
-	updateCourseById = async (id: string) => {
-		const isRemoved = await checkIsCourseRemoved(id);
-		const replacedName = await getReplacedCourseName(id);
+	updateCourseById = (id: string) => {
+		const isRemoved = checkIsCourseRemoved(id);
+		const replacedName = getReplacedCourseName(id);
 
 		this.setState(({courses}): Pick<SettingsPageState, 'courses'> => {
 			for (const [i, course] of courses.entries()) {
@@ -514,13 +474,13 @@ class SettingsPage extends Component<
 		});
 	};
 
-	handleSidebarClick = async (
+	handleSidebarClick = (
 		_event: JSX.TargetedMouseEvent<HTMLDivElement>,
 		course: Course,
 	) => {
 		if (course.isRemoved) {
-			await removeElementFromStorage(course.courseId, {updateReplacers: false});
-			await this.updateCourseById(course.courseId);
+			removeElementFromStorage(course.courseId, {updateReplacers: false});
+			this.updateCourseById(course.courseId);
 		}
 
 		this.setState(
