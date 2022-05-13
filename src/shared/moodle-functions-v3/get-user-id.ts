@@ -43,6 +43,7 @@ async function getUserId(this: Moodle): Promise<number> {
 	const responseJSON = (await response.json()) as GetUserIdResponse;
 
 	if ('exception' in responseJSON) {
+		this.logout();
 		throw new Error('token was undefined');
 	}
 

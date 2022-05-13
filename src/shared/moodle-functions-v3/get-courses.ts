@@ -58,6 +58,7 @@ async function getCourses(this: Moodle): Promise<Courses> {
 	const responseJSON = (await response.json()) as GetUserCoursesResponse;
 
 	if ('exception' in responseJSON || responseJSON.responses[0].error) {
+		this.logout();
 		throw new Error('Token was invalid');
 	}
 

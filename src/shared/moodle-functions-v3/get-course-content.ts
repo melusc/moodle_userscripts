@@ -125,6 +125,7 @@ async function getCourseContent(
 		| ResponseFailed;
 
 	if ('exception' in responseJSON) {
+		this.logout();
 		throw new Error('Invalid token');
 	}
 
