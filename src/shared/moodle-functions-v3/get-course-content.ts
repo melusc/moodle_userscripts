@@ -2,27 +2,26 @@
 
 import type {Moodle, RegisterFunction} from './moodle';
 
-export type ModuleUrlContent = {
-	type: 'url';
+type ModuleContentBase = {
 	filename: string;
-	filepath: null;
 	filesize: number;
 	fileurl: string;
-	timecreated: null;
 	timemodified: number;
+};
+
+export type ModuleUrlContent = ModuleContentBase & {
+	type: 'url';
+	filepath: null;
+	timecreated: null;
 	sortorder: null;
 	userid: null;
 	author: null;
 	license: null;
 };
 
-export type ModuleFileContent = {
+export type ModuleFileContent = ModuleContentBase & {
 	type: 'file';
-	filename: string;
 	filepath: string;
-	filesize: number;
-	fileurl: string;
-	timemodified: number;
 	sortorder: number;
 	timecreated: number | null;
 	userid: number | null;
