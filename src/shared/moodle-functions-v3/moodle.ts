@@ -100,6 +100,10 @@ export class Moodle {
 			},
 		});
 
+		if (!response.ok) {
+			throw new Error(`Response was not ok: ${response.status}`);
+		}
+
 		const responseJSON = (await response.json()) as LoginResponse;
 
 		if ('errorcode' in responseJSON) {

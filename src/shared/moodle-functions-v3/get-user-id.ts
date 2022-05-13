@@ -36,6 +36,10 @@ async function getUserId(this: Moodle): Promise<number> {
 		},
 	);
 
+	if (!response.ok) {
+		throw new Error(`Response was not ok: ${response.status}`);
+	}
+
 	const responseJSON = (await response.json()) as GetUserIdResponse;
 
 	if ('exception' in responseJSON) {
