@@ -14,9 +14,15 @@
 import {render, h} from 'preact';
 import domReady from '@wordpress/dom-ready';
 
+import {upgrader, cleanAuthStorage} from '../shared/general-functions';
+
 import {Folder} from './folder';
 
 import style from './style.scss';
+
+upgrader({
+	'1.2.0': cleanAuthStorage,
+});
 
 GM_addStyle(style);
 

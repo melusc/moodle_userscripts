@@ -22,6 +22,8 @@
 import {Component, FunctionalComponent, h, render} from 'preact';
 import domReady from '@wordpress/dom-ready';
 
+import {upgrader, cleanAuthStorage} from '../shared/general-functions';
+
 import {initSettingsPage} from './settingspage';
 import frontPageStyle from './frontpage.scss';
 import {TimetableStates, Lang, notificationIconUrl} from './consts';
@@ -31,6 +33,10 @@ import {
 	TimetableStorageValues,
 	TimetableStorageValuesWeek,
 } from './timetable';
+
+upgrader({
+	'1.2.0': cleanAuthStorage,
+});
 
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';

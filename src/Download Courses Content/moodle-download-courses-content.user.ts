@@ -23,9 +23,14 @@ import {
 	popupLogin,
 } from '../shared/moodle-functions-v3';
 import type {CourseContent} from '../shared/moodle-functions-v3/course-content.d';
+import {upgrader, cleanAuthStorage} from '../shared/general-functions';
 
 Moodle.extend(getCourseContent).extend(popupLogin);
 const moodle = new Moodle();
+
+upgrader({
+	'1.1.0': cleanAuthStorage,
+});
 
 const enum QueueTypes {
 	download,

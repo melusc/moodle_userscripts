@@ -18,6 +18,8 @@ import {render, Fragment, h} from 'preact';
 import {useSnapshot, proxy} from 'valtio';
 import domReady from '@wordpress/dom-ready';
 
+import {upgrader, cleanAuthStorage} from '../shared/general-functions';
+
 import {countries as COUNTRY_CODES} from './countries';
 import {getContacts} from './get-contacts';
 import {title, moodle} from './consts';
@@ -27,6 +29,10 @@ import style from './style.scss';
 import type {UserDataResponse} from './explore-profiles.d';
 
 dayjs.extend(dayjsPluginRelativeTime);
+
+upgrader({
+	'1.2.0': cleanAuthStorage,
+});
 
 let CONTACTS: readonly number[];
 let USER_ID: number;
