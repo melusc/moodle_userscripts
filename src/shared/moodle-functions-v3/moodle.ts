@@ -145,7 +145,7 @@ export class Moodle {
 	async getCourseContent(
 		// @ts-expect-error See above
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		id: string,
+		id: string | number,
 		// @ts-expect-error See above
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		noCache?: boolean,

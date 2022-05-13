@@ -90,12 +90,16 @@ type ResponseFailed = {
 const cacheKey = Symbol('getCourseContent');
 async function getCourseContent(
 	this: Moodle,
-	id: string,
+	id: string | number,
 	noCache = false,
 ): Promise<CourseContent[]> {
-	const cache = this._readCache<CourseContent[]>(cacheKey);
-	if (cache && !noCache) {
-		return cache;
+	id = String(id);
+
+	const cache
+		= this._readCache<Record<string, CourseContent[]>>(cacheKey) ?? {};
+	const cachedResult = cache[id];
+	if (cachedResult && !noCache) {
+		return cachedResult;
 	}
 
 	const token = await this.login();
@@ -130,7 +134,9 @@ async function getCourseContent(
 		throw new Error('Invalid token');
 	}
 
-	return this._writeCache(cacheKey, responseJSON);
+	cache[id] = responseJSON;
+	this._writeCache(cacheKey, cache);
+	return responseJSON;
 }
 
 const register: RegisterFunction = Moodle => {
