@@ -2,7 +2,7 @@
 
 import type {Moodle, RegisterFunction} from './moodle';
 
-type UrlContent = {
+export type ModuleUrlContent = {
 	type: 'url';
 	filename: string;
 	filepath: null;
@@ -16,7 +16,7 @@ type UrlContent = {
 	license: null;
 };
 
-type FileContent = {
+export type ModuleFileContent = {
 	type: 'file';
 	filename: string;
 	filepath: string;
@@ -33,13 +33,13 @@ type FileContent = {
 	isexternalfile?: boolean;
 };
 
-type Content = UrlContent | FileContent;
+export type ModuleContent = ModuleUrlContent | ModuleFileContent;
 
-type Module = (
+export type Module = (
 	| {
 			modname: 'url' | 'folder' | 'resource' | 'page';
 			url: string;
-			contents: Content[];
+			contents: ModuleContent[];
 			contentsinfo: {};
 			description?: string;
 	  }
@@ -91,9 +91,10 @@ const cacheKey = Symbol('getCourseContent');
 async function getCourseContent(
 	this: Moodle,
 	id: string,
+	noCache = false,
 ): Promise<CourseContent[]> {
 	const cache = this._readCache<CourseContent[]>(cacheKey);
-	if (cache) {
+	if (cache && !noCache) {
 		return cache;
 	}
 
