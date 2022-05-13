@@ -57,7 +57,7 @@
 	"private": true,
 	"scripts": {
 		"build": "yarn fmt && yarn run webpack",
-		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js dist/test/test",
+		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
 		"pretest": "rimraf dist/test && tsc --project test/tsconfig.json",
 		"fmt": "prettier -w . && xo --fix",
 		"lint": "xo",
@@ -69,6 +69,9 @@
 	"type": "module",
 	"version": "1.0.0",
 	"jest": {
-		"transform": {}
+		"transform": {},
+		"testMatch": [
+			"<rootDir>/dist/test/test/**/*.test.js"
+		]
 	}
 }
