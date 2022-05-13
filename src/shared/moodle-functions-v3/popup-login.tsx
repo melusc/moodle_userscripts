@@ -103,7 +103,10 @@ const GenericPopup: FunctionalComponent<{
 	) : null;
 };
 
-const popupLogin = async function (this: Moodle, title: string): Promise<string> {
+const popupLogin = async function (
+	this: Moodle,
+	title: string,
+): Promise<string> {
 	return new Promise<string>(resolve => {
 		const style = GM_addStyle(genericPopupSCSS);
 

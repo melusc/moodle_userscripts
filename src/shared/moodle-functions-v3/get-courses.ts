@@ -23,9 +23,9 @@ type GetUserCoursesResponse =
 	  };
 
 const cacheKey = Symbol('getCourses');
-async function getCourses(this: Moodle): Promise<Courses> {
+async function getCourses(this: Moodle, noCache = false): Promise<Courses> {
 	const cache = this._readCache<Courses>(cacheKey);
-	if (cache) {
+	if (cache && !noCache) {
 		return cache;
 	}
 

@@ -125,7 +125,10 @@ export class Moodle {
 		delete this.credentials.password;
 	}
 
-	async getCourses(): Promise<Courses> {
+	// @ts-expect-error Parameters are necessary for typing
+	// and the vscode type-hints look nicer without the leading underscore
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	async getCourses(noCache?: boolean): Promise<Courses> {
 		throw new ERR_NOT_INCLUDED('getCourses');
 	}
 
@@ -133,11 +136,20 @@ export class Moodle {
 		throw new ERR_NOT_INCLUDED('getUserId');
 	}
 
-	async popupLogin(_title: string): Promise<string> {
+	// @ts-expect-error See above
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	async popupLogin(title: string): Promise<string> {
 		throw new ERR_NOT_INCLUDED('popupLogin');
 	}
 
-	async getCourseContent(_id: string): Promise<CourseContent[]> {
+	async getCourseContent(
+		// @ts-expect-error See above
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		id: string,
+		// @ts-expect-error See above
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		noCache?: boolean,
+	): Promise<CourseContent[]> {
 		throw new ERR_NOT_INCLUDED('getCourseContent');
 	}
 }
