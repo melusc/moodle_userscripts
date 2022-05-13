@@ -16,7 +16,7 @@ describe('greaterThan', () => {
 		[[1, 2, 5], [2, 3, 4], -1],
 		[[1, 2, 3], [1, 2, 3], 0],
 	])('%j > %j === %j', (a: Version, b: Version, expected: boolean) => {
-		expect(compare(a, b)).toStrictEqual(expected);
+		expect(Math.sign(compare(a, b))).toStrictEqual(expected);
 	});
 
 	test('parseVersion', () => {
@@ -38,8 +38,9 @@ describe('upgrader', () => {
 	test(
 		'Call none',
 		violentMonkeyContext(() => {
+			GM_setValue('lastUpgraded', '1.0.0');
 			update_GM_info({
-				version: '0.0.0',
+				version: '1.2.3',
 			});
 
 			const dontCall = jest.fn();
@@ -47,30 +48,34 @@ describe('upgrader', () => {
 			upgrader({
 				'0.0.1': dontCall,
 				'0.1.0': dontCall,
+				'1.0.0': dontCall,
 			});
 
 			expect(dontCall).not.toHaveBeenCalled();
+			expect(GM_getValue('lastUpgraded')).toBe('1.2.3');
 		}),
 	);
 
 	test(
 		'Call some',
 		violentMonkeyContext(() => {
+			GM_setValue('lastUpgraded', '0.0.0');
 			update_GM_info({
-				version: '1.0.0',
+				version: '1.1.0',
 			});
 
 			const dontCall = jest.fn();
 			const doCall = jest.fn();
 
 			upgrader({
-				'0.0.0': doCall,
+				'0.0.0': dontCall,
 				'1.0.0': doCall,
-				'1.0.1': dontCall,
+				'1.0.1': doCall,
 			});
 
 			expect(dontCall).not.toHaveBeenCalled();
 			expect(doCall).toHaveBeenCalledTimes(2);
+			expect(GM_getValue('lastUpgraded')).toBe('1.1.0');
 		}),
 	);
 
@@ -91,6 +96,7 @@ describe('upgrader', () => {
 			});
 
 			expect(doCall).toHaveBeenCalledTimes(4);
+			expect(GM_getValue('lastUpgraded')).toBe('1.0.0');
 		}),
 	);
 });

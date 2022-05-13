@@ -19,26 +19,39 @@ export const parseVersion = (version: string): Version => {
 	return [major, minor, patch] as const;
 };
 
-const compareSingle = (a: number, b: number) => (a > b ? 1 : (a < b ? -1 : 0));
+const compareSingle = (a: number, b: number) => a - b;
 export const compare = (a: Version, b: Version) =>
 	compareSingle(a[0], b[0])
 	|| compareSingle(a[1], b[1])
 	|| compareSingle(a[2], b[2]);
 
+const key = 'lastUpgraded';
 const upgrader = (versions: Record<string, () => void>) => {
-	const currentVersion = parseVersion(GM_info.version);
+	const rawCurrentVersion = GM_getValue<string | undefined>(key);
+	// Only version that can be negativ.
+	// The default is therefore always the smallest and will trigger all upgraders
+	// Theoretically, 0.0.0 won't need an upgrade yet, since it is the first valid version, but doesn't matter
+	const currentVersion
+		= rawCurrentVersion === undefined
+			? ([-1, -1, -1] as const)
+			: parseVersion(rawCurrentVersion);
 
+	// Order by version, with greatest version first
 	const upgraders = Object.entries(versions)
 		.map(([version, cb]) => [parseVersion(version), cb] as const)
-		.sort(([a], [b]) => compare(a, b));
+		.sort(([a], [b]) => compare(b, a));
 
 	for (const [version, cb] of upgraders) {
-		if (compare(currentVersion, version) === -1) {
+		// If `currentVersion` is greater / equal to `version`
+		// Since they are sorted, all after this will also be greater / equal
+		if (compare(currentVersion, version) >= 0) {
 			break;
 		}
 
 		cb();
 	}
+
+	GM_setValue(key, GM_info.version);
 };
 
 const upgraderSilent = (versions: Record<string, () => void>) => {
