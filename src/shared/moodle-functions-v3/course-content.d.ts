@@ -28,11 +28,70 @@ export type ContentsInfo = {
 };
 
 type ContentsBase = {
-	type: string;
 	filename: string;
 	filesize: number;
 	fileurl: string;
 	timemodified: number;
+};
+
+export type ResourceContent = ContentsBase & {
+	type: 'file';
+	filepath: string;
+	timecreated: number;
+	sortorder: number;
+	mimetype: string;
+	isexternalfile: boolean;
+	userid: number;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	author: null | string;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	license: null | string;
+};
+
+export type FolderContent = ContentsBase & {
+	type: 'file';
+	filepath: string;
+	timecreated: number;
+	sortorder: number;
+	mimetype: string;
+	isexternalfile: boolean;
+	userid: number;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	author: null | string;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	license: null | string;
+};
+
+export type UrlContent = ContentsBase & {
+	type: 'url';
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	filepath: null;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	timecreated: null;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	sortorder: null;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	userid: null;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	author: null;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	license: null;
+};
+
+export type PageContent = ContentsBase & {
+	type: 'file';
+	filepath: string;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	timecreated: null | number;
+	sortorder: number;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	userid: null | number;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	author: null;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	license: null | string;
+	mimetype?: string;
+	isexternalfile?: boolean;
 };
 
 type ModuleBase = {
@@ -62,20 +121,7 @@ export type ResourceModule = ModuleBase & {
 	modname: 'resource';
 
 	url: string;
-	contents: Array<
-		ContentsBase & {
-			filepath: string;
-			timecreated: number;
-			sortorder: number;
-			mimetype: string;
-			isexternalfile: boolean;
-			userid: number;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			author: null | string;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			license: null | string;
-		}
-	>;
+	contents: ResourceContent[];
 	contentsinfo: ContentsInfo;
 	completiondata?: CompletionData;
 	description?: string;
@@ -90,20 +136,7 @@ export type FolderModule = ModuleBase & {
 	modname: 'folder';
 
 	url?: string;
-	contents: Array<
-		ContentsBase & {
-			filepath: string;
-			timecreated: number;
-			sortorder: number;
-			mimetype: string;
-			isexternalfile: boolean;
-			userid: number;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			author: null | string;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			license: null | string;
-		}
-	>;
+	contents: FolderContent[];
 	contentsinfo: ContentsInfo;
 	completiondata?: CompletionData;
 	description?: string;
@@ -119,22 +152,7 @@ export type UrlModule = ModuleBase & {
 	modname: 'url';
 
 	url: string;
-	contents: Array<
-		ContentsBase & {
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			filepath: null;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			timecreated: null;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			sortorder: null;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			userid: null;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			author: null;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			license: null;
-		}
-	>;
+	contents: UrlContent[];
 	contentsinfo: ContentsInfo;
 	completiondata?: CompletionData;
 	description?: string;
@@ -149,22 +167,7 @@ export type PageModule = ModuleBase & {
 	modname: 'page';
 
 	url: string;
-	contents: Array<
-		ContentsBase & {
-			filepath: string;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			timecreated: null | number;
-			sortorder: number;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			userid: null | number;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			author: null;
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			license: null | string;
-			mimetype?: string;
-			isexternalfile?: boolean;
-		}
-	>;
+	contents: PageContent[];
 	contentsinfo: ContentsInfo;
 };
 export type FeedbackModule = ModuleBase & {

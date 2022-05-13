@@ -21,8 +21,8 @@ import {
 	Moodle,
 	getCourseContent,
 	popupLogin,
-	CourseContent,
 } from '../shared/moodle-functions-v3/index';
+import type {CourseContent} from '../shared/moodle-functions-v3/course-content.d';
 
 Moodle.extend(getCourseContent).extend(popupLogin);
 const moodle = new Moodle();
@@ -104,13 +104,7 @@ const initDownload = async (target: HTMLButtonElement) => {
 				const folderName = sanitizeFileName(module_.name);
 
 				for (const content of contents) {
-					const {fileurl, filepath, timemodified: timeModified, type} = content;
-
-					if (type === 'url') {
-						throw new Error(
-							`Unexpected type="url" in section="${sectionName}" modname="${modname}".`,
-						);
-					}
+					const {fileurl, filepath, timemodified: timeModified} = content;
 
 					const filename = sanitizeFileName(content.filename);
 					const date = new Date(timeModified * 1000);

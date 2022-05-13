@@ -1,21 +1,19 @@
-import {Except} from 'type-fest';
-
 import {
-	CourseContent,
-	ModuleFileContent,
 	Moodle,
 	popupLogin,
 	getCourseContent,
 } from '../shared/moodle-functions-v3/index';
+import type {
+	CourseContent,
+	FolderContent,
+	FolderModule,
+} from '../shared/moodle-functions-v3/course-content.d';
 
 import {getImageURL} from './image-urls';
 
-export type SanitizedContentFile = Except<
-	ModuleFileContent,
-	'filepath' | 'fileurl'
-> & {
-	filePath: string[]; // Different case than ContentIsFile, to indicate that it gets modified
-	fileUrl: string; // ^
+export type SanitizedContentFile = FolderContent & {
+	filePath: string[];
+	fileUrl: string;
 	imgPath: string;
 };
 
@@ -68,16 +66,12 @@ export const getSanitizedContents = async (
 
 	const {modules} = sectionObject;
 
-	const folderObject = modules.find(({id}) => id === Number(folderId));
+	const folderObject = modules.find(
+		({id, modname}) => modname === 'folder' && id === Number(folderId),
+	) as FolderModule | undefined;
 
 	if (!folderObject) {
 		console.error('Could not find folderObject.');
-
-		return false;
-	}
-
-	if (!('contents' in folderObject)) {
-		console.warn('folderObject was a description.');
 
 		return false;
 	}

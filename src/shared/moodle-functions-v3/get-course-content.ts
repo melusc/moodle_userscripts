@@ -15,8 +15,8 @@ async function getCourseContent(
 ): Promise<CourseContent[]> {
 	id = String(id);
 
-	const cache
-		= this._readCache<Record<string, CourseContent[]>>(cacheKey) ?? {};
+	const cache =
+		this._readCache<Record<string, CourseContent[]>>(cacheKey) ?? {};
 	const cachedResult = cache[id];
 	if (cachedResult && !noCache) {
 		return cachedResult;
