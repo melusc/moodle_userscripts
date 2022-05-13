@@ -5,6 +5,7 @@ import {
 	setToken,
 	setUsername,
 } from './credentials';
+import type {CourseContent} from './get-course-content';
 import type {Courses} from './get-courses';
 
 export type Credentials = {
@@ -138,5 +139,9 @@ export class Moodle {
 
 	async popupLogin(_title: string): Promise<void> {
 		throw new ERR_NOT_INCLUDED('popupLogin');
+	}
+
+	async getCourseContent(_id: string): Promise<CourseContent[]> {
+		throw new ERR_NOT_INCLUDED('getCourseContent');
 	}
 }
