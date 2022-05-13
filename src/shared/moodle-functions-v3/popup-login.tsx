@@ -6,7 +6,7 @@ import type {Moodle, RegisterFunction} from './moodle';
 import {getUsername} from './credentials';
 
 const GenericPopup: FunctionalComponent<{
-	cb: () => void;
+	cb: (token: string) => void;
 	title: string;
 	moodle: Moodle;
 }> = ({cb, title, moodle}) => {
@@ -35,9 +35,9 @@ const GenericPopup: FunctionalComponent<{
 			setLoggedOut(false);
 
 			try {
-				await moodle.login({username, password});
+				const token = await moodle.login({username, password});
 
-				cb();
+				cb(token);
 			} catch {
 				setLoggedOut(true);
 			}
@@ -103,16 +103,16 @@ const GenericPopup: FunctionalComponent<{
 	) : null;
 };
 
-const popupLogin = async function (this: Moodle, title: string): Promise<void> {
-	return new Promise<void>(resolve => {
+const popupLogin = async function (this: Moodle, title: string): Promise<string> {
+	return new Promise<string>(resolve => {
 		const style = GM_addStyle(genericPopupSCSS);
 
-		const callback = () => {
+		const callback = (token: string) => {
 			render(null, div);
 			style.remove();
 			div.remove();
 
-			resolve();
+			resolve(token);
 		};
 
 		const div = document.createElement('div');

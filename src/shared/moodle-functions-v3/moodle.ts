@@ -118,10 +118,6 @@ export class Moodle {
 		return token;
 	}
 
-	get loggedIn(): boolean {
-		return this.credentials.token !== undefined;
-	}
-
 	logout(): void {
 		delete this.credentials.token;
 		deleteToken();
@@ -137,7 +133,7 @@ export class Moodle {
 		throw new ERR_NOT_INCLUDED('getUserId');
 	}
 
-	async popupLogin(_title: string): Promise<void> {
+	async popupLogin(_title: string): Promise<string> {
 		throw new ERR_NOT_INCLUDED('popupLogin');
 	}
 
