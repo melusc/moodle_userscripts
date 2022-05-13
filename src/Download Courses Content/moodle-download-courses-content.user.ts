@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   1.0.1
+// @version   1.1.0
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JXzhy
-// @grant     GM.getValue
-// @grant     GM.setValue
-// @grant     GM.deleteValue
+// @grant     GM_getValue
+// @grant     GM_setValue
+// @grant     GM_deleteValue
 // @grant     GM_addStyle
 // @grant     GM_xmlhttpRequest
 // @run-at    document-start
@@ -17,8 +17,15 @@ import {saveAs} from 'file-saver';
 import JSZip from 'jszip';
 import domReady from '@wordpress/dom-ready';
 
-import {popupGetToken, logout} from '../shared/moodle-functions-v2';
-import type {Response} from './responses.d';
+import {
+	Moodle,
+	getCourseContent,
+	popupLogin,
+	CourseContent,
+} from '../shared/moodle-functions-v3/index';
+
+Moodle.extend(getCourseContent).extend(popupLogin);
+const moodle = new Moodle();
 
 const enum QueueTypes {
 	download,
@@ -59,36 +66,19 @@ const initDownload = async (target: HTMLButtonElement) => {
 	target.disabled = true;
 	target.textContent = formatProgress.downloading(0);
 
-	const token = await popupGetToken("Download Course's Content");
+	const courseId = new URLSearchParams(location.search).get('id');
 
-	const courseid = new URLSearchParams(location.search).get('id');
-
-	if (typeof courseid !== 'string') {
+	if (typeof courseId !== 'string') {
 		return;
 	}
 
-	const pageContentResponse = await fetch('/webservice/rest/server.php', {
-		method: 'POST',
-		headers: {
-			'content-type': 'application/x-www-form-urlencoded',
-		},
-		body: new URLSearchParams({
-			// Important: "courseid" is all lowercase
-			courseid,
-			'options[0][name]': 'includestealthmodules',
-			'options[0][value]': '1',
-			wstoken: token,
-			moodlewsrestformat: 'json',
-			wsfunction: 'core_course_get_contents',
-		}),
-	});
+	let courseContent: CourseContent[];
 
-	const jsonPageContent = (await pageContentResponse.json()) as Response;
-
-	if ('exception' in jsonPageContent) {
-		await logout();
-		void initDownload(target);
-		return;
+	try {
+		courseContent = await moodle.getCourseContent(courseId);
+	} catch {
+		await moodle.popupLogin("Download Course's Content");
+		courseContent = await moodle.getCourseContent(courseId);
 	}
 
 	const zipFile = new JSZip();
@@ -98,7 +88,7 @@ const initDownload = async (target: HTMLButtonElement) => {
 		 since we then know how many items there are */
 	const queue: QueueItem[] = [];
 
-	for (const section of jsonPageContent) {
+	for (const section of courseContent) {
 		const {modules} = section;
 		const sectionName = sanitizeFileName(section.name);
 
@@ -114,7 +104,14 @@ const initDownload = async (target: HTMLButtonElement) => {
 				const folderName = sanitizeFileName(module_.name);
 
 				for (const content of contents) {
-					const {fileurl, filepath, timemodified: timeModified} = content;
+					const {fileurl, filepath, timemodified: timeModified, type} = content;
+
+					if (type === 'url') {
+						throw new Error(
+							`Unexpected type="url" in section="${sectionName}" modname="${modname}".`,
+						);
+					}
+
 					const filename = sanitizeFileName(content.filename);
 					const date = new Date(timeModified * 1000);
 
@@ -149,6 +146,7 @@ const initDownload = async (target: HTMLButtonElement) => {
 		}
 	}
 
+	const token = moodle.credentials.token!;
 	const body = new URLSearchParams({token});
 
 	for (const [i, item] of queue.entries()) {
@@ -218,7 +216,7 @@ const initDownload = async (target: HTMLButtonElement) => {
 
 	saveAs(
 		blob,
-		`course-${courseid}_${new Date().toISOString().replace(/:/g, '-')}.zip`,
+		`course-${courseId}_${new Date().toISOString().replace(/:/g, '-')}.zip`,
 	);
 
 	target.disabled = false;
