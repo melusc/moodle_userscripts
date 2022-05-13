@@ -15,7 +15,7 @@ describe('greaterThan', () => {
 		[[1, 5, 6], [2, 3, 4], -1],
 		[[1, 2, 5], [2, 3, 4], -1],
 		[[1, 2, 3], [1, 2, 3], 0],
-	])('%j > %j === %j', (a: Version, b: Version, expected: boolean) => {
+	])('%j > %j === %j', (a: Version, b: Version, expected: number) => {
 		expect(Math.sign(compare(a, b))).toStrictEqual(expected);
 	});
 
