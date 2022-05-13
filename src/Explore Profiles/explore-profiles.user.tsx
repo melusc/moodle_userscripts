@@ -5,9 +5,9 @@
 // @updateURL https://git.io/JXzjB
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
 // @grant     GM_addStyle
-// @grant     GM.setValue
-// @grant     GM.getValue
-// @grant     GM.deleteValue
+// @grant     GM_setValue
+// @grant     GM_getValue
+// @grant     GM_deleteValue
 // @run-at    document-start
 // ==/UserScript==
 
@@ -18,15 +18,9 @@ import {render, Fragment, h} from 'preact';
 import {useSnapshot, proxy} from 'valtio';
 import domReady from '@wordpress/dom-ready';
 
-import {
-	logout,
-	popupGetToken,
-	popupGetUserId,
-} from '../shared/moodle-functions-v2';
-
 import {countries as COUNTRY_CODES} from './countries';
 import {getContacts} from './get-contacts';
-import {title} from './consts';
+import {title, moodle} from './consts';
 
 import style from './style.scss';
 
@@ -67,11 +61,11 @@ type MainState = {
 };
 
 const getHighest = async () => {
-	let highest = await GM.getValue<number | undefined>('highest');
+	let highest = GM_getValue<number | undefined>('highest');
 
 	if (highest === undefined) {
 		highest = 2136;
-		await GM.setValue('highest', highest);
+		GM_setValue('highest', highest);
 	}
 
 	return highest;
@@ -716,7 +710,12 @@ const getProfilesInRange = async (
 	start: number,
 	range: number,
 ): Promise<UserDataResponse[]> => {
-	const wstoken = await popupGetToken(title);
+	let wstoken: string;
+	try {
+		wstoken = await moodle.login();
+	} catch {
+		wstoken = await moodle.popupLogin(title);
+	}
 
 	let lower = start;
 	let upper = start + range;
@@ -752,7 +751,7 @@ const getProfilesInRange = async (
 	const responseJSON = (await response.json()) as UserDataResponse[];
 
 	if ('errorcode' in responseJSON) {
-		await logout();
+		moodle.logout();
 		return getProfilesInRange(start, range);
 	}
 
@@ -815,7 +814,7 @@ const getProfile = async (
 	const highest = profiles[profiles.length - 1];
 
 	if (highest && highest.id > currentHighest - 10) {
-		await GM.setValue('highest', highest.id + 10);
+		GM_setValue('highest', highest.id + 10);
 	}
 
 	const profile = actionSign < 0 ? profiles[profiles.length - 1] : profiles[0];
@@ -848,7 +847,12 @@ const fetchNewProfile = async (action: number | 'rand') => {
 	}
 
 	if (USER_ID === undefined) {
-		USER_ID = await popupGetUserId(title);
+		try {
+			USER_ID = await moodle.getUserId();
+		} catch {
+			await moodle.popupLogin(title);
+			USER_ID = await moodle.getUserId();
+		}
 	}
 
 	notificationState.from = undefined;

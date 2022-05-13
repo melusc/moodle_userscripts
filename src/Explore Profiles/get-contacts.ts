@@ -1,5 +1,4 @@
-import {popupGetToken, logout} from '../shared/moodle-functions-v2';
-import {title} from './consts';
+import {title, moodle} from './consts';
 
 type CoreMessageGetUserContactsResponse =
 	| {
@@ -13,7 +12,13 @@ type CoreMessageGetUserContactsResponse =
 	  }>;
 
 export const getContacts = async (userId: number): Promise<number[]> => {
-	const wstoken = await popupGetToken(title);
+	let wstoken: string;
+	try {
+		wstoken = await moodle.login();
+	} catch {
+		wstoken = await moodle.popupLogin(title);
+	}
+
 	const body = new URLSearchParams({
 		userid: `${userId}`,
 		wsfunction: 'core_message_get_user_contacts',
@@ -36,7 +41,7 @@ export const getContacts = async (userId: number): Promise<number[]> => {
 		= (await response.json()) as CoreMessageGetUserContactsResponse;
 
 	if ('exception' in responseJSON) {
-		await logout();
+		moodle.logout();
 		return getContacts(userId);
 	}
 
