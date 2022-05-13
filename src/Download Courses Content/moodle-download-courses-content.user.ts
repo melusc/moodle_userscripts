@@ -21,7 +21,7 @@ import {
 	Moodle,
 	getCourseContent,
 	popupLogin,
-} from '../shared/moodle-functions-v3/index';
+} from '../shared/moodle-functions-v3';
 import type {CourseContent} from '../shared/moodle-functions-v3/course-content.d';
 
 Moodle.extend(getCourseContent).extend(popupLogin);

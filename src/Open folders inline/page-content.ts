@@ -2,7 +2,7 @@ import {
 	Moodle,
 	popupLogin,
 	getCourseContent,
-} from '../shared/moodle-functions-v3/index';
+} from '../shared/moodle-functions-v3';
 import type {
 	CourseContent,
 	FolderContent,

@@ -5,7 +5,7 @@ import {Component, Fragment, h, JSX, RefObject, render} from 'preact';
 // Shared across repo
 
 import {uniqueId} from '../shared/general-functions';
-import {getCourses, Moodle, Courses} from '../shared/moodle-functions-v3/index';
+import {getCourses, Moodle, Courses} from '../shared/moodle-functions-v3';
 // Locally shared
 
 import ButtonGrid from './components/button-grid';

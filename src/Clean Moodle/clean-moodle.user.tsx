@@ -27,7 +27,7 @@ import {
 	popupLogin,
 	Courses,
 	getCourses,
-} from '../shared/moodle-functions-v3/index';
+} from '../shared/moodle-functions-v3';
 
 import {setupSettingsPage} from './settingspage';
 import {removeElementFromStorage} from './shared';
