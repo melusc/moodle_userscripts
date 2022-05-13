@@ -5,7 +5,7 @@ import {
 	setToken,
 	setUsername,
 } from './credentials';
-import type {CourseContent} from './get-course-content';
+import type {CourseContent} from './course-content.d';
 import type {Courses} from './get-courses';
 
 export type Credentials = {

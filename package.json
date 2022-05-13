@@ -30,6 +30,7 @@
 		"eslint-plugin-react-hooks": "^4.5.0",
 		"jest": "^28.1.0",
 		"mock-violentmonkey": "^1.1.1",
+		"ow": "^0.28.1",
 		"prettier": "^2.6.2",
 		"rimraf": "^3.0.2",
 		"sass": "^1.51.0",
