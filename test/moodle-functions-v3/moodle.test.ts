@@ -54,8 +54,7 @@ describe('#login', () => {
 			expect(typeof getToken()).toBe('string');
 
 			const moodle2 = new Moodle();
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			expect(typeof (moodle2 as any).credentials.token).toBe('string');
+			expect(typeof moodle2.credentials.token).toBe('string');
 
 			await expect(new Moodle().login()).resolves.toBe(GM_getValue('token'));
 		}),
