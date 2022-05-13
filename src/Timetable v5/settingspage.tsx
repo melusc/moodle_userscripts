@@ -1,37 +1,32 @@
 // Dependencies
-import {h, Component, render, Fragment, JSX, RefObject} from 'preact';
-import {produce} from 'immer';
 import clsx from 'clsx';
-
+import {produce} from 'immer';
+import {Component, Fragment, h, JSX, RefObject, render} from 'preact';
 // Shared across repo
-import {uniqueId} from '../shared/general-functions';
-import {
-	getCourses_throwable,
-	getCredentials,
-	getToken,
-	login_throwable,
-	logout,
-} from '../shared/moodle-functions-v2';
 
+import {uniqueId} from '../shared/general-functions';
+import {getCourses, Moodle, Courses} from '../shared/moodle-functions-v3/index';
 // Locally shared
+
+import ButtonGrid from './components/button-grid';
+import LoggedOut from './components/logged-out';
+import SuggestionsPopup from './components/suggestions-popup';
+import Table from './components/table';
 import {SvgIconAdd} from './icons';
 import {parseStringToTime, parseTimeToString} from './shared';
-import Table from './components/table';
-import SuggestionsPopup from './components/suggestions-popup';
-import LoggedOut from './components/logged-out';
-import ButtonGrid from './components/button-grid';
 
 // Types
 import {
-	SingleDay,
-	TableRow,
 	SettingsPageState,
+	SingleDay,
 	TableOnInputSelectors,
+	TableRow,
 } from './settingspage.d';
 
 // Style
 import settingsPageStyle from './settingspage.scss';
 
+Moodle.extend(getCourses);
 // =============
 
 const getDayOfWeek = () => {
@@ -121,17 +116,11 @@ class SettingsPage extends Component<
 		saveValidity: undefined,
 	};
 
-	callbacksAfterLogin = new Set<(token: string) => void>();
-
-	constructor(...args: Array<Record<string, unknown>>) {
-		super(...args);
-
-		this.callbacksAfterLogin.add(this.fetchCourses);
-	}
+	moodle = new Moodle();
 
 	render() {
 		const {
-			loggedOutCallback,
+			tryLogin: loggedOutCallback,
 			handleButtonNavigate,
 			handleSave,
 			deleteRow,
@@ -370,26 +359,7 @@ class SettingsPage extends Component<
 			}
 		});
 
-		const token = await getToken();
-
-		if (token) {
-			this.callbackAfterLoginHandler(token);
-
-			return;
-		}
-
-		const creds = await getCredentials();
-
-		if (creds) {
-			try {
-				const token = await login_throwable(creds);
-				this.callbackAfterLoginHandler(token);
-
-				return;
-			} catch {}
-		}
-
-		await this.logout(true);
+		this.tryLogin();
 	}
 
 	handleTableInput
@@ -471,57 +441,44 @@ class SettingsPage extends Component<
 		);
 	};
 
-	logout = async (removeCreds?: boolean, cb?: (token: string) => void) => {
-		await logout(removeCreds);
+	onLogin = async () => {
+		await this.fetchCourses();
+	};
 
-		if (cb) {
-			this.callbacksAfterLogin.add(cb);
-		}
+	logout = () => {
+		this.moodle.logout();
 
 		this.setState({
 			loggedOut: true,
 		});
 	};
 
-	callbackAfterLoginHandler = (token: string) => {
-		for (const cb of this.callbacksAfterLogin) {
-			cb(token);
+	tryLogin = (creds?: {username: string; password: string}) => {
+		this.setState({
+			loggedOut: false,
+		});
 
-			this.callbacksAfterLogin.delete(cb);
-		}
+		this.moodle.login(creds).then(this.onLogin, this.logout);
 	};
 
-	loggedOutCallback = async (creds: {username: string; password: string}) => {
-		try {
-			const token = await login_throwable(creds);
-
-			this.setState({
-				loggedOut: false,
-			});
-			this.callbackAfterLoginHandler(token);
-		} catch {
-			await this.logout(true);
-		}
-	};
-
-	fetchCourses = async (token: string) => {
-		let coursesObject: Record<string, string>;
+	fetchCourses = async () => {
+		let courses: Courses;
 
 		try {
-			coursesObject = await getCourses_throwable(token);
+			courses = await this.moodle.getCourses();
 		} catch {
-			await this.logout(false, this.fetchCourses);
+			this.logout();
 
 			return;
 		}
 
-		const courses = Object.entries(coursesObject).map(([id, fullname]) => ({
-			id,
-			name: fullname,
+		const coursesWithKey = courses.map(({id, name}) => ({
+			id: String(id),
+			name,
 			key: uniqueId(),
 		}));
 
-		this.setState({courses});
+		this.setState({courses: coursesWithKey});
 	};
 
 	handleButtonNavigate = (n: number) => {
