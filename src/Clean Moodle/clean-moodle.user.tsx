@@ -19,6 +19,8 @@ import domReady from '@wordpress/dom-ready';
 import {
 	numericBaseSensitiveCollator,
 	getSidebar,
+	upgrader,
+	cleanAuthStorage,
 } from '../shared/general-functions';
 import {
 	Moodle,
@@ -31,6 +33,10 @@ import {setupSettingsPage} from './settingspage';
 import {removeElementFromStorage} from './shared';
 
 Moodle.extend(getCourses).extend(popupLogin);
+
+upgrader({
+	'1.4.0': cleanAuthStorage,
+});
 
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
