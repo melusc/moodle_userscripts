@@ -26,7 +26,11 @@ import {
 	popupLogin,
 	Courses,
 } from '../shared/moodle-functions-v3';
-import {getSidebar} from '../shared/general-functions';
+import {
+	getSidebar,
+	upgrader,
+	cleanAuthStorage,
+} from '../shared/general-functions';
 
 import {setupSettingsPage} from './settingspage';
 import {
@@ -41,6 +45,10 @@ import type {ValidIconObject} from './custom-icons.d';
 
 Moodle.extend(getCourses).extend(popupLogin);
 const moodle = new Moodle();
+
+upgrader({
+	'1.3.0': cleanAuthStorage,
+});
 
 // Stop webpack from removing the metadata above
 if (location.protocol !== 'https:') {
