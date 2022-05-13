@@ -1,60 +1,45 @@
-import {logout, popupGetToken} from '../shared/moodle-functions-v2';
+import {Except} from 'type-fest';
+
+import {
+	CourseContent,
+	ModuleFileContent,
+	Moodle,
+	popupLogin,
+	getCourseContent,
+} from '../shared/moodle-functions-v3/index';
 
 import {getImageURL} from './image-urls';
 
-import type {
-	SanitizedContentFile,
-	ContentsResponse,
-	GetContentsResponseFailed,
-} from './open-folders-inline';
+export type SanitizedContentFile = Except<
+	ModuleFileContent,
+	'filepath' | 'fileurl'
+> & {
+	filePath: string[]; // Different case than ContentIsFile, to indicate that it gets modified
+	fileUrl: string; // ^
+	imgPath: string;
+};
 
-let cachedPageContent: ContentsResponse[] | undefined;
+Moodle.extend(popupLogin).extend(getCourseContent);
+const moodle = new Moodle();
+
 const getPageContent = async (
-	noCache = false,
-): Promise<false | ContentsResponse[]> => {
-	if (!noCache && cachedPageContent !== undefined) {
-		return cachedPageContent;
-	}
-
-	const wstoken = await popupGetToken('Open folders inline');
-
+	noCache?: boolean,
+): Promise<false | CourseContent[]> => {
 	const searchParameters = new URLSearchParams(location.search);
 	const courseId = searchParameters.get('id');
 
 	if (!courseId) {
-		console.error('CourseId was falsy:', searchParameters);
+		console.error('Could not extract courseId "%s"', searchParameters);
 
 		return false;
 	}
 
-	const requestParameters = new URLSearchParams({
-		courseid: courseId,
-		'options[0][name]': 'includestealthmodules',
-		'options[0][value]': '1',
-		moodlewsrestformat: 'json',
-		wsfunction: 'core_course_get_contents',
-		wstoken,
-	});
-
-	const response = await fetch('/webservice/rest/server.php', {
-		method: 'POST',
-		headers: {
-			'content-type': 'application/x-www-form-urlencoded',
-		},
-		body: requestParameters.toString(),
-	});
-
-	const responseJSON = (await response.json()) as
-		| ContentsResponse[]
-		| GetContentsResponseFailed;
-
-	if (!Array.isArray(responseJSON) && 'exception' in responseJSON) {
-		await logout();
-		return getPageContent();
+	try {
+		return await moodle.getCourseContent(courseId, noCache);
+	} catch {
+		await moodle.popupLogin('Open folders inline');
+		return moodle.getCourseContent(courseId, noCache);
 	}
-
-	cachedPageContent = responseJSON;
-	return responseJSON;
 };
 
 const sanitizedFilePath = (path: string): string[] =>
@@ -101,7 +86,7 @@ export const getSanitizedContents = async (
 	const sanitizedContents: SanitizedContentFile[] = [];
 
 	for (const item of contents) {
-		if ('isexternalfile' in item) {
+		if (item.type === 'file') {
 			const {filepath, mimetype} = item;
 
 			const fileUrl = new URL(item.fileurl, 'https://moodle.ksasz.ch');
@@ -109,7 +94,7 @@ export const getSanitizedContents = async (
 
 			const imgPath = new URL(fileUrl.href);
 
-			if (!mimetype.startsWith('image')) {
+			if (!mimetype?.startsWith('image')) {
 				imgPath.searchParams.set('preview', '1');
 			}
 

@@ -30,7 +30,14 @@ const imageURLs: Record<string, string> = {
 	doesn't have to download each file individually, which would be much slower
 */
 
-export const getImageURL = (mimetype: string, defaultValue: string) => {
+export const getImageURL = (
+	mimetype: string | undefined,
+	defaultValue: string,
+) => {
+	if (mimetype === undefined) {
+		return defaultValue;
+	}
+
 	const icon = imageURLs[mimetype];
 	if (icon) {
 		return `/theme/image.php/classic/core/1601902087/f/${icon}`;
