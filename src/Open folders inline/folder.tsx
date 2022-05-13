@@ -4,8 +4,7 @@ import {useEffect, useState} from 'preact/hooks';
 
 import {numericBaseSensitiveCollator} from '../shared/general-functions';
 
-import {SanitizedContentFile} from './open-folders-inline';
-import {getSanitizedContents} from './page-content';
+import {SanitizedContentFile, getSanitizedContents} from './page-content';
 import {RefreshIcon} from './refresh-icon';
 
 const FolderIcon: FunctionalComponent<{

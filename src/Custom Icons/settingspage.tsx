@@ -10,13 +10,7 @@ import {
 import {useEffect, useRef} from 'preact/hooks';
 import {html} from 'htm/preact';
 
-import {
-	login_throwable,
-	logout,
-	getCourses_throwable,
-	getCredentials,
-	getToken,
-} from '../shared/moodle-functions-v2';
+import {Moodle, getCourses, Courses} from '../shared/moodle-functions-v3';
 import {numericBaseSensitiveCollator} from '../shared/general-functions';
 
 import {
@@ -26,6 +20,8 @@ import {
 	getValueFromId,
 } from './shared';
 import style from './settingspage.scss';
+
+Moodle.extend(getCourses);
 
 const sortCourses = (courses: Course[]) => {
 	courses.sort(({name: nameA, id: idA}, {name: nameB, id: idB}) => {
@@ -200,7 +196,9 @@ const LoggedOut = (props: {
 	const usernameRef = useRef<HTMLInputElement>(null);
 	const passwordRef = useRef<HTMLInputElement>(null);
 
-	const handleSaveClick = () => {
+	const handleSubmit: JSX.GenericEventHandler<HTMLFormElement> = event => {
+		event.preventDefault();
+
 		const username = usernameRef.current?.value.trim();
 		const password = passwordRef.current?.value;
 
@@ -215,14 +213,16 @@ const LoggedOut = (props: {
 	return (
 		<div class="outer-main">
 			<div class="main">
-				<div class="replace-flex-inputs">
-					<h2>Login</h2>
-					<input ref={usernameRef} placeholder="Username" />
-					<input ref={passwordRef} placeholder="Password" type="password" />
-					<button class="btn-save" type="button" onClick={handleSaveClick}>
-						Login
-					</button>
-				</div>
+				<form onSubmit={handleSubmit}>
+					<div class="replace-flex-inputs">
+						<h2>Login</h2>
+						<input ref={usernameRef} placeholder="Username" />
+						<input ref={passwordRef} placeholder="Password" type="password" />
+						<button class="btn-save" type="submit">
+							Login
+						</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	);
@@ -614,13 +614,7 @@ class SettingsPage extends Component<
 		notification: undefined,
 	};
 
-	callbacksAfterLogin = new Set<(token: string) => void>();
-
-	constructor(...args: Array<Record<string, unknown>>) {
-		super(...args);
-
-		this.callbacksAfterLogin.add(this.setCourses);
-	}
+	moodle = new Moodle();
 
 	render() {
 		const {
@@ -666,10 +660,7 @@ class SettingsPage extends Component<
 	}
 
 	override async componentDidMount() {
-		const token = await this.getToken();
-		if (token) {
-			this.callbackAfterLoginHandler(token);
-		}
+		this.tryLogin();
 
 		document.addEventListener('keydown', event_ => {
 			if (event_.key === 'Escape') {
@@ -704,26 +695,16 @@ class SettingsPage extends Component<
 		}
 	};
 
-	callbackAfterLoginHandler = (token: string) => {
-		for (const cb of this.callbacksAfterLogin) {
-			cb(token);
+	loggedOutCallback = (creds: {username: string; password: string}) => {
+		this.setState({
+			loggedOut: false,
+		});
 
-			this.callbacksAfterLogin.delete(cb);
-		}
+		this.tryLogin(creds);
 	};
 
-	loggedOutCallback = async (creds: {username: string; password: string}) => {
-		try {
-			this.setState({
-				loggedOut: false,
-			});
-
-			const token = await login_throwable(creds);
-
-			this.callbackAfterLoginHandler(token);
-		} catch {
-			await this.logout(true);
-		}
+	tryLogin = (creds?: {username: string; password: string}) => {
+		this.moodle.login(creds).then(this.onLogin, this.logout);
 	};
 
 	updateCourseById = async (id: string) => {
@@ -761,59 +742,35 @@ class SettingsPage extends Component<
 		}
 	};
 
-	getToken = async (): Promise<string | undefined> => {
-		const token = await getToken();
-
-		if (token) {
-			return token;
-		}
-
-		const creds = await getCredentials();
-
-		if (!creds) {
-			await this.logout(true);
-
-			return undefined;
-		}
-
-		try {
-			return await login_throwable(creds);
-		} catch {
-			await this.logout(true);
-
-			return undefined;
-		}
-	};
-
-	logout = async (removeCreds?: boolean, cb?: (token: string) => void) => {
-		await logout(removeCreds);
-
-		if (cb) {
-			this.callbacksAfterLogin.add(cb);
-		}
+	logout = async () => {
+		this.moodle.logout();
 
 		this.setState({
 			loggedOut: true,
 		});
 	};
 
-	setCourses = async (token: string) => {
-		let coursesObject: Record<string, string>;
+	onLogin = async () => {
+		await this.getCourses();
+	};
+
+	getCourses = async () => {
+		let coursesObject: Courses;
 
 		try {
-			coursesObject = await getCourses_throwable(token);
+			coursesObject = await this.moodle.getCourses();
 		} catch {
-			await this.logout(false, this.setCourses);
+			await this.logout();
 
 			return;
 		}
 
 		const courses: Course[] = [];
-		for (const [id, courseName] of Object.entries(coursesObject)) {
+		for (const {id, name} of coursesObject) {
 			courses.push({
-				id,
-				name: courseName,
-				icon: await getIcon(id),
+				id: String(id),
+				name,
+				icon: await getIcon(String(id)),
 			});
 		}
 

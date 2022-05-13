@@ -1,11 +1,13 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   1.2.1
+// @version   1.3.0
 // @author    lusc
 // @updateURL https://git.io/JXgei
 // @include   *://moodle.ksasz.ch/*
 // @grant     GM.setValue
+// @grant     GM_setValue
 // @grant     GM.getValue
+// @grant     GM_getValue
 // @grant     GM_addStyle
 // @grant     GM.deleteValue
 // @grant     GM_addValueChangeListener
@@ -18,8 +20,17 @@
 import {render, html} from 'htm/preact';
 import domReady from '@wordpress/dom-ready';
 
-import {popupGetCourses} from '../shared/moodle-functions-v2';
-import {getSidebar} from '../shared/general-functions';
+import {
+	Moodle,
+	getCourses,
+	popupLogin,
+	Courses,
+} from '../shared/moodle-functions-v3';
+import {
+	getSidebar,
+	upgrader,
+	cleanAuthStorage,
+} from '../shared/general-functions';
 
 import {setupSettingsPage} from './settingspage';
 import {
@@ -32,6 +43,13 @@ import {
 
 import type {ValidIconObject} from './custom-icons.d';
 
+Moodle.extend(getCourses).extend(popupLogin);
+const moodle = new Moodle();
+
+upgrader({
+	'1.3.0': cleanAuthStorage,
+});
+
 // Stop webpack from removing the metadata above
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
@@ -40,9 +58,16 @@ if (location.protocol !== 'https:') {
 const isFrontpage = !/^\/customiconspreact/i.test(location.pathname);
 
 const testIfUserLeftCourse = async (id: string) => {
-	const courses = await popupGetCourses('Custom Icons');
+	let courses: Courses;
 
-	if (!(id in courses)) {
+	try {
+		courses = await moodle.getCourses();
+	} catch {
+		await moodle.popupLogin('Custom Icons');
+		courses = await moodle.getCourses();
+	}
+
+	if (!courses.some(course => String(course.id) === id)) {
 		await deleteIconFromStorage(id);
 
 		// eslint-disable-next-line no-alert

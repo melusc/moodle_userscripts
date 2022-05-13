@@ -1,6 +1,7 @@
-import {getUserId_throwable} from './get-user-id';
+import {getUserId} from './get-user-id';
+import type {Moodle, RegisterFunction} from './moodle';
 
-type GetCoursesReturnValue = Record<string, string>;
+export type Courses = Array<{id: number; name: string}>;
 
 type GetUserCoursesResponse =
 	| {
@@ -21,31 +22,28 @@ type GetUserCoursesResponse =
 			];
 	  };
 
-let cachedCourses: undefined | GetCoursesReturnValue;
-
-export const getCourses_throwable = async (
-	wstoken: string,
-): Promise<GetCoursesReturnValue> => {
-	if (cachedCourses !== undefined) {
-		return cachedCourses;
+const cacheKey = Symbol('getCourses');
+async function getCourses(this: Moodle, noCache = false): Promise<Courses> {
+	const cache = this._readCache<Courses>(cacheKey);
+	if (cache && !noCache) {
+		return cache;
 	}
 
-	// Let it throw
-	const userId = await getUserId_throwable(wstoken);
+	const userId = await this.getUserId();
+	const token = await this.login();
 
 	const bodyParameters = new URLSearchParams({
 		'requests[0][function]': 'core_enrol_get_users_courses',
 		'requests[0][arguments]': JSON.stringify({
-			// IMPORTANT: "userid" all lowercase
 			userid: userId,
 			returnusercount: false,
 		}),
-		wstoken,
+		wstoken: token,
 		wsfunction: 'tool_mobile_call_external_functions',
 		moodlewsrestformat: 'json',
 	});
 
-	const response = await fetch('/webservice/rest/server.php', {
+	const response = await fetch(`${this.baseUrl}/webservice/rest/server.php`, {
 		method: 'POST',
 		body: bodyParameters.toString(),
 		headers: {
@@ -60,6 +58,7 @@ export const getCourses_throwable = async (
 	const responseJSON = (await response.json()) as GetUserCoursesResponse;
 
 	if ('exception' in responseJSON || responseJSON.responses[0].error) {
+		this.logout();
 		throw new Error('Token was invalid');
 	}
 
@@ -69,11 +68,21 @@ export const getCourses_throwable = async (
 		fullname: string;
 	}>;
 
-	cachedCourses = {};
+	const result: Courses = [];
 
 	for (const {id, fullname} of data) {
-		cachedCourses[id] = fullname;
+		result.push({
+			id,
+			name: fullname,
+		});
 	}
 
-	return cachedCourses;
+	return this._writeCache(cacheKey, result);
+}
+
+const register: RegisterFunction = Moodle => {
+	Moodle.prototype.getCourses = getCourses;
+	Moodle.extend(getUserId);
 };
+
+export {register as getCourses};

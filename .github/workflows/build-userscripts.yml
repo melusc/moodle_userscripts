@@ -28,6 +28,9 @@ jobs:
 
       - name: CI tests
         run: yarn run test
+        env:
+          MOODLE_USERNAME: ${{ secrets.MOODLE_USERNAME }}
+          MOODLE_PASSWORD: ${{ secrets.MOODLE_PASSWORD }}
 
       - name: Build
         run: yarn run webpack

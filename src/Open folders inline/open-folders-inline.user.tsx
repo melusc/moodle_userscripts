@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   1.1.0
+// @version   1.2.0
 // @author    lusc
 // @include   https://moodle.ksasz.ch/course/view.php?id=*
 // @updateURL https://git.io/JXgvE
-// @grant     GM.setValue
-// @grant     GM.getValue
-// @grant     GM.deleteValue
+// @grant     GM_setValue
+// @grant     GM_getValue
+// @grant     GM_deleteValue
 // @grant     GM_addStyle
 // @run-at    document-start
 // ==/UserScript==
@@ -14,9 +14,15 @@
 import {render, h} from 'preact';
 import domReady from '@wordpress/dom-ready';
 
+import {upgrader, cleanAuthStorage} from '../shared/general-functions';
+
 import {Folder} from './folder';
 
 import style from './style.scss';
+
+upgrader({
+	'1.2.0': cleanAuthStorage,
+});
 
 GM_addStyle(style);
 

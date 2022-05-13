@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.3.0
+// @version   1.4.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JXgeW
-// @grant     GM.setValue
-// @grant     GM.getValue
-// @grant     GM.deleteValue
+// @grant     GM_setValue
+// @grant     GM_getValue
+// @grant     GM_deleteValue
 // @grant     GM_addStyle
 // @grant     GM_registerMenuCommand
 // @grant     GM_addValueChangeListener
@@ -16,18 +16,33 @@
 import {render, h} from 'preact';
 import domReady from '@wordpress/dom-ready';
 
-import {popupGetCourses} from '../shared/moodle-functions-v2';
 import {
 	numericBaseSensitiveCollator,
 	getSidebar,
+	upgrader,
+	cleanAuthStorage,
 } from '../shared/general-functions';
+import {
+	Moodle,
+	popupLogin,
+	Courses,
+	getCourses,
+} from '../shared/moodle-functions-v3';
 
 import {setupSettingsPage} from './settingspage';
 import {removeElementFromStorage} from './shared';
 
+Moodle.extend(getCourses).extend(popupLogin);
+
+upgrader({
+	'1.4.0': cleanAuthStorage,
+});
+
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
 }
+
+const moodle = new Moodle();
 
 const {isArray} = Array;
 
@@ -58,9 +73,16 @@ const getCourseElementFromSidebar = (id: string) =>
 	);
 
 const testForInexistantCourse = async (id: string) => {
-	const courses = await popupGetCourses('Clean Moodle');
-	if (!(id in courses)) {
-		await removeElementFromStorage(id);
+	let courses: Courses;
+	try {
+		courses = await moodle.getCourses();
+	} catch {
+		await moodle.popupLogin('Clean Moodle');
+		courses = await moodle.getCourses();
+	}
+
+	if (!courses.some(course => String(course.id) === id)) {
+		removeElementFromStorage(id);
 
 		// eslint-disable-next-line no-alert
 		alert(
@@ -156,14 +178,14 @@ const sortSidebar = () => {
 	sidebar.prepend(...children);
 };
 
-const cleanFrontpage = async () => {
+const cleanFrontpage = () => {
 	const sidebar = getSidebar();
 
 	if (!sidebar) {
 		return;
 	}
 
-	const replaceObject = await GM.getValue<Record<string, string> | undefined>(
+	const replaceObject = GM_getValue<Record<string, string> | undefined>(
 		'replace',
 	);
 
@@ -173,16 +195,16 @@ const cleanFrontpage = async () => {
 			setCourseText(...item);
 		}
 	} else {
-		void GM.setValue('replace', {});
+		GM_setValue('replace', {});
 	}
 
-	const removeArray = await GM.getValue<string[] | undefined>('remove');
+	const removeArray = GM_getValue<string[] | undefined>('remove');
 	if (isArray(removeArray)) {
 		for (const id of removeArray) {
 			setCourseVisibility(id);
 		}
 	} else {
-		void GM.setValue('remove', []);
+		GM_setValue('remove', []);
 	}
 
 	sortSidebar();
@@ -235,7 +257,7 @@ const setupFrontpage = () => {
 	});
 
 	if (sidebar) {
-		void cleanFrontpage();
+		cleanFrontpage();
 
 		GM_addValueChangeListener('replace', refresh(refreshReplaced));
 		GM_addValueChangeListener('remove', refresh(refreshRemoved));

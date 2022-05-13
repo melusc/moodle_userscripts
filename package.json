@@ -23,11 +23,14 @@
 		"clean-webpack-plugin": "^4.0.0",
 		"concurrently": "^7.1.0",
 		"csso-loader": "^0.3.1",
+		"dotenv": "^16.0.1",
 		"eslint-config-xo-react": "^0.27.0",
 		"eslint-plugin-jest": "^26.1.5",
 		"eslint-plugin-react": "^7.29.4",
 		"eslint-plugin-react-hooks": "^4.5.0",
 		"jest": "^28.1.0",
+		"mock-violentmonkey": "^1.1.1",
+		"ow": "^0.28.1",
 		"prettier": "^2.6.2",
 		"rimraf": "^3.0.2",
 		"sass": "^1.51.0",
@@ -54,7 +57,7 @@
 	"private": true,
 	"scripts": {
 		"build": "yarn fmt && yarn run webpack",
-		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js dist/test/test",
+		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
 		"pretest": "rimraf dist/test && tsc --project test/tsconfig.json",
 		"fmt": "prettier -w . && xo --fix",
 		"lint": "xo",
@@ -66,6 +69,9 @@
 	"type": "module",
 	"version": "1.0.0",
 	"jest": {
-		"transform": {}
+		"transform": {},
+		"testMatch": [
+			"<rootDir>/dist/test/test/**/*.test.js"
+		]
 	}
 }
