@@ -36,19 +36,17 @@ const upgrader = (versions: Record<string, () => void>) => {
 			? ([-1, -1, -1] as const)
 			: parseVersion(rawCurrentVersion);
 
-	// Order by version, with greatest version first
+	// Order by version, with lowest version first
 	const upgraders = Object.entries(versions)
 		.map(([version, cb]) => [parseVersion(version), cb] as const)
-		.sort(([a], [b]) => compare(b, a));
+		.sort(([a], [b]) => compare(a, b));
 
+	// Always call the lowest versions first
+	// but only those that have never been called before (i.e. greater than currentVersion)
 	for (const [version, cb] of upgraders) {
-		// If `currentVersion` is greater / equal to `version`
-		// Since they are sorted, all after this will also be greater / equal
-		if (compare(currentVersion, version) >= 0) {
-			break;
+		if (compare(currentVersion, version) < 0) {
+			cb();
 		}
-
-		cb();
 	}
 
 	GM_setValue(key, GM_info.version);

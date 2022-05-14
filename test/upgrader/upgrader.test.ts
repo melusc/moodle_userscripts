@@ -99,4 +99,24 @@ describe('upgrader', () => {
 			expect(GM_getValue('lastUpgraded')).toBe('1.0.0');
 		}),
 	);
+
+	test(
+		'Call order',
+		violentMonkeyContext(() => {
+			expect.assertions(4);
+
+			let index = 0;
+			const makeTester = (expectedIndex: number) => () => {
+				expect(index).toEqual(expectedIndex);
+				++index;
+			};
+
+			upgrader({
+				'2.3.0': makeTester(3),
+				'1.2.4': makeTester(1),
+				'1.4.2': makeTester(2),
+				'0.2.1': makeTester(0),
+			});
+		}),
+	);
 });
