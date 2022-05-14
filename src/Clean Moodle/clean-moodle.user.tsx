@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.4.1
+// @version   1.5.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JXgeW
@@ -30,12 +30,26 @@ import {
 } from '../shared/moodle-functions-v3';
 
 import {setupSettingsPage} from './settingspage';
-import {removeElementFromStorage} from './shared';
+import {getOverrides, Overrides, removeElementFromStorage} from './shared';
 
 Moodle.extend(getCourses).extend(popupLogin);
 
 upgrader({
 	'1.4.0': cleanAuthStorage,
+	'1.5.0'() {
+		const remove: string[] = GM_getValue('remove') ?? [];
+		const replace: Record<string, false | string>
+			= GM_getValue('replace') ?? {};
+
+		for (const id of remove) {
+			replace[id] = false;
+		}
+
+		GM_setValue('overrides', replace);
+
+		GM_deleteValue('remove');
+		GM_deleteValue('replace');
+	},
 });
 
 if (location.protocol !== 'https:') {
@@ -43,8 +57,6 @@ if (location.protocol !== 'https:') {
 }
 
 const moodle = new Moodle();
-
-const {isArray} = Array;
 
 const isFrontpage = !/^\/cleanmoodlepreact/i.test(location.pathname);
 
@@ -125,7 +137,7 @@ const setCourseText = (id: string, newValue?: string) => {
  * Sets the visibility of a course by id
  * @param {string} id The id of the course to remove
  */
-const setCourseVisibility = (id: string, visible = false) => {
+const setCourseVisibility = (id: string, visible: boolean) => {
 	const anchor = getCourseElementFromSidebar(id);
 
 	if (anchor) {
@@ -172,10 +184,18 @@ const sortSidebar = () => {
 			throw new Error('aText or bText was undefined');
 		}
 
-		return numericBaseSensitiveCollator.compare(aText, bText);
+		return numericBaseSensitiveCollator.compare(aText.trim(), bText.trim());
 	});
 
 	sidebar.prepend(...children);
+};
+
+const setCourse = (id: string, value: string | false) => {
+	if (value === false) {
+		setCourseVisibility(id, false);
+	} else {
+		setCourseText(id, value);
+	}
 };
 
 const cleanFrontpage = () => {
@@ -185,26 +205,10 @@ const cleanFrontpage = () => {
 		return;
 	}
 
-	const replaceObject = GM_getValue<Record<string, string> | undefined>(
-		'replace',
-	);
+	const overrides = getOverrides();
 
-	if (typeof replaceObject === 'object') {
-		const replaceEntries = Object.entries(replaceObject);
-		for (const item of replaceEntries) {
-			setCourseText(...item);
-		}
-	} else {
-		GM_setValue('replace', {});
-	}
-
-	const removeArray = GM_getValue<string[] | undefined>('remove');
-	if (isArray(removeArray)) {
-		for (const id of removeArray) {
-			setCourseVisibility(id);
-		}
-	} else {
-		GM_setValue('remove', []);
+	for (const [id, newValue] of Object.entries(overrides)) {
+		setCourse(id, newValue);
 	}
 
 	sortSidebar();
@@ -234,7 +238,7 @@ const refreshRemoved = (oldValue: string[], newValue: string[]) => {
 
 	for (const id of newValue) {
 		if (!oldValue.includes(id)) {
-			setCourseVisibility(id);
+			setCourseVisibility(id, false);
 		}
 	}
 };
@@ -261,6 +265,39 @@ const setupFrontpage = () => {
 
 		GM_addValueChangeListener('replace', refresh(refreshReplaced));
 		GM_addValueChangeListener('remove', refresh(refreshRemoved));
+		GM_addValueChangeListener(
+			'overrides',
+			(
+				_name: string,
+				oldOverrides: Overrides | undefined,
+				newOverrides: Overrides,
+				remote: boolean,
+			) => {
+				if (!remote) {
+					return;
+				}
+
+				if (!oldOverrides) {
+					cleanFrontpage();
+					return;
+				}
+
+				for (const id of Object.keys(oldOverrides)) {
+					if (!(id in newOverrides)) {
+						setCourseText(id);
+						setCourseVisibility(id, true);
+					}
+				}
+
+				for (const [id, newValue] of Object.entries(newOverrides)) {
+					if (newValue !== oldOverrides[id]) {
+						setCourse(id, newValue);
+					}
+				}
+
+				sortSidebar();
+			},
+		);
 
 		const p = sidebar.previousSibling;
 

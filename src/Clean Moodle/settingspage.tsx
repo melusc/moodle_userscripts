@@ -17,7 +17,7 @@ import {
 } from '../shared/moodle-functions-v3';
 import {numericBaseSensitiveCollator} from '../shared/general-functions';
 
-import {removeElementFromStorage} from './shared';
+import {getOverrides, getValue, removeElementFromStorage} from './shared';
 import style from './settingspage.scss';
 import {SvgArrowBack, SvgCheck, SvgX} from './icons';
 
@@ -27,67 +27,50 @@ Moodle.extend(getCourses);
 const sortCoursesArray = (array: Course[]) =>
 	array.sort(
 		(
-			{courseName: courseNameA, replacedName: replacedNameA},
-			{courseName: courseNameB, replacedName: replacedNameB},
+			{courseName: courseNameA, value: valueA},
+			{courseName: courseNameB, value: valueB},
 		) => {
-			const textA = (replacedNameA ?? courseNameA).trim();
-			const textB = (replacedNameB ?? courseNameB).trim();
+			const textA = getName(valueA, courseNameA).trim();
+			const textB = getName(valueB, courseNameB).trim();
 
 			return numericBaseSensitiveCollator.compare(textA, textB);
 		},
 	);
 
-/**
- * Get the replaced name of a course or undefined
- */
-const getReplacedCourseName = (id: string): string | undefined => {
-	const replacers = GM_getValue<Record<string, string> | undefined>('replace');
-
-	return replacers?.[id];
-};
-
-/**
- * Check if a course is being hidden
- */
-const checkIsCourseRemoved = (id: string): boolean => {
-	const removers = GM_getValue<string[] | undefined>('remove');
-
-	return removers?.includes(id) ?? false;
-};
+const getName = (name: string | undefined | false, defaultName: string) =>
+	typeof name === 'string' ? name : defaultName;
 
 /**
  * Add item to removers
  */
-const setRemoved = (id: string) => {
-	const {removers} = removeElementFromStorage(id, {
-		updateRemovers: false,
-	});
+const setRemoved = (id: number) => {
+	const overrides = getOverrides();
 
-	removers.push(id);
+	overrides[id] = false;
 
-	GM_setValue('remove', removers);
+	GM_setValue('overrides', overrides);
 };
 
 /**
  * Set the new text for a course
  */
 const setReplaced = (
-	id: string,
+	id: number,
 	newValue: string | undefined = '',
 	oldValue: string | undefined = '',
 ) => {
 	newValue = newValue.trim();
 	oldValue = oldValue.trim();
 
-	const {replacers} = removeElementFromStorage(id, {
-		updateReplacers: false,
-	});
+	const overrides = getOverrides();
+	// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+	delete overrides[id];
 
 	if (newValue !== '' && newValue !== oldValue) {
-		replacers[id] = newValue;
+		overrides[id] = newValue;
 	}
 
-	GM_setValue('replace', replacers);
+	GM_setValue('overrides', overrides);
 };
 
 const SidebarRow: FunctionalComponent<{
@@ -105,10 +88,10 @@ const SidebarRow: FunctionalComponent<{
 		item: Course,
 	) => void;
 }> = ({course, handleClick, toggleItem, resetItem}) => {
-	const {courseName, replacedName, isRemoved} = course;
+	const {courseName, value} = course;
 	return (
 		<div
-			class={`row${isRemoved ? ' removed' : ''}`}
+			class={`row${value === false ? ' removed' : ''}`}
 			title={courseName}
 			onClick={event_ => {
 				handleClick(event_, course);
@@ -119,10 +102,10 @@ const SidebarRow: FunctionalComponent<{
 					toggleItem(event_, course);
 				}}
 			>
-				{isRemoved ? <SvgX /> : <SvgCheck />}
+				{value === false ? <SvgX /> : <SvgCheck />}
 			</span>
-			{replacedName ?? courseName}
-			{replacedName !== undefined && (
+			{getName(value, courseName)}
+			{typeof value === 'string' && (
 				<span
 					onClick={event_ => {
 						resetItem(event_, course);
@@ -224,9 +207,8 @@ const Main = (props: {
 						}
 						disabled={!selected.isSelected}
 						value={
-							selected.isSelected
-								? selected.replacedName ?? selected.courseName
-								: ''
+							// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+							selected.isSelected ? selected.value || selected.courseName : ''
 						}
 						onKeyDown={handleKeydown}
 					/>
@@ -246,9 +228,8 @@ const Main = (props: {
 
 type Course = Readonly<{
 	courseName: string;
-	courseId: string;
-	isRemoved: boolean;
-	replacedName: string | undefined;
+	courseId: number;
+	value: string | false | undefined;
 }>;
 
 type SettingsPageState = {
@@ -327,12 +308,10 @@ class SettingsPage extends Component<
 		const coursesExtended: Course[] = [];
 
 		for (const {id, name} of courses) {
-			const id_ = String(id);
 			coursesExtended.push({
 				courseName: name,
-				courseId: id_,
-				replacedName: getReplacedCourseName(id_),
-				isRemoved: checkIsCourseRemoved(id_),
+				courseId: id,
+				value: getValue(id),
 			});
 		}
 
@@ -406,11 +385,11 @@ class SettingsPage extends Component<
 
 	toggleCourseRemoved = (
 		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		{isRemoved, courseId}: Course,
+		{value, courseId}: Course,
 	) => {
 		event_.stopImmediatePropagation();
 
-		if (isRemoved) {
+		if (value === false) {
 			removeElementFromStorage(courseId);
 		} else {
 			setRemoved(courseId);
@@ -434,7 +413,7 @@ class SettingsPage extends Component<
 		this.updateCourseById(courseId);
 	};
 
-	removeSelectedIfEqualId = (id: string) => {
+	removeSelectedIfEqualId = (id: number) => {
 		this.setState(
 			// eslint-disable-next-line @typescript-eslint/ban-types
 			({selected}): Pick<SettingsPageState, 'selected'> | null => {
@@ -447,17 +426,13 @@ class SettingsPage extends Component<
 		);
 	};
 
-	updateCourseById = (id: string) => {
-		const isRemoved = checkIsCourseRemoved(id);
-		const replacedName = getReplacedCourseName(id);
-
+	updateCourseById = (id: number) => {
 		this.setState(({courses}): Pick<SettingsPageState, 'courses'> => {
 			for (const [i, course] of courses.entries()) {
 				if (course.courseId === id) {
 					courses[i] = {
 						...course,
-						isRemoved,
-						replacedName,
+						value: getValue(id),
 					};
 
 					break;
@@ -474,8 +449,8 @@ class SettingsPage extends Component<
 		_event: JSX.TargetedMouseEvent<HTMLDivElement>,
 		course: Course,
 	) => {
-		if (course.isRemoved) {
-			removeElementFromStorage(course.courseId, {updateReplacers: false});
+		if (course.value === false) {
+			removeElementFromStorage(course.courseId);
 			this.updateCourseById(course.courseId);
 		}
 
