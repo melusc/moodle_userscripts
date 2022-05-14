@@ -163,16 +163,15 @@ export const Folder: FunctionalComponent<{
 			) : (
 				<FolderRoot isParent contents={contents} />
 			)}
-			{contents !== undefined
-				&& createPortal(
-					<RefreshIcon
-						onClick={() => {
-							setContents(undefined);
-							void fetchContents(folderId, sectionId, true);
-						}}
-					/>,
-					anchor,
-				)}
+			{createPortal(
+				<RefreshIcon
+					onClick={() => {
+						setContents(undefined);
+						void fetchContents(folderId, sectionId, true);
+					}}
+				/>,
+				anchor,
+			)}
 		</>
 	);
 };
