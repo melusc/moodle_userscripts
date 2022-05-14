@@ -36,7 +36,11 @@ const config = (environment = {}) => ({
 			new TerserPlugin({
 				terserOptions: {
 					format: {
-						comments: /^\s*==\/?UserScript==|^\s*@(?!see|ts-ignore)[\w-]/,
+						// Allow ==UserScript== and ==/UserScript==
+						// Allow patterns like @version or @run-at
+						// Disallow @see, @ts-ignore, @ts-expect-error
+						comments:
+							/^\s*==\/?UserScript==|^\s*@(?!see|ts-ignore|ts-expect-error)[\w-]/,
 					},
 					compress: {
 						passes: 3,
