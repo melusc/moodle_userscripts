@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   1.3.0
+// @version   1.3.1
 // @author    lusc
 // @updateURL https://git.io/JXgei
 // @include   *://moodle.ksasz.ch/*
@@ -9,7 +9,7 @@
 // @grant     GM.getValue
 // @grant     GM_getValue
 // @grant     GM_addStyle
-// @grant     GM.deleteValue
+// @grant     GM_deleteValue
 // @grant     GM_addValueChangeListener
 // @grant     GM_registerMenuCommand
 // @grant     GM_xmlhttpRequest
