@@ -49,7 +49,7 @@ const upgrader = (versions: Record<string, () => void>) => {
 		}
 	}
 
-	GM_setValue(key, GM_info.version);
+	GM_setValue(key, GM_info.script.version);
 };
 
 const upgraderSilent = (versions: Record<string, () => void>) => {

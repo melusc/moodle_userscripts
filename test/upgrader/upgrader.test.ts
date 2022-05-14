@@ -40,7 +40,9 @@ describe('upgrader', () => {
 		violentMonkeyContext(() => {
 			GM_setValue('lastUpgraded', '1.0.0');
 			update_GM_info({
-				version: '1.2.3',
+				script: {
+					version: '1.2.3',
+				},
 			});
 
 			const dontCall = jest.fn();
@@ -61,7 +63,9 @@ describe('upgrader', () => {
 		violentMonkeyContext(() => {
 			GM_setValue('lastUpgraded', '0.0.0');
 			update_GM_info({
-				version: '1.1.0',
+				script: {
+					version: '1.1.0',
+				},
 			});
 
 			const dontCall = jest.fn();
@@ -83,7 +87,9 @@ describe('upgrader', () => {
 		'Call all',
 		violentMonkeyContext(() => {
 			update_GM_info({
-				version: '1.0.0',
+				script: {
+					version: '1.0.0',
+				},
 			});
 
 			const doCall = jest.fn();
