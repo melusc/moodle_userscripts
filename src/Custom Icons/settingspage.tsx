@@ -95,22 +95,11 @@ const enum ERROR_MSG {
 const errorMessageFromStatusCode = (status: number, statusText: string) =>
 	`Error ${status}: ${statusText}`;
 
-const getIcon = async (id: string): Promise<Icon | undefined> => {
-	const value = await getValueFromId(id);
+const getIcon = (id: string): Icon | undefined => {
+	const value = getValueFromId(id);
 
-	if (value) {
-		const result: Icon = {};
-
-		if ('rawXML' in value) {
-			result.rawXML = value.rawXML;
-		} else {
-			result.dataURI = value.dataURI;
-		}
-
-		return result;
-	}
-
-	return undefined;
+	// False -> undefined
+	return value || undefined;
 };
 
 const SvgX: FunctionalComponent<
@@ -385,7 +374,7 @@ class Main extends Component<MainProps, MainState> {
 		this.resetForm();
 	};
 
-	save = async () => {
+	save = () => {
 		const {notify, selectedCourse: course} = this.props;
 
 		if (course === undefined) {
@@ -405,7 +394,7 @@ class Main extends Component<MainProps, MainState> {
 				const value = this.refs_.copy.current?.value;
 
 				if (value) {
-					await this.saveByCopy(value, course);
+					this.saveByCopy(value, course);
 				} else {
 					notify(ERROR_MSG.noImage);
 				}
@@ -492,7 +481,7 @@ class Main extends Component<MainProps, MainState> {
 		// Avoid unnecessary steps if svg
 		// Read as text to not have to convert from base64
 		if (blob.type === 'image/svg+xml') {
-			fr.addEventListener('load', async () => {
+			fr.addEventListener('load', () => {
 				// eslint-disable-next-line @typescript-eslint/ban-types
 				const result = fr.result as string | null;
 
@@ -500,7 +489,7 @@ class Main extends Component<MainProps, MainState> {
 					return;
 				}
 
-				await addEntry(id, {
+				addEntry(id, {
 					rawXML: result,
 				});
 
@@ -526,7 +515,7 @@ class Main extends Component<MainProps, MainState> {
 				notify(ERROR_MSG.notImage);
 			});
 
-			img.addEventListener('load', async () => {
+			img.addEventListener('load', () => {
 				const groups = /^data:[\w+/]+;base64,(?<data>.+)$/.exec(result)?.groups;
 
 				if (!groups) {
@@ -540,7 +529,7 @@ class Main extends Component<MainProps, MainState> {
 					return;
 				}
 
-				await addEntry(id, {
+				addEntry(id, {
 					dataURI: result,
 				});
 
@@ -554,10 +543,10 @@ class Main extends Component<MainProps, MainState> {
 		fr.readAsDataURL(blob);
 	};
 
-	saveByCopy = async (courseId: string, course: Course) => {
+	saveByCopy = (courseId: string, course: Course) => {
 		const {id} = course;
 
-		await copyEntry(id, courseId);
+		copyEntry(id, courseId);
 
 		this.resetSelected();
 		this.props.updateCourseById(id);
@@ -659,7 +648,7 @@ class SettingsPage extends Component<
 		);
 	}
 
-	override async componentDidMount() {
+	override componentDidMount() {
 		this.tryLogin();
 
 		document.addEventListener('keydown', event_ => {
@@ -675,10 +664,10 @@ class SettingsPage extends Component<
 		});
 	};
 
-	resetIcon = async (id: string) => {
-		await deleteIconFromStorage(id);
+	resetIcon = (id: string) => {
+		deleteIconFromStorage(id);
 
-		await this.updateCourseById(id);
+		this.updateCourseById(id);
 
 		this.resetSelectedIfEqualId(id);
 	};
@@ -707,8 +696,8 @@ class SettingsPage extends Component<
 		this.moodle.login(creds).then(this.onLogin, this.logout);
 	};
 
-	updateCourseById = async (id: string) => {
-		const icon = await getIcon(id);
+	updateCourseById = (id: string) => {
+		const icon = getIcon(id);
 
 		this.setState(({courses}): Pick<SettingsPageState, 'courses'> => {
 			const updatedCourses = [...courses];
@@ -742,7 +731,7 @@ class SettingsPage extends Component<
 		}
 	};
 
-	logout = async () => {
+	logout = () => {
 		this.moodle.logout();
 
 		this.setState({
@@ -760,7 +749,7 @@ class SettingsPage extends Component<
 		try {
 			coursesObject = await this.moodle.getCourses();
 		} catch {
-			await this.logout();
+			this.logout();
 
 			return;
 		}
@@ -770,7 +759,7 @@ class SettingsPage extends Component<
 			courses.push({
 				id: String(id),
 				name,
-				icon: await getIcon(String(id)),
+				icon: getIcon(String(id)),
 			});
 		}
 

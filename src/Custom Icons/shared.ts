@@ -1,24 +1,15 @@
 import {nanoid} from 'nanoid';
 
-import {
-	DeprecatedValue,
-	Pointers,
-	ValidIconObject,
-	Values,
-} from './custom-icons.d';
+import {Icons, ValidIconObject} from './custom-icons.d';
 
-export const enum StorageKeys {
-	values = 'values',
-	pointers = 'pointers',
-	changed = 'changed',
-}
+export const iconsKey = 'icons';
 
 /**
  * Removes a course and its icon from storage.
  * @param id The id of the course
  */
-export const deleteIconFromStorage = async (id: string) => {
-	const [pointers, values] = await Promise.all([getPointers(), getValues()]);
+export const deleteIconFromStorage = (id: string) => {
+	const {pointers, values} = getIcons();
 
 	// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 	delete pointers[id];
@@ -32,127 +23,101 @@ export const deleteIconFromStorage = async (id: string) => {
 		}
 	}
 
-	await GM.setValue(StorageKeys.values, values);
-	await GM.setValue(StorageKeys.pointers, pointers);
-
-	await dispatchUpdate(DispatchType.deleted, id);
+	setIcons({pointers, values});
 };
 
-/**
- * Get the pointers from storage.
- * @returns Always returns an object even if the value in storage was undefined
- */
-export const getPointers = async (): Promise<Pointers> => {
-	let pointers = await GM.getValue<Pointers | undefined>(StorageKeys.pointers);
-	if (pointers === undefined) {
-		pointers = {};
-		await GM.setValue(StorageKeys.pointers, pointers);
-	}
-
-	return pointers;
-};
+export const getPointers = () => getIcons().pointers;
 
 /**
  * Adds a pointer to the storage
  */
-const setPointer = async (courseId: string, uuid: string) => {
-	const pointers = await getPointers();
+const setPointer = (courseId: string, uuid: string) => {
+	const pointers = getPointers();
 
 	pointers[courseId] = uuid;
-	await GM.setValue(StorageKeys.pointers, pointers);
+	setIcons({pointers});
 };
 
 /**
  * Get the values from storage
  * @returns Always returns an object event if the value in storage was undefined
  */
-export const getValues = async (): Promise<Values> => {
-	let values = await GM.getValue<Values | undefined>(StorageKeys.values);
-
-	if (values === undefined) {
-		values = {};
-		await GM.setValue(StorageKeys.values, values);
-	}
-
-	return values;
-};
+export const getValues = () => getIcons().values;
 
 /**
  * Add a value to storage
  */
-const setValue = async (uuid: string, object: ValidIconObject) => {
-	const values = await getValues();
+const setValue = (uuid: string, object: ValidIconObject) => {
+	const values = getValues();
 
 	values[uuid] = object;
-	await GM.setValue(StorageKeys.values, values);
+	setIcons({values});
 };
 
 /**
  * Takes a course id and returns the icon value.
  *
- * If the value could not be found it returns false.
+ * If the value could not be found it returns undefined.
  */
-export const getValueFromId = async (
-	id: string,
-): Promise<ValidIconObject | false> => {
-	const pointers = await getPointers();
+export const getValueFromId = (id: string): ValidIconObject | undefined => {
+	const pointers = getPointers();
 	const uuid = pointers[id];
 
 	if (!uuid) {
-		return false;
+		return undefined;
 	}
 
-	const values = await getValues();
+	const values = getValues();
 	const value = values[uuid];
 	if (!value) {
-		return false;
-	}
-
-	if ('rawByteString' in value) {
-		const dataURI = await updateDeprecatedSplitDataURI(uuid, value);
-		return {
-			dataURI,
-		};
+		deleteIconFromStorage(id);
+		return undefined;
 	}
 
 	return value;
+};
+
+export const getIcons = (): Icons =>
+	GM_getValue<Icons | undefined>(iconsKey) ?? {
+		pointers: {},
+		values: {},
+	};
+export const setIcons = (icons: Partial<Icons>) => {
+	const fullIcons: Icons = {...getIcons(), ...icons};
+	GM_setValue(iconsKey, fullIcons);
 };
 
 /**
  * Adds a new entry to the storage with the id and object.
  * It avoids collisions automatically.
  */
-export const addEntry = async (id: string, object: ValidIconObject) => {
-	await deleteIconFromStorage(id);
+export const addEntry = (id: string, object: ValidIconObject) => {
+	deleteIconFromStorage(id);
 
 	let uuid = '';
 
-	const values = await getValues();
+	const values = getValues();
 	// Avoid collisions
 	do {
 		uuid = nanoid(5);
 	} while (uuid in values);
 
-	await setValue(uuid, object);
-	await setPointer(id, uuid);
-
-	await dispatchUpdate(DispatchType.added, id, object);
+	setValue(uuid, object);
+	setPointer(id, uuid);
 };
 
 /**
  * Copies an already existant value to the passed id
  */
-export const copyEntry = async (id: string, copyFrom: string) => {
-	await deleteIconFromStorage(id);
+export const copyEntry = (id: string, copyFrom: string) => {
+	deleteIconFromStorage(id);
 
-	const pointers = await getPointers();
+	const pointers = getPointers();
 	const pointerUUID = pointers[copyFrom];
 
 	if (pointerUUID !== undefined) {
-		await setPointer(id, pointerUUID);
+		setPointer(id, pointerUUID);
 	}
-
-	await dispatchUpdate(DispatchType.copied, id, copyFrom);
 };
 
 export const enum DispatchType {
@@ -160,64 +125,3 @@ export const enum DispatchType {
 	copied,
 	deleted,
 }
-
-type DispatchUpdateSignatures = {
-	(type: DispatchType.copied, id: string, copiedFromId: string): Promise<void>;
-	(
-		type: DispatchType.added,
-		id: string,
-		object: ValidIconObject,
-	): Promise<void>;
-	(type: DispatchType.deleted, id: string): Promise<void>;
-};
-
-/**
- * Dispatch an update by updating the value in storage for other tabs
- * to listen for and react accordingly.
- */
-const dispatchUpdate: DispatchUpdateSignatures = async (
-	type,
-	id,
-	lastArg?: string | ValidIconObject,
-): Promise<void> => {
-	const changedInfo: [
-		DispatchType,
-		string,
-		ValidIconObject | string | undefined,
-	] = [type, id, undefined];
-
-	/* Leave "ValidIconObject" in the tuple as undefined
-		if `type === DispatchType.deleted` */
-
-	if (type === DispatchType.added) {
-		// Copied or added
-		changedInfo[2] = lastArg;
-	} else {
-		const object = await getValueFromId(lastArg as string);
-		if (!object) {
-			return;
-		}
-
-		changedInfo[2] = object;
-	}
-
-	await GM.setValue(StorageKeys.changed, [...changedInfo, Math.random()]);
-};
-
-/**
- * Takes the deprecated format of icon objects (with mediaString and rawByteString),
- * converts it the current format, updates the storage, and returns the new format.
- */
-export const updateDeprecatedSplitDataURI = async (
-	uuid: string,
-	values: DeprecatedValue,
-): Promise<string> => {
-	const {mediaType, rawByteString} = values;
-
-	const dataURI = `data:${mediaType};base64,${rawByteString}`;
-	await setValue(uuid, {
-		dataURI,
-	});
-
-	return dataURI;
-};

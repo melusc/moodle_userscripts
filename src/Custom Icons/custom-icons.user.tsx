@@ -1,12 +1,10 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   1.3.1
+// @version   1.4.0
 // @author    lusc
 // @updateURL https://git.io/JXgei
 // @include   *://moodle.ksasz.ch/*
-// @grant     GM.setValue
 // @grant     GM_setValue
-// @grant     GM.getValue
 // @grant     GM_getValue
 // @grant     GM_addStyle
 // @grant     GM_deleteValue
@@ -35,19 +33,30 @@ import {
 import {setupSettingsPage} from './settingspage';
 import {
 	deleteIconFromStorage,
-	DispatchType,
 	getPointers,
 	getValueFromId,
-	StorageKeys,
+	iconsKey,
+	setIcons,
 } from './shared';
 
-import type {ValidIconObject} from './custom-icons.d';
+import {Icons, Pointers, ValidIconObject, Values} from './custom-icons.d';
 
 Moodle.extend(getCourses).extend(popupLogin);
 const moodle = new Moodle();
 
 upgrader({
 	'1.3.0': cleanAuthStorage,
+	'1.4.0'() {
+		GM_deleteValue('changed');
+		const pointers = GM_getValue<Pointers | undefined>('pointers');
+		const values = GM_getValue<Values | undefined>('values');
+		if (pointers && values) {
+			setIcons({pointers, values});
+		}
+
+		GM_deleteValue('pointers');
+		GM_deleteValue('values');
+	},
 });
 
 // Stop webpack from removing the metadata above
@@ -68,7 +77,7 @@ const testIfUserLeftCourse = async (id: string) => {
 	}
 
 	if (!courses.some(course => String(course.id) === id)) {
-		await deleteIconFromStorage(id);
+		deleteIconFromStorage(id);
 
 		// eslint-disable-next-line no-alert
 		alert(
@@ -77,7 +86,7 @@ const testIfUserLeftCourse = async (id: string) => {
 	}
 };
 
-const applyIcon = async (id: string, icon?: ValidIconObject) => {
+const applyIcon = (id: string, icon?: ValidIconObject) => {
 	const sidebar = getSidebar();
 
 	if (!sidebar) {
@@ -99,12 +108,12 @@ const applyIcon = async (id: string, icon?: ValidIconObject) => {
 	}
 
 	if (!icon) {
-		const storageIcon = await getValueFromId(id);
+		const storageIcon = getValueFromId(id);
 
 		if (!storageIcon) {
 			resetIcon(id);
 
-			void deleteIconFromStorage(id);
+			deleteIconFromStorage(id);
 
 			return;
 		}
@@ -162,44 +171,62 @@ const resetIcon = (id: string) => {
 	}
 };
 
-const refresh = async (
+const refresh = (
 	_valueName: string,
-	_oldValue: Record<string, string>,
-	changed:
-		| [
-				type: DispatchType,
-				id: string,
-				optionalObject: ValidIconObject | undefined,
-				cacheBuster: number,
-		  ]
-		| undefined,
+	oldValue: Icons | undefined,
+	newValue: Icons | undefined,
 	remote: boolean,
 ) => {
-	if (!remote || !changed) {
+	if (!oldValue && !newValue) {
 		return;
 	}
 
-	const [type, id, optionalObject] = changed;
+	if (!remote) {
+		return;
+	}
 
-	if (type === DispatchType.deleted) {
+	if (!newValue) {
+		const {pointers} = oldValue!;
+		for (const id of Object.keys(pointers)) {
+			resetIcon(id);
+		}
+
+		return;
+	}
+
+	if (!oldValue) {
+		updateIcons();
+		return;
+	}
+
+	const {pointers: oldPointers} = oldValue;
+	const {pointers: newPointers} = newValue;
+	const oldKeys = new Set(Object.keys(oldPointers));
+	for (const id of Object.keys(newPointers)) {
+		if (newPointers[id] !== oldPointers[id]) {
+			applyIcon(id);
+		}
+
+		oldKeys.delete(id);
+	}
+
+	for (const id of oldKeys) {
 		resetIcon(id);
-	} else {
-		void applyIcon(id, optionalObject);
 	}
 };
 
-const updateIcons = async () => {
+const updateIcons = () => {
 	const sidebar = getSidebar();
 
 	if (sidebar) {
-		const pointers = await getPointers();
+		const pointers = getPointers();
 		const pointerKeys = Object.keys(pointers);
 
 		for (const id of pointerKeys) {
-			await applyIcon(id);
+			applyIcon(id);
 		}
 
-		GM_addValueChangeListener(StorageKeys.changed, refresh);
+		GM_addValueChangeListener(iconsKey, refresh);
 	}
 };
 
@@ -211,7 +238,7 @@ const runOnceOnFrontPage = () => {
 
 		addEventListener('customIconsPreact', updateIcons);
 
-		void updateIcons();
+		updateIcons();
 	}
 };
 
