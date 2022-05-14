@@ -66,7 +66,7 @@ type MainState = {
 	interests?: string[];
 };
 
-const getHighest = async () => {
+const getHighest = () => {
 	let highest = GM_getValue<number | undefined>('highest');
 
 	if (highest === undefined) {
@@ -778,7 +778,7 @@ const unescapeHTML = (html: string) =>
 		.replace(/&amp;/g, '&');
 
 const getRandomProfile = async (): Promise<UserDataResponse> => {
-	const highest = await getHighest();
+	const highest = getHighest();
 	const randProfile = Math.floor(Math.random() * (highest + 1)) + 1;
 
 	notificationState.from = randProfile;
@@ -801,7 +801,7 @@ const getProfile = async (
 
 	let newId = currentId + action;
 
-	const currentHighest = await getHighest();
+	const currentHighest = getHighest();
 	if (newId < 1) {
 		newId = currentHighest;
 	} else if (newId > currentHighest) {

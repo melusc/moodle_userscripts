@@ -127,21 +127,23 @@ export class Moodle {
 
 	// @ts-expect-error Parameters are necessary for typing
 	// and the vscode type-hints look nicer without the leading underscore
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/require-await
 	async getCourses(noCache?: boolean): Promise<Courses> {
 		throw new ERR_NOT_INCLUDED('getCourses');
 	}
 
+	// eslint-disable-next-line @typescript-eslint/require-await
 	async getUserId(): Promise<number> {
 		throw new ERR_NOT_INCLUDED('getUserId');
 	}
 
 	// @ts-expect-error See above
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/require-await
 	async popupLogin(title: string): Promise<string> {
 		throw new ERR_NOT_INCLUDED('popupLogin');
 	}
 
+	// eslint-disable-next-line @typescript-eslint/require-await
 	async getCourseContent(
 		// @ts-expect-error See above
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -26,7 +26,7 @@ upgrader({
 
 GM_addStyle(style);
 
-const handleClick = async (event: MouseEvent): Promise<void> => {
+const handleClick = (event: MouseEvent): void => {
 	if (event.ctrlKey) {
 		return;
 	}

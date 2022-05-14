@@ -345,7 +345,7 @@ class SettingsPage extends Component<
 		);
 	};
 
-	override async componentDidMount() {
+	override componentDidMount() {
 		document.body.addEventListener('focusout', () => {
 			this.setState({
 				focusedElement: undefined,
