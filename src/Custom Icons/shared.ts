@@ -70,7 +70,6 @@ export const getValueFromId = (id: string): ValidIconObject | undefined => {
 	const values = getValues();
 	const value = values[uuid];
 	if (!value) {
-		deleteIconFromStorage(id);
 		return undefined;
 	}
 

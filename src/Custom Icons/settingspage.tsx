@@ -95,13 +95,6 @@ const enum ERROR_MSG {
 const errorMessageFromStatusCode = (status: number, statusText: string) =>
 	`Error ${status}: ${statusText}`;
 
-const getIcon = (id: string): Icon | undefined => {
-	const value = getValueFromId(id);
-
-	// False -> undefined
-	return value || undefined;
-};
-
 const SvgX: FunctionalComponent<
 	{
 		class?: string;
@@ -697,7 +690,7 @@ class SettingsPage extends Component<
 	};
 
 	updateCourseById = (id: string) => {
-		const icon = getIcon(id);
+		const icon = getValueFromId(id);
 
 		this.setState(({courses}): Pick<SettingsPageState, 'courses'> => {
 			const updatedCourses = [...courses];
@@ -759,7 +752,7 @@ class SettingsPage extends Component<
 			courses.push({
 				id: String(id),
 				name,
-				icon: getIcon(String(id)),
+				icon: getValueFromId(String(id)),
 			});
 		}
 
