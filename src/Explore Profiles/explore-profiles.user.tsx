@@ -99,14 +99,14 @@ const Notification = () => {
 	}
 
 	return (
-		<div class="epr-notification">
-			<div class="epr-centered">
-				<div class="epr-spinner">
-					<div class="bounce1" />
-					<div class="bounce2" />
-					<div class="bounce3" />
+		<div class='epr-notification'>
+			<div class='epr-centered'>
+				<div class='epr-spinner'>
+					<div class='bounce1' />
+					<div class='bounce2' />
+					<div class='bounce3' />
 				</div>
-				<div class="epr-text-center">
+				<div class='epr-text-center'>
 					{'Checking '}
 					{from}
 					{to !== undefined && to !== from && ` to ${to}`}
@@ -134,32 +134,32 @@ const Header = () => {
 	} = snap;
 
 	return (
-		<div class="col-12 pt-3 pb-3">
-			<div class="card ">
-				<div class="card-body ">
-					<div class="d-flex align-items-center">
-						<div class="mr-auto">
-							<div class="page-context-header">
-								<div class="page-header-image">
+		<div class='col-12 pt-3 pb-3'>
+			<div class='card '>
+				<div class='card-body '>
+					<div class='d-flex align-items-center'>
+						<div class='mr-auto'>
+							<div class='page-context-header'>
+								<div class='page-header-image'>
 									<a
 										href={`https://moodle.ksasz.ch/user/profile.php?id=${id}`}
-										class="d-inline-block aabtn"
+										class='d-inline-block aabtn'
 									>
 										<img
 											src={image}
-											class="userpicture defaultuserpic"
+											class='userpicture defaultuserpic'
 											alt={`Picture of ${fullname}`}
 											title={`Picture of ${fullname}`}
-											width="100"
-											height="100"
+											width='100'
+											height='100'
 										/>
 									</a>
 								</div>
-								<div class="page-header-headings">
+								<div class='page-header-headings'>
 									<h1>{fullname}</h1>
 									<h5>
 										{'First accessed Moodle: '}
-										<span class="epr-coloured">
+										<span class='epr-coloured'>
 											{dayjs
 												.unix(firstaccess)
 												.format('ddd, D MMM YYYY HH:mm:ss')}
@@ -167,33 +167,33 @@ const Header = () => {
 									</h5>
 									<h5>
 										{'Last accessed Moodle '}
-										<span class="epr-coloured">
+										<span class='epr-coloured'>
 											{dayjs.unix(lastaccess).fromNow(true)}
 										</span>
 										{' ago'}
 									</h5>
 								</div>
-								<div class="btn-group header-button-group">
+								<div class='btn-group header-button-group'>
 									<a
-										id="message-user-button"
-										role="button"
-										data-conversationid="0"
+										id='message-user-button'
+										role='button'
+										data-conversationid='0'
 										data-userid={id}
-										class="btn"
+										class='btn'
 										href={`https://moodle.ksasz.ch/message/index.php?id=${id}`}
 									>
 										<span>
 											<i
-												class="icon fa fa-comment fa-fw iconsmall"
-												title="Message"
-												aria-label="Message"
+												class='icon fa fa-comment fa-fw iconsmall'
+												title='Message'
+												aria-label='Message'
 											/>
-											<span class="header-button-title">Message</span>
+											<span class='header-button-title'>Message</span>
 										</span>
 									</a>
 									<span
-										class="sr-only sr-only-focusable"
-										data-region="jumpto"
+										class='sr-only sr-only-focusable'
+										data-region='jumpto'
 										tabIndex={-1}
 									/>
 
@@ -201,9 +201,9 @@ const Header = () => {
 										<a
 											data-userid={id}
 											data-is-contact={isContact ? 1 : 0}
-											id="toggle-contact-button"
-											role="button"
-											class="ajax-contact-button btn"
+											id='toggle-contact-button'
+											role='button'
+											class='ajax-contact-button btn'
 											href={`https://moodle.ksasz.ch/message/index.php?user1=${USER_ID}&user2=${id}&${
 												isContact ? 'removecontact' : 'addcontact'
 											}=${id}&sesskey=${unsafeWindow.M.cfg.sesskey}`}
@@ -211,28 +211,28 @@ const Header = () => {
 											<span>
 												{isContact ? (
 													<i
-														class="icon fa fa-user-times fa-fw iconsmall"
-														title="Remove from contacts"
-														aria-label="Remove from contacts"
+														class='icon fa fa-user-times fa-fw iconsmall'
+														title='Remove from contacts'
+														aria-label='Remove from contacts'
 													/>
 												) : (
 													<i
-														class="icon fa fa-address-card fa-fw iconsmall"
-														title="Add to contacts"
-														aria-label="Add to contacts"
+														class='icon fa fa-address-card fa-fw iconsmall'
+														title='Add to contacts'
+														aria-label='Add to contacts'
 													/>
 												)}
-												<span class="header-button-title">
+												<span class='header-button-title'>
 													{isContact
 														? 'Remove from contacts'
 														: 'Add to contacts'}
 												</span>
 											</span>
-											<span class="loading-icon icon-no-margin">
+											<span class='loading-icon icon-no-margin'>
 												<i
-													class="icon fa fa-circle-o-notch fa-spin fa-fw "
-													title="Loading"
-													aria-label="Loading"
+													class='icon fa fa-circle-o-notch fa-spin fa-fw '
+													title='Loading'
+													aria-label='Loading'
 												/>
 											</span>
 										</a>
@@ -241,24 +241,24 @@ const Header = () => {
 							</div>
 						</div>
 						<div
-							class="header-actions-container flex-shrink-0"
-							data-region="header-actions-container"
+							class='header-actions-container flex-shrink-0'
+							data-region='header-actions-container'
 						/>
 					</div>
-					<div class="d-flex flex-wrap">
-						<div id="page-navbar">
-							<nav aria-label="Navigation bar">
-								<ol class="breadcrumb">
-									<li class="breadcrumb-item">
-										<a href="https://moodle.ksasz.ch/">Home</a>
+					<div class='d-flex flex-wrap'>
+						<div id='page-navbar'>
+							<nav aria-label='Navigation bar'>
+								<ol class='breadcrumb'>
+									<li class='breadcrumb-item'>
+										<a href='https://moodle.ksasz.ch/'>Home</a>
 									</li>
 
-									<li class="breadcrumb-item">Users</li>
+									<li class='breadcrumb-item'>Users</li>
 
-									<li class="breadcrumb-item">
+									<li class='breadcrumb-item'>
 										<a
 											href={`https://moodle.ksasz.ch/user/profile.php?id=${id}`}
-											aria-current="page"
+											aria-current='page'
 										>
 											{fullname}
 										</a>
@@ -266,49 +266,49 @@ const Header = () => {
 								</ol>
 							</nav>
 						</div>
-						<div class="ml-auto d-flex">
+						<div class='ml-auto d-flex'>
 							{isUserProfile && (
 								<>
-									<div class="singlebutton">
+									<div class='singlebutton'>
 										<form
-											method="post"
-											action="https://moodle.ksasz.ch/user/profile.php"
+											method='post'
+											action='https://moodle.ksasz.ch/user/profile.php'
 										>
-											<input type="hidden" name="edit" value="1" />
-											<input type="hidden" name="reset" value="1" />
-											<input type="hidden" name="id" value={USER_ID} />
+											<input type='hidden' name='edit' value='1' />
+											<input type='hidden' name='reset' value='1' />
+											<input type='hidden' name='id' value={USER_ID} />
 											<input
-												type="hidden"
-												name="sesskey"
+												type='hidden'
+												name='sesskey'
 												value={unsafeWindow.M.cfg.sesskey}
 											/>
 											<button
-												type="submit"
-												class="btn btn-secondary"
-												id="single_button5fcba57352eb71"
-												title=""
+												type='submit'
+												class='btn btn-secondary'
+												id='single_button5fcba57352eb71'
+												title=''
 											>
 												Reset page to default
 											</button>
 										</form>
 									</div>
-									<div class="singlebutton">
+									<div class='singlebutton'>
 										<form
-											method="post"
-											action="https://moodle.ksasz.ch/user/profile.php"
+											method='post'
+											action='https://moodle.ksasz.ch/user/profile.php'
 										>
-											<input type="hidden" name="edit" value="1" />
-											<input type="hidden" name="id" value={USER_ID} />
+											<input type='hidden' name='edit' value='1' />
+											<input type='hidden' name='id' value={USER_ID} />
 											<input
-												type="hidden"
-												name="sesskey"
+												type='hidden'
+												name='sesskey'
 												value={unsafeWindow.M.cfg.sesskey}
 											/>
 											<button
-												type="submit"
-												class="btn btn-secondary"
-												id="single_button5fcba57352eb72"
-												title=""
+												type='submit'
+												class='btn btn-secondary'
+												id='single_button5fcba57352eb72'
+												title=''
 											>
 												Customise this page
 											</button>
@@ -317,7 +317,7 @@ const Header = () => {
 								</>
 							)}
 						</div>
-						<div id="course-header" />
+						<div id='course-header' />
 					</div>
 				</div>
 			</div>
@@ -346,11 +346,11 @@ const Main = () => {
 	} = snap;
 
 	return (
-		<section id="region-main" class="region-main-content" aria-label="Content">
-			<span class="notifications" id="user-notifications" />
-			<div role="main">
-				<span id="maincontent" />
-				<div class="userprofile">
+		<section id='region-main' class='region-main-content' aria-label='Content'>
+			<span class='notifications' id='user-notifications' />
+			<div role='main'>
+				<span id='maincontent' />
+				<div class='userprofile'>
 					{typeof description !== 'undefined' && description !== '' && (
 						<div
 							// Disable it because it gets sanitised
@@ -359,25 +359,25 @@ const Main = () => {
 							dangerouslySetInnerHTML={{
 								__html: DOMPurify.sanitize(description),
 							}}
-							class="description"
+							class='description'
 						/>
 					)}
 					<aside
-						id="block-region-content"
-						class="block-region"
-						data-blockregion="content"
-						data-droptarget="1"
+						id='block-region-content'
+						class='block-region'
+						data-blockregion='content'
+						data-droptarget='1'
 					/>
-					<div class="profile_tree">
+					<div class='profile_tree'>
 						{[email, country, city, url, interests].some(
 							item => typeof item !== 'undefined',
 						) && (
-							<section class="node_category card d-inline-block w-100 mb-3">
-								<div class="card-body">
-									<h3 class="lead">User details</h3>
+							<section class='node_category card d-inline-block w-100 mb-3'>
+								<div class='card-body'>
+									<h3 class='lead'>User details</h3>
 									<ul>
 										{typeof email !== 'undefined' && (
-											<li class="contentnode">
+											<li class='contentnode'>
 												<dl>
 													<dt>Email address</dt>
 													<dd>
@@ -389,7 +389,7 @@ const Main = () => {
 											</li>
 										)}
 										{typeof country !== 'undefined' && (
-											<li class="contentnode">
+											<li class='contentnode'>
 												<dl>
 													<dt>Country</dt>
 													<dd>{country}</dd>
@@ -397,7 +397,7 @@ const Main = () => {
 											</li>
 										)}
 										{typeof city !== 'undefined' && (
-											<li class="contentnode">
+											<li class='contentnode'>
 												<dl>
 													<dt>City/town</dt>
 													<dd>{city}</dd>
@@ -405,11 +405,11 @@ const Main = () => {
 											</li>
 										)}
 										{typeof url !== 'undefined' && (
-											<li class="contentnode">
+											<li class='contentnode'>
 												<dl>
 													<dt>Web page</dt>
 													<dd>
-														<a href={url} rel="noopener noreferrer">
+														<a href={url} rel='noopener noreferrer'>
 															{url}
 														</a>
 													</dd>
@@ -417,19 +417,19 @@ const Main = () => {
 											</li>
 										)}
 										{typeof interests !== 'undefined' && (
-											<li class="contentnode">
+											<li class='contentnode'>
 												<dl>
 													<dt>Interests</dt>
 													<dd>
-														<div class="tag_list hideoverlimit ">
-															<ul class="inline-list">
+														<div class='tag_list hideoverlimit '>
+															<ul class='inline-list'>
 																{interests.map(interest => (
 																	<li key={interest}>
 																		<a
 																			href={`https://moodle.ksasz.ch/tag/index.php?tag=${encodeURIComponent(
 																				interest,
 																			)}`}
-																			class="badge badge-info"
+																			class='badge badge-info'
 																		>
 																			{interest}
 																		</a>
@@ -446,11 +446,11 @@ const Main = () => {
 							</section>
 						)}
 						{isReadonlyArray(courses) && courses.length > 0 && (
-							<section class="node_category card d-inline-block w-100 mb-3">
-								<div class="card-body">
-									<h3 class="lead">Course details</h3>
+							<section class='node_category card d-inline-block w-100 mb-3'>
+								<div class='card-body'>
+									<h3 class='lead'>Course details</h3>
 									<ul>
-										<li class="contentnode">
+										<li class='contentnode'>
 											<dl>
 												<dt>Course profiles</dt>
 												<dd>
@@ -472,9 +472,9 @@ const Main = () => {
 								</div>
 							</section>
 						)}
-						<section class="node_category card d-inline-block w-100 mb-3">
-							<div class="card-body">
-								<h3 class="lead">Miscellaneous</h3>
+						<section class='node_category card d-inline-block w-100 mb-3'>
+							<div class='card-body'>
+								<h3 class='lead'>Miscellaneous</h3>
 								<ul>
 									<li>
 										<span>
@@ -507,13 +507,13 @@ const Main = () => {
 							</div>
 						</section>
 						{isUserProfile && (
-							<section class="node_category card d-inline-block w-100 mb-3">
-								<div class="card-body">
-									<h3 class="lead">Reports</h3>
+							<section class='node_category card d-inline-block w-100 mb-3'>
+								<div class='card-body'>
+									<h3 class='lead'>Reports</h3>
 									<ul>
 										<li>
 											<span>
-												<a href="https://moodle.ksasz.ch/report/usersessions/user.php">
+												<a href='https://moodle.ksasz.ch/report/usersessions/user.php'>
 													Browser sessions
 												</a>
 											</span>
@@ -531,12 +531,12 @@ const Main = () => {
 								</div>
 							</section>
 						)}
-						<section class="node_category card d-inline-block w-100 mb-3">
-							<div class="card-body">
-								<h3 class="lead">Login activity</h3>
+						<section class='node_category card d-inline-block w-100 mb-3'>
+							<div class='card-body'>
+								<h3 class='lead'>Login activity</h3>
 								<ul>
 									{typeof firstaccess !== 'undefined' && (
-										<li class="contentnode">
+										<li class='contentnode'>
 											<dl>
 												<dt>First access to site</dt>
 												<dd>
@@ -550,7 +550,7 @@ const Main = () => {
 										</li>
 									)}
 									{typeof lastaccess !== 'undefined' && (
-										<li class="contentnode">
+										<li class='contentnode'>
 											<dl>
 												<dt>Last access to site</dt>
 												<dd>
@@ -585,80 +585,80 @@ const Sidebar = () => {
 	return (
 		<>
 			<p
-				class="tree_item branch"
-				role="treeitem"
-				aria-expanded="true"
-				aria-owns="random5fcb9ae3999e64_group"
+				class='tree_item branch'
+				role='treeitem'
+				aria-expanded='true'
+				aria-owns='random5fcb9ae3999e64_group'
 				tabIndex={-1}
-				aria-selected="false"
+				aria-selected='false'
 			>
-				<span tabIndex={-1} id="label_2_34">
+				<span tabIndex={-1} id='label_2_34'>
 					Users
 				</span>
 			</p>
-			<ul role="group" tabIndex={-1}>
+			<ul role='group' tabIndex={-1}>
 				<li
-					class="type_user depth_3 contains_branch current_branch"
-					aria-labelledby="label_3_35"
+					class='type_user depth_3 contains_branch current_branch'
+					aria-labelledby='label_3_35'
 					tabIndex={-1}
 				>
 					<p
-						class="tree_item branch active_tree_node"
-						role="treeitem"
-						aria-expanded="true"
-						aria-owns="random5fcb9ae3999e65_group"
+						class='tree_item branch active_tree_node'
+						role='treeitem'
+						aria-expanded='true'
+						aria-owns='random5fcb9ae3999e65_group'
 						tabIndex={-1}
-						aria-selected="false"
+						aria-selected='false'
 					>
 						<a
 							tabIndex={-1}
-							id="label_3_35"
+							id='label_3_35'
 							href={`https://moodle.ksasz.ch/user/profile.php?id=${id}`}
 						>
 							{fullname}
 						</a>
 					</p>
-					<ul role="group" tabIndex={-1}>
+					<ul role='group' tabIndex={-1}>
 						<li
-							class="type_container depth_4 contains_branch"
-							aria-labelledby="label_4_36"
+							class='type_container depth_4 contains_branch'
+							aria-labelledby='label_4_36'
 							tabIndex={-1}
 						>
 							<p
-								class="tree_item branch"
-								role="treeitem"
-								aria-expanded="false"
-								aria-owns="random5fcb9ae3999e66_group"
+								class='tree_item branch'
+								role='treeitem'
+								aria-expanded='false'
+								aria-owns='random5fcb9ae3999e66_group'
 								tabIndex={-1}
-								aria-selected="false"
+								aria-selected='false'
 							>
-								<span tabIndex={-1} id="label_4_36">
+								<span tabIndex={-1} id='label_4_36'>
 									Blogs
 								</span>
 							</p>
-							<ul role="group" aria-hidden="true" tabIndex={-1}>
+							<ul role='group' aria-hidden='true' tabIndex={-1}>
 								<li
-									class="type_custom depth_5 item_with_icon"
-									aria-labelledby="label_5_37"
+									class='type_custom depth_5 item_with_icon'
+									aria-labelledby='label_5_37'
 									tabIndex={-1}
 								>
 									<p
-										class="tree_item hasicon"
-										role="treeitem"
+										class='tree_item hasicon'
+										role='treeitem'
 										tabIndex={-1}
-										aria-selected="false"
+										aria-selected='false'
 									>
 										<a
 											tabIndex={-1}
-											id="label_5_37"
+											id='label_5_37'
 											href={`https://moodle.ksasz.ch/blog/index.php?userid=${id}`}
 										>
 											<i
-												class="icon fa fa-square fa-fw navicon"
-												aria-hidden="true"
+												class='icon fa fa-square fa-fw navicon'
+												aria-hidden='true'
 												tabIndex={-1}
 											/>
-											<span class="item-content-wrap" tabIndex={-1}>
+											<span class='item-content-wrap' tabIndex={-1}>
 												View all entries by {fullname}
 											</span>
 										</a>
@@ -667,27 +667,27 @@ const Sidebar = () => {
 							</ul>
 						</li>
 						<li
-							class="type_setting depth_4 item_with_icon"
-							aria-labelledby="label_4_38"
+							class='type_setting depth_4 item_with_icon'
+							aria-labelledby='label_4_38'
 							tabIndex={-1}
 						>
 							<p
-								class="tree_item hasicon"
-								role="treeitem"
+								class='tree_item hasicon'
+								role='treeitem'
 								tabIndex={-1}
-								aria-selected="false"
+								aria-selected='false'
 							>
 								<a
 									tabIndex={-1}
-									id="label_4_38"
+									id='label_4_38'
 									href={`https://moodle.ksasz.ch/message/index.php?user1=${USER_ID}&user2=${id}`}
 								>
 									<i
-										class="icon fa fa-square fa-fw navicon"
-										aria-hidden="true"
+										class='icon fa fa-square fa-fw navicon'
+										aria-hidden='true'
 										tabIndex={-1}
 									/>
-									<span class="item-content-wrap" tabIndex={-1}>
+									<span class='item-content-wrap' tabIndex={-1}>
 										Messages
 									</span>
 								</a>
@@ -984,8 +984,8 @@ const runOnce = () => {
 				{BUTTONS.map(([text, action]) => (
 					<button
 						key={action}
-						class="btn btn-secondary"
-						type="button"
+						class='btn btn-secondary'
+						type='button'
 						onClick={() => {
 							void fetchNewProfile(action);
 						}}

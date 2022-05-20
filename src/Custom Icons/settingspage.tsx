@@ -101,16 +101,16 @@ const SvgX: FunctionalComponent<
 	} & JSX.DOMAttributes<SVGSVGElement>
 > = ({class: _class, ...props}) => (
 	<svg
-		fill="none"
-		stroke="currentColor"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-		stroke-width="2"
+		fill='none'
+		stroke='currentColor'
+		stroke-linecap='round'
+		stroke-linejoin='round'
+		stroke-width='2'
 		class={`svg-icon svg-icon-x${_class ? ` ${_class}` : ''}`}
-		viewBox="0 0 24 24"
+		viewBox='0 0 24 24'
 		{...props}
 	>
-		<path d="M24 0 0 24M0 0l24 24" />
+		<path d='M24 0 0 24M0 0l24 24' />
 	</svg>
 );
 
@@ -122,7 +122,7 @@ const RenderIcon = (props: {icon: Icon | undefined}) => {
 	}
 
 	return icon.rawXML ? (
-		<span class="icon">
+		<span class='icon'>
 			{html(
 				Object.assign([icon.rawXML], {
 					raw: [icon.rawXML],
@@ -130,7 +130,7 @@ const RenderIcon = (props: {icon: Icon | undefined}) => {
 			)}
 		</span>
 	) : (icon.dataURI ? (
-		<img class="icon" src={icon.dataURI} />
+		<img class='icon' src={icon.dataURI} />
 	) : null);
 };
 
@@ -152,21 +152,21 @@ const Notification: FunctionalComponent<{
 
 	return content ? (
 		<div
-			class="outer-notification"
+			class='outer-notification'
 			onClick={event_ => {
 				if (event_.currentTarget === event_.target) {
 					cb();
 				}
 			}}
 		>
-			<div ref={notificationRef} class="inner-notification">
+			<div ref={notificationRef} class='inner-notification'>
 				<SvgX
-					class="svg-close"
+					class='svg-close'
 					onClick={() => {
 						cb();
 					}}
 				/>
-				<div class="notification-string">{content}</div>
+				<div class='notification-string'>{content}</div>
 			</div>
 		</div>
 	) : null;
@@ -193,14 +193,14 @@ const LoggedOut = (props: {
 	};
 
 	return (
-		<div class="outer-main">
-			<div class="main">
+		<div class='outer-main'>
+			<div class='main'>
 				<form onSubmit={handleSubmit}>
-					<div class="replace-flex-inputs">
+					<div class='replace-flex-inputs'>
 						<h2>Login</h2>
-						<input ref={usernameRef} placeholder="Username" />
-						<input ref={passwordRef} placeholder="Password" type="password" />
-						<button class="btn-save" type="submit">
+						<input ref={usernameRef} placeholder='Username' />
+						<input ref={passwordRef} placeholder='Password' type='password' />
+						<button class='btn-save' type='submit'>
 							Login
 						</button>
 					</div>
@@ -229,8 +229,8 @@ class Main extends Component<MainProps, MainState> {
 		const file = refs_.file.current?.files?.[0];
 
 		return (
-			<div class="outer-main">
-				<div class="main">
+			<div class='outer-main'>
+				<div class='main'>
 					<form ref={refs_.form}>
 						<h2>Change or add an icon</h2>
 						{selectedCourse ? (
@@ -251,8 +251,8 @@ class Main extends Component<MainProps, MainState> {
 						<h3>Upload image from URL</h3>
 						<input
 							ref={refs_.url}
-							type="url"
-							placeholder="Image url"
+							type='url'
+							placeholder='Image url'
 							disabled={
 								selected !== FILE_TYPES.URL && selected !== FILE_TYPES.NONE
 							}
@@ -264,13 +264,13 @@ class Main extends Component<MainProps, MainState> {
 						<input
 							ref={refs_.file}
 							hidden
-							type="file"
+							type='file'
 							onInput={event_ => {
 								handleInput(FILE_TYPES.FILE, event_);
 							}}
 						/>
 						<button
-							type="button"
+							type='button'
 							disabled={
 								selected !== FILE_TYPES.FILE && selected !== FILE_TYPES.NONE
 							}
@@ -282,7 +282,7 @@ class Main extends Component<MainProps, MainState> {
 								<>
 									{file.name}
 									<SvgX
-										class="svg-clear"
+										class='svg-clear'
 										onClick={ev => {
 											ev.stopPropagation();
 											reset();
@@ -303,7 +303,7 @@ class Main extends Component<MainProps, MainState> {
 								handleInput(FILE_TYPES.COPY, event_);
 							}}
 						>
-							<option selected value="null">
+							<option selected value='null'>
 								Select course to copy icon from
 							</option>
 							{courses.map(
@@ -317,8 +317,8 @@ class Main extends Component<MainProps, MainState> {
 							)}
 						</select>
 						<button
-							class="btn-save"
-							type="button"
+							class='btn-save'
+							type='button'
 							disabled={
 								selected === FILE_TYPES.NONE || selectedCourse === undefined
 							}
@@ -552,15 +552,15 @@ const Sidebar = ({
 	isCoursesLoading,
 	selectCourse,
 }: SidebarProps) => (
-	<div class="outer-sidebar">
-		<div class="sidebar">
+	<div class='outer-sidebar'>
+		<div class='sidebar'>
 			{isCoursesLoading ? (
-				<div class="row">Loading courses...</div>
+				<div class='row'>Loading courses...</div>
 			) : (
 				courses.map(({id, name, icon}) => (
 					<div
 						key={id}
-						class="row"
+						class='row'
 						onClick={() => {
 							selectCourse(id);
 						}}
@@ -568,7 +568,7 @@ const Sidebar = ({
 						<RenderIcon icon={icon} />
 						{icon && (
 							<SvgX
-								class="svg-del-icon"
+								class='svg-del-icon'
 								onClick={event_ => {
 									event_.stopPropagation();
 

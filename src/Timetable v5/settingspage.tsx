@@ -136,9 +136,9 @@ class SettingsPage extends Component<
 		return (
 			<>
 				<LoggedOut loggedOut={loggedOut} cb={loggedOutCallback} />
-				<div class="container">
-					<div class="table-center">
-						<div class="grid-buttons">
+				<div class='container'>
+					<div class='table-center'>
+						<div class='grid-buttons'>
 							<ButtonGrid
 								day={day}
 								handleSave={handleSave}
@@ -150,15 +150,15 @@ class SettingsPage extends Component<
 								resetSaveValidity={resetSaveValidity}
 							/>
 						</div>
-						<div class="main-table">
+						<div class='main-table'>
 							<Table
 								rows={tables[day]}
 								deleteRow={deleteRow}
 								handleFocus={handleTableFocus}
 								onInput={handleTableInput}
 							/>
-							<div class="row-icon-add-row">
-								<div class="icon-add-row">
+							<div class='row-icon-add-row'>
+								<div class='icon-add-row'>
 									<SvgIconAdd onClick={createRow} />
 								</div>
 							</div>

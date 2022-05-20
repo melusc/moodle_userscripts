@@ -42,7 +42,7 @@ const SuggestionsPopup: FunctionalComponent<{
 
 	return (
 		<div
-			class="suggestions"
+			class='suggestions'
 			style={{transform: `translate(${left}px, ${top + height}px)`}}
 		>
 			{filterCourses(courses, inputText).map(({id, name}) => {
@@ -55,7 +55,7 @@ const SuggestionsPopup: FunctionalComponent<{
 				return (
 					<div
 						key={id}
-						class="suggestion"
+						class='suggestion'
 						onMouseDown={() => {
 							/* MouseDown because otherwise the event listener
 								 in settingspage for `focusout` will fire first and
@@ -64,12 +64,12 @@ const SuggestionsPopup: FunctionalComponent<{
 							onClick(id);
 						}}
 					>
-						<div class="suggestion-name">
+						<div class='suggestion-name'>
 							{before}
-							<span class="emphasised">{emphasised}</span>
+							<span class='emphasised'>{emphasised}</span>
 							{after}
 						</div>
-						<div class="suggestion-id">{id}</div>
+						<div class='suggestion-id'>{id}</div>
 					</div>
 				);
 			})}

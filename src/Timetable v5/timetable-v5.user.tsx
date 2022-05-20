@@ -55,8 +55,8 @@ const TimetableRow: FunctionalComponent<{
 	const content = values.content ?? Lang.freeLesson;
 
 	return (
-		<div class="tt-tr">
-			<div class="tt-th">
+		<div class='tt-tr'>
+			<div class='tt-th'>
 				{isNow ? Lang.now : Lang.next}
 				{from !== undefined
 					&& to !== undefined
@@ -68,9 +68,9 @@ const TimetableRow: FunctionalComponent<{
 						(at a quick glance) */
 				}
 			</div>
-			<div class="tt-td">
+			<div class='tt-td'>
 				{typeof id === 'string' ? (
-					<a href={getHref(id)} target="_blank" rel="noopener noreferrer">
+					<a href={getHref(id)} target='_blank' rel='noopener noreferrer'>
 						{content}
 					</a>
 				) : (
@@ -221,12 +221,12 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 		const [currentCourse, nextCourse] = courses;
 		return (
 			<div>
-				<div class="mod-indent-outer w-100">
-					<div class="contentwithoutlink">
-						<div class="no-overflow">
+				<div class='mod-indent-outer w-100'>
+					<div class='contentwithoutlink'>
+						<div class='no-overflow'>
 							<hr />
-							<div class="tt-body">
-								<div class="tt-title">Timetable</div>
+							<div class='tt-body'>
+								<div class='tt-title'>Timetable</div>
 
 								{timetableState === TimetableStates.init && <div>Loading</div>}
 
@@ -234,28 +234,28 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 									<div>{Lang.afterSchool}</div>
 								)}
 								{timetableState === TimetableStates.weekend && (
-									<div class="tt-title">{Lang.weekend}</div>
+									<div class='tt-title'>{Lang.weekend}</div>
 								)}
 								{timetableState === TimetableStates.holiday && (
-									<div class="tt-title">{Lang.holiday}</div>
+									<div class='tt-title'>{Lang.holiday}</div>
 								)}
 
 								{timetableState === TimetableStates.empty && (
 									<div>
 										{Lang.emptyBeforeAnchor}
 										<a
-											href="/timetable/v5"
-											rel="noopener noreferrer"
-											target="_blank"
+											href='/timetable/v5'
+											rel='noopener noreferrer'
+											target='_blank'
 										>
 											{Lang.emptyInAnchor}
 										</a>
 									</div>
 								)}
-								<div class="tt-table">
+								<div class='tt-table'>
 									{(timetableState === TimetableStates.before
 										|| timetableState === TimetableStates.during) && (
-										<div class="tt-tbody">
+										<div class='tt-tbody'>
 											{
 												/* If currentCourse is undefined
 													it is currently before school

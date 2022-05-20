@@ -134,8 +134,8 @@ const Sidebar: FunctionalComponent<{
 		item: Course,
 	) => void;
 }> = ({courses, loadingCourses, ...rest}) => (
-	<div class="outer-sidebar">
-		<div class="sidebar">
+	<div class='outer-sidebar'>
+		<div class='sidebar'>
 			{loadingCourses && <div>Loading courses...</div>}
 			{courses.map(course => (
 				<SidebarRow key={course.courseId} course={course} {...rest} />
@@ -163,15 +163,15 @@ const LoggedOut: FunctionalComponent<{
 
 	return (
 		<form onSubmit={onSubmit}>
-			<div class="replace-flex-input">
+			<div class='replace-flex-input'>
 				<h5>Login</h5>
 				<input
 					ref={usernameRef}
-					placeholder="Username"
+					placeholder='Username'
 					defaultValue={getUsername()}
 				/>
-				<input ref={passwordRef} placeholder="Password" type="password" />
-				<button class="btn-save" type="submit">
+				<input ref={passwordRef} placeholder='Password' type='password' />
+				<button class='btn-save' type='submit'>
 					Login
 				</button>
 			</div>
@@ -188,10 +188,10 @@ const Main = (props: {
 	const {selected, replaceInputRef, handleSaveClick, handleKeydown} = props;
 
 	return (
-		<div class="outer-main">
-			<div class="main">
-				<div class="section-title">Rename course</div>
-				<div class="replace-flex-inputs">
+		<div class='outer-main'>
+			<div class='main'>
+				<div class='section-title'>Rename course</div>
+				<div class='replace-flex-inputs'>
 					<div>
 						{selected.isSelected
 							? `Selected: ${selected.courseName}`
@@ -199,7 +199,7 @@ const Main = (props: {
 					</div>
 					<input
 						ref={replaceInputRef}
-						class="replace-input"
+						class='replace-input'
 						placeholder={
 							selected.isSelected
 								? `Leave empty to reset to ${selected.courseName}`
@@ -213,9 +213,9 @@ const Main = (props: {
 						onKeyDown={handleKeydown}
 					/>
 					<button
-						class="btn-save"
+						class='btn-save'
 						disabled={!selected.isSelected}
-						type="button"
+						type='button'
 						onClick={handleSaveClick}
 					>
 						Save
@@ -273,7 +273,7 @@ class SettingsPage extends Component<
 		} = this;
 
 		return (
-			<div class="container">
+			<div class='container'>
 				<Sidebar
 					courses={courses}
 					handleClick={handleSidebarClick}

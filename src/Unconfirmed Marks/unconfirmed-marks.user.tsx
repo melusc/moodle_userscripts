@@ -92,33 +92,33 @@ class SchulNetzMarks extends Component<
 		const {marks, state, errorMsg, bottomHR} = this.state;
 
 		return (
-			<div class="mod-indent-outer w-100">
-				<div class="contentwithoutlink">
-					<div class="ucmr-title">
+			<div class='mod-indent-outer w-100'>
+				<div class='contentwithoutlink'>
+					<div class='ucmr-title'>
 						Unconfirmed Marks
 						{(state === States.marks
 							|| state === States.noMarks
 							|| state === States.error) && (
 							<i
-								role="button"
-								class="icon fa fa-refresh fa-fw ml-1"
+								role='button'
+								class='icon fa fa-refresh fa-fw ml-1'
 								onClick={this.refresh}
 							/>
 						)}
 					</div>
 
 					{state === States.loading && (
-						<i class="icon fa fa-circle-o-notch fa-fw fa-spin" />
+						<i class='icon fa fa-circle-o-notch fa-fw fa-spin' />
 					)}
 
 					{state === States.marks && (
 						<div>
 							{marks.map(({key, course, name, date, mark}) => (
-								<div key={key} class="ucmr-row">
-									<div class="ucmr-course">{course}</div>
-									<div class="ucmr-name">{name}</div>
-									<div class="ucmr-date">{date}</div>
-									<div class="ucmr-mark">{mark}</div>
+								<div key={key} class='ucmr-row'>
+									<div class='ucmr-course'>{course}</div>
+									<div class='ucmr-name'>{name}</div>
+									<div class='ucmr-date'>{date}</div>
+									<div class='ucmr-mark'>{mark}</div>
 								</div>
 							))}
 						</div>
@@ -131,39 +131,39 @@ class SchulNetzMarks extends Component<
 					{state === States.offline && <div>Offline</div>}
 
 					{state === States.loggedOut && (
-						<form class="login-form" onSubmit={this.handleLogin}>
+						<form class='login-form' onSubmit={this.handleLogin}>
 							<input
 								ref={this.inputs.username}
 								required
-								class="form-control"
-								placeholder="Username"
-								type="text"
+								class='form-control'
+								placeholder='Username'
+								type='text'
 								value={GM_getValue<string | undefined>('username')}
 							/>
 							<input
 								ref={this.inputs.password}
 								required
-								class="form-control"
-								placeholder="Password"
-								type="password"
+								class='form-control'
+								placeholder='Password'
+								type='password'
 								value={GM_getValue<string | undefined>('password')}
 							/>
 							<input
 								ref={this.inputs.page}
 								required
-								class="form-control"
-								placeholder="Page (ausserschwyz, einsiedeln...)"
-								type="text"
+								class='form-control'
+								placeholder='Page (ausserschwyz, einsiedeln...)'
+								type='text'
 								value={GM_getValue<string | undefined>('page')}
 							/>
-							<button class="btn btn-primary" type="submit">
+							<button class='btn btn-primary' type='submit'>
 								Save
 							</button>
 						</form>
 					)}
 
 					{state === States.error && (
-						<div class="ucmr-error">{errorMsg ?? 'Something went wrong'}</div>
+						<div class='ucmr-error'>{errorMsg ?? 'Something went wrong'}</div>
 					)}
 
 					{bottomHR && <hr />}

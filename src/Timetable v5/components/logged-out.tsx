@@ -32,27 +32,27 @@ const LoggedOut = ({
 	};
 
 	return (
-		<div class="login-popup">
+		<div class='login-popup'>
 			<form onSubmit={handleLoginClick}>
-				<div class="card">
-					<div class="card-body">
-						<h5 class="card-title">Login</h5>
+				<div class='card'>
+					<div class='card-body'>
+						<h5 class='card-title'>Login</h5>
 						<input
 							ref={usernameRef}
 							required
-							placeholder="Username"
-							class="input-group-text"
+							placeholder='Username'
+							class='input-group-text'
 							defaultValue={getUsername()}
 						/>
 						<input
 							ref={passwordRef}
 							required
-							placeholder="Password"
-							class="input-group-text"
-							type="password"
+							placeholder='Password'
+							class='input-group-text'
+							type='password'
 						/>
 					</div>
-					<button type="submit" class="btn btn-primary">
+					<button type='submit' class='btn btn-primary'>
 						Login
 					</button>
 				</div>

@@ -30,15 +30,15 @@ const TableRow: FunctionalComponent<{
 	const contentRef = useRef<HTMLInputElement>(null);
 
 	return (
-		<div class="table-row">
-			<div class="table-cell time">
+		<div class='table-row'>
+			<div class='table-cell time'>
 				<TimeInput
 					index={index}
 					class={clsx('time-from', {
 						'invalid-input': fromInvalid === true,
 					})}
 					time={from.str}
-					placeholder="HH:mm"
+					placeholder='HH:mm'
 					onInput={onInput('from', index)}
 				/>
 				{' - '}
@@ -48,15 +48,15 @@ const TableRow: FunctionalComponent<{
 						'invalid-input': toInvalid === true,
 					})}
 					time={to.str}
-					placeholder="HH:mm"
+					placeholder='HH:mm'
 					onInput={onInput('to', index)}
 				/>
 			</div>
-			<div class="table-cell content">
+			<div class='table-cell content'>
 				<input
 					ref={contentRef}
 					value={content}
-					placeholder="Content"
+					placeholder='Content'
 					onInput={onInput('content', index)}
 					onFocus={handleFocus(idRef, contentRef, index)}
 				/>
@@ -64,13 +64,13 @@ const TableRow: FunctionalComponent<{
 				<input
 					ref={idRef}
 					value={id}
-					placeholder="Course id"
+					placeholder='Course id'
 					onInput={onInput('id', index)}
 					onFocus={handleFocus(idRef, contentRef, index)}
 				/>
 			</div>
 			<div
-				class="table-cell remove-row"
+				class='table-cell remove-row'
 				onClick={() => {
 					deleteRow(index);
 				}}

@@ -21,9 +21,9 @@ const ButtonGrid: FunctionalComponent<{
 	day: number;
 }> = ({handleClick, handleSave, day, saveButtonClass, resetSaveValidity}) => (
 	<>
-		<div class="day-controls">
+		<div class='day-controls'>
 			<div
-				class="caret-back"
+				class='caret-back'
 				onClick={() => {
 					// Overflow from 0 to 4
 					handleClick((day - 1 + 5) % 5);
@@ -31,9 +31,9 @@ const ButtonGrid: FunctionalComponent<{
 			>
 				<SvgIconCaretBack />
 			</div>
-			<div class="day-current-day">{getDay(day)}</div>
+			<div class='day-current-day'>{getDay(day)}</div>
 			<div
-				class="caret-forward"
+				class='caret-forward'
 				onClick={() => {
 					// Overflow from 4 to 0
 					handleClick((day + 1) % 5);
@@ -43,7 +43,7 @@ const ButtonGrid: FunctionalComponent<{
 			</div>
 		</div>
 		<button
-			type="button"
+			type='button'
 			class={clsx('save-button', saveButtonClass)}
 			onClick={handleSave}
 			onAnimationEnd={resetSaveValidity}

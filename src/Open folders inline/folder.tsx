@@ -12,23 +12,23 @@ const FolderIcon: FunctionalComponent<{
 	base: string | undefined;
 	handleClick: JSX.MouseEventHandler<HTMLDivElement>;
 }> = ({isHidden, base, handleClick}) => (
-	<div class="fp-filename-icon folders-inline-icon" onClick={handleClick}>
-		<div class="folders-inline-icon-div">
+	<div class='fp-filename-icon folders-inline-icon' onClick={handleClick}>
+		<div class='folders-inline-icon-div'>
 			<i
 				class={`icon fa ${
 					isHidden ? 'fa-caret-right' : 'fa-caret-down'
 				} fa-fw navicon folders-inline-caret`}
 			/>
 			<img
-				alt=""
-				class="iconlarge activityicon"
-				role="presentation"
+				alt=''
+				class='iconlarge activityicon'
+				role='presentation'
 				title={base}
-				aria-hidden="true"
-				src="/theme/image.php/classic/core/1601902087/f/folder-128"
+				aria-hidden='true'
+				src='/theme/image.php/classic/core/1601902087/f/folder-128'
 			/>
 		</div>
-		<span class="fp-filename">{base}</span>
+		<span class='fp-filename'>{base}</span>
 	</div>
 );
 
@@ -90,12 +90,12 @@ const FolderRoot: FunctionalComponent<{
 					))}
 					{root?.map(({fileUrl, filename, imgPath}) => (
 						<li key={filename}>
-							<span class="fp-filename-icon">
+							<span class='fp-filename-icon'>
 								<a href={fileUrl}>
-									<span class="fp-icon">
-										<img alt="" title={filename} src={imgPath} />
+									<span class='fp-icon'>
+										<img alt='' title={filename} src={imgPath} />
 									</span>
-									<span class="fp-filename">{filename}</span>
+									<span class='fp-filename'>{filename}</span>
 								</a>
 							</span>
 						</li>
@@ -153,13 +153,13 @@ export const Folder: FunctionalComponent<{
 	}
 
 	if (!contents) {
-		return <div class="folder-loading">Loading</div>;
+		return <div class='folder-loading'>Loading</div>;
 	}
 
 	return (
 		<>
 			{contents.length === 0 ? (
-				<div class="folder-empty">The folder was empty</div>
+				<div class='folder-empty'>The folder was empty</div>
 			) : (
 				<FolderRoot isParent contents={contents} />
 			)}
