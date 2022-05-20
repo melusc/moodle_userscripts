@@ -72,6 +72,10 @@
 		"transform": {},
 		"testMatch": [
 			"<rootDir>/dist/test/test/**/*.test.js"
+		],
+		"testPathIgnorePatterns": [
+			"/node_modules/",
+			"/test/moodle-functions-v3/"
 		]
 	}
 }
