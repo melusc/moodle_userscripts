@@ -16,7 +16,7 @@
 	"description": "",
 	"devDependencies": {
 		"@jest/globals": "^28.1.0",
-		"@lusc/tsconfig": "^1.1.0",
+		"@lusc/tsconfig": "^1.2.1",
 		"@types/dompurify": "^2.3.3",
 		"@types/file-saver": "^2.0.5",
 		"@types/tampermonkey": "^4.0.5",
