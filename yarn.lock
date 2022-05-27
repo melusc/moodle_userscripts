@@ -672,10 +672,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lusc/tsconfig@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@lusc/tsconfig/-/tsconfig-1.1.0.tgz#09cbb296a6471da5e2c61a7ee486b03b863db385"
-  integrity sha512-Dgzixd358ju5/i/yvXidtR2h3ZxPzIdph4eWHfC/+dlQ3CjyoFu5uGGqPT/NSwFHrzsbx3KcfrygMtPSJ3WBWg==
+"@lusc/tsconfig@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@lusc/tsconfig/-/tsconfig-1.2.1.tgz#160a83c960668bbebea501040e9cedb5a0257477"
+  integrity sha512-vJ8gfkqVS8deXodAUkCjwkwos5hOBgS7kyHmJ7KhKs0OCZipVUgfHKrlwtjhM/Q9PrisY4xrCHaEui2EbgWJ8A==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
