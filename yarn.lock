@@ -672,10 +672,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lusc/tsconfig@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@lusc/tsconfig/-/tsconfig-1.2.1.tgz#160a83c960668bbebea501040e9cedb5a0257477"
-  integrity sha512-vJ8gfkqVS8deXodAUkCjwkwos5hOBgS7kyHmJ7KhKs0OCZipVUgfHKrlwtjhM/Q9PrisY4xrCHaEui2EbgWJ8A==
+"@lusc/tsconfig@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@lusc/tsconfig/-/tsconfig-1.2.2.tgz#eac329ef90a00f29b72c89ef08fe54c94d971b32"
+  integrity sha512-XbAa7aOF1RwLEj+REphp8TAsUCck+6I/yFaDm5EOmOyZME/vInSc4473ttqNRmoSt22Bto/kHSxw4YacUhOWgA==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -6023,15 +6023,15 @@ xo@^0.49.0:
   integrity sha512-dDj1bYy3LJ/8C2XItw/lFVckZtO68C2YCx9TR8xfSLVcmael3y0SkeFse/3OMUPMvG5jG44bQ2CAI6wFTpRqVg==
   dependencies:
     "@eslint/eslintrc" "^1.2.3"
-    "@typescript-eslint/eslint-plugin" "*"
-    "@typescript-eslint/parser" "*"
+    "@typescript-eslint/eslint-plugin" "^5.24.0"
+    "@typescript-eslint/parser" "^5.24.0"
     arrify "^3.0.0"
     cosmiconfig "^7.0.1"
     define-lazy-prop "^3.0.0"
     eslint "^8.15.0"
     eslint-config-prettier "^8.5.0"
     eslint-config-xo "^0.41.0"
-    eslint-config-xo-typescript "*"
+    eslint-config-xo-typescript "^0.51.1"
     eslint-formatter-pretty "^4.1.0"
     eslint-import-resolver-webpack "^0.13.2"
     eslint-plugin-ava "^13.2.0"
