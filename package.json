@@ -33,7 +33,7 @@
 		"ow": "^0.28.1",
 		"prettier": "^2.6.2",
 		"rimraf": "^3.0.2",
-		"sass": "^1.52.1",
+		"sass": "^1.52.2",
 		"sass-loader": "^13.0.0",
 		"serve": "^13.0.2",
 		"terser-webpack-plugin": "^5.3.1",
