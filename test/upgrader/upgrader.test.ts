@@ -15,9 +15,12 @@ describe('greaterThan', () => {
 		[[1, 5, 6], [2, 3, 4], -1],
 		[[1, 2, 5], [2, 3, 4], -1],
 		[[1, 2, 3], [1, 2, 3], 0],
-	])('%j > %j === %j', (a: Version, b: Version, expected: number) => {
-		expect(Math.sign(compare(a, b))).toStrictEqual(expected);
-	});
+	] as Array<[Version, Version, number]>)(
+		'%j > %j === %j',
+		(a, b, expected) => {
+			expect(Math.sign(compare(a, b))).toStrictEqual(expected);
+		},
+	);
 
 	test('parseVersion', () => {
 		expect(parseVersion('0.0.1')).toStrictEqual([0, 0, 1]);
