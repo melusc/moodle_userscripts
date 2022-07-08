@@ -704,10 +704,10 @@
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.23.4.tgz#6ff93fd2585ce44f7481c9ff6af610fbb5de98a4"
   integrity sha512-0/WqSvpVbCBAV1yPeko7eAczKbs78dNVAaX14quVlwOb2wxfKuXCx91h4NrEfkYK9zEnyVSW4JVI/trP3iS+Qg==
 
-"@sindresorhus/is@^4.2.0":
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.6.0.tgz#3c7c9c46e678feefe7a2e5bb609d3dbd665ffb3f"
-  integrity sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==
+"@sindresorhus/is@^5.1.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-5.2.0.tgz#2d1acdf153e59bc6e865adf5c893dbf388a1789b"
+  integrity sha512-tDrSvtear91yf6HFlHHwpV5x4ZyzFj3xkZxsfmsuLlQwR4e0+n8Da1Dr+TIY6nla0ATGxqLK9MWz7Dx/jlu9RQ==
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
@@ -1582,10 +1582,15 @@ call-bind@^1.0.0, call-bind@^1.0.2:
     function-bind "^1.1.1"
     get-intrinsic "^1.0.2"
 
-callsites@^3.0.0, callsites@^3.1.0:
+callsites@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/callsites/-/callsites-3.1.0.tgz#b3630abd8943432f54b3f0519238e33cd7df2f73"
   integrity sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==
+
+callsites@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/callsites/-/callsites-4.0.0.tgz#8014cea4fedfe681a30e2f7d2d557dd95808a92a"
+  integrity sha512-y3jRROutgpKdz5vzEhWM34TidDU8vkJppF8dszITeb1PQmSqV3DTxyV8G/lyO/DNvtE1YTedehmw9MPZsCBHxQ==
 
 camelcase-keys@^7.0.0:
   version "7.0.2"
@@ -2099,12 +2104,12 @@ dompurify@^2.3.8:
   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.3.8.tgz#224fe9ae57d7ebd9a1ae1ac18c1c1ca3f532226f"
   integrity sha512-eVhaWoVibIzqdGYjwsBWodIQIaXFSB+cKDf4cfxLMsK0xiud6SE+/WCVx/Xw/UwQsa4cS3T2eITcdtmTg2UKcw==
 
-dot-prop@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/dot-prop/-/dot-prop-6.0.1.tgz#fc26b3cf142b9e59b74dbd39ed66ce620c681083"
-  integrity sha512-tE7ztYzXHIeyvc7N+hR3oi7FIbf/NIjVP9hmAt3yMXzrQ072/fpjGLx2GxNxGxUl5V73MEqYzioOMoVhGMJ5cA==
+dot-prop@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/dot-prop/-/dot-prop-7.2.0.tgz#468172a3529779814d21a779c1ba2f6d76609809"
+  integrity sha512-Ol/IPXUARn9CSbkrdV4VJo7uCy1I3VuSiWCaFSg+8BdUOzF9n3jefIpcgAydvUZbTdEBZs2vEiTiS9m61ssiDA==
   dependencies:
-    is-obj "^2.0.0"
+    type-fest "^2.11.2"
 
 dotenv@^16.0.1:
   version "16.0.1"
@@ -3366,11 +3371,6 @@ is-obj-prop@^1.0.0:
     lowercase-keys "^1.0.0"
     obj-props "^1.0.0"
 
-is-obj@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/is-obj/-/is-obj-2.0.0.tgz#473fb05d973705e3fd9620545018ca8e22ef4982"
-  integrity sha512-drqDG3cbczxxEJRoOXcOjtdp1J/lyp1mNn0xaznRs8+muBhgQcrnbspox5X5fOw0HnMnbfDzvnEMEtqDEJEo8w==
-
 is-path-cwd@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/is-path-cwd/-/is-path-cwd-2.2.0.tgz#67d43b82664a7b5191fd9119127eb300048a9fdb"
@@ -4544,16 +4544,16 @@ optionator@^0.9.1:
     type-check "^0.4.0"
     word-wrap "^1.2.3"
 
-ow@^0.28.1:
-  version "0.28.1"
-  resolved "https://registry.yarnpkg.com/ow/-/ow-0.28.1.tgz#e7cf19a0994a4ace78f38976f11f2a080f51a570"
-  integrity sha512-1EZTywPZeUKac9gD7q8np3Aj+V54kvfIcjNEVNDSbG2Ys5xA5foW2HquvMMqgyWGLqIFMlc0Iq/HmyMHqN48sA==
+ow@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ow/-/ow-1.0.0.tgz#d09b8e6e5735450c7554a9a3e29dfa8749ae02d6"
+  integrity sha512-e7Bu8LOhWACzlx89dZb64K2p3KusY0s4BhkVLewsVuKA4Pp1lq+Nxicp0k6ZP4G5GO3YdkVVd6+qUclQRcl6fg==
   dependencies:
-    "@sindresorhus/is" "^4.2.0"
-    callsites "^3.1.0"
-    dot-prop "^6.0.1"
+    "@sindresorhus/is" "^5.1.0"
+    callsites "^4.0.0"
+    dot-prop "^7.2.0"
     lodash.isequal "^4.5.0"
-    type-fest "^2.3.4"
+    type-fest "^2.13.0"
     vali-date "^1.0.0"
 
 p-finally@^1.0.0:
@@ -5704,7 +5704,7 @@ type-fest@^1.0.1, type-fest@^1.2.1, type-fest@^1.2.2:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-1.4.0.tgz#e9fb813fe3bf1744ec359d55d1affefa76f14be1"
   integrity sha512-yGSza74xk0UG8k+pLh5oeoYirvIiWo5t0/o3zHHAO2tRDiZcxWP7fywNlXhqb6/r6sWvwi+RsyQMWhVLe4BVuA==
 
-type-fest@^2.0.0, type-fest@^2.16.0, type-fest@^2.3.4, type-fest@^2.9.0:
+type-fest@^2.0.0, type-fest@^2.11.2, type-fest@^2.13.0, type-fest@^2.16.0, type-fest@^2.9.0:
   version "2.16.0"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-2.16.0.tgz#1250fbd64dafaf4c8e405e393ef3fb16d9651db2"
   integrity sha512-qpaThT2HQkFb83gMOrdKVsfCN7LKxP26Yq+smPzY1FqoHRjqmjqHXA7n5Gkxi8efirtbeEUxzfEdePthQWCuHw==
