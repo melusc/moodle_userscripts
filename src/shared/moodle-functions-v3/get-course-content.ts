@@ -1,5 +1,5 @@
-import type {CourseContent} from './course-content.d';
-import type {Moodle, RegisterFunction} from './moodle';
+import type {CourseContent} from './course-content.d.js';
+import type {Moodle, RegisterFunction} from './moodle.js';
 
 type ResponseFailed = {
 	errorcode: string;

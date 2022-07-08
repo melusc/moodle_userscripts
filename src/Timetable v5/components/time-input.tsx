@@ -1,8 +1,8 @@
 import {h, JSX} from 'preact';
-import clsx, {ClassValue} from 'clsx';
+import {clsx, ClassValue} from 'clsx';
 
 import {Except} from 'type-fest';
-import {parseStringToTime} from '../shared';
+import {parseStringToTime} from '../shared.js';
 
 type TimeInputCustomProps = {
 	time: string;

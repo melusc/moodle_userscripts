@@ -15,31 +15,32 @@
 // @connect   *
 // ==/UserScript==
 
+// eslint-disable-next-line n/file-extension-in-import
 import {render, html} from 'htm/preact';
-import domReady from '@wordpress/dom-ready';
 
 import {
 	Moodle,
 	getCourses,
 	popupLogin,
 	Courses,
-} from '../shared/moodle-functions-v3';
+} from '../shared/moodle-functions-v3/index.js';
 import {
 	getSidebar,
 	upgrader,
 	cleanAuthStorage,
-} from '../shared/general-functions';
+	domReady,
+} from '../shared/general-functions/index.js';
 
-import {setupSettingsPage} from './settingspage';
+import {setupSettingsPage} from './settingspage.js';
 import {
 	deleteIconFromStorage,
 	getPointers,
 	getValueFromId,
 	iconsKey,
 	setIcons,
-} from './shared';
+} from './shared.js';
 
-import {Icons, Pointers, ValidIconObject, Values} from './custom-icons.d';
+import {Icons, Pointers, ValidIconObject, Values} from './custom-icons.d.js';
 
 Moodle.extend(getCourses).extend(popupLogin);
 const moodle = new Moodle();

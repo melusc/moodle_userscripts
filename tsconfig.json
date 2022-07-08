@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
 		"declaration": false,
-		"types": ["tampermonkey"]
+		"types": ["tampermonkey"],
+		"moduleResolution": "NodeNext"
 	},
 	"extends": "@lusc/tsconfig",
 	"include": ["src/**/*", "./*"]

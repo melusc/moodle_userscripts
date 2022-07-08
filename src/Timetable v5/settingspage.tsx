@@ -1,19 +1,23 @@
 // Dependencies
-import clsx from 'clsx';
+import {clsx} from 'clsx';
 import {produce} from 'immer';
 import {Component, Fragment, h, JSX, RefObject, render} from 'preact';
 // Shared across repo
 
-import {uniqueId} from '../shared/general-functions';
-import {getCourses, Moodle, Courses} from '../shared/moodle-functions-v3';
+import {uniqueId} from '../shared/general-functions/index.js';
+import {
+	getCourses,
+	Moodle,
+	Courses,
+} from '../shared/moodle-functions-v3/index.js';
 // Locally shared
 
-import ButtonGrid from './components/button-grid';
-import LoggedOut from './components/logged-out';
-import SuggestionsPopup from './components/suggestions-popup';
-import Table from './components/table';
-import {SvgIconAdd} from './icons';
-import {parseStringToTime, parseTimeToString} from './shared';
+import ButtonGrid from './components/button-grid.js';
+import LoggedOut from './components/logged-out.js';
+import SuggestionsPopup from './components/suggestions-popup.js';
+import Table from './components/table.js';
+import {SvgIconAdd} from './icons.js';
+import {parseStringToTime, parseTimeToString} from './shared.js';
 
 // Types
 import {
@@ -21,7 +25,7 @@ import {
 	SingleDay,
 	TableOnInputSelectors,
 	TableRow,
-} from './settingspage.d';
+} from './settingspage.d.js';
 
 // Style
 import settingsPageStyle from './settingspage.scss';

@@ -1,4 +1,4 @@
-import {TimetableStates} from './consts';
+import {TimetableStates} from './consts.js';
 
 export type TimetableStorageValues = {
 	content?: string;

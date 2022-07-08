@@ -1,4 +1,4 @@
-import {uniqueId} from '../shared/general-functions';
+import {uniqueId} from '../shared/general-functions/index.js';
 
 export type MarksRow = {
 	key: string;

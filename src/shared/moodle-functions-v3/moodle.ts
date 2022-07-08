@@ -4,9 +4,9 @@ import {
 	getUsername,
 	setToken,
 	setUsername,
-} from './credentials';
-import type {CourseContent} from './course-content.d';
-import type {Courses} from './get-courses';
+} from './credentials.js';
+import type {CourseContent} from './course-content.d.js';
+import type {Courses} from './get-courses.js';
 
 export type Credentials = {
 	token?: string;

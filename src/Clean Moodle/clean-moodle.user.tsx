@@ -14,23 +14,23 @@
 // ==/UserScript==
 
 import {render, h} from 'preact';
-import domReady from '@wordpress/dom-ready';
 
 import {
 	numericBaseSensitiveCollator,
 	getSidebar,
 	upgrader,
 	cleanAuthStorage,
-} from '../shared/general-functions';
+	domReady,
+} from '../shared/general-functions/index.js';
 import {
 	Moodle,
 	popupLogin,
 	Courses,
 	getCourses,
-} from '../shared/moodle-functions-v3';
+} from '../shared/moodle-functions-v3/index.js';
 
-import {setupSettingsPage} from './settingspage';
-import {getOverrides, Overrides, removeElementFromStorage} from './shared';
+import {setupSettingsPage} from './settingspage.js';
+import {getOverrides, Overrides, removeElementFromStorage} from './shared.js';
 
 Moodle.extend(getCourses).extend(popupLogin);
 

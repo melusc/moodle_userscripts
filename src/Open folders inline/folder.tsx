@@ -1,11 +1,13 @@
 import {h, Fragment, JSX, FunctionalComponent} from 'preact';
+// eslint-disable-next-line n/file-extension-in-import
 import {createPortal} from 'preact/compat';
+// eslint-disable-next-line n/file-extension-in-import
 import {useEffect, useState} from 'preact/hooks';
 
-import {numericBaseSensitiveCollator} from '../shared/general-functions';
+import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
 
-import {SanitizedContentFile, getSanitizedContents} from './page-content';
-import {RefreshIcon} from './refresh-icon';
+import {SanitizedContentFile, getSanitizedContents} from './page-content.js';
+import {RefreshIcon} from './refresh-icon.js';
 
 const FolderIcon: FunctionalComponent<{
 	isHidden: boolean;

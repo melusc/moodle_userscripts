@@ -16,17 +16,20 @@ import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime.js';
 import DOMPurify from 'dompurify';
 import {render, Fragment, h} from 'preact';
 import {useSnapshot, proxy} from 'valtio';
-import domReady from '@wordpress/dom-ready';
 
-import {upgrader, cleanAuthStorage} from '../shared/general-functions';
+import {
+	upgrader,
+	cleanAuthStorage,
+	domReady,
+} from '../shared/general-functions/index.js';
 
-import {countries as COUNTRY_CODES} from './countries';
-import {getContacts} from './get-contacts';
-import {title, moodle} from './consts';
+import {countries as COUNTRY_CODES} from './countries.js';
+import {getContacts} from './get-contacts.js';
+import {title, moodle} from './consts.js';
 
 import style from './style.scss';
 
-import type {UserDataResponse} from './explore-profiles.d';
+import type {UserDataResponse} from './explore-profiles.d.js';
 
 dayjs.extend(dayjsPluginRelativeTime);
 

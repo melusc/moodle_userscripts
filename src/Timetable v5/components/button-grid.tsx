@@ -1,7 +1,7 @@
 import {h, Fragment, FunctionalComponent} from 'preact';
-import clsx, {ClassValue} from 'clsx';
+import {clsx, ClassValue} from 'clsx';
 
-import {SvgIconCaretBack, SvgIconCaretForward} from '../icons';
+import {SvgIconCaretBack, SvgIconCaretForward} from '../icons.js';
 
 const getDay = (n: number): string => {
 	const result = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'][n];

@@ -12,11 +12,14 @@
 // ==/UserScript==
 
 import {render, h} from 'preact';
-import domReady from '@wordpress/dom-ready';
 
-import {upgrader, cleanAuthStorage} from '../shared/general-functions';
+import {
+	upgrader,
+	cleanAuthStorage,
+	domReady,
+} from '../shared/general-functions/index.js';
 
-import {Folder} from './folder';
+import {Folder} from './folder.js';
 
 import style from './style.scss';
 

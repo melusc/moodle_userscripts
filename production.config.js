@@ -2,6 +2,7 @@ import {fileURLToPath} from 'node:url';
 
 import TerserPlugin from 'terser-webpack-plugin';
 import entry from 'webpack-glob-entry';
+import ResolveTypeScriptPlugin from 'resolve-typescript-plugin';
 import {CleanWebpackPlugin} from 'clean-webpack-plugin';
 
 const resolve = p => fileURLToPath(new URL(p, import.meta.url));
@@ -13,6 +14,7 @@ const config = (environment = {}) => ({
 			'react-dom': 'preact/compat',
 		},
 		extensions: ['.ts', '.tsx', '.scss', '.css'],
+		plugins: [new ResolveTypeScriptPlugin()],
 	},
 	mode: 'production',
 	entry: entry(entry.basePath('src'), resolve('src/**/*.user.{ts,tsx}')),

@@ -15,15 +15,18 @@
 
 import {saveAs} from 'file-saver';
 import JSZip from 'jszip';
-import domReady from '@wordpress/dom-ready';
 
 import {
 	Moodle,
 	getCourseContent,
 	popupLogin,
-} from '../shared/moodle-functions-v3';
-import type {CourseContent} from '../shared/moodle-functions-v3/course-content.d';
-import {upgrader, cleanAuthStorage} from '../shared/general-functions';
+} from '../shared/moodle-functions-v3/index.js';
+import type {CourseContent} from '../shared/moodle-functions-v3/course-content.d.js';
+import {
+	upgrader,
+	cleanAuthStorage,
+	domReady,
+} from '../shared/general-functions/index.js';
 
 Moodle.extend(getCourseContent).extend(popupLogin);
 const moodle = new Moodle();

@@ -17,10 +17,11 @@
 // ==/UserScript==
 
 import {render, Component, h, createRef} from 'preact';
-import domReady from '@wordpress/dom-ready';
+
+import {domReady} from '../shared/general-functions/index.js';
 
 import style from './style.scss';
-import {getMarks, MarksRow} from './get-marks';
+import {getMarks, MarksRow} from './get-marks.js';
 
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';

@@ -8,18 +8,19 @@ import {
 	FunctionalComponent,
 } from 'preact';
 
+// eslint-disable-next-line n/file-extension-in-import
 import {useRef} from 'preact/hooks';
 import {
 	Moodle,
 	getCourses,
 	Courses,
 	getUsername,
-} from '../shared/moodle-functions-v3';
-import {numericBaseSensitiveCollator} from '../shared/general-functions';
+} from '../shared/moodle-functions-v3/index.js';
+import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
 
-import {getOverrides, getValue, removeElementFromStorage} from './shared';
+import {getOverrides, getValue, removeElementFromStorage} from './shared.js';
 import style from './settingspage.scss';
-import {SvgArrowBack, SvgCheck, SvgX} from './icons';
+import {SvgArrowBack, SvgCheck, SvgX} from './icons.js';
 
 Moodle.extend(getCourses);
 
