@@ -26,6 +26,10 @@ jobs:
           yarn run fmt
           git --no-pager diff --exit-code
 
+      - name: Typecheck with tsc
+        run: |
+          yarn tsc --noEmit
+
       - name: CI tests
         run: yarn run test
         env:
