@@ -1,6 +1,6 @@
 import {nanoid} from 'nanoid';
 
-import {Icons, ValidIconObject} from './custom-icons.d';
+import {Icons, ValidIconObject} from './custom-icons.d.js';
 
 export const iconsKey = 'icons';
 

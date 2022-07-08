@@ -1,4 +1,8 @@
-import {Moodle, popupLogin, getUserId} from '../shared/moodle-functions-v3';
+import {
+	Moodle,
+	popupLogin,
+	getUserId,
+} from '../shared/moodle-functions-v3/index.js';
 
 Moodle.extend(popupLogin).extend(getUserId);
 

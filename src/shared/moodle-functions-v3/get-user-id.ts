@@ -1,4 +1,4 @@
-import type {Moodle, RegisterFunction} from './moodle';
+import type {Moodle, RegisterFunction} from './moodle.js';
 
 type GetUserIdResponse =
 	| {

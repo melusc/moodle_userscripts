@@ -18,8 +18,7 @@
 				"@typescript-eslint/require-await": "error",
 				"require-await": "off",
 				"no-unused-vars": "off",
-				"@typescript-eslint/naming-convention": "off",
-				"n/file-extension-in-import": "off"
+				"@typescript-eslint/naming-convention": "off"
 			}
 		},
 		{
@@ -59,7 +58,6 @@
 				"varsIgnorePattern": "^h$|^Fragment$"
 			}
 		],
-		"node/file-extension-in-import": "off",
 		"prefer-template": "error",
 		"quotes": [
 			"error",

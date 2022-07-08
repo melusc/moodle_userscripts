@@ -17,19 +17,22 @@
 // ==/UserScript==
 
 import {Component, FunctionalComponent, h, render} from 'preact';
-import domReady from '@wordpress/dom-ready';
 
-import {upgrader, cleanAuthStorage} from '../shared/general-functions';
+import {
+	upgrader,
+	cleanAuthStorage,
+	domReady,
+} from '../shared/general-functions/index.js';
 
-import {initSettingsPage} from './settingspage';
+import {initSettingsPage} from './settingspage.js';
 import frontPageStyle from './frontpage.scss';
-import {TimetableStates, Lang, notificationIconUrl} from './consts';
-import {parseTimeToString} from './shared';
+import {TimetableStates, Lang, notificationIconUrl} from './consts.js';
+import {parseTimeToString} from './shared.js';
 import {
 	getCourses,
 	TimetableStorageValues,
 	TimetableStorageValuesWeek,
-} from './timetable';
+} from './timetable.js';
 
 upgrader({
 	'1.2.0': cleanAuthStorage,

@@ -1,12 +1,12 @@
 import {describe, expect, jest, test} from '@jest/globals';
 
-import {TimetableStates} from '../../src/Timetable v5/consts';
+import {TimetableStates} from '../../src/Timetable v5/consts.js';
 import {
 	getCourses,
 	getMinutesSinceMidnight,
 	getMsSinceMidnight,
 	getNextDay,
-} from '../../src/Timetable v5/timetable';
+} from '../../src/Timetable v5/timetable.js';
 
 describe('getNextDay', () => {
 	jest.useFakeTimers();

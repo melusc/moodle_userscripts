@@ -1,5 +1,5 @@
-import {getUserId} from './get-user-id';
-import type {Moodle, RegisterFunction} from './moodle';
+import {getUserId} from './get-user-id.js';
+import type {Moodle, RegisterFunction} from './moodle.js';
 
 export type Courses = Array<{id: number; name: string}>;
 

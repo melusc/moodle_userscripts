@@ -2,14 +2,14 @@ import {
 	Moodle,
 	popupLogin,
 	getCourseContent,
-} from '../shared/moodle-functions-v3';
+} from '../shared/moodle-functions-v3/index.js';
 import type {
 	CourseContent,
 	FolderContent,
 	FolderModule,
-} from '../shared/moodle-functions-v3/course-content.d';
+} from '../shared/moodle-functions-v3/course-content.d.js';
 
-import {getImageURL} from './image-urls';
+import {getImageURL} from './image-urls.js';
 
 export type SanitizedContentFile = FolderContent & {
 	filePath: string[];

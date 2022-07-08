@@ -7,18 +7,24 @@ import {
 	createRef,
 	FunctionalComponent,
 } from 'preact';
+// eslint-disable-next-line n/file-extension-in-import
 import {useEffect, useRef} from 'preact/hooks';
+// eslint-disable-next-line n/file-extension-in-import
 import {html} from 'htm/preact';
 
-import {Moodle, getCourses, Courses} from '../shared/moodle-functions-v3';
-import {numericBaseSensitiveCollator} from '../shared/general-functions';
+import {
+	Moodle,
+	getCourses,
+	Courses,
+} from '../shared/moodle-functions-v3/index.js';
+import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
 
 import {
 	deleteIconFromStorage,
 	addEntry,
 	copyEntry,
 	getValueFromId,
-} from './shared';
+} from './shared.js';
 import style from './settingspage.scss';
 
 Moodle.extend(getCourses);

@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals';
 import {violentMonkeyContext} from 'mock-violentmonkey';
-import ow_, {Ow} from 'ow';
+import ow from 'ow';
 
 import {getCourseContent} from '../../src/shared/moodle-functions-v3/get-course-content.js';
 import {
@@ -10,9 +10,6 @@ import {
 import {Moodle} from '../../src/shared/moodle-functions-v3/moodle.js';
 
 import {username, password} from './credentials.js';
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-const ow: Ow = (ow_ as any).default;
 
 Moodle.extend(getCourses).extend(getCourseContent);
 

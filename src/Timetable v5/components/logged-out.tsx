@@ -1,7 +1,8 @@
 import {h, JSX} from 'preact';
+// eslint-disable-next-line n/file-extension-in-import
 import {useRef} from 'preact/hooks';
 
-import {getUsername} from '../../shared/moodle-functions-v3/credentials';
+import {getUsername} from '../../shared/moodle-functions-v3/credentials.js';
 
 const LoggedOut = ({
 	loggedOut,
