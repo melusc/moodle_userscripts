@@ -10,7 +10,7 @@
 		"jszip": "^3.10.0",
 		"nanoid": "^4.0.0",
 		"preact": "^10.9.0",
-		"valtio": "^1.6.1"
+		"valtio": "^1.6.2"
 	},
 	"description": "",
 	"devDependencies": {
