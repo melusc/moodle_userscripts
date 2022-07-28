@@ -1,5 +1,3 @@
-import {nanoid} from 'nanoid';
-
 import {Icons, ValidIconObject} from './custom-icons.d.js';
 
 export const iconsKey = 'icons';
@@ -88,18 +86,11 @@ export const setIcons = (icons: Partial<Icons>) => {
 
 /**
  * Adds a new entry to the storage with the id and object.
- * It avoids collisions automatically.
  */
 export const addEntry = (id: string, object: ValidIconObject) => {
 	deleteIconFromStorage(id);
 
-	let uuid = '';
-
-	const values = getValues();
-	// Avoid collisions
-	do {
-		uuid = nanoid(5);
-	} while (uuid in values);
+	const uuid = crypto.randomUUID();
 
 	setValue(uuid, object);
 	setPointer(id, uuid);
