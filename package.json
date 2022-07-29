@@ -30,7 +30,6 @@
 		"mock-violentmonkey": "^1.1.1",
 		"ow": "^1.0.0",
 		"prettier": "^2.7.1",
-		"resolve-typescript-plugin": "^1.2.0",
 		"rimraf": "^3.0.2",
 		"sass": "^1.54.0",
 		"sass-loader": "^13.0.2",
