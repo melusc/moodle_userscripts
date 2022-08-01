@@ -1,5 +1,4 @@
 /node_modules
 /.cache
-**.min.svg
 /dist
 .env
