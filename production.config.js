@@ -45,9 +45,6 @@ const config = (environment = {}) => ({
 						comments:
 							/^\s*==\/?UserScript==|^\s*@(?!see|ts-ignore|ts-expect-error)[\w-]/,
 					},
-					compress: {
-						passes: 3,
-					},
 				},
 			}),
 		],
