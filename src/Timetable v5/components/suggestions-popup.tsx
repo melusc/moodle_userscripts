@@ -5,13 +5,13 @@ import {Course, SettingsPageState} from '../settingspage.d.js';
 
 const filterCourses = (array: Course[], inputText: string) => {
 	const result = [];
-	const regex = new RegExp(inputText, 'i');
+	inputText = inputText.toLowerCase();
 
 	for (const item of array) {
-		if (regex.test(item.name)) {
+		if (item.name.toLowerCase().includes(inputText)) {
 			result.push({
 				...item,
-				index: item.name.search(regex),
+				index: item.name.indexOf(inputText),
 			});
 		}
 	}
