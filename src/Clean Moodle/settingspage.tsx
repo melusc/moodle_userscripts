@@ -18,7 +18,12 @@ import {
 } from '../shared/moodle-functions-v3/index.js';
 import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
 
-import {getOverrides, getValue, removeElementFromStorage} from './shared.js';
+import {
+	getOverrides,
+	getValue,
+	removeElementFromStorage,
+	setValue,
+} from './shared.js';
 import style from './settingspage.scss';
 import {SvgArrowBack, SvgCheck, SvgX} from './icons.js';
 
@@ -42,17 +47,6 @@ const getName = (name: string | undefined | false, defaultName: string) =>
 	typeof name === 'string' ? name : defaultName;
 
 /**
- * Add item to removers
- */
-const setRemoved = (id: number) => {
-	const overrides = getOverrides();
-
-	overrides[id] = false;
-
-	GM_setValue('overrides', overrides);
-};
-
-/**
  * Set the new text for a course
  */
 const setReplaced = (
@@ -74,22 +68,36 @@ const setReplaced = (
 	GM_setValue('overrides', overrides);
 };
 
+type SidebarEventHandler<Element extends HTMLElement> = (
+	event_: JSX.TargetedMouseEvent<Element>,
+	item: Course,
+) => void;
 const SidebarRow: FunctionalComponent<{
 	course: Course;
-	handleClick: (
-		event_: JSX.TargetedMouseEvent<HTMLDivElement>,
-		item: Course,
-	) => void;
-	toggleItem: (
-		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		item: Course,
-	) => void;
-	resetItem: (
-		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		item: Course,
-	) => void;
-}> = ({course, handleClick, toggleItem, resetItem}) => {
-	const {courseName, value} = course;
+	handleClick: SidebarEventHandler<HTMLDivElement>;
+	onChange: (item: Course) => void;
+}> = ({course, handleClick, onChange}) => {
+	const {courseName, value, courseId} = course;
+
+	const reset: JSX.MouseEventHandler<HTMLElement> = event_ => {
+		event_.stopImmediatePropagation();
+
+		removeElementFromStorage(courseId);
+		onChange(course);
+	};
+
+	const toggle: JSX.MouseEventHandler<HTMLElement> = event_ => {
+		event_.stopImmediatePropagation();
+
+		if (value === false) {
+			removeElementFromStorage(courseId);
+		} else {
+			setValue(courseId, false);
+		}
+
+		onChange(course);
+	};
+
 	return (
 		<div
 			class={`row${value === false ? ' removed' : ''}`}
@@ -98,20 +106,10 @@ const SidebarRow: FunctionalComponent<{
 				handleClick(event_, course);
 			}}
 		>
-			<span
-				onClick={event_ => {
-					toggleItem(event_, course);
-				}}
-			>
-				{value === false ? <SvgX /> : <SvgCheck />}
-			</span>
+			<span onClick={toggle}>{value === false ? <SvgX /> : <SvgCheck />}</span>
 			{getName(value, courseName)}
 			{typeof value === 'string' && (
-				<span
-					onClick={event_ => {
-						resetItem(event_, course);
-					}}
-				>
+				<span onClick={reset}>
 					<SvgArrowBack />
 				</span>
 			)}
@@ -122,24 +120,19 @@ const SidebarRow: FunctionalComponent<{
 const Sidebar: FunctionalComponent<{
 	courses: Course[];
 	loadingCourses: boolean;
-	handleClick: (
-		event_: JSX.TargetedMouseEvent<HTMLDivElement>,
-		item: Course,
-	) => void;
-	toggleItem: (
-		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		item: Course,
-	) => void;
-	resetItem: (
-		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		item: Course,
-	) => void;
-}> = ({courses, loadingCourses, ...rest}) => (
+	handleClick: SidebarEventHandler<HTMLDivElement>;
+	onChange: (item: Course) => void;
+}> = ({courses, loadingCourses, handleClick, onChange}) => (
 	<div class='outer-sidebar'>
 		<div class='sidebar'>
 			{loadingCourses && <div>Loading courses...</div>}
 			{courses.map(course => (
-				<SidebarRow key={course.courseId} course={course} {...rest} />
+				<SidebarRow
+					key={course.courseId}
+					course={course}
+					handleClick={handleClick}
+					onChange={onChange}
+				/>
 			))}
 		</div>
 	</div>
@@ -238,10 +231,10 @@ type SettingsPageState = {
 	loadingCourses: boolean;
 	selected:
 		| {
-				isSelected: false;
+				readonly isSelected: false;
 		  }
 		| ({
-				isSelected: true;
+				readonly isSelected: true;
 		  } & Course);
 	loggedOut: boolean;
 };
@@ -265,12 +258,11 @@ class SettingsPage extends Component<
 		const {courses, selected, loggedOut, loadingCourses} = this.state;
 		const {
 			handleSidebarClick,
-			toggleCourseRemoved: toggleItem,
-			resetCourse: resetItem,
 			replaceInputRef,
 			loggedOutCallbackHandler,
 			handleMainKeydown,
 			handleSave,
+			removeSelectedIfEqualId: onChange,
 		} = this;
 
 		return (
@@ -278,9 +270,8 @@ class SettingsPage extends Component<
 				<Sidebar
 					courses={courses}
 					handleClick={handleSidebarClick}
-					toggleItem={toggleItem}
-					resetItem={resetItem}
 					loadingCourses={loadingCourses}
+					onChange={onChange}
 				/>
 				{loggedOut ? (
 					<LoggedOut cb={loggedOutCallbackHandler} />
@@ -355,6 +346,24 @@ class SettingsPage extends Component<
 		this.moodle.login().then(this.onLogin, () => {
 			this.logout();
 		});
+
+		GM_addValueChangeListener('overrides', () => {
+			this.setState(({courses}) => {
+				const newCourses = courses.map(
+					({...rest}) =>
+						({
+							...rest,
+							value: getValue(rest.courseId),
+						} as const),
+				);
+
+				sortCoursesArray(newCourses);
+
+				return {
+					courses: newCourses,
+				};
+			});
+		});
 	}
 
 	handleMainKeydown: JSX.KeyboardEventHandler<HTMLInputElement> = event_ => {
@@ -379,46 +388,14 @@ class SettingsPage extends Component<
 
 		setReplaced(courseId, input, courseName);
 
-		this.updateCourseById(courseId);
-
 		this.setState({selected: {isSelected: false}});
 	};
 
-	toggleCourseRemoved = (
-		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		{value, courseId}: Course,
-	) => {
-		event_.stopImmediatePropagation();
-
-		if (value === false) {
-			removeElementFromStorage(courseId);
-		} else {
-			setRemoved(courseId);
-		}
-
-		this.updateCourseById(courseId);
-
-		this.removeSelectedIfEqualId(courseId);
-	};
-
-	resetCourse = (
-		event_: JSX.TargetedMouseEvent<HTMLSpanElement>,
-		item: Course,
-	) => {
-		const {courseId} = item;
-		event_.stopImmediatePropagation();
-		this.removeSelectedIfEqualId(courseId);
-
-		removeElementFromStorage(courseId);
-
-		this.updateCourseById(courseId);
-	};
-
-	removeSelectedIfEqualId = (id: number) => {
+	removeSelectedIfEqualId = ({courseId}: Course) => {
 		this.setState(
 			// eslint-disable-next-line @typescript-eslint/ban-types
 			({selected}): Pick<SettingsPageState, 'selected'> | null => {
-				if (selected.isSelected && selected.courseId === id) {
+				if (selected.isSelected && selected.courseId === courseId) {
 					return {selected: {isSelected: false}};
 				}
 
@@ -427,34 +404,10 @@ class SettingsPage extends Component<
 		);
 	};
 
-	updateCourseById = (id: number) => {
-		this.setState(({courses}): Pick<SettingsPageState, 'courses'> => {
-			for (const [i, course] of courses.entries()) {
-				if (course.courseId === id) {
-					courses[i] = {
-						...course,
-						value: getValue(id),
-					};
-
-					break;
-				}
-			}
-
-			sortCoursesArray(courses);
-
-			return {courses};
-		});
-	};
-
 	handleSidebarClick = (
 		_event: JSX.TargetedMouseEvent<HTMLDivElement>,
 		course: Course,
 	) => {
-		if (course.value === false) {
-			removeElementFromStorage(course.courseId);
-			this.updateCourseById(course.courseId);
-		}
-
 		this.setState(
 			{
 				selected: {

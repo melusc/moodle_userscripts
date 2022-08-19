@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.5.1
+// @version   1.6.0
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JXgeW
@@ -108,7 +108,7 @@ const testForInexistantCourse = async (id: string) => {
  * @param {number|string} id The id of the course to replace
  * @param {[string]} newValue The new value, defaults to the anchors title (for resetting it)
  */
-const setCourseText = (id: string, newValue?: string) => {
+const setCourseText = (id: string, newValue: string | undefined) => {
 	const anchor = getCourseElementFromSidebar(id);
 
 	if (!anchor) {
@@ -142,16 +142,13 @@ const setCourseVisibility = (id: string, visible: boolean) => {
 
 	if (anchor) {
 		const li = anchor.closest<HTMLLIElement>('li.type_course');
+		const cl = li?.classList;
 
 		// If the current page is the same as the current course link
 		// don't remove it
-		if (li && !li.classList.contains('contains_branch')) {
-			li.classList.toggle('hide', !visible);
-			if (visible) {
-				li.classList.remove('hide', 'hidden');
-			} else {
-				li.classList.add('hide', 'hidden');
-			}
+		if (cl && !cl.contains('contains_branch')) {
+			cl.toggle('hide', !visible);
+			cl.toggle('hidden', !visible);
 		}
 	} else {
 		void testForInexistantCourse(id);
@@ -191,11 +188,8 @@ const sortSidebar = () => {
 };
 
 const setCourse = (id: string, value: string | false) => {
-	if (value === false) {
-		setCourseVisibility(id, false);
-	} else {
-		setCourseText(id, value);
-	}
+	setCourseVisibility(id, value !== false);
+	setCourseText(id, value === false ? undefined : value);
 };
 
 const cleanFrontpage = () => {
@@ -243,7 +237,7 @@ const setupFrontpage = () => {
 
 				for (const id of Object.keys(oldOverrides)) {
 					if (!(id in newOverrides)) {
-						setCourseText(id);
+						setCourseText(id, undefined);
 						setCourseVisibility(id, true);
 					}
 				}

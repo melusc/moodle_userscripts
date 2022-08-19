@@ -1,7 +1,16 @@
 export type Overrides = Record<string, string | false>;
 
 export const getOverrides = (): Overrides => GM_getValue('overrides') ?? {};
+export const setOverrides = (overrides: Overrides) => {
+	GM_setValue('overrides', overrides);
+};
+
 export const getValue = (id: string | number) => getOverrides()[id];
+export const setValue = (id: string | number, value: string | false) => {
+	const overrides = getOverrides();
+	overrides[id] = value;
+	setOverrides(overrides);
+};
 
 /**
  * @param {string} id The courseid
