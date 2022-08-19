@@ -4776,10 +4776,10 @@ proto-props@^2.0.0:
   resolved "https://registry.yarnpkg.com/proto-props/-/proto-props-2.0.0.tgz#8ac6e6dec658545815c623a3bc81580deda9a181"
   integrity sha512-2yma2tog9VaRZY2mn3Wq51uiSW4NcPYT1cQdBagwyrznrilKSZwIZ0UG3ZPL/mx+axEns0hE35T5ufOYZXEnBQ==
 
-proxy-compare@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/proxy-compare/-/proxy-compare-2.2.0.tgz#2357330407241b091501644d08a446a4a28e0e15"
-  integrity sha512-hEtMJevUmOByZCTw1NRUVaWWHCGJLO0ogizpey8yX6zMPolDe8YVa+PHgMOTiZuyUkFj+hMKs/1UaM0+ZkuvgA==
+proxy-compare@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/proxy-compare/-/proxy-compare-2.3.0.tgz#ac9633ae52918ff9c9fcc54dfe6316c7a02d20ee"
+  integrity sha512-c3L2CcAi7f7pvlD0D7xsF+2CQIW8C3HaYx2Pfgq8eA4HAl3GAH6/dVYsyBbYF/0XJs2ziGLrzmz5fmzPm6A0pQ==
 
 psl@^1.1.33:
   version "1.8.0"
@@ -5724,12 +5724,12 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-valtio@^1.6.3:
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/valtio/-/valtio-1.6.3.tgz#7ea4aa72cd3deb14f18283ecb1ef2e4f802899f6"
-  integrity sha512-ySg2q5nFFSY0zSm/a/sxEGHshWGGvelo4m4y/oAlO92fuXZ9WHSi0J214P3ZDjDiveGp08wck0qJZcA2ubEj+Q==
+valtio@^1.6.4:
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/valtio/-/valtio-1.6.4.tgz#ddab600cf58b54a76339ef1cc3e931f9fe6070ce"
+  integrity sha512-wEslN1bO1ihuv2Xj4jIxkGaDgsnwSvZdcaYcJ6aSwaNYU0ZMe+eZipfEzbTqd4CwnMu7ihDBNes0ZP5CIl1NqA==
   dependencies:
-    proxy-compare "2.2.0"
+    proxy-compare "2.3.0"
     use-sync-external-store "1.2.0"
 
 vary@~1.1.2:
