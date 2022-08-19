@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.5.0
+// @version   1.5.1
 // @author    lusc
 // @include   *://moodle.ksasz.ch/*
 // @updateURL https://git.io/JXgeW
@@ -214,45 +214,6 @@ const cleanFrontpage = () => {
 	sortSidebar();
 };
 
-const refreshReplaced = (
-	oldValue: Record<string, string>,
-	newValue: Record<string, string>,
-) => {
-	for (const key of Object.keys({...oldValue, ...newValue})) {
-		if (oldValue[key] !== newValue[key]) {
-			// If key only exists in oldValue, newValue[key] is undefined and it resets the text
-			setCourseText(key, newValue[key]);
-		}
-	}
-
-	// Changing text leaves it potentially unsorted
-	sortSidebar();
-};
-
-const refreshRemoved = (oldValue: string[], newValue: string[]) => {
-	for (const id of oldValue) {
-		if (!newValue.includes(id)) {
-			setCourseVisibility(id, true);
-		}
-	}
-
-	for (const id of newValue) {
-		if (!oldValue.includes(id)) {
-			setCourseVisibility(id, false);
-		}
-	}
-};
-
-const refresh
-	= <T,>( // eslint-disable-line @typescript-eslint/comma-dangle
-		cb: (oldValue: T, newValue: T) => void,
-	) =>
-	(_name: string, oldValue: T, newValue: T, remote: boolean) => {
-		if (remote && getSidebar()) {
-			cb(oldValue, newValue);
-		}
-	};
-
 const setupFrontpage = () => {
 	const sidebar = getSidebar();
 
@@ -263,8 +224,6 @@ const setupFrontpage = () => {
 	if (sidebar) {
 		cleanFrontpage();
 
-		GM_addValueChangeListener('replace', refresh(refreshReplaced));
-		GM_addValueChangeListener('remove', refresh(refreshRemoved));
 		GM_addValueChangeListener(
 			'overrides',
 			(
