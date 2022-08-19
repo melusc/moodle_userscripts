@@ -4704,10 +4704,10 @@ pluralize@^8.0.0:
   resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-8.0.0.tgz#1a6fa16a38d12a1901e0320fa017051c539ce3b1"
   integrity sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==
 
-preact@^10.10.2:
-  version "10.10.2"
-  resolved "https://registry.yarnpkg.com/preact/-/preact-10.10.2.tgz#3460d456d84c4701af33ac37e9bd3054271d5b1e"
-  integrity sha512-GUXSsfwq4NKhlLYY5ctfNE0IjFk7Xo4952yPI8yMkXdhzeQmQ+FahZITe7CeHXMPyKBVQ8SoCmGNIy9TSOdhgQ==
+preact@^10.10.4:
+  version "10.10.4"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.10.4.tgz#744f624a955595dac32908c3ec518026b99df807"
+  integrity sha512-3itXRadRHCZ09T5zdFg2SmgwZm7RBAGznA9W74Qwsb/Ri7SpjgGmICvwSRXFgYlXtlgJMDZqrIGP/4z53ZStZw==
 
 prelude-ls@^1.2.1:
   version "1.2.1"
