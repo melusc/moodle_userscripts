@@ -16,17 +16,17 @@
 // @run-at    document-start
 // ==/UserScript==
 
-import {Component, type FunctionalComponent, h, render} from 'preact';
+import {Component, h, render, type FunctionalComponent} from 'preact';
 
 import {
-	upgrader,
 	cleanAuthStorage,
 	domReady,
+	upgrader,
 } from '../shared/general-functions/index.js';
 
-import {initSettingsPage} from './settingspage.js';
+import {Lang, notificationIconUrl, TimetableStates} from './consts.js';
 import frontPageStyle from './frontpage.scss';
-import {TimetableStates, Lang, notificationIconUrl} from './consts.js';
+import {initSettingsPage} from './settingspage.js';
 import {parseTimeToString} from './shared.js';
 import {
 	getCourses,

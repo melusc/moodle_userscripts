@@ -1,4 +1,3 @@
-import type {RefObject} from 'preact';
 import type {FixedLengthArray} from 'type-fest';
 
 type Time = {

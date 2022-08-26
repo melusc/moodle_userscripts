@@ -1,4 +1,4 @@
-import {h, Fragment, type JSX, type FunctionalComponent} from 'preact';
+import {Fragment, h, type FunctionalComponent, type JSX} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {createPortal} from 'preact/compat';
 // eslint-disable-next-line n/file-extension-in-import
@@ -7,8 +7,8 @@ import {useEffect, useState} from 'preact/hooks';
 import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
 
 import {
-	type SanitizedContentFile,
 	getSanitizedContents,
+	type SanitizedContentFile,
 } from './page-content.js';
 import {RefreshIcon} from './refresh-icon.js';
 

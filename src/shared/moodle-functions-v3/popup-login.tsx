@@ -1,10 +1,10 @@
-import {render, h, type FunctionalComponent, type JSX} from 'preact';
+import {h, render, type FunctionalComponent, type JSX} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {useRef, useState} from 'preact/hooks';
 
-import genericPopupSCSS from './popup-login.scss';
-import type {Moodle, RegisterFunction} from './moodle.js';
 import {getUsername} from './credentials.js';
+import type {Moodle, RegisterFunction} from './moodle.js';
+import genericPopupSCSS from './popup-login.scss';
 
 const GenericPopup: FunctionalComponent<{
 	cb: (token: string) => void;

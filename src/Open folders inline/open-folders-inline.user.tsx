@@ -11,12 +11,12 @@
 // @run-at    document-start
 // ==/UserScript==
 
-import {render, h} from 'preact';
+import {h, render} from 'preact';
 
 import {
-	upgrader,
 	cleanAuthStorage,
 	domReady,
+	upgrader,
 } from '../shared/general-functions/index.js';
 
 import {Folder} from './folder.js';

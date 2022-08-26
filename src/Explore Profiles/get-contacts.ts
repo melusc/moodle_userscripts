@@ -1,4 +1,4 @@
-import {title, moodle} from './consts.js';
+import {moodle, title} from './consts.js';
 
 type CoreMessageGetUserContactsResponse =
 	| {

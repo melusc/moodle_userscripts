@@ -13,27 +13,27 @@
 // @run-at    document-start
 // ==/UserScript==
 
-import {render, h} from 'preact';
+import {h, render} from 'preact';
 
 import {
-	numericBaseSensitiveCollator,
-	getSidebar,
-	upgrader,
 	cleanAuthStorage,
 	domReady,
+	getSidebar,
+	numericBaseSensitiveCollator,
+	upgrader,
 } from '../shared/general-functions/index.js';
 import {
+	getCourses,
 	Moodle,
 	popupLogin,
 	type Courses,
-	getCourses,
 } from '../shared/moodle-functions-v3/index.js';
 
 import {setupSettingsPage} from './settingspage.js';
 import {
 	getOverrides,
-	type Overrides,
 	removeElementFromStorage,
+	type Overrides,
 } from './shared.js';
 
 Moodle.extend(getCourses).extend(popupLogin);

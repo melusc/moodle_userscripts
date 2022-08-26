@@ -1,8 +1,9 @@
 import {describe, expect, test} from '@jest/globals';
 import {violentMonkeyContext} from 'mock-violentmonkey';
 
-import {Moodle} from '../../src/shared/moodle-functions-v3/moodle.js';
 import {getCourses} from '../../src/shared/moodle-functions-v3/get-courses.js';
+import {Moodle} from '../../src/shared/moodle-functions-v3/moodle.js';
+
 import {password, username} from './credentials.js';
 
 Moodle.extend(getCourses);

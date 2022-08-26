@@ -1,3 +1,4 @@
+import type {CourseContent} from './course-content.d.js';
 import {
 	deleteToken,
 	getToken,
@@ -5,7 +6,6 @@ import {
 	setToken,
 	setUsername,
 } from './credentials.js';
-import type {CourseContent} from './course-content.d.js';
 import type {Courses} from './get-courses.js';
 
 export type Credentials = {

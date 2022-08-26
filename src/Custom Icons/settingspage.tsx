@@ -1,31 +1,31 @@
 import {
-	render,
-	h,
 	Component,
-	Fragment,
-	type JSX,
 	createRef,
+	Fragment,
+	h,
+	render,
 	type FunctionalComponent,
+	type JSX,
 } from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {useEffect, useRef} from 'preact/hooks';
 // eslint-disable-next-line n/file-extension-in-import
 import {html} from 'htm/preact';
 
+import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
 import {
-	Moodle,
 	getCourses,
+	Moodle,
 	type Courses,
 } from '../shared/moodle-functions-v3/index.js';
-import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
 
+import style from './settingspage.scss';
 import {
-	deleteIconFromStorage,
 	addEntry,
 	copyEntry,
+	deleteIconFromStorage,
 	getValueFromId,
 } from './shared.js';
-import style from './settingspage.scss';
 
 Moodle.extend(getCourses);
 

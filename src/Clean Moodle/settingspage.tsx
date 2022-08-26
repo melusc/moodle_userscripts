@@ -1,31 +1,32 @@
 import {
-	render,
-	h,
 	Component,
 	createRef,
-	type RefObject,
-	type JSX,
+	h,
+	render,
 	type FunctionalComponent,
+	type JSX,
+	type RefObject,
 } from 'preact';
 
 // eslint-disable-next-line n/file-extension-in-import
 import {useRef} from 'preact/hooks';
-import {
-	Moodle,
-	getCourses,
-	type Courses,
-	getUsername,
-} from '../shared/moodle-functions-v3/index.js';
-import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
 
+import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
+import {
+	getCourses,
+	getUsername,
+	Moodle,
+	type Courses,
+} from '../shared/moodle-functions-v3/index.js';
+
+import {SvgArrowBack, SvgCheck, SvgX} from './icons.js';
+import style from './settingspage.scss';
 import {
 	getOverrides,
 	getValue,
 	removeElementFromStorage,
 	setValue,
 } from './shared.js';
-import style from './settingspage.scss';
-import {SvgArrowBack, SvgCheck, SvgX} from './icons.js';
 
 Moodle.extend(getCourses);
 

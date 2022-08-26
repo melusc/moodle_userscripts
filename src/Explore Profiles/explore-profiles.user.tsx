@@ -14,18 +14,18 @@
 import dayjs from 'dayjs';
 import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime.js';
 import DOMPurify from 'dompurify';
-import {render, Fragment, h} from 'preact';
-import {useSnapshot, proxy} from 'valtio';
+import {Fragment, h, render} from 'preact';
+import {proxy, useSnapshot} from 'valtio';
 
 import {
-	upgrader,
 	cleanAuthStorage,
 	domReady,
+	upgrader,
 } from '../shared/general-functions/index.js';
 
+import {moodle, title} from './consts.js';
 import {countries as COUNTRY_CODES} from './countries.js';
 import {getContacts} from './get-contacts.js';
-import {title, moodle} from './consts.js';
 
 import style from './style.scss';
 

@@ -17,16 +17,16 @@ import {saveAs} from 'file-saver';
 import JSZip from 'jszip';
 
 import {
-	Moodle,
-	getCourseContent,
-	popupLogin,
-} from '../shared/moodle-functions-v3/index.js';
-import type {CourseContent} from '../shared/moodle-functions-v3/course-content.d.js';
-import {
-	upgrader,
 	cleanAuthStorage,
 	domReady,
+	upgrader,
 } from '../shared/general-functions/index.js';
+import type {CourseContent} from '../shared/moodle-functions-v3/course-content.d.js';
+import {
+	getCourseContent,
+	Moodle,
+	popupLogin,
+} from '../shared/moodle-functions-v3/index.js';
 
 Moodle.extend(getCourseContent).extend(popupLogin);
 const moodle = new Moodle();

@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {env} from 'node:process';
-import assert from 'node:assert/strict';
 
 import {parse} from 'dotenv';
 

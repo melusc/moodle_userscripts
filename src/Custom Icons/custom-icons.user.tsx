@@ -16,20 +16,20 @@
 // ==/UserScript==
 
 // eslint-disable-next-line n/file-extension-in-import
-import {render, html} from 'htm/preact';
+import {html, render} from 'htm/preact';
 
 import {
-	Moodle,
+	cleanAuthStorage,
+	domReady,
+	getSidebar,
+	upgrader,
+} from '../shared/general-functions/index.js';
+import {
 	getCourses,
+	Moodle,
 	popupLogin,
 	type Courses,
 } from '../shared/moodle-functions-v3/index.js';
-import {
-	getSidebar,
-	upgrader,
-	cleanAuthStorage,
-	domReady,
-} from '../shared/general-functions/index.js';
 
 import {setupSettingsPage} from './settingspage.js';
 import {

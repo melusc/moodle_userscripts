@@ -1,10 +1,11 @@
 import {describe, expect, jest, test} from '@jest/globals';
 import {update_GM_info, violentMonkeyContext} from 'mock-violentmonkey';
+
 import {
 	compare,
+	parseVersion,
 	upgrader,
 	type Version,
-	parseVersion,
 } from '../../src/shared/general-functions/upgrader.js';
 
 describe('greaterThan', () => {

@@ -1,13 +1,13 @@
-import {
-	Moodle,
-	popupLogin,
-	getCourseContent,
-} from '../shared/moodle-functions-v3/index.js';
 import type {
 	CourseContent,
 	FolderContent,
 	FolderModule,
 } from '../shared/moodle-functions-v3/course-content.d.js';
+import {
+	getCourseContent,
+	Moodle,
+	popupLogin,
+} from '../shared/moodle-functions-v3/index.js';
 
 import {getImageURL} from './image-urls.js';
 

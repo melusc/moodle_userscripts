@@ -4,12 +4,12 @@ import ow from 'ow';
 
 import {getCourseContent} from '../../src/shared/moodle-functions-v3/get-course-content.js';
 import {
-	type Courses,
 	getCourses,
+	type Courses,
 } from '../../src/shared/moodle-functions-v3/get-courses.js';
 import {Moodle} from '../../src/shared/moodle-functions-v3/moodle.js';
 
-import {username, password} from './credentials.js';
+import {password, username} from './credentials.js';
 
 Moodle.extend(getCourses).extend(getCourseContent);
 
