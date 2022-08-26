@@ -22,7 +22,7 @@ import {
 	Moodle,
 	getCourses,
 	popupLogin,
-	Courses,
+	type Courses,
 } from '../shared/moodle-functions-v3/index.js';
 import {
 	getSidebar,
@@ -40,7 +40,12 @@ import {
 	setIcons,
 } from './shared.js';
 
-import {Icons, Pointers, ValidIconObject, Values} from './custom-icons.d.js';
+import type {
+	Icons,
+	Pointers,
+	ValidIconObject,
+	Values,
+} from './custom-icons.d.js';
 
 Moodle.extend(getCourses).extend(popupLogin);
 const moodle = new Moodle();

@@ -1,4 +1,4 @@
-import {h, JSX} from 'preact';
+import {h, type JSX} from 'preact';
 
 export const SvgIconX = (props: JSX.HTMLAttributes<SVGSVGElement>) => (
 	<svg {...props} viewBox='0 0 512 512'>

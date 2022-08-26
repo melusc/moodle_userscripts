@@ -1,5 +1,5 @@
 import type {RefObject} from 'preact';
-import {FixedLengthArray} from 'type-fest';
+import type {FixedLengthArray} from 'type-fest';
 
 type Time = {
 	str: string;
@@ -48,4 +48,10 @@ type SettingsPageState = {
 	saveValidity: boolean | undefined;
 };
 
-export {TableRow, SingleDay, Course, SettingsPageState, TableOnInputSelectors};
+export type {
+	TableRow,
+	SingleDay,
+	Course,
+	SettingsPageState,
+	TableOnInputSelectors,
+};

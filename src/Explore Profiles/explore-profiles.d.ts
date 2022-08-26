@@ -1,4 +1,5 @@
 declare global {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Window {
 		M: {
 			cfg: {
@@ -68,4 +69,4 @@ type UserDataResponse = {
 	username?: string;
 };
 
-export {UserDataResponse};
+export type {UserDataResponse};

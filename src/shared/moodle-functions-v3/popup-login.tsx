@@ -1,4 +1,4 @@
-import {render, h, FunctionalComponent, JSX} from 'preact';
+import {render, h, type FunctionalComponent, type JSX} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {useRef, useState} from 'preact/hooks';
 

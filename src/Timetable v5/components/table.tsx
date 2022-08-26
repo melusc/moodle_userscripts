@@ -1,11 +1,11 @@
-import {FunctionalComponent, h, JSX, RefObject} from 'preact';
+import {type FunctionalComponent, h, type JSX, type RefObject} from 'preact';
 import {clsx} from 'clsx';
 
 // eslint-disable-next-line n/file-extension-in-import
 import {useRef} from 'preact/hooks';
 import {SvgIconX} from '../icons.js';
 
-import {
+import type {
 	TableRow as TypeTableRow,
 	TableOnInputSelectors,
 } from '../settingspage.d.js';

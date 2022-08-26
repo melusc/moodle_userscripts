@@ -21,7 +21,7 @@ import {render, Component, h, createRef} from 'preact';
 import {domReady} from '../shared/general-functions/index.js';
 
 import style from './style.scss';
-import {getMarks, MarksRow} from './get-marks.js';
+import {getMarks, type MarksRow} from './get-marks.js';
 
 if (location.protocol !== 'https:') {
 	location.protocol = 'https:';

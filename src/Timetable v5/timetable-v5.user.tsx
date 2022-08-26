@@ -16,7 +16,7 @@
 // @run-at    document-start
 // ==/UserScript==
 
-import {Component, FunctionalComponent, h, render} from 'preact';
+import {Component, type FunctionalComponent, h, render} from 'preact';
 
 import {
 	upgrader,
@@ -30,8 +30,8 @@ import {TimetableStates, Lang, notificationIconUrl} from './consts.js';
 import {parseTimeToString} from './shared.js';
 import {
 	getCourses,
-	TimetableStorageValues,
-	TimetableStorageValuesWeek,
+	type TimetableStorageValues,
+	type TimetableStorageValuesWeek,
 } from './timetable.js';
 
 upgrader({

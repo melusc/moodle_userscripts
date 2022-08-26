@@ -25,12 +25,16 @@ import {
 import {
 	Moodle,
 	popupLogin,
-	Courses,
+	type Courses,
 	getCourses,
 } from '../shared/moodle-functions-v3/index.js';
 
 import {setupSettingsPage} from './settingspage.js';
-import {getOverrides, Overrides, removeElementFromStorage} from './shared.js';
+import {
+	getOverrides,
+	type Overrides,
+	removeElementFromStorage,
+} from './shared.js';
 
 Moodle.extend(getCourses).extend(popupLogin);
 
