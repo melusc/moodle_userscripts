@@ -4,7 +4,7 @@ import ow from 'ow';
 
 import {getCourseContent} from '../../src/shared/moodle-functions-v3/get-course-content.js';
 import {
-	Courses,
+	type Courses,
 	getCourses,
 } from '../../src/shared/moodle-functions-v3/get-courses.js';
 import {Moodle} from '../../src/shared/moodle-functions-v3/moodle.js';

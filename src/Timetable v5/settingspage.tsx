@@ -1,14 +1,14 @@
 // Dependencies
 import {clsx} from 'clsx';
 import {produce} from 'immer';
-import {Component, Fragment, h, JSX, RefObject, render} from 'preact';
+import {Component, Fragment, h, type JSX, type RefObject, render} from 'preact';
 // Shared across repo
 
 import {uniqueId} from '../shared/general-functions/index.js';
 import {
 	getCourses,
 	Moodle,
-	Courses,
+	type Courses,
 } from '../shared/moodle-functions-v3/index.js';
 // Locally shared
 
@@ -20,7 +20,7 @@ import {SvgIconAdd} from './icons.js';
 import {parseStringToTime, parseTimeToString} from './shared.js';
 
 // Types
-import {
+import type {
 	SettingsPageState,
 	SingleDay,
 	TableOnInputSelectors,

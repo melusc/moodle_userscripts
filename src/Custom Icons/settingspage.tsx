@@ -3,9 +3,9 @@ import {
 	h,
 	Component,
 	Fragment,
-	JSX,
+	type JSX,
 	createRef,
-	FunctionalComponent,
+	type FunctionalComponent,
 } from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {useEffect, useRef} from 'preact/hooks';
@@ -15,7 +15,7 @@ import {html} from 'htm/preact';
 import {
 	Moodle,
 	getCourses,
-	Courses,
+	type Courses,
 } from '../shared/moodle-functions-v3/index.js';
 import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
 

@@ -1,4 +1,4 @@
-import {FunctionalComponent, h, JSX} from 'preact';
+import {type FunctionalComponent, h, type JSX} from 'preact';
 
 export const RefreshIcon: FunctionalComponent<{
 	onClick: () => void;

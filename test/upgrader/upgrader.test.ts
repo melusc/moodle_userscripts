@@ -3,7 +3,7 @@ import {update_GM_info, violentMonkeyContext} from 'mock-violentmonkey';
 import {
 	compare,
 	upgrader,
-	Version,
+	type Version,
 	parseVersion,
 } from '../../src/shared/general-functions/upgrader.js';
 

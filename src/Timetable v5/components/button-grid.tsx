@@ -1,5 +1,5 @@
-import {h, Fragment, FunctionalComponent} from 'preact';
-import {clsx, ClassValue} from 'clsx';
+import {h, type Fragment, type FunctionalComponent} from 'preact';
+import {clsx, type ClassValue} from 'clsx';
 
 import {SvgIconCaretBack, SvgIconCaretForward} from '../icons.js';
 

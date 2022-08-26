@@ -1,4 +1,4 @@
-import {Icons, ValidIconObject} from './custom-icons.d.js';
+import type {Icons, ValidIconObject} from './custom-icons.d.js';
 
 export const iconsKey = 'icons';
 
