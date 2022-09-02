@@ -24,7 +24,7 @@
 		"dotenv": "^16.0.2",
 		"eslint-config-xo-react": "^0.27.0",
 		"eslint-plugin-jest": "^27.0.1",
-		"eslint-plugin-react": "^7.31.0",
+		"eslint-plugin-react": "^7.31.1",
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"jest": "^29.0.1",
 		"mock-violentmonkey": "^1.2.0",
