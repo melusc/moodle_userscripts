@@ -16,14 +16,14 @@ import {h, render} from 'preact';
 import {
 	cleanAuthStorage,
 	domReady,
-	upgrader,
+	migrate,
 } from '../shared/general-functions/index.js';
 
 import {Folder} from './folder.js';
 
 import style from './style.scss';
 
-upgrader({
+migrate({
 	'1.2.0': cleanAuthStorage,
 });
 

@@ -26,7 +26,7 @@ export const compare = (a: Version, b: Version) =>
 	|| compareSingle(a[2], b[2]);
 
 const key = 'lastUpgraded';
-const upgrader = (versions: Record<string, () => void>) => {
+const migrate = (versions: Record<string, () => void>) => {
 	const rawCurrentVersion = GM_getValue<string | undefined>(key);
 	// Only version that can be negativ.
 	// The default is therefore always the smallest and will trigger all upgraders
@@ -37,13 +37,13 @@ const upgrader = (versions: Record<string, () => void>) => {
 			: parseVersion(rawCurrentVersion);
 
 	// Order by version, with lowest version first
-	const upgraders = Object.entries(versions)
+	const migrators = Object.entries(versions)
 		.map(([version, cb]) => [parseVersion(version), cb] as const)
 		.sort(([a], [b]) => compare(a, b));
 
 	// Always call the lowest versions first
 	// but only those that have never been called before (i.e. greater than currentVersion)
-	for (const [version, cb] of upgraders) {
+	for (const [version, cb] of migrators) {
 		if (compare(currentVersion, version) < 0) {
 			cb();
 		}
@@ -52,12 +52,12 @@ const upgrader = (versions: Record<string, () => void>) => {
 	GM_setValue(key, GM_info.script.version);
 };
 
-const upgraderSilent = (versions: Record<string, () => void>) => {
+const migrateSilent = (versions: Record<string, () => void>) => {
 	try {
-		upgrader(versions);
+		migrate(versions);
 	} catch (error: unknown) {
 		console.error('Upgrading threw %o. Failing silently.', error);
 	}
 };
 
-export {upgraderSilent as upgrader};
+export {migrateSilent as migrate};

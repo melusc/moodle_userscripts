@@ -4,9 +4,9 @@ import {update_GM_info, violentMonkeyContext} from 'mock-violentmonkey';
 import {
 	compare,
 	parseVersion,
-	upgrader,
+	migrate,
 	type Version,
-} from '../../src/shared/general-functions/upgrader.js';
+} from '../../src/shared/general-functions/migrate.js';
 
 describe('greaterThan', () => {
 	test.each([
@@ -51,7 +51,7 @@ describe('upgrader', () => {
 
 			const dontCall = jest.fn();
 
-			upgrader({
+			migrate({
 				'0.0.1': dontCall,
 				'0.1.0': dontCall,
 				'1.0.0': dontCall,
@@ -75,7 +75,7 @@ describe('upgrader', () => {
 			const dontCall = jest.fn();
 			const doCall = jest.fn();
 
-			upgrader({
+			migrate({
 				'0.0.0': dontCall,
 				'1.0.0': doCall,
 				'1.0.1': doCall,
@@ -98,7 +98,7 @@ describe('upgrader', () => {
 
 			const doCall = jest.fn();
 
-			upgrader({
+			migrate({
 				'0.0.0': doCall,
 				'0.0.1': doCall,
 				'0.1.0': doCall,
@@ -121,7 +121,7 @@ describe('upgrader', () => {
 				++index;
 			};
 
-			upgrader({
+			migrate({
 				'2.3.0': makeTester(3),
 				'1.2.4': makeTester(1),
 				'1.4.2': makeTester(2),

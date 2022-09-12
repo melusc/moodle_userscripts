@@ -19,7 +19,7 @@ import JSZip from 'jszip';
 import {
 	cleanAuthStorage,
 	domReady,
-	upgrader,
+	migrate,
 } from '../shared/general-functions/index.js';
 import type {CourseContent} from '../shared/moodle-functions-v3/course-content.d.js';
 import {
@@ -31,7 +31,7 @@ import {
 Moodle.extend(getCourseContent).extend(popupLogin);
 const moodle = new Moodle();
 
-upgrader({
+migrate({
 	'1.1.0': cleanAuthStorage,
 });
 

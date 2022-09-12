@@ -20,7 +20,7 @@ import {proxy, useSnapshot} from 'valtio';
 import {
 	cleanAuthStorage,
 	domReady,
-	upgrader,
+	migrate,
 } from '../shared/general-functions/index.js';
 
 import {moodle, title} from './consts.js';
@@ -33,7 +33,7 @@ import type {UserDataResponse} from './explore-profiles.d.js';
 
 dayjs.extend(dayjsPluginRelativeTime);
 
-upgrader({
+migrate({
 	'1.2.0': cleanAuthStorage,
 });
 

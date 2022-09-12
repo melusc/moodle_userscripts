@@ -22,7 +22,7 @@ import {
 	cleanAuthStorage,
 	domReady,
 	getSidebar,
-	upgrader,
+	migrate,
 } from '../shared/general-functions/index.js';
 import {
 	getCourses,
@@ -50,7 +50,7 @@ import type {
 Moodle.extend(getCourses).extend(popupLogin);
 const moodle = new Moodle();
 
-upgrader({
+migrate({
 	'1.3.0': cleanAuthStorage,
 	'1.4.0'() {
 		GM_deleteValue('changed');

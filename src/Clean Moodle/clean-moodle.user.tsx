@@ -20,7 +20,7 @@ import {
 	domReady,
 	getSidebar,
 	numericBaseSensitiveCollator,
-	upgrader,
+	migrate,
 } from '../shared/general-functions/index.js';
 import {
 	getCourses,
@@ -38,7 +38,7 @@ import {
 
 Moodle.extend(getCourses).extend(popupLogin);
 
-upgrader({
+migrate({
 	'1.4.0': cleanAuthStorage,
 	'1.5.0'() {
 		const remove: string[] = GM_getValue('remove') ?? [];

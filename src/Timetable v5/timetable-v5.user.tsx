@@ -21,7 +21,7 @@ import {Component, h, render, type FunctionalComponent} from 'preact';
 import {
 	cleanAuthStorage,
 	domReady,
-	upgrader,
+	migrate,
 } from '../shared/general-functions/index.js';
 
 import {Lang, notificationIconUrl, TimetableStates} from './consts.js';
@@ -34,7 +34,7 @@ import {
 	type TimetableStorageValuesWeek,
 } from './timetable.js';
 
-upgrader({
+migrate({
 	'1.2.0': cleanAuthStorage,
 });
 
