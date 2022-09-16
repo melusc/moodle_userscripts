@@ -124,6 +124,10 @@ export const Folder: FunctionalComponent<{
 
 	useEffect(() => {
 		const handler = (event: MouseEvent): void => {
+			if (event.ctrlKey) {
+				return;
+			}
+
 			event.preventDefault();
 			event.stopImmediatePropagation();
 
