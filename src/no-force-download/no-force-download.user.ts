@@ -5,7 +5,7 @@
 // @version    1.0.0
 // @author     lusc
 // @license    MIT
-// @updateURL  https://raw.githubusercontent.com/melusc/moodle_userscripts/userscript-out/no-force-download/no-force-download.user.js
+// @updateURL  https://github.com/melusc/moodle_userscripts/raw/userscript-out/no-force-download/no-force-download.user.js
 // @run-at     document-start
 // ==/UserScript==
 
