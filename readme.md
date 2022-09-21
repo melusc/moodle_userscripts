@@ -20,6 +20,10 @@ To run these you need to have violentmonkey, tampermonkey, greasemonkey or simil
 
 [Download Course's Content](https://git.io/JXzhy)
 
+[No Force Download][]
+
 ## About
 
 Currently, all these userscripts are written in typescript and jsx using [preact](https://github.com/preactjs/preact).
+
+[No Force Download]: https://github.com/melusc/moodle_userscripts/raw/userscript-out/no-force-download/no-force-download.user.js
