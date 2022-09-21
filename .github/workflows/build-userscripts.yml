@@ -43,6 +43,11 @@ jobs:
       - name: Build
         run: yarn run webpack
 
+        # Sometimes webpack removes the metadata
+        # even though it shouldn't
+      - name: Check metadata of output
+        run: node scripts/check-metadata.js
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
