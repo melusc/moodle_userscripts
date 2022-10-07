@@ -728,10 +728,10 @@
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.24.19.tgz#5297278e0d8a1aea084685a3216074910ac6c113"
   integrity sha512-gHJu8cdYTD5p4UqmQHrxaWrtb/jkH5imLXzuBypWhKzNkW0qfmgz+w1xaJccWVuJta1YYUdlDiPHXRTR4Ku0MQ==
 
-"@sindresorhus/is@^5.1.0":
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-5.2.0.tgz#2d1acdf153e59bc6e865adf5c893dbf388a1789b"
-  integrity sha512-tDrSvtear91yf6HFlHHwpV5x4ZyzFj3xkZxsfmsuLlQwR4e0+n8Da1Dr+TIY6nla0ATGxqLK9MWz7Dx/jlu9RQ==
+"@sindresorhus/is@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-5.3.0.tgz#0ec9264cf54a527671d990eb874e030b55b70dcc"
+  integrity sha512-CX6t4SYQ37lzxicAqsBtxA3OseeoVrh9cSJ5PFYam0GksYlupRfy1A+Q4aYD3zvcfECLc0zO2u+ZnR2UYKvCrw==
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
@@ -4522,16 +4522,15 @@ optionator@^0.9.1:
     type-check "^0.4.0"
     word-wrap "^1.2.3"
 
-ow@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/ow/-/ow-1.0.0.tgz#d09b8e6e5735450c7554a9a3e29dfa8749ae02d6"
-  integrity sha512-e7Bu8LOhWACzlx89dZb64K2p3KusY0s4BhkVLewsVuKA4Pp1lq+Nxicp0k6ZP4G5GO3YdkVVd6+qUclQRcl6fg==
+ow@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/ow/-/ow-1.1.0.tgz#78c87857e1f473c06e85e110f114c30b3539f0ff"
+  integrity sha512-NB4kEnHaFum/ZWQqg1DwZ456nS1DPxYKgmipl5J9yiR3lY/S0+wJlTU8h/5fCTaedzNGTJyjdHlFZmAse6A25w==
   dependencies:
-    "@sindresorhus/is" "^5.1.0"
+    "@sindresorhus/is" "^5.3.0"
     callsites "^4.0.0"
     dot-prop "^7.2.0"
     lodash.isequal "^4.5.0"
-    type-fest "^2.13.0"
     vali-date "^1.0.0"
 
 p-limit@^1.1.0:
