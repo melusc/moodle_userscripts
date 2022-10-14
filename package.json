@@ -9,7 +9,7 @@
 		"immer": "^9.0.15",
 		"jszip": "^3.10.1",
 		"preact": "^10.11.0",
-		"valtio": "^1.7.0"
+		"valtio": "^1.7.2"
 	},
 	"description": "",
 	"devDependencies": {
