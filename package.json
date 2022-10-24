@@ -76,5 +76,6 @@
 			"/node_modules/",
 			"/test/moodle-functions-v3/"
 		]
-	}
+	},
+	"packageManager": "yarn@1.22.19"
 }
