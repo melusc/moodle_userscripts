@@ -143,7 +143,7 @@ type FrontPageState = {
 class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 	override state: FrontPageState = {
 		courses: [],
-		timetableState: TimetableStates.init,
+		timetableState: TimetableStates.loading,
 	};
 
 	_timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -231,7 +231,7 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 							<div class='tt-body'>
 								<div class='tt-title'>Timetable</div>
 
-								{timetableState === TimetableStates.init && <div>Loading</div>}
+								{timetableState === TimetableStates.loading && <div>Loading</div>}
 
 								{timetableState === TimetableStates.after && (
 									<div>{Lang.afterSchool}</div>

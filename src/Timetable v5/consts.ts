@@ -19,7 +19,7 @@ export const enum TimetableStates {
 	after,
 	during,
 	empty,
-	init,
+	loading,
 	holiday,
 	weekend,
 }
