@@ -231,7 +231,9 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 							<div class='tt-body'>
 								<div class='tt-title'>Timetable</div>
 
-								{timetableState === TimetableStates.loading && <div>Loading</div>}
+								{timetableState === TimetableStates.loading && (
+									<div>Loading</div>
+								)}
 
 								{timetableState === TimetableStates.after && (
 									<div>{Lang.afterSchool}</div>
