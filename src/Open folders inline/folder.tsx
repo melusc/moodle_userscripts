@@ -12,6 +12,15 @@ import {
 } from './page-content.js';
 import {RefreshIcon} from './refresh-icon.js';
 
+const cleanHref = (href: string): string => {
+	const url = new URL(href);
+	if (url.searchParams.get('forcedownload') === '1') {
+		url.searchParams.set('forcedownload', '0');
+	}
+
+	return url.href;
+};
+
 const FolderIcon: FunctionalComponent<{
 	isHidden: boolean;
 	base: string | undefined;
@@ -96,7 +105,7 @@ const FolderRoot: FunctionalComponent<{
 					{root?.map(({fileUrl, filename, imgPath}) => (
 						<li key={filename}>
 							<span class='fp-filename-icon'>
-								<a href={fileUrl}>
+								<a href={cleanHref(fileUrl)}>
 									<span class='fp-icon'>
 										<img alt='' title={filename} src={imgPath} />
 									</span>
