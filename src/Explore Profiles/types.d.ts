@@ -27,7 +27,7 @@ declare global {
   'preferences',
 ]; */
 
-type UserDataResponse = {
+export type UserDataResponse = {
 	city?: string;
 	country?: string;
 	description?: string;
@@ -69,4 +69,30 @@ type UserDataResponse = {
 	username?: string;
 };
 
-export type {UserDataResponse};
+export type LoadedState = {
+	loaded: true;
+
+	id: number;
+	fullname: string;
+	firstaccess: number;
+	lastaccess: number;
+	image: string;
+
+	isContact: boolean;
+	isUserProfile: boolean;
+	userId: number;
+
+	email?: string;
+	city?: string;
+	description?: string;
+	url?: string;
+	country?: string;
+	courses?: Array<{
+		id: number;
+		coursename: string;
+	}>;
+	interests?: string[];
+};
+export type UnloadedState = {loaded: false};
+
+export type State = UnloadedState | LoadedState;
