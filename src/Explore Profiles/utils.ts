@@ -54,7 +54,8 @@ export const getContacts = async (userId: number): Promise<number[]> => {
 		return getContacts(userId);
 	}
 
-	return responseJSON.map(({id}) => id);
+	contacts = responseJSON.map(({id}) => id);
+	return contacts;
 };
 
 let userId: number | undefined;
