@@ -206,11 +206,11 @@ const fetchProfile = async (
 	}
 
 	const userId = await getUserId();
-
-	setFromTo({from: undefined, to: undefined});
+	const contacts = await getContacts(userId);
 
 	document.title = `${profile.fullname}: Public profile`;
-	const contacts = await getContacts(userId);
+
+	setFromTo({from: undefined, to: undefined});
 
 	return {
 		loaded: true,
