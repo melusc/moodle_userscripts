@@ -13,7 +13,7 @@
 	},
 	"description": "",
 	"devDependencies": {
-		"@jest/globals": "^29.2.1",
+		"@jest/globals": "^29.2.2",
 		"@lusc/tsconfig": "^2.0.0",
 		"@types/dompurify": "^2.3.4",
 		"@types/file-saver": "^2.0.5",
