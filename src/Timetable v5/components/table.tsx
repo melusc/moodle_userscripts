@@ -34,9 +34,12 @@ const TableRow: FunctionalComponent<{
 			<div class='table-cell time'>
 				<TimeInput
 					index={index}
-					class={['time-from', {
-						'invalid-input': fromInvalid === true,
-					}]}
+					class={[
+						'time-from',
+						{
+							'invalid-input': fromInvalid === true,
+						},
+					]}
 					time={from.str}
 					placeholder='HH:mm'
 					onInput={onInput('from', index)}
@@ -44,9 +47,12 @@ const TableRow: FunctionalComponent<{
 				{' - '}
 				<TimeInput
 					index={3}
-					class={['time-to', {
-						'invalid-input': toInvalid === true,
-					}]}
+					class={[
+						'time-to',
+						{
+							'invalid-input': toInvalid === true,
+						},
+					]}
 					time={to.str}
 					placeholder='HH:mm'
 					onInput={onInput('to', index)}

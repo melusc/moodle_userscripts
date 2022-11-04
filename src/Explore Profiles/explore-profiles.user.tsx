@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   2.0.0
+// @version   2.1.0
 // @author    lusc
 // @updateURL https://git.io/JXzjB
 // @include   https://moodle.ksasz.ch/user/profile.php?id=*
@@ -33,7 +33,7 @@ import {moodle, title} from './consts.js';
 import {countries as COUNTRY_CODES} from './countries.js';
 import {getContacts, getUserId} from './utils.js';
 
-import type {State, UserDataResponse} from './types.js';
+import type {State, UserData} from './types.js';
 
 import style from './style.scss';
 
@@ -65,7 +65,7 @@ const getHighest = () => {
 const getProfilesInRange = async (
 	start: number,
 	range: number,
-): Promise<UserDataResponse[]> => {
+): Promise<UserData[]> => {
 	let wstoken: string;
 	try {
 		wstoken = await moodle.login();
@@ -104,7 +104,7 @@ const getProfilesInRange = async (
 			},
 		},
 	);
-	const responseJSON = (await response.json()) as UserDataResponse[];
+	const responseJSON = (await response.json()) as UserData[];
 
 	if ('errorcode' in responseJSON) {
 		moodle.logout();
@@ -127,9 +127,7 @@ const unescapeHTML = (html: string) =>
 		)
 		.replace(/&amp;/g, '&');
 
-const getRandomProfile = async (
-	setFromTo: SetFromTo,
-): Promise<UserDataResponse> => {
+const getRandomProfile = async (setFromTo: SetFromTo): Promise<UserData> => {
 	const highest = getHighest();
 	const randProfile = Math.floor(Math.random() * (highest + 1)) + 1;
 
@@ -148,7 +146,7 @@ const getProfile = async (
 	currentId: number,
 	action: number,
 	setFromTo: SetFromTo,
-): Promise<UserDataResponse> => {
+): Promise<UserData> => {
 	const actionSign = Math.sign(action);
 
 	let newId = currentId + action;
@@ -222,7 +220,7 @@ const fetchProfile = async (
 		firstaccess: profile.firstaccess,
 		lastaccess: profile.lastaccess,
 		description: profile.description,
-		url: profile.url,
+		customfields: profile.customfields,
 		country: COUNTRY_CODES[profile.country ?? ''],
 		courses: profile.enrolledcourses?.map(({id, fullname}) => ({
 			id,

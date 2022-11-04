@@ -27,46 +27,43 @@ declare global {
   'preferences',
 ]; */
 
-export type UserDataResponse = {
-	city?: string;
-	country?: string;
-	description?: string;
-	descriptionformat?: 1;
-	email?: string;
-	enrolledcourses?: Array<{
-		id: number;
-		fullname: string;
-		shortname: string;
-	}>;
+export type UserData = {
 	firstaccess: number;
 	fullname: string;
 	id: number;
 	lastaccess: number;
 	profileimageurl: string;
 	profileimageurlsmall: string;
-	roles: Array<{
-		name: string;
-		roleid: number;
-		shortname: string;
-		sortorder: number;
-	}>;
+	roles: Role[];
 	suspended: boolean;
-	url?: string;
+	city?: string;
+	country?: string;
+	description?: string;
+	descriptionformat?: number;
+	email?: string;
+	enrolledcourses?: Enrolledcourse[];
+	customfields?: CustomField[];
 	interests?: string;
+};
 
-	/* Only on own profile */
-	preferences?: Array<{
-		name: string;
-		value: string | number;
-	}>;
-	timezone?: string;
-	mailformat?: number;
-	lang?: string;
-	theme?: string;
-	confirmed?: boolean;
-	auth?: string;
-	department?: string;
-	username?: string;
+export type Role = {
+	name: string;
+	roleid: number;
+	shortname: string;
+	sortorder: number;
+};
+
+export type Enrolledcourse = {
+	fullname: string;
+	id: number;
+	shortname: string;
+};
+
+export type CustomField = {
+	name: string;
+	shortname: string;
+	type: string;
+	value: string;
 };
 
 export type LoadedState = {
@@ -85,13 +82,13 @@ export type LoadedState = {
 	email?: string;
 	city?: string;
 	description?: string;
-	url?: string;
 	country?: string;
 	courses?: Array<{
 		id: number;
 		coursename: string;
 	}>;
 	interests?: string[];
+	customfields?: CustomField[];
 };
 export type UnloadedState = {loaded: false};
 

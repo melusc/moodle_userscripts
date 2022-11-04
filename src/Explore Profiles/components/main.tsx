@@ -6,6 +6,7 @@ import {createPortal} from 'preact/compat';
 
 import type {LoadedState} from '../types.js';
 import {clearNode, isReadonlyArray} from '../utils.js';
+import {CustomField} from './custom-field.js';
 
 const Portal: FunctionalComponent<{children: VNode}> = ({children}) => {
 	const regionMainBox = document.querySelector('#region-main-box');
@@ -20,7 +21,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 	email,
 	country,
 	city,
-	url,
+	customfields,
 	interests,
 	courses,
 	id,
@@ -53,7 +54,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 						data-droptarget='1'
 					/>
 					<div class='profile_tree'>
-						{[email, country, city, url, interests].some(
+						{[email, country, city, customfields, interests].some(
 							item => typeof item !== 'undefined',
 						) && (
 							<section class='node_category card d-inline-block w-100 mb-3'>
@@ -88,18 +89,10 @@ export const Main: FunctionalComponent<LoadedState> = ({
 												</dl>
 											</li>
 										)}
-										{typeof url !== 'undefined' && (
-											<li class='contentnode'>
-												<dl>
-													<dt>Web page</dt>
-													<dd>
-														<a href={url} rel='noopener noreferrer'>
-															{url}
-														</a>
-													</dd>
-												</dl>
-											</li>
-										)}
+										{Array.isArray(customfields)
+											&& customfields.map(field => (
+												<CustomField key={field.shortname} {...field} />
+											))}
 										{typeof interests !== 'undefined' && (
 											<li class='contentnode'>
 												<dl>
