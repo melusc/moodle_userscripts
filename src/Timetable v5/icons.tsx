@@ -1,6 +1,8 @@
-import {h, type JSX} from 'preact';
+import {h, type FunctionalComponent, type JSX} from 'preact';
 
-export const SvgIconX = (props: JSX.HTMLAttributes<SVGSVGElement>) => (
+type SvgAttributes = JSX.HTMLAttributes<SVGSVGElement>;
+
+export const SvgIconX: FunctionalComponent<SvgAttributes> = props => (
 	<svg {...props} viewBox='0 0 512 512'>
 		<path
 			stroke='currentColor'
@@ -10,7 +12,7 @@ export const SvgIconX = (props: JSX.HTMLAttributes<SVGSVGElement>) => (
 		/>
 	</svg>
 );
-export const SvgIconCaretBack = (props: JSX.HTMLAttributes<SVGSVGElement>) => (
+export const SvgIconCaretBack: FunctionalComponent<SvgAttributes> = props => (
 	<svg {...props} viewBox='0 0 512 512'>
 		<path
 			fill='currentColor'
@@ -18,9 +20,9 @@ export const SvgIconCaretBack = (props: JSX.HTMLAttributes<SVGSVGElement>) => (
 		/>
 	</svg>
 );
-export const SvgIconCaretForward = (
-	props: JSX.HTMLAttributes<SVGSVGElement>,
-) => (
+export const SvgIconCaretForward: FunctionalComponent<
+	SvgAttributes
+> = props => (
 	<svg {...props} viewBox='0 0 512 512'>
 		<path
 			fill='currentColor'
@@ -29,7 +31,7 @@ export const SvgIconCaretForward = (
 	</svg>
 );
 
-export const SvgIconAdd = (props: JSX.HTMLAttributes<SVGSVGElement>) => (
+export const SvgIconAdd: FunctionalComponent<SvgAttributes> = props => (
 	<svg {...props} viewBox='0 0 512 512'>
 		<path
 			stroke='currentColor'

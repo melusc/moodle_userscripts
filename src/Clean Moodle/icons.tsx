@@ -1,6 +1,6 @@
-import {h} from 'preact';
+import {h, type FunctionalComponent} from 'preact';
 
-export const SvgCheck = () => (
+export const SvgCheck: FunctionalComponent = () => (
 	<svg
 		fill='none'
 		stroke='currentColor'
@@ -13,7 +13,7 @@ export const SvgCheck = () => (
 		<path d='m5 12 5 5L20 7' />
 	</svg>
 );
-export const SvgX = () => (
+export const SvgX: FunctionalComponent = () => (
 	<svg
 		fill='none'
 		stroke='currentColor'
@@ -26,7 +26,7 @@ export const SvgX = () => (
 		<path d='M18 6 6 18M6 6l12 12' />
 	</svg>
 );
-export const SvgArrowBack = () => (
+export const SvgArrowBack: FunctionalComponent = () => (
 	<svg
 		fill='none'
 		stroke='currentColor'

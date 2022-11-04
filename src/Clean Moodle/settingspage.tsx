@@ -174,52 +174,48 @@ const LoggedOut: FunctionalComponent<{
 	);
 };
 
-const Main = (props: {
+const Main: FunctionalComponent<{
 	selected: SettingsPageState['selected'];
 	replaceInputRef: RefObject<HTMLInputElement>;
 	handleKeydown: JSX.KeyboardEventHandler<HTMLInputElement>;
 	handleSaveClick: JSX.MouseEventHandler<HTMLButtonElement>;
-}) => {
-	const {selected, replaceInputRef, handleSaveClick, handleKeydown} = props;
-
-	return (
-		<div class='outer-main'>
-			<div class='main'>
-				<div class='section-title'>Rename course</div>
-				<div class='replace-flex-inputs'>
-					<div>
-						{selected.isSelected
-							? `Selected: ${selected.courseName}`
-							: 'Select course to the left'}
-					</div>
-					<input
-						ref={replaceInputRef}
-						class='replace-input'
-						placeholder={
-							selected.isSelected
-								? `Leave empty to reset to ${selected.courseName}`
-								: 'Select course to the left'
-						}
-						disabled={!selected.isSelected}
-						value={
-							// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-							selected.isSelected ? selected.value || selected.courseName : ''
-						}
-						onKeyDown={handleKeydown}
-					/>
-					<button
-						class='btn-save'
-						disabled={!selected.isSelected}
-						type='button'
-						onClick={handleSaveClick}
-					>
-						Save
-					</button>
+}> = ({selected, replaceInputRef, handleKeydown, handleSaveClick}) => (
+	<div class='outer-main'>
+		<div class='main'>
+			<div class='section-title'>Rename course</div>
+			<div class='replace-flex-inputs'>
+				<div>
+					{selected.isSelected
+						? `Selected: ${selected.courseName}`
+						: 'Select course to the left'}
 				</div>
+				<input
+					ref={replaceInputRef}
+					class='replace-input'
+					placeholder={
+						selected.isSelected
+							? `Leave empty to reset to ${selected.courseName}`
+							: 'Select course to the left'
+					}
+					disabled={!selected.isSelected}
+					value={
+						// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+						selected.isSelected ? selected.value || selected.courseName : ''
+					}
+					onKeyDown={handleKeydown}
+				/>
+				<button
+					class='btn-save'
+					disabled={!selected.isSelected}
+					type='button'
+					onClick={handleSaveClick}
+				>
+					Save
+				</button>
 			</div>
 		</div>
-	);
-};
+	</div>
+);
 
 type Course = Readonly<{
 	courseName: string;

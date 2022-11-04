@@ -13,7 +13,7 @@
 
 import dayjs from 'dayjs';
 import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime.js';
-import {Fragment, h, render} from 'preact';
+import {Fragment, h, render, type FunctionalComponent} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {useEffect, useState} from 'preact/hooks';
 
@@ -233,7 +233,7 @@ const fetchProfile = async (
 	};
 };
 
-const ExploreProfiles = () => {
+const ExploreProfiles: FunctionalComponent = () => {
 	const [state, setState] = useState<State>({
 		loaded: false,
 	});

@@ -13,14 +13,14 @@
 // @run-at    document-start
 // ==/UserScript==
 
-import {h, render} from 'preact';
+import {h, render, type FunctionalComponent} from 'preact';
 
 import {
 	cleanAuthStorage,
 	domReady,
 	getSidebar,
-	numericBaseSensitiveCollator,
 	migrate,
+	numericBaseSensitiveCollator,
 } from '../shared/general-functions/index.js';
 import {
 	getCourses,
@@ -64,7 +64,7 @@ const moodle = new Moodle();
 
 const isFrontpage = !/^\/cleanmoodlepreact/i.test(location.pathname);
 
-const SvgSettingsGear = () => (
+const SvgSettingsGear: FunctionalComponent = () => (
 	<a
 		href='/cleanMoodlePreact/'
 		target='_blank'

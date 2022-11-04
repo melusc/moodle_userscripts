@@ -120,9 +120,7 @@ const SvgX: FunctionalComponent<
 	</svg>
 );
 
-const RenderIcon = (props: {icon: Icon | undefined}) => {
-	const {icon} = props;
-
+const RenderIcon: FunctionalComponent<{icon: Icon | undefined}> = ({icon}) => {
 	if (!icon) {
 		return null;
 	}
@@ -178,9 +176,9 @@ const Notification: FunctionalComponent<{
 	) : null;
 };
 
-const LoggedOut = (props: {
+const LoggedOut: FunctionalComponent<{
 	cb: (creds: {username: string; password: string}) => void;
-}) => {
+}> = ({cb}) => {
 	const usernameRef = useRef<HTMLInputElement>(null);
 	const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -191,7 +189,7 @@ const LoggedOut = (props: {
 		const password = passwordRef.current?.value;
 
 		if (username !== undefined && password !== undefined) {
-			props.cb({
+			cb({
 				username,
 				password,
 			});
@@ -552,12 +550,12 @@ class Main extends Component<MainProps, MainState> {
 	};
 }
 
-const Sidebar = ({
+const Sidebar: FunctionalComponent<SidebarProps> = ({
 	courses,
 	resetIcon,
 	isCoursesLoading,
 	selectCourse,
-}: SidebarProps) => (
+}) => (
 	<div class='outer-sidebar'>
 		<div class='sidebar'>
 			{isCoursesLoading ? (

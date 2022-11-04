@@ -1,30 +1,22 @@
 import {clsx, type ClassValue} from 'clsx';
-import {h, type JSX} from 'preact';
+import {h, type FunctionalComponent, type JSX} from 'preact';
 
 import type {Except} from 'type-fest';
 import {parseStringToTime} from '../shared.js';
 
-type TimeInputCustomProps = {
-	time: string;
-	class: ClassValue;
-	index: number;
-};
-
-const TimeInput = ({
-	time,
-	class: class_,
-	onInput: handleInput,
-	index,
-	...props
-}: TimeInputCustomProps &
-	Except<JSX.HTMLAttributes<HTMLInputElement>, 'class'>) => (
+const TimeInput: FunctionalComponent<
+	{
+		time: string;
+		class: ClassValue;
+		index: number;
+	} & Except<JSX.HTMLAttributes<HTMLInputElement>, 'class' | 'value'>
+> = ({time, class: class_, index, ...props}) => (
 	<input
 		{...props}
 		class={clsx('time-input', class_, {
 			'invalid-input': parseStringToTime(time) === false,
 		})}
 		value={time}
-		onInput={handleInput}
 	/>
 );
 

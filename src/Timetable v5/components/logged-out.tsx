@@ -1,16 +1,13 @@
-import {h, type JSX} from 'preact';
+import {h, type FunctionalComponent, type JSX} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {useRef} from 'preact/hooks';
 
 import {getUsername} from '../../shared/moodle-functions-v3/credentials.js';
 
-const LoggedOut = ({
-	loggedOut,
-	cb,
-}: {
+const LoggedOut: FunctionalComponent<{
 	loggedOut: boolean;
 	cb: (creds: {username: string; password: string}) => void;
-}) => {
+}> = ({loggedOut, cb}) => {
 	const usernameRef = useRef<HTMLInputElement>(null);
 	const passwordRef = useRef<HTMLInputElement>(null);
 
