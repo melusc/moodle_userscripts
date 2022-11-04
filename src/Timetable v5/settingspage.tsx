@@ -1,5 +1,4 @@
 // Dependencies
-import {clsx} from 'clsx';
 import {produce} from 'immer';
 import {Component, Fragment, h, render, type JSX, type RefObject} from 'preact';
 // Shared across repo
@@ -147,10 +146,10 @@ class SettingsPage extends Component<
 								day={day}
 								handleSave={handleSave}
 								handleClick={handleButtonNavigate}
-								saveButtonClass={clsx({
+								saveButtonClass={{
 									'save-successful': saveValidity === true,
 									'save-failed': saveValidity === false,
-								})}
+								}}
 								resetSaveValidity={resetSaveValidity}
 							/>
 						</div>

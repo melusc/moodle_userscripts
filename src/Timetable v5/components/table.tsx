@@ -1,4 +1,3 @@
-import {clsx} from 'clsx';
 import {h, type FunctionalComponent, type JSX, type RefObject} from 'preact';
 
 // eslint-disable-next-line n/file-extension-in-import
@@ -35,9 +34,9 @@ const TableRow: FunctionalComponent<{
 			<div class='table-cell time'>
 				<TimeInput
 					index={index}
-					class={clsx('time-from', {
+					class={['time-from', {
 						'invalid-input': fromInvalid === true,
-					})}
+					}]}
 					time={from.str}
 					placeholder='HH:mm'
 					onInput={onInput('from', index)}
@@ -45,9 +44,9 @@ const TableRow: FunctionalComponent<{
 				{' - '}
 				<TimeInput
 					index={3}
-					class={clsx('time-to', {
+					class={['time-to', {
 						'invalid-input': toInvalid === true,
-					})}
+					}]}
 					time={to.str}
 					placeholder='HH:mm'
 					onInput={onInput('to', index)}
