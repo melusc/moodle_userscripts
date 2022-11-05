@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   1.4.1
+// @version   2.0.0
 // @author    lusc
 // @updateURL https://git.io/JXgei
-// @include   *://moodle.ksasz.ch/*
+// @match     *://moodle.*/*
+// @match     *://moodle*.*/*
 // @grant     GM_setValue
 // @grant     GM_getValue
 // @grant     GM_addStyle
@@ -99,9 +100,7 @@ const applyIcon = (id: string, icon?: ValidIconObject) => {
 		return;
 	}
 
-	const anchor = sidebar.querySelector(
-		`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"]`,
-	);
+	const anchor = sidebar.querySelector(`a[href$="/course/view.php?id=${id}"]`);
 
 	if (!anchor) {
 		void testIfUserLeftCourse(id);
@@ -163,7 +162,7 @@ const resetIcon = (id: string) => {
 	const sidebar = getSidebar();
 
 	const img = sidebar?.querySelector<HTMLImageElement>(
-		`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"] > .icon.navicon`,
+		`a[href$="/course/view.php?id=${id}"] > .icon.navicon`,
 	);
 
 	// Test nodeName to not update an icon accidentally

@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   1.6.0
+// @version   2.0.0
 // @author    lusc
-// @include   *://moodle.ksasz.ch/*
+// @match     *://moodle.*/*
+// @match     *://moodle*.*/*
 // @updateURL https://git.io/JXgeW
 // @grant     GM_setValue
 // @grant     GM_getValue
@@ -66,7 +67,7 @@ const isFrontpage = !/^\/cleanmoodlepreact/i.test(location.pathname);
 
 const SvgSettingsGear: FunctionalComponent = () => (
 	<a
-		href='/cleanMoodlePreact/'
+		href='/cleanMoodlePreact'
 		target='_blank'
 		rel='noreferrer noopener'
 		onClick={event_ => {
@@ -85,7 +86,7 @@ const SvgSettingsGear: FunctionalComponent = () => (
 );
 const getCourseElementFromSidebar = (id: string) =>
 	getSidebar()?.querySelector<HTMLAnchorElement>(
-		`a[href="https://moodle.ksasz.ch/course/view.php?id=${id}"]`,
+		`a[href$="/course/view.php?id=${id}"]`,
 	);
 
 const testForInexistantCourse = async (id: string) => {
@@ -216,7 +217,7 @@ const setupFrontpage = () => {
 	const sidebar = getSidebar();
 
 	GM_registerMenuCommand('Open settings', () => {
-		open('https://moodle.ksasz.ch/cleanMoodlePreact/');
+		open('/cleanMoodlePreact');
 	});
 
 	if (sidebar) {

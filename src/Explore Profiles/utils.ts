@@ -36,7 +36,7 @@ export const getContacts = async (userId: number): Promise<number[]> => {
 	});
 
 	const response = await fetch(
-		'https://moodle.ksasz.ch/webservice/rest/server.php',
+		moodle.resolveUrl('/webservice/rest/server.php'),
 		{
 			headers: {
 				'content-type': 'application/x-www-form-urlencoded',

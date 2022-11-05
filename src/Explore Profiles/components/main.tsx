@@ -103,7 +103,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 																{interests.map(interest => (
 																	<li key={interest}>
 																		<a
-																			href={`https://moodle.ksasz.ch/tag/index.php?tag=${encodeURIComponent(
+																			href={`/tag/index.php?tag=${encodeURIComponent(
 																				interest,
 																			)}`}
 																			class='badge badge-info'
@@ -155,27 +155,19 @@ export const Main: FunctionalComponent<LoadedState> = ({
 								<ul>
 									<li>
 										<span>
-											<a
-												href={`https://moodle.ksasz.ch/blog/index.php?userid=${id}`}
-											>
+											<a href={`/blog/index.php?userid=${id}`}>
 												View all blog entries
 											</a>
 										</span>
 									</li>
 									<li>
 										<span>
-											<a
-												href={`https://moodle.ksasz.ch/mod/forum/user.php?id=${id}`}
-											>
-												Forum posts
-											</a>
+											<a href={`/mod/forum/user.php?id=${id}`}>Forum posts</a>
 										</span>
 									</li>
 									<li>
 										<span>
-											<a
-												href={`https://moodle.ksasz.ch/mod/forum/user.php?id=${id}&mode=discussions`}
-											>
+											<a href={`/mod/forum/user.php?id=${id}&mode=discussions`}>
 												Forum discussions
 											</a>
 										</span>
@@ -190,7 +182,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 									<ul>
 										<li>
 											<span>
-												<a href='https://moodle.ksasz.ch/report/usersessions/user.php'>
+												<a href='/report/usersessions/user.php'>
 													Browser sessions
 												</a>
 											</span>
@@ -198,7 +190,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 										<li>
 											<span>
 												<a
-													href={`https://moodle.ksasz.ch/grade/report/overview/index.php?userid=${userId}&id=1`}
+													href={`/grade/report/overview/index.php?userid=${userId}&id=1`}
 												>
 													Grades overview
 												</a>

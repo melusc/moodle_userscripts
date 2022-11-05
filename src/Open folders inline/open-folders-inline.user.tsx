@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   2.0.0
+// @version   3.0.0
 // @author    lusc
-// @include   https://moodle.ksasz.ch/course/view.php?id=*
+// @match     *://moodle.*/course/view.php?id=*
+// @match     *://moodle*.*/course/view.php?id=*
 // @updateURL https://git.io/JXgvE
 // @grant     GM_setValue
 // @grant     GM_getValue

@@ -1,3 +1,4 @@
+/* eslint-disable n/prefer-global/process */
 import type {CourseContent} from './course-content.d.js';
 import {
 	deleteToken,
@@ -45,6 +46,16 @@ class ERR_NOT_INCLUDED extends Error {
 type MoodleConstructor = typeof Moodle;
 export type RegisterFunction = (moodle: MoodleConstructor) => void;
 
+let defaultBaseUrl = new URL('http://localhost/');
+if (typeof location !== 'undefined') {
+	defaultBaseUrl = new URL('/', location.href);
+} else if (
+	typeof process !== 'undefined'
+	&& typeof process.env['MOODLE_BASE_URL'] === 'string'
+) {
+	defaultBaseUrl = new URL(process.env['MOODLE_BASE_URL']);
+}
+
 export class Moodle {
 	static extend(register: RegisterFunction): MoodleConstructor {
 		register(Moodle);
@@ -52,7 +63,7 @@ export class Moodle {
 		return Moodle;
 	}
 
-	baseUrl = 'https://moodle.ksasz.ch';
+	baseUrl: URL = defaultBaseUrl;
 
 	readonly credentials: Credentials = {
 		token: getToken(),
@@ -60,6 +71,8 @@ export class Moodle {
 	};
 
 	readonly #cache = new Map<symbol, unknown>();
+
+	resolveUrl = (path: string): URL => new URL(path, this.baseUrl);
 
 	_readCache<T>(key: symbol): T | undefined {
 		return this.#cache.get(key) as T | undefined;
@@ -93,7 +106,7 @@ export class Moodle {
 			service: 'moodle_mobile_app',
 		});
 
-		const response = await fetch(`${this.baseUrl}/login/token.php`, {
+		const response = await fetch(this.resolveUrl('/login/token.php'), {
 			method: 'POST',
 			body: loginParameters.toString(),
 			headers: {

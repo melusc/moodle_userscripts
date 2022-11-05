@@ -81,7 +81,7 @@ export const Sidebar: FunctionalComponent<LoadedState> = ({
 						<a
 							tabIndex={-1}
 							id='random4379_label_3_38'
-							href={`https://moodle.ksasz.ch/user/profile.php?id=${id}`}
+							href={`/user/profile.php?id=${id}`}
 						>
 							{fullname}
 						</a>
@@ -109,7 +109,7 @@ export const Sidebar: FunctionalComponent<LoadedState> = ({
 										<a
 											tabIndex={-1}
 											id='random6359815fcb8b312_label_5_40'
-											href={`https://moodle.ksasz.ch/blog/index.php?userid=${id}`}
+											href={`/blog/index.php?userid=${id}`}
 										>
 											<i
 												class='icon fa fa-square fa-fw navicon'
@@ -132,7 +132,7 @@ export const Sidebar: FunctionalComponent<LoadedState> = ({
 								<a
 									tabIndex={-1}
 									id='random2904_label_4_41'
-									href={`https://moodle.ksasz.ch/message/index.php?user1=${userId}&user2=${id}`}
+									href={`/message/index.php?user1=${userId}&user2=${id}`}
 								>
 									<i
 										class='icon fa fa-square fa-fw navicon'

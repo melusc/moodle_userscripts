@@ -39,6 +39,7 @@ jobs:
         env:
           MOODLE_USERNAME: ${{ secrets.MOODLE_USERNAME }}
           MOODLE_PASSWORD: ${{ secrets.MOODLE_PASSWORD }}
+          MOODLE_BASE_URL: ${{ secrets.MOODLE_BASE_URL }}
 
       - name: Build
         run: yarn run webpack
