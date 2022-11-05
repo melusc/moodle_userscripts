@@ -2,9 +2,10 @@
 (()=>{"use strict";var e;
 // ==UserScript==
 // @name       No Force Download
-// @match      https://moodle.ksasz.ch/*
+// @match      *://moodle.*/*
+// @match      *://moodle*.*/*
 // @grant      none
-// @version    1.0.0
+// @version    2.0.0
 // @author     lusc
 // @license    MIT
 // @updateURL  https://github.com/melusc/moodle_userscripts/raw/userscript-out/no-force-download/no-force-download.user.js
