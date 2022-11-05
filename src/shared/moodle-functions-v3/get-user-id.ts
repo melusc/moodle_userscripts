@@ -26,7 +26,7 @@ async function getUserId(this: Moodle): Promise<number> {
 	});
 
 	const response = await fetch(
-		`${this.baseUrl}/webservice/rest/server.php?moodlewsrestformat=json`,
+		this.resolveUrl('/webservice/rest/server.php?moodlewsrestformat=json'),
 		{
 			method: 'POST',
 			headers: {

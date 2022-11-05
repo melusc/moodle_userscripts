@@ -43,7 +43,7 @@ async function getCourses(this: Moodle, noCache = false): Promise<Courses> {
 		moodlewsrestformat: 'json',
 	});
 
-	const response = await fetch(`${this.baseUrl}/webservice/rest/server.php`, {
+	const response = await fetch(this.resolveUrl('/webservice/rest/server.php'), {
 		method: 'POST',
 		body: bodyParameters.toString(),
 		headers: {

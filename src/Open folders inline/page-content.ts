@@ -83,7 +83,7 @@ export const getSanitizedContents = async (
 		if (item.type === 'file') {
 			const {filepath, mimetype} = item;
 
-			const fileUrl = new URL(item.fileurl, 'https://moodle.ksasz.ch');
+			const fileUrl = moodle.resolveUrl(item.fileurl);
 			fileUrl.pathname = fileUrl.pathname.replace(/^\/webservice/, '');
 
 			const imgPath = new URL(fileUrl.href);

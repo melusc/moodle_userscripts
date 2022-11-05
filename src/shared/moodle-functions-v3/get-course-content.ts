@@ -33,7 +33,7 @@ async function getCourseContent(
 		wstoken: token,
 	});
 
-	const response = await fetch(`${this.baseUrl}/webservice/rest/server.php`, {
+	const response = await fetch(this.resolveUrl('/webservice/rest/server.php'), {
 		method: 'POST',
 		headers: {
 			'content-type': 'application/x-www-form-urlencoded',

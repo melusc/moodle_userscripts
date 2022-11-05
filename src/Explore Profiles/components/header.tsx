@@ -36,7 +36,7 @@ export const Header: FunctionalComponent<LoadedState> = ({
 							<div class='page-context-header'>
 								<div class='page-header-image'>
 									<a
-										href={`https://moodle.ksasz.ch/user/profile.php?id=${id}`}
+										href={`/user/profile.php?id=${id}`}
 										class='d-inline-block aabtn'
 									>
 										<img
@@ -72,7 +72,7 @@ export const Header: FunctionalComponent<LoadedState> = ({
 										data-conversationid='0'
 										data-userid={id}
 										class='btn'
-										href={`https://moodle.ksasz.ch/message/index.php?id=${id}`}
+										href={`/message/index.php?id=${id}`}
 									>
 										<span>
 											<i
@@ -96,7 +96,7 @@ export const Header: FunctionalComponent<LoadedState> = ({
 											id='toggle-contact-button'
 											role='button'
 											class='ajax-contact-button btn'
-											href={`https://moodle.ksasz.ch/message/index.php?user1=${userId}&user2=${id}&${
+											href={`/message/index.php?user1=${userId}&user2=${id}&${
 												isContact ? 'removecontact' : 'addcontact'
 											}=${id}&sesskey=${unsafeWindow.M.cfg.sesskey}`}
 										>
@@ -142,14 +142,14 @@ export const Header: FunctionalComponent<LoadedState> = ({
 							<nav aria-label='Navigation bar'>
 								<ol class='breadcrumb'>
 									<li class='breadcrumb-item'>
-										<a href='https://moodle.ksasz.ch/'>Home</a>
+										<a href='/'>Home</a>
 									</li>
 
 									<li class='breadcrumb-item'>Users</li>
 
 									<li class='breadcrumb-item'>
 										<a
-											href={`https://moodle.ksasz.ch/user/profile.php?id=${id}`}
+											href={`/user/profile.php?id=${id}`}
 											aria-current='page'
 										>
 											{fullname}
@@ -164,7 +164,7 @@ export const Header: FunctionalComponent<LoadedState> = ({
 									<div class='singlebutton'>
 										<form
 											method='post'
-											action='https://moodle.ksasz.ch/user/profile.php'
+											action='/user/profile.php'
 										>
 											<input type='hidden' name='edit' value='1' />
 											<input type='hidden' name='reset' value='1' />
@@ -187,7 +187,7 @@ export const Header: FunctionalComponent<LoadedState> = ({
 									<div class='singlebutton'>
 										<form
 											method='post'
-											action='https://moodle.ksasz.ch/user/profile.php'
+											action='/user/profile.php'
 										>
 											<input type='hidden' name='edit' value='1' />
 											<input type='hidden' name='id' value={userId} />

@@ -1,15 +1,9 @@
-import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
 import {env} from 'node:process';
-
-import {parse} from 'dotenv';
 
 type Env = {
 	MOODLE_USERNAME?: string;
 	MOODLE_PASSWORD?: string;
 };
-
-let localEnv: Env;
 
 const get = (key: keyof Env): string => {
 	const inEnv = env[key];
@@ -17,14 +11,7 @@ const get = (key: keyof Env): string => {
 		return inEnv;
 	}
 
-	// Only read if necessary
-	localEnv ??= parse<Env>(
-		readFileSync(new URL('../../../../.env', import.meta.url)),
-	);
-	const result = localEnv[key];
-
-	assert(typeof result === 'string');
-	return result;
+	throw new Error(`${key} not found in environment variables`);
 };
 
 export const username = get('MOODLE_USERNAME');

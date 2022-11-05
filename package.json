@@ -74,6 +74,9 @@
 		"testPathIgnorePatterns": [
 			"/node_modules/",
 			"/test/moodle-functions-v3/"
+		],
+		"setupFiles": [
+			"<rootDir>/test/set-env.js"
 		]
 	},
 	"packageManager": "yarn@1.22.19"

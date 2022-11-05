@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   1.3.0
+// @version   2.0.0
 // @author    lusc
-// @include   *://moodle.ksasz.ch/
-// @include   *://moodle.ksasz.ch/?*
+// @match     *://moodle.*/
+// @match     *://moodle*.*/
 // @updateURL https://git.io/JXzhC
 // @grant     GM_xmlhttpRequest
 // @grant     GM_setValue
@@ -364,4 +364,6 @@ const init = () => {
 	GM_addStyle(style);
 };
 
-domReady(init);
+if (location.pathname === '/') {
+	domReady(init);
+}

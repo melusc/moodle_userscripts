@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name       Moodle Auto Login
-// @version    1.0.0
+// @version    2.0.0
 // @author     lusc
-// @match      *://moodle.ksasz.ch/*
+// @match      *://moodle.*/*
+// @match      *://moodle*.*/*
 // @grant      GM_setValue
 // @grant      GM_getValue
 // @run-at     document-start

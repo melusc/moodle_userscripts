@@ -1,11 +1,10 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   1.3.0
+// @version   2.0.0
 // @author    lusc
 // @updateURL https://git.io/JXzjr
-// @include   *://moodle.ksasz.ch/
-// @include   *://moodle.ksasz.ch/?*
-// @include   *://moodle.ksasz.ch/timetable/v5*
+// @match     *://moodle.*/*
+// @match     *://moodle*.*/*
 // @grant     GM_addValueChangeListener
 // @grant     GM_setValue
 // @grant     GM_getValue
@@ -300,6 +299,10 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 }
 
 const initFrontpage = () => {
+	if (location.pathname !== '/') {
+		return;
+	}
+
 	GM_registerMenuCommand('Open settings', () => {
 		open('/timetable/v5', '_blank');
 	});
