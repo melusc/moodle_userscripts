@@ -100,9 +100,7 @@ const applyIcon = (id: string, icon?: ValidIconObject) => {
 		return;
 	}
 
-	const anchor = sidebar.querySelector(
-		`a[href$="/course/view.php?id=${id}"]`,
-	);
+	const anchor = sidebar.querySelector(`a[href$="/course/view.php?id=${id}"]`);
 
 	if (!anchor) {
 		void testIfUserLeftCourse(id);

@@ -155,27 +155,19 @@ export const Main: FunctionalComponent<LoadedState> = ({
 								<ul>
 									<li>
 										<span>
-											<a
-												href={`/blog/index.php?userid=${id}`}
-											>
+											<a href={`/blog/index.php?userid=${id}`}>
 												View all blog entries
 											</a>
 										</span>
 									</li>
 									<li>
 										<span>
-											<a
-												href={`/mod/forum/user.php?id=${id}`}
-											>
-												Forum posts
-											</a>
+											<a href={`/mod/forum/user.php?id=${id}`}>Forum posts</a>
 										</span>
 									</li>
 									<li>
 										<span>
-											<a
-												href={`/mod/forum/user.php?id=${id}&mode=discussions`}
-											>
+											<a href={`/mod/forum/user.php?id=${id}&mode=discussions`}>
 												Forum discussions
 											</a>
 										</span>

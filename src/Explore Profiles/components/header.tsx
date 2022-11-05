@@ -148,10 +148,7 @@ export const Header: FunctionalComponent<LoadedState> = ({
 									<li class='breadcrumb-item'>Users</li>
 
 									<li class='breadcrumb-item'>
-										<a
-											href={`/user/profile.php?id=${id}`}
-											aria-current='page'
-										>
+										<a href={`/user/profile.php?id=${id}`} aria-current='page'>
 											{fullname}
 										</a>
 									</li>
@@ -162,10 +159,7 @@ export const Header: FunctionalComponent<LoadedState> = ({
 							{isUserProfile && (
 								<>
 									<div class='singlebutton'>
-										<form
-											method='post'
-											action='/user/profile.php'
-										>
+										<form method='post' action='/user/profile.php'>
 											<input type='hidden' name='edit' value='1' />
 											<input type='hidden' name='reset' value='1' />
 											<input type='hidden' name='id' value={userId} />
@@ -185,10 +179,7 @@ export const Header: FunctionalComponent<LoadedState> = ({
 										</form>
 									</div>
 									<div class='singlebutton'>
-										<form
-											method='post'
-											action='/user/profile.php'
-										>
+										<form method='post' action='/user/profile.php'>
 											<input type='hidden' name='edit' value='1' />
 											<input type='hidden' name='id' value={userId} />
 											<input

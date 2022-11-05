@@ -6,7 +6,7 @@ type Env = {
 };
 
 const get = (key: keyof Env): string => {
-	const inEnv = env[key];
+	const inEnv = env[key] as string;
 	if (inEnv) {
 		return inEnv;
 	}
