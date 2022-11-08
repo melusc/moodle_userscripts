@@ -24,9 +24,12 @@ To run these you need to have violentmonkey, tampermonkey, greasemonkey or simil
 
 [Moodle Auto Login][]
 
+[Course Expand All][] (⚠️ potentially unstable)
+
 ## About
 
 Currently, all these userscripts are written in typescript and jsx using [preact](https://github.com/preactjs/preact).
 
 [no force download]: https://github.com/melusc/moodle_userscripts/raw/userscript-out/no-force-download/no-force-download.user.js
 [moodle auto login]: https://github.com/melusc/moodle_userscripts/raw/userscript-out/moodle-auto-login/moodle-auto-login.user.js
+[course expand all]: https://github.com/melusc/moodle_userscripts/raw/userscript-out/course-expand-all/course-expand-all.user.js
