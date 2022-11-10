@@ -151,7 +151,7 @@ const setCourseVisibility = (id: string, visible: boolean) => {
 
 		// If the current page is the same as the current course link
 		// don't remove it
-		if (cl && !cl.contains('contains_branch')) {
+		if (cl && !cl.contains('current_branch')) {
 			cl.toggle('hide', !visible);
 			cl.toggle('hidden', !visible);
 		}
