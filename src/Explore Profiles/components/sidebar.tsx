@@ -1,6 +1,7 @@
 import {Fragment, h, type FunctionalComponent, type VNode} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {createPortal} from 'preact/compat';
+import {getSidebar} from '../../shared/general-functions/get-sidebar.js';
 
 import type {LoadedState} from '../types.js';
 import {clearNode} from '../utils.js';
@@ -10,10 +11,10 @@ let li: HTMLLIElement | null | undefined;
 
 const getLi = (): HTMLLIElement => {
 	const foundLi = document.evaluate(
-		'//li' // Get all li elements
-			+ '[@class="type_system depth_2 contains_branch"]' // That have class "type_system depth_2 contains_branch"
-			+ '[.//span[text()="Users"]]' // That have a span with text "Users"
-			+ '[.//span[text()="Blogs"]]', // That have a span with text "Blogs"
+		'//li' + // Get all li elements
+			'[@class="type_system depth_2 contains_branch"]' + // That have class "type_system depth_2 contains_branch"
+			'[.//span[text()="Users"]]' + // That have a span with text "Users"
+			'[.//span[text()="Blogs"]]', // That have a span with text "Blogs"
 		document.body,
 		null,
 		XPathResult.FIRST_ORDERED_NODE_TYPE,
@@ -31,13 +32,13 @@ const getLi = (): HTMLLIElement => {
 	createdLi.className = 'type_system depth_2 contains_branch';
 	createdLi.setAttribute('aria-labelledby', 'label_2_34');
 	createdLi.tabIndex = -1;
+	createdLi.setAttribute('role', 'treeitem');
+	createdLi.setAttribute('aria-expanded', "true")
 
-	const courseSidebar = document.querySelector<HTMLLIElement>(
-		'li[aria-labelledby$="label_2_4"]',
-	);
+	const courseSidebar = getSidebar()?.parentElement?.parentElement;
 
 	if (courseSidebar) {
-		courseSidebar.after(createdLi);
+		courseSidebar.append(createdLi);
 	}
 
 	return createdLi;
