@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2.0.0
+// @version   3.0.0
 // @author    lusc
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
