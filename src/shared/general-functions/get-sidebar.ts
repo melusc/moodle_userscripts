@@ -1,4 +1,4 @@
 export const getSidebar = () =>
 	document.querySelector<HTMLUListElement>(
-		'li[aria-labelledby$="label_2_4"] ul[role="group"]',
+		'#page-content li.type_system.depth_2 > ul[role="group"]',
 	);

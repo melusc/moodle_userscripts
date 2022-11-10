@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   2.0.0
+// @version   3.0.0
 // @author    lusc
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
@@ -151,7 +151,7 @@ const setCourseVisibility = (id: string, visible: boolean) => {
 
 		// If the current page is the same as the current course link
 		// don't remove it
-		if (cl && !cl.contains('contains_branch')) {
+		if (cl && !cl.contains('current_branch')) {
 			cl.toggle('hide', !visible);
 			cl.toggle('hidden', !visible);
 		}
