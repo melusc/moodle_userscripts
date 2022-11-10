@@ -87,6 +87,10 @@ html {
 			}
 		}
 
+		.svg-icon-x {
+			display: none;
+		}
+
 		&[data-removed='false'] {
 			color: $green;
 		}
@@ -133,6 +137,10 @@ select {
 	&:disabled {
 		color: $darker-white;
 	}
+
+	&[hidden] {
+		display: none;
+	}
 }
 
 select > option {
@@ -159,8 +167,6 @@ select {
 	height: 1em;
 	width: 1em;
 	cursor: pointer;
-
-	display: none;
 
 	&.svg-clear,
 	&.svg-del-icon {
