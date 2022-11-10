@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   3.0.0
+// @version   3.1.0
 // @author    lusc
 // @updateURL https://git.io/JXgei
 // @match     *://moodle.*/*
@@ -137,7 +137,7 @@ const applyIcon = (id: string, icon?: ValidIconObject) => {
 			span,
 		);
 
-		anchor.before(span);
+		anchor.prepend(span);
 	} else {
 		const img = new Image();
 
@@ -149,18 +149,18 @@ const applyIcon = (id: string, icon?: ValidIconObject) => {
 
 		img.tabIndex = -1;
 		img.src = icon.dataURI;
-		anchor.before(img);
+		anchor.prepend(img);
 	}
 };
 
 const removeIcon = (id: string) => {
 	const anchor = getAnchorFromSidebar(id);
 
-	const previous = anchor?.previousElementSibling as HTMLElement | undefined;
+	const previous = anchor?.querySelector<HTMLElement>(
+		'[data-custom-icon="true"]',
+	);
 
-	if (previous?.dataset['customIcon'] === 'true') {
-		previous.remove();
-	}
+	previous?.remove();
 };
 
 const refresh = (
