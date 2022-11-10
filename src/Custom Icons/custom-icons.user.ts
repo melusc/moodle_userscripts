@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   2.0.0
+// @version   3.0.0
 // @author    lusc
 // @updateURL https://git.io/JXgei
 // @match     *://moodle.*/*
@@ -93,14 +93,11 @@ const testIfUserLeftCourse = async (id: string) => {
 	}
 };
 
+const getAnchorFromSidebar = (id: string) =>
+	getSidebar()?.querySelector(`a[href$="/course/view.php?id=${id}"]`);
+
 const applyIcon = (id: string, icon?: ValidIconObject) => {
-	const sidebar = getSidebar();
-
-	if (!sidebar) {
-		return;
-	}
-
-	const anchor = sidebar.querySelector(`a[href$="/course/view.php?id=${id}"]`);
+	const anchor = getAnchorFromSidebar(id);
 
 	if (!anchor) {
 		void testIfUserLeftCourse(id);
@@ -108,15 +105,11 @@ const applyIcon = (id: string, icon?: ValidIconObject) => {
 		return;
 	}
 
-	if (!anchor.firstElementChild) {
-		return;
-	}
-
 	if (!icon) {
 		const storageIcon = getValueFromId(id);
 
 		if (!storageIcon) {
-			resetIcon(id);
+			removeIcon(id);
 
 			deleteIconFromStorage(id);
 
@@ -129,6 +122,7 @@ const applyIcon = (id: string, icon?: ValidIconObject) => {
 	if ('rawXML' in icon) {
 		const span = document.createElement('span');
 
+		span.dataset['customIcon'] = 'true';
 		span.classList.add('icon', 'navicon');
 		span.style.display = 'inline-block';
 		span.style.color = 'var(--svg-fill, inherit)';
@@ -143,10 +137,11 @@ const applyIcon = (id: string, icon?: ValidIconObject) => {
 			span,
 		);
 
-		anchor.firstElementChild.replaceWith(span);
+		anchor.before(span);
 	} else {
 		const img = new Image();
 
+		img.dataset['customIcon'] = 'true';
 		img.classList.add('icon', 'navicon');
 		img.setAttribute('aria-hidden', 'true');
 		img.style.cssText
@@ -154,25 +149,17 @@ const applyIcon = (id: string, icon?: ValidIconObject) => {
 
 		img.tabIndex = -1;
 		img.src = icon.dataURI;
-		anchor.firstElementChild.replaceWith(img);
+		anchor.before(img);
 	}
 };
 
-const resetIcon = (id: string) => {
-	const sidebar = getSidebar();
+const removeIcon = (id: string) => {
+	const anchor = getAnchorFromSidebar(id);
 
-	const img = sidebar?.querySelector<HTMLImageElement>(
-		`a[href$="/course/view.php?id=${id}"] > .icon.navicon`,
-	);
+	const previous = anchor?.previousElementSibling as HTMLElement | undefined;
 
-	// Test nodeName to not update an icon accidentally
-	if (img && (img.nodeName === 'SPAN' || img.nodeName === 'IMG')) {
-		const icon = document.createElement('i');
-
-		icon.classList.add('icon', 'fa', 'fa-graduation-cap', 'fa-fw', 'navicon');
-		icon.setAttribute('aria-hidden', 'true');
-		icon.tabIndex = -1;
-		img.replaceWith(icon);
+	if (previous?.dataset['customIcon'] === 'true') {
+		previous.remove();
 	}
 };
 
@@ -193,7 +180,7 @@ const refresh = (
 	if (!newValue) {
 		const {pointers} = oldValue!;
 		for (const id of Object.keys(pointers)) {
-			resetIcon(id);
+			removeIcon(id);
 		}
 
 		return;
@@ -216,7 +203,7 @@ const refresh = (
 	}
 
 	for (const id of oldKeys) {
-		resetIcon(id);
+		removeIcon(id);
 	}
 };
 
