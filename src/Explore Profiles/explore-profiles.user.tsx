@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   3.0.0
+// @version   4.0.0
 // @author    lusc
 // @updateURL https://git.io/JXzjB
 // @match     *://moodle.*/user/profile.php?id=*
