@@ -24,7 +24,7 @@ jobs:
           git checkout HEAD -- .yarnrc.yml
           git clean .yarn/releases -f
 
-      - run: yarn up '*'
+      - run: yarn up '**'
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v4
