@@ -55,8 +55,8 @@
 	"private": true,
 	"scripts": {
 		"build": "yarn fmt && yarn run webpack",
-		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-		"pretest": "rimraf dist/test && tsc --project test/tsconfig.json",
+		"test": "yarn build:test && node --experimental-vm-modules node_modules/jest/bin/jest.js",
+		"build:test": "rimraf dist/test && tsc --project test/tsconfig.json",
 		"fmt": "prettier -w . && xo --fix",
 		"lint": "xo",
 		"serve": "serve dist/userscript-out",
@@ -79,5 +79,5 @@
 			"<rootDir>/test/set-env.js"
 		]
 	},
-	"packageManager": "yarn@1.22.19"
+	"packageManager": "yarn@3.2.4"
 }
