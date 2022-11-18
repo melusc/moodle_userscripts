@@ -423,9 +423,8 @@ class Main extends Component<MainProps, MainState> {
 				break;
 			}
 
-			default: {
+			default:
 				// Nothing
-			}
 		}
 	};
 
