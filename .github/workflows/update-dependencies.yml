@@ -34,5 +34,6 @@ jobs:
           title: Update all dependencies
           body: Update all NPM dependencies.
           delete-branch: true
+          token: ${{ secrets.CPR_TOKEN }}
           #labels: auto-merge
           #reviewers: # optional
