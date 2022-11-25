@@ -59,7 +59,7 @@
 		"build:test": "rimraf dist/test && tsc --project test/tsconfig.json",
 		"fmt": "prettier -w . && xo --fix",
 		"lint": "xo",
-		"serve": "serve dist/userscript-out",
+		"serve": "serve dist/userscript-out -L",
 		"start": "concurrently yarn:webpack:w yarn:serve -r -k",
 		"webpack": "webpack -c production.config.js --env PROD",
 		"webpack:w": "webpack -c production.config.js -w"
