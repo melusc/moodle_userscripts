@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   3.0.0
+// @version   3.1.0
 // @author    lusc
 // @match     *://moodle.*/course/view.php?id=*
 // @match     *://moodle*.*/course/view.php?id=*
@@ -83,7 +83,7 @@ const handleClick = (event: MouseEvent): void => {
 
 const init = () => {
 	document
-		.querySelector<HTMLUListElement>('div.course-content > ul.topics')
+		.querySelector<HTMLUListElement>('div.course-content > ul')
 		?.addEventListener('click', handleClick);
 };
 
