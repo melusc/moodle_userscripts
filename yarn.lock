@@ -3511,9 +3511,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jest@npm:^27.1.6":
-  version: 27.1.6
-  resolution: "eslint-plugin-jest@npm:27.1.6"
+"eslint-plugin-jest@npm:^27.1.7":
+  version: 27.1.7
+  resolution: "eslint-plugin-jest@npm:27.1.7"
   dependencies:
     "@typescript-eslint/utils": ^5.10.0
   peerDependencies:
@@ -3524,7 +3524,7 @@ __metadata:
       optional: true
     jest:
       optional: true
-  checksum: 5b1640b5d575f0d5e27da8ef8cb3110a29f94ebd50ae51edc5ea34c1054f5dcf305416865b2919ac424bc02c4569848bbe7fd2c86e7e1aff23e77f1ff9ef7dfd
+  checksum: 1173e60450d8fa7a913d654e80e26176cc64c35f287d680d6fe4187a53974fd8c6883749924c8ea2a9328e295cba4d1be0b3047492653270e9341da1a3fec580
   languageName: node
   linkType: hard
 
@@ -6282,7 +6282,7 @@ __metadata:
     dompurify: ^2.4.1
     dotenv: ^16.0.3
     eslint-config-xo-react: ^0.27.0
-    eslint-plugin-jest: ^27.1.6
+    eslint-plugin-jest: ^27.1.7
     eslint-plugin-react: ^7.31.11
     eslint-plugin-react-hooks: ^4.6.0
     file-saver: ^2.0.5
@@ -6300,7 +6300,7 @@ __metadata:
     serve: ^14.1.2
     terser-webpack-plugin: ^5.3.6
     ts-loader: ^9.4.2
-    type-fest: ^3.3.0
+    type-fest: ^3.4.0
     typescript: ^4.9.4
     webpack: ^5.75.0
     webpack-cli: ^5.0.1
@@ -8364,10 +8364,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "type-fest@npm:3.3.0"
-  checksum: 6f260466dd1847048bca4481412f39c32fbb69abbe6daf1ead67e682529adfe8ab8f150a9937eddd065fa544eaf92c15e35ebad0f45f46feadcfbd3a87ae5a2d
+"type-fest@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "type-fest@npm:3.4.0"
+  checksum: 37e8559f07778b6a24a1d01f285d9b6904537cfde49f6231f080f146c6ff753ea12a9163bcbe8e9bcd24f72529cf4d3baf69874b9a6e1d2da47046c41e4567f6
   languageName: node
   linkType: hard
 
