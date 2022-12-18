@@ -47,7 +47,7 @@ export const getNextDay = (
 
 	// While the current value is either not defined or empty
 	while (
-		(!(values = valuesWeek[`${day}`]) || values.length === 0)
+		(!(values = valuesWeek[day]) || values.length === 0)
 		&& offsetDays <= 7
 	) {
 		++day;
@@ -61,10 +61,7 @@ export const getNextDay = (
 
 	const nextDate = new Date();
 	nextDate.setDate(nextDate.getDate() + offsetDays);
-	nextDate.setMilliseconds(0);
-	nextDate.setSeconds(0);
-	nextDate.setMinutes(0);
-	nextDate.setHours(0);
+	nextDate.setHours(0, 0, 0, 0);
 
 	return nextDate.getTime() - Date.now();
 };
