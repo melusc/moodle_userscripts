@@ -4,13 +4,9 @@ import {h, Fragment, type FunctionalComponent} from 'preact';
 import {SvgIconCaretBack, SvgIconCaretForward} from '../icons.js';
 
 const getDay = (n: number): string => {
-	const result = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'][n];
-
-	if (result === undefined) {
-		throw new Error(`n was out of range: ${n}`);
-	}
-
-	return result;
+	const d = new Date();
+	d.setDate(d.getDate() - d.getDay() + (n + 1));
+	return d.toLocaleString('en', {weekday: 'long'});
 };
 
 const ButtonGrid: FunctionalComponent<{
