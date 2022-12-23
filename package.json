@@ -30,7 +30,7 @@
 		"ow": "^1.1.0",
 		"prettier": "^2.8.1",
 		"rimraf": "^3.0.2",
-		"sass": "^1.56.2",
+		"sass": "^1.57.1",
 		"sass-loader": "^13.2.0",
 		"serve": "^14.1.2",
 		"terser-webpack-plugin": "^5.3.6",
@@ -79,5 +79,5 @@
 			"<rootDir>/test/set-env.js"
 		]
 	},
-	"packageManager": "yarn@3.3.0"
+	"packageManager": "yarn@3.3.1"
 }
