@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle open folders inline preact
-// @version   3.1.0
+// @version   3.2.0
 // @author    lusc
 // @match     *://moodle.*/course/view.php?id=*
 // @match     *://moodle*.*/course/view.php?id=*
@@ -12,7 +12,7 @@
 // @run-at    document-start
 // ==/UserScript==
 
-import {h, render} from 'preact';
+import {render} from 'preact';
 
 import {
 	cleanAuthStorage,

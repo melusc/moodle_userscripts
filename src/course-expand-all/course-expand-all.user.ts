@@ -6,10 +6,10 @@
 // @match       *://moodle*.*/course/view.php
 // @grant       none
 // @version     0.0.1
-// @author     lusc
-// @license    MIT
-// @run-at     document-start
-// @updateURL  https://github.com/melusc/moodle_userscripts/raw/userscript-out/course-expand-all/course-expand-all.user.js
+// @author      lusc
+// @license     MIT
+// @run-at      document-start
+// @updateURL   https://github.com/melusc/moodle_userscripts/raw/userscript-out/course-expand-all/course-expand-all.user.js
 // ==/UserScript==
 
 import {domReady} from '../shared/general-functions/dom-ready.js';

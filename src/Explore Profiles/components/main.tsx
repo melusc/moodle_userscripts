@@ -1,6 +1,6 @@
 import {unix} from 'dayjs';
 import {sanitize} from 'dompurify';
-import {h, type FunctionalComponent, type VNode} from 'preact';
+import type {FunctionalComponent, VNode} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {createPortal} from 'preact/compat';
 

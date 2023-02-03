@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   3.1.1
+// @version   3.2.0
 // @author    lusc
 // @updateURL https://git.io/JXgei
 // @match     *://moodle.*/*

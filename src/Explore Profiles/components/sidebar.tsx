@@ -1,4 +1,4 @@
-import {Fragment, h, type FunctionalComponent, type VNode} from 'preact';
+import type {FunctionalComponent, VNode} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {createPortal} from 'preact/compat';
 import {getSidebar} from '../../shared/general-functions/get-sidebar.js';

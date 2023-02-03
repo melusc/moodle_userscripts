@@ -1,5 +1,5 @@
 import {clsx, type ClassValue} from 'clsx';
-import {h, type FunctionalComponent, type JSX} from 'preact';
+import type {FunctionalComponent, JSX} from 'preact';
 
 import type {Except} from 'type-fest';
 import {parseStringToTime} from '../shared.js';

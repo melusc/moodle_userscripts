@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2.0.2
+// @version   2.1.0
 // @author    lusc
 // @updateURL https://git.io/JXzjr
 // @match     *://moodle.*/*
@@ -15,7 +15,7 @@
 // @run-at    document-start
 // ==/UserScript==
 
-import {Component, h, render, type FunctionalComponent} from 'preact';
+import {Component, render, type FunctionalComponent} from 'preact';
 
 import {
 	cleanAuthStorage,

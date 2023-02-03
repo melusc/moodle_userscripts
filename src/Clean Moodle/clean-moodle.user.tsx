@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   3.0.0
+// @version   3.1.0
 // @author    lusc
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
@@ -14,7 +14,7 @@
 // @run-at    document-start
 // ==/UserScript==
 
-import {h, render, type FunctionalComponent} from 'preact';
+import {render, type FunctionalComponent} from 'preact';
 
 import {
 	cleanAuthStorage,

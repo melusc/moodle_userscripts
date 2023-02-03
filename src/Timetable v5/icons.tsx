@@ -1,4 +1,4 @@
-import {h, type FunctionalComponent, type JSX} from 'preact';
+import type {FunctionalComponent, JSX} from 'preact';
 
 type SvgAttributes = JSX.HTMLAttributes<SVGSVGElement>;
 

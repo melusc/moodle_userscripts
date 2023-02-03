@@ -1,8 +1,6 @@
 import {
 	Component,
 	createRef,
-	Fragment,
-	h,
 	render,
 	type FunctionalComponent,
 	type JSX,

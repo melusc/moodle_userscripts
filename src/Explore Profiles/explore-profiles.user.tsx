@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   4.0.0
+// @version   4.1.0
 // @author    lusc
 // @updateURL https://git.io/JXzjB
 // @match     *://moodle.*/user/profile.php?id=*
@@ -14,7 +14,7 @@
 
 import dayjs from 'dayjs';
 import dayjsPluginRelativeTime from 'dayjs/plugin/relativeTime.js';
-import {Fragment, h, render, type FunctionalComponent} from 'preact';
+import {render, type FunctionalComponent} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {useEffect, useState} from 'preact/hooks';
 

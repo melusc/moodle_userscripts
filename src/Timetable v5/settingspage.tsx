@@ -1,6 +1,6 @@
 // Dependencies
 import {produce} from 'immer';
-import {Component, Fragment, h, render, type JSX, type RefObject} from 'preact';
+import {Component, render, type JSX, type RefObject} from 'preact';
 // Shared across repo
 
 import {uniqueId} from '../shared/general-functions/index.js';
