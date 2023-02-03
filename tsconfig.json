@@ -1,7 +1,10 @@
 {
 	"compilerOptions": {
 		"declaration": false,
-		"types": ["tampermonkey"]
+		"types": ["tampermonkey"],
+		"jsx": "react",
+		"jsxFactory": "h",
+		"jsxFragmentFactory": "Fragment"
 	},
 	"extends": "@lusc/tsconfig",
 	"include": ["src/**/*", "./*"]
