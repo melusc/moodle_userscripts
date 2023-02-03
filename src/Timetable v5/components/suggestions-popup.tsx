@@ -1,4 +1,4 @@
-import {h, type FunctionalComponent} from 'preact';
+import type {FunctionalComponent} from 'preact';
 import {numericBaseSensitiveCollator} from '../../shared/general-functions/index.js';
 
 import type {Course, SettingsPageState} from '../settingspage.d.js';

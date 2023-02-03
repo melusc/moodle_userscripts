@@ -1,7 +1,6 @@
 import {
 	Component,
 	createRef,
-	h,
 	render,
 	type FunctionalComponent,
 	type JSX,

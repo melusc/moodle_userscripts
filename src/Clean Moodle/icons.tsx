@@ -1,4 +1,4 @@
-import {h, type FunctionalComponent} from 'preact';
+import type {FunctionalComponent} from 'preact';
 
 export const SvgCheck: FunctionalComponent = () => (
 	<svg

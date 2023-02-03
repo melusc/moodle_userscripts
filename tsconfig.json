@@ -2,9 +2,8 @@
 	"compilerOptions": {
 		"declaration": false,
 		"types": ["tampermonkey"],
-		"jsx": "react",
-		"jsxFactory": "h",
-		"jsxFragmentFactory": "Fragment"
+		"jsx": "react-jsx",
+		"jsxImportSource": "preact"
 	},
 	"extends": "@lusc/tsconfig",
 	"include": ["src/**/*", "./*"]

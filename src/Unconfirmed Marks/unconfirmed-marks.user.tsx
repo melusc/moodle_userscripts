@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2.0.0
+// @version   2.1.0
 // @author    lusc
 // @match     *://moodle.*/
 // @match     *://moodle*.*/
@@ -16,7 +16,7 @@
 // @connect   www.schul-netz.com
 // ==/UserScript==
 
-import {Component, createRef, h, render} from 'preact';
+import {Component, createRef, type JSX, render} from 'preact';
 
 import {domReady} from '../shared/general-functions/index.js';
 
@@ -173,12 +173,12 @@ class SchulNetzMarks extends Component<
 		);
 	}
 
-	refresh: h.JSX.MouseEventHandler<HTMLElement> = event_ => {
+	refresh: JSX.MouseEventHandler<HTMLElement> = event_ => {
 		event_.preventDefault();
 		this.loginFromStorage();
 	};
 
-	handleLogin: h.JSX.GenericEventHandler<HTMLElement> = event_ => {
+	handleLogin: JSX.GenericEventHandler<HTMLElement> = event_ => {
 		event_.preventDefault();
 
 		const username = this.inputs.username.current?.value;
