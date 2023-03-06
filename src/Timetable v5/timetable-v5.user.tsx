@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2.1.0
+// @version   2.1.1
 // @author    lusc
 // @updateURL https://git.io/JXzjr
 // @match     *://moodle.*/*
