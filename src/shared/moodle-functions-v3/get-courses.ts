@@ -9,18 +9,10 @@ type GetUserCoursesResponse =
 			errorcode: string;
 			message: string;
 	  }
-	| {
-			responses: [
-				| {
-						error: false;
-						data: string;
-				  }
-				| {
-						error: true;
-						exception: string;
-				  },
-			];
-	  };
+	| Array<{
+			id: number;
+			fullname: string;
+	  }>;
 
 const cacheKey = Symbol('getCourses');
 async function getCourses(this: Moodle, noCache = false): Promise<Courses> {
@@ -33,14 +25,11 @@ async function getCourses(this: Moodle, noCache = false): Promise<Courses> {
 	const token = await this.login();
 
 	const bodyParameters = new URLSearchParams({
-		'requests[0][function]': 'core_enrol_get_users_courses',
-		'requests[0][arguments]': JSON.stringify({
-			userid: userId,
-			returnusercount: false,
-		}),
 		wstoken: token,
-		wsfunction: 'tool_mobile_call_external_functions',
 		moodlewsrestformat: 'json',
+		wsfunction: 'core_enrol_get_users_courses',
+		userid: String(userId),
+		returnusercount: '0',
 	});
 
 	const response = await fetch(this.resolveUrl('/webservice/rest/server.php'), {
@@ -57,20 +46,14 @@ async function getCourses(this: Moodle, noCache = false): Promise<Courses> {
 
 	const responseJSON = (await response.json()) as GetUserCoursesResponse;
 
-	if ('exception' in responseJSON || responseJSON.responses[0].error) {
+	if ('exception' in responseJSON) {
 		this.logout();
 		throw new Error('Token was invalid');
 	}
 
-	// Let it throw if it does
-	const data = JSON.parse(responseJSON.responses[0].data) as Array<{
-		id: number;
-		fullname: string;
-	}>;
-
 	const result: Courses = [];
 
-	for (const {id, fullname} of data) {
+	for (const {id, fullname} of responseJSON) {
 		result.push({
 			id,
 			name: fullname,
