@@ -13,6 +13,7 @@
 // @grant     GM_addStyle
 // @grant     GM_notification
 // @run-at    document-start
+// @license   MIT
 // ==/UserScript==
 
 import {Component, render, type FunctionalComponent} from 'preact';

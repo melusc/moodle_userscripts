@@ -14,6 +14,7 @@
 // @grant     GM_registerMenuCommand
 // @run-at    document-start
 // @connect   www.schul-netz.com
+// @license   MIT
 // ==/UserScript==
 
 import {Component, createRef, type JSX, render} from 'preact';

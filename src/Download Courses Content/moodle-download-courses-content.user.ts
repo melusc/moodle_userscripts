@@ -12,6 +12,7 @@
 // @grant     GM_xmlhttpRequest
 // @run-at    document-start
 // @connect   *
+// @license   MIT
 // ==/UserScript==
 
 import {saveAs} from 'file-saver';
