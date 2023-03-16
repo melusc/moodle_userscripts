@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   3.2.1
+// @version   3.3.0
 // @author    lusc
 // @updateURL https://git.io/JXgei
 // @match     *://moodle.*/*
@@ -71,7 +71,7 @@ if (location.protocol !== 'https:') {
 	location.protocol = 'https:';
 }
 
-const isFrontpage = !/^\/customiconspreact/i.test(location.pathname);
+const isFrontpage = !/^\/customicons/i.test(location.pathname);
 
 const testIfUserLeftCourse = async (id: string) => {
 	let courses: Courses;
@@ -225,10 +225,10 @@ const updateIcons = () => {
 const runOnceOnFrontPage = () => {
 	if (getSidebar()) {
 		GM_registerMenuCommand('Open settings', () => {
-			open('/customIconsPreact/', '_blank');
+			open('/customIcons', '_blank');
 		});
 
-		addEventListener('customIconsPreact', updateIcons);
+		addEventListener('customIcons', updateIcons);
 
 		updateIcons();
 	}

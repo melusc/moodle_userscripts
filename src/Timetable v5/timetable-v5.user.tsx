@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Timetable v5
-// @version   2.1.1
+// @version   2.2.0
 // @author    lusc
 // @updateURL https://git.io/JXzjr
 // @match     *://moodle.*/*
@@ -248,7 +248,7 @@ class FrontPage extends Component<Record<string, unknown>, FrontPageState> {
 									<div>
 										{Lang.emptyBeforeAnchor}
 										<a
-											href='/timetable/v5'
+											href='/timetable'
 											rel='noopener noreferrer'
 											target='_blank'
 										>
@@ -304,7 +304,7 @@ const initFrontpage = () => {
 	}
 
 	GM_registerMenuCommand('Open settings', () => {
-		open('/timetable/v5', '_blank');
+		open('/timetable', '_blank');
 	});
 
 	GM_registerMenuCommand('Toggle holiday', () => {
@@ -328,7 +328,7 @@ const initFrontpage = () => {
 	}
 };
 
-const init = /^\/timetable\/v5/i.test(location.pathname)
+const init = /^\/timetable/i.test(location.pathname)
 	? initSettingsPage
 	: initFrontpage;
 
