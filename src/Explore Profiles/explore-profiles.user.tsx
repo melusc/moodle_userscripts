@@ -10,6 +10,7 @@
 // @grant     GM_getValue
 // @grant     GM_deleteValue
 // @run-at    document-start
+// @license   MIT
 // ==/UserScript==
 
 import dayjs from 'dayjs';

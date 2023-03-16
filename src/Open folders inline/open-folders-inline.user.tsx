@@ -10,6 +10,7 @@
 // @grant     GM_deleteValue
 // @grant     GM_addStyle
 // @run-at    document-start
+// @license   MIT
 // ==/UserScript==
 
 import {render} from 'preact';

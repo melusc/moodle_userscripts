@@ -12,6 +12,7 @@
 // @grant     GM_registerMenuCommand
 // @grant     GM_addValueChangeListener
 // @run-at    document-start
+// @license   MIT
 // ==/UserScript==
 
 import {render, type FunctionalComponent} from 'preact';
