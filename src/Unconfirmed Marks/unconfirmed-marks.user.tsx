@@ -4,7 +4,7 @@
 // @author    lusc
 // @match     *://moodle.*/
 // @match     *://moodle*.*/
-// @updateURL https://git.io/JXzhC
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/userscript-out/Unconfirmed%20Marks/unconfirmed-marks.user.js
 // @grant     GM_xmlhttpRequest
 // @grant     GM_setValue
 // @grant     GM_getValue

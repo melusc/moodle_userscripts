@@ -2,7 +2,7 @@
 // @name      Moodle Timetable v5
 // @version   2.2.0
 // @author    lusc
-// @updateURL https://git.io/JXzjr
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/userscript-out/Timetable%20v5/timetable-v5.user.js
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
 // @grant     GM_addValueChangeListener

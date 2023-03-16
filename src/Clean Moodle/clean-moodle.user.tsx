@@ -4,7 +4,7 @@
 // @author    lusc
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
-// @updateURL https://git.io/JXgeW
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/userscript-out/Clean%20Moodle/clean-moodle.user.js
 // @grant     GM_setValue
 // @grant     GM_getValue
 // @grant     GM_deleteValue
