@@ -440,7 +440,7 @@ export const setupSettingsPage = () => {
 		body.lastChild.remove();
 	}
 
-	history.replaceState({}, '', '/cleanMoodlePreact');
+	history.replaceState({}, '', '/cleanMoodle');
 
 	document.title = 'Clean Moodle Setup';
 

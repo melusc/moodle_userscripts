@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   3.1.1
+// @version   3.2.0
 // @author    lusc
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
@@ -63,11 +63,11 @@ if (location.protocol !== 'https:') {
 
 const moodle = new Moodle();
 
-const isFrontpage = !/^\/cleanmoodlepreact/i.test(location.pathname);
+const isFrontpage = !/^\/cleanmoodle/i.test(location.pathname);
 
 const SvgSettingsGear: FunctionalComponent = () => (
 	<a
-		href='/cleanMoodlePreact'
+		href='/cleanMoodle'
 		target='_blank'
 		rel='noreferrer noopener'
 		onClick={event_ => {
@@ -217,7 +217,7 @@ const setupFrontpage = () => {
 	const sidebar = getSidebar();
 
 	GM_registerMenuCommand('Open settings', () => {
-		open('/cleanMoodlePreact');
+		open('/cleanMoodle');
 	});
 
 	if (sidebar) {

@@ -492,7 +492,7 @@ class SettingsPage extends Component<
 }
 
 const initSettingsPage = () => {
-	history.replaceState({}, '', '/timetable/v5');
+	history.replaceState({}, '', '/timetable');
 
 	const {body, head} = document;
 	while (head.lastChild) {
@@ -503,7 +503,7 @@ const initSettingsPage = () => {
 		body.lastChild.remove();
 	}
 
-	document.title = 'Moodle timetable v5';
+	document.title = 'Moodle timetable';
 
 	const icon = document.createElement('link');
 	icon.rel = 'shortcut icon';

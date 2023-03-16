@@ -786,7 +786,7 @@ export const setupSettingsPage = () => {
 
 	document.title = 'Custom Icons Setup';
 
-	history.replaceState({}, '', '/customIconsPreact');
+	history.replaceState({}, '', '/customIcons');
 
 	GM_addStyle(style);
 
