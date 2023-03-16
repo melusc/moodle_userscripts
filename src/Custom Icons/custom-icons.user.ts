@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name      Custom Icons Preact
-// @version   3.3.0
+// @version   3.4.0
 // @author    lusc
-// @updateURL https://git.io/JXgei
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/userscript-out/Custom%20Icons/custom-icons.user.js
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
 // @grant     GM_setValue

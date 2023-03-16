@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2.1.0
+// @version   2.2.0
 // @author    lusc
 // @match     *://moodle.*/
 // @match     *://moodle*.*/
-// @updateURL https://git.io/JXzhC
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/userscript-out/Unconfirmed%20Marks/unconfirmed-marks.user.js
 // @grant     GM_xmlhttpRequest
 // @grant     GM_setValue
 // @grant     GM_getValue

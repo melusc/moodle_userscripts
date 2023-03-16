@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name      Moodle Download Course's Content
-// @version   2.0.0
+// @version   2.1.0
 // @author    lusc
 // @match     *://moodle.*/course/view.php?id=*
 // @match     *://moodle*.*/course/view.php?id=*
-// @updateURL https://git.io/JXzhy
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/userscript-out/Download%20Courses%20Content/moodle-download-courses-content.user.js
 // @grant     GM_getValue
 // @grant     GM_setValue
 // @grant     GM_deleteValue
