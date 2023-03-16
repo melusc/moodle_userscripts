@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2.1.0
+// @version   2.2.0
 // @author    lusc
 // @match     *://moodle.*/
 // @match     *://moodle*.*/

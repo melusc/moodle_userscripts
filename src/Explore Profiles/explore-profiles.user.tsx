@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle explore profiles rest
-// @version   4.1.0
+// @version   4.2.0
 // @author    lusc
 // @updateURL https://github.com/melusc/moodle_userscripts/raw/userscript-out/Explore%20Profiles/explore-profiles.user.js
 // @match     *://moodle.*/user/profile.php?id=*
