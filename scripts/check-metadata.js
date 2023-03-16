@@ -48,7 +48,9 @@ try {
 			find('// ==/UserScript==');
 			find(
 				new RegExp(
-					`^// @updateURL\\s*https://github.com/melusc/moodle_userscripts/raw/userscript-out/.+/${escapeRegex(name)}`,
+					`^// @updateURL\\s*https://github.com/melusc/moodle_userscripts/raw/userscript-out/.+/${escapeRegex(
+						name,
+					)}`,
 				),
 			);
 			find(/^\/\/ @license\s+MIT$/);
