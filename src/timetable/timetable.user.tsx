@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name      Moodle Timetable v5
-// @version   2.3.0
+// @name      Moodle Timetable
+// @version   3.0.0
 // @author    lusc
-// @updateURL https://github.com/melusc/moodle_userscripts/raw/userscript-out/Timetable%20v5/timetable-v5.user.js
+// @updateURL https://github.com/melusc/moodle_userscripts/raw/userscript-out/timetable/timetable.user.js
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
 // @grant     GM_addValueChangeListener
@@ -321,7 +321,7 @@ const initFrontpage = () => {
 	if (main) {
 		const li = document.createElement('li');
 
-		li.id = 'module-timetable-v5';
+		li.id = 'module-timetable';
 		li.className = 'activity label modtype_label';
 		main.prepend(li);
 

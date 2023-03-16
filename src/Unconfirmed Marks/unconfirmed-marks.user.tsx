@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Unconfirmed Marks Preact
-// @version   2.2.0
+// @version   2.2.1
 // @author    lusc
 // @match     *://moodle.*/
 // @match     *://moodle*.*/
@@ -352,10 +352,10 @@ const init = () => {
 	li.id = 'module-marks';
 	li.className = 'activity label modtype_label';
 
-	const timetablev5 = document.querySelector('#module-timetable-v5');
+	const timetable = document.querySelector('#module-timetable');
 
-	if (timetablev5) {
-		timetablev5.after(li);
+	if (timetable) {
+		timetable.after(li);
 	} else {
 		main.prepend(li);
 	}
