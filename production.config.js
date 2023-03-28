@@ -11,8 +11,9 @@ const config = (environment = {}) => ({
 		alias: {
 			react: 'preact/compat',
 			'react-dom': 'preact/compat',
+			svelte: resolve('node_modules/svelte'),
 		},
-		extensions: ['.ts', '.tsx', '.scss', '.css'],
+		extensions: ['.ts', '.tsx', '.scss', '.css', '.svelte'],
 		extensionAlias: {
 			'.js': ['.js', '.ts', '.tsx'],
 		},
@@ -20,11 +21,11 @@ const config = (environment = {}) => ({
 	mode: 'production',
 	entry: entry(entry.basePath('src'), resolve('src/**/*.user.{ts,tsx}')),
 	output: {
-		path: resolve('dist/userscript-out'),
+		path: resolve('dist'),
 		filename: '[name].user.js',
 		hashFunction: 'xxhash64',
 	},
-	plugins: [new CleanWebpackPlugin()],
+	plugins: 'PROD' in environment ? [new CleanWebpackPlugin()] : undefined,
 	cache: {
 		type: 'filesystem',
 		cacheDirectory: resolve('.cache'),
@@ -64,6 +65,17 @@ const config = (environment = {}) => ({
 				test: /\.scss$/,
 				type: 'asset/source',
 				use: ['csso-loader', 'sass-loader'],
+			},
+			{
+				test: /\.svelte$/,
+				use: 'svelte-loader',
+			},
+			{
+				// Required to prevent errors from Svelte on Webpack 5+, omit on Webpack 4
+				test: /node_modules\/svelte\/.*\.mjs$/,
+				resolve: {
+					fullySpecified: false,
+				},
 			},
 		],
 	},
