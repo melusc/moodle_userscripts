@@ -3,8 +3,10 @@
 		"declaration": false,
 		"types": ["tampermonkey"],
 		"jsx": "react-jsx",
-		"jsxImportSource": "preact"
+		"jsxImportSource": "preact",
+
+		"verbatimModuleSyntax": true
 	},
 	"extends": "@lusc/tsconfig",
-	"include": ["src/**/*", "./*"]
+	"include": ["src/**/*", "./*.d.ts", "src/**/*.svelte"]
 }
