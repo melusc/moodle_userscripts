@@ -21,7 +21,7 @@ const config = (environment = {}) => ({
 	mode: 'production',
 	entry: entry(entry.basePath('src'), resolve('src/**/*.user.{ts,tsx}')),
 	output: {
-		path: resolve('dist'),
+		path: resolve('dist/userscript-out'),
 		filename: '[name].user.js',
 		hashFunction: 'xxhash64',
 	},
