@@ -24,11 +24,8 @@ import {
 	migrate,
 } from '../shared/general-functions/index.js';
 import type {CourseContent} from '../shared/moodle-functions-v3/course-content.d.js';
-import {
-	getCourseContent,
-	Moodle,
-	popupLogin,
-} from '../shared/moodle-functions-v3/index.js';
+import {getCourseContent, Moodle} from '../shared/moodle-functions-v3/index.js';
+import {popupLogin} from '../shared/moodle-functions-v3/popup-login.js';
 
 Moodle.extend(getCourseContent).extend(popupLogin);
 const moodle = new Moodle();

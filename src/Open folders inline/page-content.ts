@@ -3,11 +3,8 @@ import type {
 	FolderContent,
 	FolderModule,
 } from '../shared/moodle-functions-v3/course-content.d.js';
-import {
-	getCourseContent,
-	Moodle,
-	popupLogin,
-} from '../shared/moodle-functions-v3/index.js';
+import {Moodle, getCourseContent} from '../shared/moodle-functions-v3/index.js';
+import {popupLogin} from '../shared/moodle-functions-v3/popup-login.js';
 
 import {getImageURL} from './image-urls.js';
 

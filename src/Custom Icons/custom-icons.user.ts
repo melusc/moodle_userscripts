@@ -27,11 +27,11 @@ import {
 	migrate,
 } from '../shared/general-functions/index.js';
 import {
-	getCourses,
 	Moodle,
-	popupLogin,
+	getCourses,
 	type Courses,
 } from '../shared/moodle-functions-v3/index.js';
+import {popupLogin} from '../shared/moodle-functions-v3/popup-login.js';
 
 import {setupSettingsPage} from './settingspage.js';
 import {
