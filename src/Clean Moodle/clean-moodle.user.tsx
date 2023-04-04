@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name      Clean Moodle with Preact
-// @version   3.3.1
+// @name      Clean Moodle
+// @version   4.0.0
 // @author    lusc
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
@@ -15,8 +15,6 @@
 // @license   MIT
 // ==/UserScript==
 
-import {render, type FunctionalComponent} from 'preact';
-
 import {
 	cleanAuthStorage,
 	domReady,
@@ -29,8 +27,9 @@ import {
 	Moodle,
 	type Courses,
 } from '../shared/moodle-functions-v3/index.js';
-import {popupLogin} from '../shared/moodle-functions-v3/popup-login.js';
+import {popupLogin} from '../shared/moodle-functions-v3/popup-login-svelte.js';
 
+import SettingsGear from './settings-gear.svelte';
 import {setupSettingsPage} from './settingspage.js';
 import {
 	getOverrides,
@@ -66,36 +65,28 @@ const moodle = new Moodle();
 
 const isFrontpage = !/^\/cleanmoodle/i.test(location.pathname);
 
-const SvgSettingsGear: FunctionalComponent = () => (
-	<a
-		href='/cleanMoodle'
-		target='_blank'
-		rel='noreferrer noopener'
-		onClick={event_ => {
-			event_.stopPropagation();
-		}}
-	>
-		<svg
-			style={{marginLeft: '0.2em'}}
-			fill='currentColor'
-			class='icon svg-icon-gear'
-			viewBox='0 0 16 16'
-		>
-			<path d='M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 014.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 01-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 011.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 012.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 012.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 011.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 01-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 018.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 001.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 00.52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 00-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 00-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 00-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 00-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 00.52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 001.255-.52l.094-.319zM8 5.754a2.246 2.246 0 100 4.492 2.246 2.246 0 000-4.492zM4.754 8a3.246 3.246 0 116.492 0 3.246 3.246 0 01-6.492 0z' />
-		</svg>
-	</a>
-);
 const getCourseElementFromSidebar = (id: string) =>
 	getSidebar()?.querySelector<HTMLAnchorElement>(
 		`a[href$="/course/view.php?id=${id}"]`,
 	);
 
+/*
+	For a race condition where testForInexistantCourse is called twice
+	before it can resolve. (i.e. when two courses have been deleted)
+	That would cause two popups to open.
+*/
+let popupLoginPromise: Promise<string> | undefined;
 const testForInexistantCourse = async (id: string) => {
+	if (popupLoginPromise) {
+		await popupLoginPromise;
+	}
+
 	let courses: Courses;
+
 	try {
 		courses = await moodle.getCourses();
 	} catch {
-		await moodle.popupLogin('Clean Moodle');
+		await (popupLoginPromise = moodle.popupLogin('Clean Moodle - Svelte'));
 		courses = await moodle.getCourses();
 	}
 
@@ -114,14 +105,10 @@ const testForInexistantCourse = async (id: string) => {
  * @param {number|string} id The id of the course to replace
  * @param {[string]} newValue The new value, defaults to the anchors title (for resetting it)
  */
-const setCourseText = (id: string, newValue: string | undefined) => {
-	const anchor = getCourseElementFromSidebar(id);
-
-	if (!anchor) {
-		void testForInexistantCourse(id);
-		return;
-	}
-
+const setCourseText = (
+	anchor: HTMLAnchorElement,
+	newValue: string | undefined,
+) => {
 	const text = newValue ?? anchor.title; // Instead of now removed resetReplaced()
 
 	const textNode = anchor.lastChild;
@@ -134,21 +121,15 @@ const setCourseText = (id: string, newValue: string | undefined) => {
  * Sets the visibility of a course by id
  * @param {string} id The id of the course to remove
  */
-const setCourseVisibility = (id: string, visible: boolean) => {
-	const anchor = getCourseElementFromSidebar(id);
+const setCourseVisibility = (anchor: HTMLAnchorElement, visible: boolean) => {
+	const li = anchor.closest<HTMLLIElement>('li.type_course');
+	const cl = li?.classList;
 
-	if (anchor) {
-		const li = anchor.closest<HTMLLIElement>('li.type_course');
-		const cl = li?.classList;
-
-		// If the current page is the same as the current course link
-		// don't remove it
-		if (cl && !cl.contains('current_branch')) {
-			cl.toggle('hide', !visible);
-			cl.toggle('hidden', !visible);
-		}
-	} else {
-		void testForInexistantCourse(id);
+	// If the current page is the same as the current course link
+	// don't remove it
+	if (cl && !cl.contains('current_branch')) {
+		cl.toggle('hide', !visible);
+		cl.toggle('hidden', !visible);
 	}
 };
 
@@ -184,9 +165,15 @@ const sortSidebar = () => {
 	sidebar.prepend(...children);
 };
 
-const setCourse = (id: string, value: string | false) => {
-	setCourseVisibility(id, value !== false);
-	setCourseText(id, value === false ? undefined : value);
+const setCourse = (id: string, value: string | false | undefined) => {
+	const anchor = getCourseElementFromSidebar(id);
+
+	if (anchor) {
+		setCourseVisibility(anchor, value !== false);
+		setCourseText(anchor, typeof value === 'string' ? value : undefined);
+	} else {
+		void testForInexistantCourse(id);
+	}
 };
 
 const cleanFrontpage = () => {
@@ -234,8 +221,7 @@ const setupFrontpage = () => {
 
 				for (const id of Object.keys(oldOverrides)) {
 					if (!(id in newOverrides)) {
-						setCourseText(id, undefined);
-						setCourseVisibility(id, true);
+						setCourse(id, undefined);
 					}
 				}
 
@@ -255,7 +241,11 @@ const setupFrontpage = () => {
 			const span = document.createElement('span');
 
 			p.append(span);
-			render(<SvgSettingsGear />, span);
+
+			// eslint-disable-next-line no-new
+			new SettingsGear({
+				target: span,
+			});
 		}
 	}
 };

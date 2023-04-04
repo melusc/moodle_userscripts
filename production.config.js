@@ -2,6 +2,7 @@ import {fileURLToPath} from 'node:url';
 
 import TerserPlugin from 'terser-webpack-plugin';
 import entry from 'webpack-glob-entry';
+import sveltePreprocess from 'svelte-preprocess';
 import {CleanWebpackPlugin} from 'clean-webpack-plugin';
 
 const resolve = p => fileURLToPath(new URL(p, import.meta.url));
@@ -68,7 +69,12 @@ const config = (environment = {}) => ({
 			},
 			{
 				test: /\.svelte$/,
-				use: 'svelte-loader',
+				use: {
+					loader: 'svelte-loader',
+					options: {
+						preprocess: sveltePreprocess(),
+					},
+				},
 			},
 			{
 				// Required to prevent errors from Svelte on Webpack 5+, omit on Webpack 4
