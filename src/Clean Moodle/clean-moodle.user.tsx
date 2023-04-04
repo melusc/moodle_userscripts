@@ -86,7 +86,7 @@ const testForInexistantCourse = async (id: string) => {
 	try {
 		courses = await moodle.getCourses();
 	} catch {
-		await (popupLoginPromise = moodle.popupLogin('Clean Moodle - Svelte'));
+		await (popupLoginPromise = moodle.popupLogin('Clean Moodle'));
 		courses = await moodle.getCourses();
 	}
 
