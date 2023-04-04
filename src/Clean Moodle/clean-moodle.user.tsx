@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle with Preact
-// @version   3.3.0
+// @version   3.3.1
 // @author    lusc
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
@@ -27,9 +27,9 @@ import {
 import {
 	getCourses,
 	Moodle,
-	popupLogin,
 	type Courses,
 } from '../shared/moodle-functions-v3/index.js';
+import {popupLogin} from '../shared/moodle-functions-v3/popup-login.js';
 
 import {setupSettingsPage} from './settingspage.js';
 import {
@@ -124,18 +124,9 @@ const setCourseText = (id: string, newValue: string | undefined) => {
 
 	const text = newValue ?? anchor.title; // Instead of now removed resetReplaced()
 
-	if (anchor.childElementCount === 0) {
-		anchor.textContent = text;
-	} else {
-		/* Because custom icons can use a span with an svg in it
-			 so we need to be more specific about which span */
-		const span = anchor.querySelector<HTMLSpanElement>(
-			'span.item-content-wrap',
-		);
-
-		if (span) {
-			span.textContent = text;
-		}
+	const textNode = anchor.lastChild;
+	if (textNode?.nodeType === Node.TEXT_NODE) {
+		textNode.textContent = text;
 	}
 };
 
