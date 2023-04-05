@@ -4,8 +4,6 @@ import genericPopupSCSS from './popup-login.scss';
 import PopupLogin from './popup-login.svelte';
 
 async function popupLogin(this: Moodle, title: string): Promise<string> {
-	console.trace(this, title);
-
 	return new Promise<string>(resolve => {
 		const style = GM_addStyle(genericPopupSCSS);
 

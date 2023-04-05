@@ -44,6 +44,7 @@
 							placeholder="Username"
 							class="form-control"
 							class:is-invalid={username.trim() === ''}
+							bind:value={username}
 						/>
 					</div>
 
