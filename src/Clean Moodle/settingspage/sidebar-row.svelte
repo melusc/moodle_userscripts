@@ -31,7 +31,8 @@
 </script>
 
 <div
-	class={`row${value === false ? ' removed' : ''}`}
+	class="row"
+	class:removed={value === false}
 	title={courseName}
 	on:click={select}
 	on:keydown|stopPropagation={event => {
