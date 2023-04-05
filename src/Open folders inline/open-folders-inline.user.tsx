@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name      Moodle open folders inline preact
+// @name      Moodle Open Folders Inline
 // @version   3.3.0
 // @author    lusc
 // @match     *://moodle.*/course/view.php?id=*
@@ -13,15 +13,13 @@
 // @license   MIT
 // ==/UserScript==
 
-import {render} from 'preact';
-
 import {
 	cleanAuthStorage,
 	domReady,
 	migrate,
 } from '../shared/general-functions/index.js';
 
-import {Folder} from './folder.js';
+import Folder from './folder.svelte';
 
 import style from './style.scss';
 
@@ -31,7 +29,7 @@ migrate({
 
 GM_addStyle(style);
 
-const handleClick = (event: MouseEvent): void => {
+function handleClick(event: MouseEvent): void {
 	if (event.ctrlKey) {
 		return;
 	}
@@ -74,18 +72,23 @@ const handleClick = (event: MouseEvent): void => {
 	const container = document.createElement('span');
 	container.className = 'folder-parent';
 
-	render(
-		<Folder sectionId={sectionId} folderId={folderId} anchor={anchor} />,
-		container,
-	);
+	// eslint-disable-next-line no-new
+	new Folder({
+		target: container,
+		props: {
+			sectionId,
+			folderId,
+			anchor,
+		},
+	});
 
 	folder.append(container);
-};
+}
 
-const init = () => {
+function init() {
 	document
 		.querySelector<HTMLUListElement>('div.course-content > ul')
 		?.addEventListener('click', handleClick);
-};
+}
 
 domReady(init);

@@ -4,7 +4,7 @@ import type {
 	FolderModule,
 } from '../shared/moodle-functions-v3/course-content.d.js';
 import {Moodle, getCourseContent} from '../shared/moodle-functions-v3/index.js';
-import {popupLogin} from '../shared/moodle-functions-v3/popup-login.js';
+import {popupLogin} from '../shared/moodle-functions-v3/popup-login-svelte.js';
 
 import {getImageURL} from './image-urls.js';
 
@@ -18,7 +18,7 @@ Moodle.extend(popupLogin).extend(getCourseContent);
 const moodle = new Moodle();
 
 const getPageContent = async (
-	noCache?: boolean,
+	allowCached: boolean,
 ): Promise<false | CourseContent[]> => {
 	const searchParameters = new URLSearchParams(location.search);
 	const courseId = searchParameters.get('id');
@@ -30,10 +30,10 @@ const getPageContent = async (
 	}
 
 	try {
-		return await moodle.getCourseContent(courseId, noCache);
+		return await moodle.getCourseContent(courseId, !allowCached);
 	} catch {
 		await moodle.popupLogin('Open folders inline');
-		return moodle.getCourseContent(courseId, noCache);
+		return moodle.getCourseContent(courseId, !allowCached);
 	}
 };
 
@@ -43,9 +43,9 @@ const sanitizedFilePath = (path: string): string[] =>
 export const getSanitizedContents = async (
 	sectionId: string,
 	folderId: string,
-	noCache?: boolean,
+	allowCached: boolean,
 ): Promise<false | SanitizedContentFile[]> => {
-	const pageContentJSON = await getPageContent(noCache);
+	const pageContentJSON = await getPageContent(allowCached);
 
 	if (pageContentJSON === false) {
 		return false;
