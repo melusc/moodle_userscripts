@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Moodle Open Folders Inline
-// @version   3.3.0
+// @version   4.0.0
 // @author    lusc
 // @match     *://moodle.*/course/view.php?id=*
 // @match     *://moodle*.*/course/view.php?id=*
