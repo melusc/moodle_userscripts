@@ -60,7 +60,6 @@
 	<RefreshIcon
 		target={anchor}
 		on:click={() => {
-			console.log('click');
 			void fetchContents(false);
 		}}
 	/>

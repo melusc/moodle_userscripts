@@ -46,8 +46,6 @@ export function cleanHref(href: string): string {
 }
 
 export function portal(element: HTMLElement, target: HTMLElement) {
-	console.log(element, target);
-
 	function update() {
 		target.append(element);
 	}
