@@ -37,7 +37,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 			<div role='main'>
 				<span id='maincontent' />
 				<div class='userprofile'>
-					{typeof description !== 'undefined' && description !== '' && (
+					{description !== undefined && description !== '' && (
 						<div
 							// Disable it because it gets sanitised
 							// and is trusted anyway
@@ -56,13 +56,13 @@ export const Main: FunctionalComponent<LoadedState> = ({
 					/>
 					<div class='profile_tree'>
 						{[email, country, city, customfields, interests].some(
-							item => typeof item !== 'undefined',
+							item => item !== undefined,
 						) && (
 							<section class='node_category card d-inline-block w-100 mb-3'>
 								<div class='card-body'>
 									<h3 class='lead'>User details</h3>
 									<ul>
-										{typeof email !== 'undefined' && (
+										{email !== undefined && (
 											<li class='contentnode'>
 												<dl>
 													<dt>Email address</dt>
@@ -74,7 +74,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 												</dl>
 											</li>
 										)}
-										{typeof country !== 'undefined' && (
+										{country !== undefined && (
 											<li class='contentnode'>
 												<dl>
 													<dt>Country</dt>
@@ -82,7 +82,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 												</dl>
 											</li>
 										)}
-										{typeof city !== 'undefined' && (
+										{city !== undefined && (
 											<li class='contentnode'>
 												<dl>
 													<dt>City/town</dt>
@@ -94,7 +94,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 											&& customfields.map(field => (
 												<CustomField key={field.shortname} {...field} />
 											))}
-										{typeof interests !== 'undefined' && (
+										{interests !== undefined && (
 											<li class='contentnode'>
 												<dl>
 													<dt>Interests</dt>
@@ -205,7 +205,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 							<div class='card-body'>
 								<h3 class='lead'>Login activity</h3>
 								<ul>
-									{typeof firstaccess !== 'undefined' && (
+									{firstaccess !== undefined && (
 										<li class='contentnode'>
 											<dl>
 												<dt>First access to site</dt>
@@ -217,7 +217,7 @@ export const Main: FunctionalComponent<LoadedState> = ({
 											</dl>
 										</li>
 									)}
-									{typeof lastaccess !== 'undefined' && (
+									{lastaccess !== undefined && (
 										<li class='contentnode'>
 											<dl>
 												<dt>Last access to site</dt>
