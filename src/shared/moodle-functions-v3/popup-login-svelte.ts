@@ -19,7 +19,7 @@ async function popupLogin(this: Moodle, title: string): Promise<string> {
 			},
 		});
 
-		app.$on('login', ({detail: token}) => {
+		app.$on('login', ({detail: token}: CustomEvent<string>) => {
 			app.$destroy();
 			style.remove();
 			div.remove();
