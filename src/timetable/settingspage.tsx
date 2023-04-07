@@ -1,7 +1,5 @@
-// Dependencies
 import {produce} from 'immer';
 import {Component, render, type JSX, type RefObject} from 'preact';
-// Shared across repo
 
 import {uniqueId} from '../shared/general-functions/index.js';
 import {
@@ -9,7 +7,6 @@ import {
 	Moodle,
 	type Courses,
 } from '../shared/moodle-functions-v3/index.js';
-// Locally shared
 
 import ButtonGrid from './components/button-grid.js';
 import LoggedOut from './components/logged-out.js';
@@ -17,20 +14,15 @@ import SuggestionsPopup from './components/suggestions-popup.js';
 import Table from './components/table.js';
 import {SvgIconAdd} from './icons.js';
 import {parseStringToTime, parseTimeToString} from './shared.js';
-
-// Types
 import type {
 	SettingsPageState,
 	SingleDay,
 	TableOnInputSelectors,
 	TableRow,
 } from './settingspage.d.js';
-
-// Style
 import settingsPageStyle from './settingspage.scss';
 
 Moodle.extend(getCourses);
-// =============
 
 const getDayOfWeek = () => {
 	const day = (new Date().getDay() + 6) % 7; // Monday is 0, Sunday is 6

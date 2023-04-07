@@ -30,13 +30,10 @@ import {Main} from './components/main.js';
 import {Navigate} from './components/navigate.js';
 import {Notification} from './components/notification.js';
 import {Sidebar} from './components/sidebar.js';
-
 import {moodle, title} from './consts.js';
 import {countries as COUNTRY_CODES} from './countries.js';
 import {getContacts, getUserId} from './utils.js';
-
 import type {State, UserData} from './types.js';
-
 import style from './style.scss';
 
 type SetFromTo = (arg0: {from?: number; to?: number}) => void;

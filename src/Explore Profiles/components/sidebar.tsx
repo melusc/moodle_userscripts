@@ -1,8 +1,8 @@
 import type {FunctionalComponent, VNode} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {createPortal} from 'preact/compat';
-import {getSidebar} from '../../shared/general-functions/get-sidebar.js';
 
+import {getSidebar} from '../../shared/general-functions/get-sidebar.js';
 import type {LoadedState} from '../types.js';
 import {clearNode} from '../utils.js';
 

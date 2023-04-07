@@ -1,6 +1,6 @@
 import type {FunctionalComponent} from 'preact';
-import {numericBaseSensitiveCollator} from '../../shared/general-functions/index.js';
 
+import {numericBaseSensitiveCollator} from '../../shared/general-functions/index.js';
 import type {Course, SettingsPageState} from '../settingspage.d.js';
 
 const filterCourses = (array: Course[], inputText: string) => {

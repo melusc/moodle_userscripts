@@ -1,5 +1,6 @@
 import {numericBaseSensitiveCollator} from '../../shared/general-functions/intl-collator.js';
 import {getOverrides} from '../shared.js';
+
 import type {Course} from './course.js';
 
 /** Sort courses, mutates the array */

@@ -41,7 +41,6 @@ import {
 	iconsKey,
 	setIcons,
 } from './shared.js';
-
 import type {
 	Icons,
 	Pointers,

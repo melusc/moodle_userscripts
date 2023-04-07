@@ -89,6 +89,13 @@
 				"namedComponents": "arrow-function",
 				"unnamedComponents": "arrow-function"
 			}
+		],
+		"import/order": [
+			"error",
+			{
+				"newlines-between": "always",
+				"warnOnUnassignedImports": true
+			}
 		]
 	},
 	"settings": {

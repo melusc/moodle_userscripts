@@ -1,13 +1,13 @@
 import type {FunctionalComponent, JSX, RefObject} from 'preact';
-
 // eslint-disable-next-line n/file-extension-in-import
 import {useRef} from 'preact/hooks';
-import {SvgIconX} from '../icons.js';
 
+import {SvgIconX} from '../icons.js';
 import type {
 	TableOnInputSelectors,
 	TableRow as TypeTableRow,
 } from '../settingspage.d.js';
+
 import TimeInput from './time-input.js';
 
 const TableRow: FunctionalComponent<{

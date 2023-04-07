@@ -1,5 +1,4 @@
 import style from './settingspage/settingspage.scss';
-
 import SettingsPage from './settingspage/settingspage.svelte';
 
 export const setupSettingsPage = () => {

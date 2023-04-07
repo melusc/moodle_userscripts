@@ -20,7 +20,6 @@ import {
 } from '../shared/general-functions/index.js';
 
 import Folder from './folder.svelte';
-
 import style from './style.scss';
 
 migrate({

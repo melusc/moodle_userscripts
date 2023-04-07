@@ -1,5 +1,4 @@
 import type {Moodle, RegisterFunction} from './moodle.js';
-
 import genericPopupSCSS from './popup-login.scss';
 import PopupLogin from './popup-login.svelte';
 

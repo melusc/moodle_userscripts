@@ -6,6 +6,7 @@ import {createPortal} from 'preact/compat';
 
 import type {LoadedState} from '../types.js';
 import {clearNode, isReadonlyArray} from '../utils.js';
+
 import {CustomField} from './custom-field.js';
 
 const Portal: FunctionalComponent<{children: VNode}> = ({children}) => {
