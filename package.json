@@ -3,10 +3,10 @@
 	"dependencies": {
 		"clsx": "^1.2.1",
 		"dayjs": "^1.11.7",
-		"dompurify": "^3.0.1",
+		"dompurify": "^3.0.2",
 		"file-saver": "^2.0.5",
 		"htm": "^3.1.1",
-		"immer": "^9.0.21",
+		"immer": "^10.0.1",
 		"jszip": "^3.10.1",
 		"preact": "^10.13.2"
 	},
@@ -14,7 +14,7 @@
 	"devDependencies": {
 		"@jest/globals": "^29.5.0",
 		"@lusc/tsconfig": "^2.2.0",
-		"@types/dompurify": "^3.0.1",
+		"@types/dompurify": "^3.0.2",
 		"@types/file-saver": "^2.0.5",
 		"@types/tampermonkey": "^4.0.10",
 		"clean-webpack-plugin": "^4.0.0",
@@ -42,7 +42,7 @@
 		"ts-loader": "^9.4.2",
 		"type-fest": "^3.8.0",
 		"typescript": "^5.0.4",
-		"webpack": "^5.79.0",
+		"webpack": "^5.80.0",
 		"webpack-cli": "^5.0.1",
 		"webpack-glob-entry": "^2.1.1",
 		"xo": "^0.54.1"
