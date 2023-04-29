@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {onMount} from 'svelte';
+
 	import RefreshIcon from './refresh-icon.svelte';
 	import {
 		getSanitizedContents,
@@ -18,12 +19,13 @@
 		void fetchContents(true);
 	});
 
-	let prevAnchor: HTMLElement | undefined = undefined;
+	let previousAnchor: HTMLElement | undefined = undefined;
 	$: {
-		if (prevAnchor !== anchor) {
-			prevAnchor?.removeEventListener('click', anchorClickHandler);
+		if (previousAnchor !== anchor) {
+			previousAnchor?.removeEventListener('click', anchorClickHandler);
 		}
-		prevAnchor = anchor;
+
+		previousAnchor = anchor;
 		anchor.addEventListener('click', anchorClickHandler);
 	}
 

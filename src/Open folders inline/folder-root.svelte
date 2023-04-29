@@ -8,7 +8,7 @@
 	export let base: string | undefined = undefined;
 	export let isParent: boolean;
 
-	$: isHidden = !isParent;
+	let isHidden = !isParent;
 	$: shouldHide = isHidden && !isParent;
 
 	$: ({root, entries} = getEntries(contents, directoryDepth));
@@ -33,7 +33,7 @@
 				/>
 			</li>
 		{/each}
-		{#each root ?? [] as { fileUrl, filename, imgPath } (filename)}
+		{#each root ?? [] as {fileUrl, filename, imgPath} (filename)}
 			<li>
 				<span class="fp-filename-icon">
 					<a href={cleanHref(fileUrl)}>

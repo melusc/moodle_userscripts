@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {createEventDispatcher} from 'svelte';
+
 	import {portal} from './util.js';
 
 	export let target: HTMLElement;

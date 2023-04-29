@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {createEventDispatcher} from 'svelte';
+
 	import {getUsername} from '../../shared/moodle-functions-v3/index.js';
 
 	const dispatch = createEventDispatcher<{
@@ -10,7 +11,7 @@
 	}>();
 
 	let username: string = getUsername() ?? '';
-	let password: string = '';
+	let password = '';
 
 	function onSubmit() {
 		if (username && password) {

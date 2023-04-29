@@ -2,6 +2,7 @@
 	"env": ["es2021", "browser", "greasemonkey"],
 	"extends": ["xo-react"],
 	"globals": ["GM_addValueChangeListener", "GM_notification"],
+	"extensions": ["svelte"],
 	"overrides": [
 		{
 			"files": ["**/*.{ts,tsx}"],
@@ -28,6 +29,23 @@
 			"extends": ["plugin:jest/recommended", "plugin:jest/style"],
 			"rules": {
 				"no-mixed-operators": "off"
+			}
+		},
+		{
+			"files": ["**/*.svelte"],
+			"parser": "svelte-eslint-parser",
+			"parserOptions": {
+				"parser": "@typescript-eslint/parser",
+				"extraFileExtensions": [".svelte"]
+			},
+			"extends": ["xo-typescript", "plugin:svelte/recommended"],
+			"plugins": ["@typescript-eslint"],
+			"rules": {
+				"import/no-mutable-exports": "off",
+				"no-unused-vars": "off",
+				"no-undef-init": "off",
+				"svelte/no-immutable-reactive-statements": "error",
+				"svelte/no-reactive-reassign": "error"
 			}
 		}
 	],

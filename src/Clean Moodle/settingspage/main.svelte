@@ -9,6 +9,12 @@
 		input: string;
 	}>();
 
+	// Selected?.value can be false, in which case it should use courseName
+	// This value is reactive, when `selected` changes it should change
+	// put on input, it should also change.
+	// Eslint is complaining because you should not assign to reactive variables
+	// however I am unaware of a better way to handle this
+	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 	$: value = (selected?.value || selected?.courseName) ?? '';
 
 	let replaceInput: HTMLInputElement;
@@ -53,6 +59,7 @@
 				bind:this={replaceInput}
 				{value}
 				on:input={event => {
+					// eslint-disable-next-line svelte/no-reactive-reassign
 					value = event.currentTarget.value;
 				}}
 			/>

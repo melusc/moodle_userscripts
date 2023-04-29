@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {type Courses} from '../../shared/moodle-functions-v3/get-courses.js';
 	import {Moodle} from '../../shared/moodle-functions-v3/moodle.js';
-
 	import {getValue, removeElementFromStorage, setValue} from '../shared.js';
 
 	import type {Course} from './course.js';
@@ -131,6 +130,7 @@
 		removeElementFromStorage(event.detail);
 	}
 
+	// eslint-disable-next-line unicorn/prefer-top-level-await
 	moodle.login().then(getCourses, logout);
 </script>
 

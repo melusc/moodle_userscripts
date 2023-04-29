@@ -2,7 +2,6 @@
 	import {createEventDispatcher} from 'svelte';
 
 	import type {Moodle} from './moodle.js';
-
 	import {getUsername} from './credentials.js';
 
 	export let title: string;
@@ -12,7 +11,7 @@
 
 	let isLoggedOut = true;
 	let username: string = getUsername() ?? '';
-	let password: string = '';
+	let password = '';
 
 	async function handleLogin() {
 		username = username.trim();
