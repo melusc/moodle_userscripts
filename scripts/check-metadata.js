@@ -8,23 +8,10 @@ function escapeRegex(string) {
 	return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
-/**
- * @param {URL} dir
- * @return {Iterable<URL>}
- */
-function * readDir(dir) {
-	for (const subDir of readdir(dir)) {
-		try {
-			yield * readDir(new URL(`${subDir}/`, dir));
-		} catch {
-			yield new URL(`${subDir}`, dir);
-		}
-	}
-}
-
 try {
-	for (const path of readDir(distDir)) {
-		if (path.href.endsWith('.user.js')) {
+	for (const relativePath of readdir(distDir, {recursive: true})) {
+		if (relativePath.endsWith('.user.js')) {
+			const path = new URL(relativePath, distDir);
 			const contents = readFile(path, 'utf8');
 			const split = new Set(contents.split(/\n/).map(s => s.trim()));
 			const name = path.href.split('/').at(-1);
