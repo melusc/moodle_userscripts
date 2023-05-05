@@ -1,5 +1,8 @@
 <script lang="ts">
-	import {type Courses} from '../../shared/moodle-functions-v3/get-courses.js';
+	import {
+		getCourses as getCoursesMoodle,
+		type Courses,
+	} from '../../shared/moodle-functions-v3/get-courses.js';
 	import {Moodle} from '../../shared/moodle-functions-v3/moodle.js';
 	import {getValue, removeElementFromStorage, setValue} from '../shared.js';
 
@@ -13,6 +16,8 @@
 	let loadingCourses = true;
 	let selected: undefined | Course;
 	let loggedOut = false;
+
+	Moodle.extend(getCoursesMoodle);
 
 	const moodle = new Moodle();
 
