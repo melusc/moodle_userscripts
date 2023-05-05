@@ -15,11 +15,11 @@
 // @license   MIT
 // ==/UserScript==
 
+import {domReady} from '../shared/general-functions/dom-ready.js';
 import {
 	cleanAuthStorage,
-	domReady,
 	migrate,
-} from '../shared/general-functions/index.js';
+} from '../shared/general-functions/migrate.js';
 
 import {setupFrontpage} from './frontpage.js';
 import {setupSettingsPage} from './settingspage.js';

@@ -19,11 +19,11 @@ import {render, type FunctionalComponent} from 'preact';
 // eslint-disable-next-line n/file-extension-in-import
 import {useEffect, useState} from 'preact/hooks';
 
+import {domReady} from '../shared/general-functions/dom-ready.js';
 import {
 	cleanAuthStorage,
-	domReady,
 	migrate,
-} from '../shared/general-functions/index.js';
+} from '../shared/general-functions/migrate.js';
 
 import {Header} from './components/header.js';
 import {Main} from './components/main.js';
@@ -32,9 +32,9 @@ import {Notification} from './components/notification.js';
 import {Sidebar} from './components/sidebar.js';
 import {moodle, title} from './consts.js';
 import {countries as COUNTRY_CODES} from './countries.js';
-import {getContacts, getUserId} from './utils.js';
-import type {State, UserData} from './types.js';
 import style from './style.scss';
+import type {State, UserData} from './types.js';
+import {getContacts, getUserId} from './utils.js';
 
 type SetFromTo = (arg0: {from?: number; to?: number}) => void;
 

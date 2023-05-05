@@ -17,9 +17,9 @@
 // @license   MIT
 // ==/UserScript==
 
-import {Component, createRef, type JSX, render} from 'preact';
+import {Component, createRef, render, type JSX} from 'preact';
 
-import {domReady} from '../shared/general-functions/index.js';
+import {domReady} from '../shared/general-functions/dom-ready.js';
 
 import {getMarks, type MarksRow} from './get-marks.js';
 import style from './style.scss';

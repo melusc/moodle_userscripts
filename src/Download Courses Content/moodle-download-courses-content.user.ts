@@ -18,13 +18,14 @@
 import {saveAs} from 'file-saver';
 import JSZip from 'jszip';
 
+import {domReady} from '../shared/general-functions/dom-ready.js';
 import {
 	cleanAuthStorage,
-	domReady,
 	migrate,
-} from '../shared/general-functions/index.js';
+} from '../shared/general-functions/migrate.js';
 import type {CourseContent} from '../shared/moodle-functions-v3/course-content.d.js';
-import {getCourseContent, Moodle} from '../shared/moodle-functions-v3/index.js';
+import {getCourseContent} from '../shared/moodle-functions-v3/get-course-content.js';
+import {Moodle} from '../shared/moodle-functions-v3/moodle.js';
 import {popupLogin} from '../shared/moodle-functions-v3/popup-login.js';
 
 Moodle.extend(getCourseContent).extend(popupLogin);

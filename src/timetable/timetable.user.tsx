@@ -18,11 +18,11 @@
 
 import {Component, render, type FunctionalComponent} from 'preact';
 
+import {domReady} from '../shared/general-functions/dom-ready.js';
 import {
 	cleanAuthStorage,
-	domReady,
 	migrate,
-} from '../shared/general-functions/index.js';
+} from '../shared/general-functions/migrate.js';
 
 import {Lang, notificationIconUrl, TimetableStates} from './consts.js';
 import frontPageStyle from './frontpage.scss';

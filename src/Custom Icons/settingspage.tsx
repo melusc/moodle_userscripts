@@ -10,12 +10,12 @@ import {useEffect, useRef} from 'preact/hooks';
 // eslint-disable-next-line n/file-extension-in-import
 import {html} from 'htm/preact';
 
-import {numericBaseSensitiveCollator} from '../shared/general-functions/index.js';
+import {numericBaseSensitiveCollator} from '../shared/general-functions/intl-collator.js';
 import {
 	getCourses,
-	Moodle,
 	type Courses,
-} from '../shared/moodle-functions-v3/index.js';
+} from '../shared/moodle-functions-v3/get-courses.js';
+import {Moodle} from '../shared/moodle-functions-v3/moodle.js';
 
 import style from './settingspage.scss';
 import {

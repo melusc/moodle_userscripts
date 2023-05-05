@@ -1,19 +1,18 @@
 import {produce} from 'immer';
 import {Component, render, type JSX, type RefObject} from 'preact';
 
-import {uniqueId} from '../shared/general-functions/index.js';
+import {uniqueId} from '../shared/general-functions/unique-id.js';
 import {
 	getCourses,
-	Moodle,
 	type Courses,
-} from '../shared/moodle-functions-v3/index.js';
+} from '../shared/moodle-functions-v3/get-courses.js';
+import {Moodle} from '../shared/moodle-functions-v3/moodle.js';
 
 import ButtonGrid from './components/button-grid.js';
 import LoggedOut from './components/logged-out.js';
 import SuggestionsPopup from './components/suggestions-popup.js';
 import Table from './components/table.js';
 import {SvgIconAdd} from './icons.js';
-import {parseStringToTime, parseTimeToString} from './shared.js';
 import type {
 	SettingsPageState,
 	SingleDay,
@@ -21,6 +20,7 @@ import type {
 	TableRow,
 } from './settingspage.d.js';
 import settingsPageStyle from './settingspage.scss';
+import {parseStringToTime, parseTimeToString} from './shared.js';
 
 Moodle.extend(getCourses);
 

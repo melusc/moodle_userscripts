@@ -20,19 +20,25 @@
 // eslint-disable-next-line n/file-extension-in-import
 import {html, render} from 'htm/preact';
 
+import {domReady} from '../shared/general-functions/dom-ready.js';
+import {getSidebar} from '../shared/general-functions/get-sidebar.js';
 import {
 	cleanAuthStorage,
-	domReady,
-	getSidebar,
 	migrate,
-} from '../shared/general-functions/index.js';
+} from '../shared/general-functions/migrate.js';
 import {
-	Moodle,
 	getCourses,
 	type Courses,
-} from '../shared/moodle-functions-v3/index.js';
+} from '../shared/moodle-functions-v3/get-courses.js';
+import {Moodle} from '../shared/moodle-functions-v3/moodle.js';
 import {popupLogin} from '../shared/moodle-functions-v3/popup-login.js';
 
+import type {
+	Icons,
+	Pointers,
+	ValidIconObject,
+	Values,
+} from './custom-icons.d.js';
 import {setupSettingsPage} from './settingspage.js';
 import {
 	deleteIconFromStorage,
@@ -41,12 +47,6 @@ import {
 	iconsKey,
 	setIcons,
 } from './shared.js';
-import type {
-	Icons,
-	Pointers,
-	ValidIconObject,
-	Values,
-} from './custom-icons.d.js';
 
 Moodle.extend(getCourses).extend(popupLogin);
 const moodle = new Moodle();

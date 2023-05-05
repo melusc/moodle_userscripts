@@ -1,11 +1,18 @@
 import {getSidebar} from '../shared/general-functions/get-sidebar.js';
 import {numericBaseSensitiveCollator} from '../shared/general-functions/intl-collator.js';
-import {getCourses, type Courses} from '../shared/moodle-functions-v3/get-courses.js';
+import {
+	getCourses,
+	type Courses,
+} from '../shared/moodle-functions-v3/get-courses.js';
 import {Moodle} from '../shared/moodle-functions-v3/moodle.js';
 import {popupLogin} from '../shared/moodle-functions-v3/popup-login-svelte.js';
 
 import SettingsGear from './settings-gear.svelte';
-import {getOverrides, removeElementFromStorage, type Overrides} from './shared.js';
+import {
+	getOverrides,
+	removeElementFromStorage,
+	type Overrides,
+} from './shared.js';
 
 Moodle.extend(getCourses).extend(popupLogin);
 
@@ -49,8 +56,10 @@ async function testForInexistantCourse(id: string) {
 /**
  * Replace the text of a course
  */
-function setCourseText(anchor: HTMLAnchorElement,
-	newValue: string | undefined) {
+function setCourseText(
+	anchor: HTMLAnchorElement,
+	newValue: string | undefined,
+) {
 	const text = newValue ?? anchor.title; // Instead of now removed resetReplaced()
 
 	const textNode = anchor.lastChild;

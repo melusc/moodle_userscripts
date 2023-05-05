@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {createEventDispatcher} from 'svelte';
 
-	import {getUsername} from '../../shared/moodle-functions-v3/index.js';
+	import {getUsername} from '../../shared/moodle-functions-v3/credentials.js';
 
 	const dispatch = createEventDispatcher<{
 		login: {

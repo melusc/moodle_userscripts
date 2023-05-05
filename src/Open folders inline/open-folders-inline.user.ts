@@ -13,11 +13,11 @@
 // @license   MIT
 // ==/UserScript==
 
+import {domReady} from '../shared/general-functions/dom-ready.js';
 import {
 	cleanAuthStorage,
-	domReady,
 	migrate,
-} from '../shared/general-functions/index.js';
+} from '../shared/general-functions/migrate.js';
 
 import Folder from './folder.svelte';
 import style from './style.scss';

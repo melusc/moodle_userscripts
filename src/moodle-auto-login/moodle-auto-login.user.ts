@@ -11,7 +11,7 @@
 // @updateURL  https://github.com/melusc/moodle_userscripts/raw/userscript-out/moodle-auto-login/moodle-auto-login.user.js
 // ==/UserScript==
 
-import {domReady} from '../shared/general-functions/index.js';
+import {domReady} from '../shared/general-functions/dom-ready.js';
 
 // Stop Webpack from removing the metadata
 if (location.protocol !== 'https:') {
