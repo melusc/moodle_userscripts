@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle
-// @version   4.0.1
+// @version   4.0.2
 // @author    lusc
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
@@ -102,8 +102,6 @@ const testForInexistantCourse = async (id: string) => {
 
 /**
  * Replace the text of a course
- * @param {number|string} id The id of the course to replace
- * @param {[string]} newValue The new value, defaults to the anchors title (for resetting it)
  */
 const setCourseText = (
 	anchor: HTMLAnchorElement,
@@ -119,7 +117,6 @@ const setCourseText = (
 
 /**
  * Sets the visibility of a course by id
- * @param {string} id The id of the course to remove
  */
 const setCourseVisibility = (anchor: HTMLAnchorElement, visible: boolean) => {
 	const li = anchor.closest<HTMLLIElement>('li.type_course');
@@ -127,7 +124,7 @@ const setCourseVisibility = (anchor: HTMLAnchorElement, visible: boolean) => {
 
 	// If the current page is the same as the current course link
 	// don't remove it
-	if (cl && !cl.contains('current_branch')) {
+	if (cl && li.getAttribute('aria-expanded') !== 'true') {
 		cl.toggle('hide', !visible);
 		cl.toggle('hidden', !visible);
 	}
