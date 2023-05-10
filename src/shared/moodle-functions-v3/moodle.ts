@@ -43,6 +43,12 @@ class ERR_NOT_INCLUDED extends Error {
 	}
 }
 
+type ApiExpection = {
+	exception: string;
+	errorcode: string;
+	message: string;
+};
+
 type MoodleConstructor = typeof Moodle;
 export type RegisterFunction = (moodle: MoodleConstructor) => void;
 
@@ -50,8 +56,8 @@ let defaultBaseUrl = new URL('http://localhost/');
 if (typeof location !== 'undefined') {
 	defaultBaseUrl = new URL('/', location.href);
 } else if (
-	typeof process !== 'undefined'
-	&& typeof process.env['MOODLE_BASE_URL'] === 'string'
+	typeof process !== 'undefined' &&
+	typeof process.env['MOODLE_BASE_URL'] === 'string'
 ) {
 	defaultBaseUrl = new URL(process.env['MOODLE_BASE_URL']);
 }
@@ -144,11 +150,16 @@ export class Moodle {
 			throw new Error(`Response was not ok: ${response.status}`);
 		}
 
-		const json = response.json() as T;
+		// Having two variables works better
+		// because T is generic and checking `'exception' in json`
+		// does not work for generics
+		// It also won't narrow to `ApiException` with `T | ApiException`
+		const json = (await response.json()) as T;
+		const error = json as ApiExpection;
 
-		if ('exception' in (json as Record<string, unknown>)) {
+		if ('exception' in error) {
 			this.logout();
-			throw new Error('Invalid token');
+			throw new Error(`Error(${error.exception}): ${error.message}`);
 		}
 
 		return json;
