@@ -56,8 +56,8 @@ let defaultBaseUrl = new URL('http://localhost/');
 if (typeof location !== 'undefined') {
 	defaultBaseUrl = new URL('/', location.href);
 } else if (
-	typeof process !== 'undefined' &&
-	typeof process.env['MOODLE_BASE_URL'] === 'string'
+	typeof process !== 'undefined'
+	&& typeof process.env['MOODLE_BASE_URL'] === 'string'
 ) {
 	defaultBaseUrl = new URL(process.env['MOODLE_BASE_URL']);
 }
