@@ -217,7 +217,7 @@ const courseContent = ow.object.exactShape({
 const courses = await violentMonkeyContext(async () => {
 	const moodle = new Moodle();
 	await moodle.login({username, password});
-	return moodle.getCourses();
+	return moodle.getCourses(true);
 })();
 
 describe('#getCourseContent & #getCourses', () => {
@@ -226,7 +226,7 @@ describe('#getCourseContent & #getCourses', () => {
 		violentMonkeyContext(async (course: Courses[number]) => {
 			const moodle = new Moodle();
 			await moodle.login({username, password});
-			const content = await moodle.getCourseContent(course.id);
+			const content = await moodle.getCourseContent(course.id, true);
 			expect(() => {
 				ow(content, ow.array.ofType(courseContent));
 			}).not.toThrow();

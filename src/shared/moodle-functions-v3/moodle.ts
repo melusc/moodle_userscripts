@@ -70,18 +70,7 @@ export class Moodle {
 		username: getUsername(),
 	};
 
-	readonly #cache = new Map<symbol, unknown>();
-
 	resolveUrl = (path: string): URL => new URL(path, this.baseUrl);
-
-	_readCache<T>(key: symbol): T | undefined {
-		return this.#cache.get(key) as T | undefined;
-	}
-
-	_writeCache<T>(key: symbol, value: T): T {
-		this.#cache.set(key, value);
-		return value;
-	}
 
 	async login(creds?: {username: string; password: string}): Promise<string> {
 		const {credentials} = this;
@@ -141,18 +130,19 @@ export class Moodle {
 	// @ts-expect-error Parameters are necessary for typing
 	// and the vscode type-hints look nicer without the leading underscore
 	// eslint-disable-next-line @typescript-eslint/require-await
-	async getCourses(noCache?: boolean): Promise<Courses> {
+	async getCourses(useCache: boolean): Promise<Courses> {
 		throw new ERR_NOT_INCLUDED('getCourses');
 	}
 
+	// @ts-expect-error See above
 	// eslint-disable-next-line @typescript-eslint/require-await
-	async getUserId(): Promise<number> {
+	async getUserId(useCache: boolean): Promise<number> {
 		throw new ERR_NOT_INCLUDED('getUserId');
 	}
 
 	// @ts-expect-error See above
 	// eslint-disable-next-line @typescript-eslint/require-await
-	async popupLogin(title: string): Promise<string> {
+	async popupLogin(title: string, useCache: boolean): Promise<string> {
 		throw new ERR_NOT_INCLUDED('popupLogin');
 	}
 
@@ -161,7 +151,7 @@ export class Moodle {
 		// @ts-expect-error See above
 		id: string | number,
 		// @ts-expect-error See above
-		noCache?: boolean,
+		useCache: boolean,
 	): Promise<CourseContent[]> {
 		throw new ERR_NOT_INCLUDED('getCourseContent');
 	}

@@ -1,3 +1,4 @@
+import {memoise} from './memoise.js';
 import type {Moodle, RegisterFunction} from './moodle.js';
 import genericPopupSCSS from './popup-login.scss';
 import PopupLogin from './popup-login.svelte';
@@ -29,7 +30,7 @@ async function popupLogin(this: Moodle, title: string): Promise<string> {
 }
 
 const register: RegisterFunction = Moodle => {
-	Moodle.prototype.popupLogin = popupLogin;
+	Moodle.prototype.popupLogin = memoise(popupLogin);
 };
 
 export {register as popupLogin};

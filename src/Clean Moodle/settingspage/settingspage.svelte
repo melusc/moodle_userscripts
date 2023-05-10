@@ -24,7 +24,7 @@
 	async function getCourses() {
 		let ajaxCourses: Courses;
 		try {
-			ajaxCourses = await moodle.getCourses();
+			ajaxCourses = await moodle.getCourses(true);
 		} catch {
 			logout();
 

@@ -15,7 +15,7 @@ describe('#getCourses', () => {
 			const moodle = new Moodle();
 			await expect(async () => {
 				moodle.credentials.token = 'INVALID';
-				await moodle.getCourses();
+				await moodle.getCourses(true);
 			}).rejects.toThrow();
 		}),
 	);
@@ -26,7 +26,7 @@ describe('#getCourses', () => {
 			const moodle = new Moodle();
 			await moodle.login({username, password});
 
-			const courses = await moodle.getCourses();
+			const courses = await moodle.getCourses(true);
 			expect(courses.find(({id}) => id === 32)).toStrictEqual({
 				id: 32,
 				name: 'Allgemeine Informationen',

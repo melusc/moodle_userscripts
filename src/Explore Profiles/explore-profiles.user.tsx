@@ -69,7 +69,7 @@ const getProfilesInRange = async (
 	try {
 		wstoken = await moodle.login();
 	} catch {
-		wstoken = await moodle.popupLogin(title);
+		wstoken = await moodle.popupLogin(title, true);
 	}
 
 	let lower = start;

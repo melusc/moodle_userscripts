@@ -19,7 +19,7 @@ Moodle.extend(popupLogin).extend(getCourseContent);
 const moodle = new Moodle();
 
 const getPageContent = async (
-	allowCached: boolean,
+	useCache: boolean,
 ): Promise<false | CourseContent[]> => {
 	const searchParameters = new URLSearchParams(location.search);
 	const courseId = searchParameters.get('id');
@@ -31,10 +31,10 @@ const getPageContent = async (
 	}
 
 	try {
-		return await moodle.getCourseContent(courseId, !allowCached);
+		return await moodle.getCourseContent(courseId, useCache);
 	} catch {
-		await moodle.popupLogin('Open folders inline');
-		return moodle.getCourseContent(courseId, !allowCached);
+		await moodle.popupLogin('Open folders inline', true);
+		return moodle.getCourseContent(courseId, useCache);
 	}
 };
 

@@ -1,4 +1,5 @@
 import {getUserId} from './get-user-id.js';
+import {memoise} from './memoise.js';
 import type {Moodle, RegisterFunction} from './moodle.js';
 
 export type Courses = Array<{id: number; name: string}>;
@@ -14,14 +15,8 @@ type GetUserCoursesResponse =
 			fullname: string;
 	  }>;
 
-const cacheKey = Symbol('getCourses');
-async function getCourses(this: Moodle, noCache = false): Promise<Courses> {
-	const cache = this._readCache<Courses>(cacheKey);
-	if (cache && !noCache) {
-		return cache;
-	}
-
-	const userId = await this.getUserId();
+async function getCourses(this: Moodle): Promise<Courses> {
+	const userId = await this.getUserId(true);
 	const token = await this.login();
 
 	const bodyParameters = new URLSearchParams({
@@ -60,11 +55,11 @@ async function getCourses(this: Moodle, noCache = false): Promise<Courses> {
 		});
 	}
 
-	return this._writeCache(cacheKey, result);
+	return result;
 }
 
 const register: RegisterFunction = Moodle => {
-	Moodle.prototype.getCourses = getCourses;
+	Moodle.prototype.getCourses = memoise(getCourses);
 	Moodle.extend(getUserId);
 };
 

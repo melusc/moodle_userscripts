@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name      Clean Moodle
-// @version   4.0.2
+// @version   4.0.3
 // @author    lusc
 // @match     *://moodle.*/*
 // @match     *://moodle*.*/*
