@@ -120,6 +120,40 @@ export class Moodle {
 		return token;
 	}
 
+	async fetch<T>(
+		wsfunction: string,
+		parametersObject: Record<string, string>,
+	): Promise<T> {
+		const parameters = new URLSearchParams(parametersObject);
+		parameters.set('wstoken', await this.login());
+		parameters.set('wsfunction', wsfunction);
+		parameters.set('moodlewsrestformat', 'json');
+
+		const response = await fetch(
+			this.resolveUrl('/webservice/rest/server.php'),
+			{
+				method: 'POST',
+				headers: {
+					'content-type': 'application/x-www-form-urlencoded',
+				},
+				body: parameters.toString(),
+			},
+		);
+
+		if (!response.ok) {
+			throw new Error(`Response was not ok: ${response.status}`);
+		}
+
+		const json = response.json() as T;
+
+		if ('exception' in (json as Record<string, unknown>)) {
+			this.logout();
+			throw new Error('Invalid token');
+		}
+
+		return json;
+	}
+
 	logout(): void {
 		delete this.credentials.token;
 		deleteToken();
