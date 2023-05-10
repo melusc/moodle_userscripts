@@ -43,6 +43,12 @@ class ERR_NOT_INCLUDED extends Error {
 	}
 }
 
+type ApiExpection = {
+	exception: string;
+	errorcode: string;
+	message: string;
+};
+
 type MoodleConstructor = typeof Moodle;
 export type RegisterFunction = (moodle: MoodleConstructor) => void;
 
@@ -118,6 +124,45 @@ export class Moodle {
 		setToken(token);
 		credentials.token = token;
 		return token;
+	}
+
+	async fetch<T>(
+		wsfunction: string,
+		parametersObject: Record<string, string>,
+	): Promise<T> {
+		const parameters = new URLSearchParams(parametersObject);
+		parameters.set('wstoken', await this.login());
+		parameters.set('wsfunction', wsfunction);
+		parameters.set('moodlewsrestformat', 'json');
+
+		const response = await fetch(
+			this.resolveUrl('/webservice/rest/server.php'),
+			{
+				method: 'POST',
+				headers: {
+					'content-type': 'application/x-www-form-urlencoded',
+				},
+				body: parameters.toString(),
+			},
+		);
+
+		if (!response.ok) {
+			throw new Error(`Response was not ok: ${response.status}`);
+		}
+
+		// Having two variables works better
+		// because T is generic and checking `'exception' in json`
+		// does not work for generics
+		// It also won't narrow to `ApiException` with `T | ApiException`
+		const json = (await response.json()) as T;
+		const error = json as ApiExpection;
+
+		if ('exception' in error) {
+			this.logout();
+			throw new Error(`Error(${error.exception}): ${error.message}`);
+		}
+
+		return json;
 	}
 
 	logout(): void {
