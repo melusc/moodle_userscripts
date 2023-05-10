@@ -83,10 +83,10 @@ const initDownload = async (target: HTMLButtonElement) => {
 	let courseContent: CourseContent[];
 
 	try {
-		courseContent = await moodle.getCourseContent(courseId);
+		courseContent = await moodle.getCourseContent(courseId, true);
 	} catch {
-		await moodle.popupLogin("Download Course's Content");
-		courseContent = await moodle.getCourseContent(courseId);
+		await moodle.popupLogin("Download Course's Content", true);
+		courseContent = await moodle.getCourseContent(courseId, true);
 	}
 
 	const zipFile = new JSZip();

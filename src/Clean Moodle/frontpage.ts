@@ -23,24 +23,14 @@ const getCourseElementFromSidebar = (id: string) =>
 		`a[href$="/course/view.php?id=${id}"]`,
 	);
 
-/*
-	For a race condition where testForInexistantCourse is called twice
-	before it can resolve. (i.e. when two courses have been deleted)
-	That would cause two popups to open.
-*/
-let popupLoginPromise: Promise<string> | undefined;
 async function testForInexistantCourse(id: string) {
-	if (popupLoginPromise) {
-		await popupLoginPromise;
-	}
-
 	let courses: Courses;
 
 	try {
-		courses = await moodle.getCourses();
+		courses = await moodle.getCourses(true);
 	} catch {
-		await (popupLoginPromise = moodle.popupLogin('Clean Moodle'));
-		courses = await moodle.getCourses();
+		await moodle.popupLogin('Clean Moodle', true);
+		courses = await moodle.getCourses(true);
 	}
 
 	if (!courses.some(course => String(course.id) === id)) {

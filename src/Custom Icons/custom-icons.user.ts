@@ -77,10 +77,10 @@ const testIfUserLeftCourse = async (id: string) => {
 	let courses: Courses;
 
 	try {
-		courses = await moodle.getCourses();
+		courses = await moodle.getCourses(true);
 	} catch {
-		await moodle.popupLogin('Custom Icons');
-		courses = await moodle.getCourses();
+		await moodle.popupLogin('Custom Icons', true);
+		courses = await moodle.getCourses(true);
 	}
 
 	if (!courses.some(course => String(course.id) === id)) {

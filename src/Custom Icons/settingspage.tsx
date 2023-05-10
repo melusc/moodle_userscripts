@@ -740,7 +740,7 @@ class SettingsPage extends Component<
 		let coursesObject: Courses;
 
 		try {
-			coursesObject = await this.moodle.getCourses();
+			coursesObject = await this.moodle.getCourses(true);
 		} catch {
 			this.logout();
 

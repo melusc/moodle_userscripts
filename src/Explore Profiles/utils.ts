@@ -25,7 +25,7 @@ export const getContacts = async (userId: number): Promise<number[]> => {
 	try {
 		wstoken = await moodle.login();
 	} catch {
-		wstoken = await moodle.popupLogin(title);
+		wstoken = await moodle.popupLogin(title, true);
 	}
 
 	const body = new URLSearchParams({
@@ -58,21 +58,13 @@ export const getContacts = async (userId: number): Promise<number[]> => {
 	return contacts;
 };
 
-let userId: number | undefined;
-
 export const getUserId = async (): Promise<number> => {
-	if (userId !== undefined) {
-		return userId;
-	}
-
 	try {
-		userId = await moodle.getUserId();
+		return await moodle.getUserId(true);
 	} catch {
-		await moodle.popupLogin(title);
+		await moodle.popupLogin(title, true);
 		return getUserId();
 	}
-
-	return userId;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types

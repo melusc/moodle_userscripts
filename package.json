@@ -81,7 +81,7 @@
 		],
 		"testPathIgnorePatterns": [
 			"/node_modules/",
-			"/test/moodle-functions-v3/"
+			"/test/moodle-functions-v3/(?!memoise.test.js$)"
 		],
 		"setupFiles": [
 			"<rootDir>/test/set-env.js"

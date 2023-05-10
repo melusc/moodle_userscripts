@@ -3,6 +3,7 @@ import {render, type FunctionalComponent, type JSX} from 'preact';
 import {useRef, useState} from 'preact/hooks';
 
 import {getUsername} from './credentials.js';
+import {memoise} from './memoise.js';
 import type {Moodle, RegisterFunction} from './moodle.js';
 import genericPopupSCSS from './popup-login.scss';
 
@@ -129,7 +130,7 @@ const popupLogin = async function (
 };
 
 const register: RegisterFunction = Moodle => {
-	Moodle.prototype.popupLogin = popupLogin;
+	Moodle.prototype.popupLogin = memoise(popupLogin);
 };
 
 export {register as popupLogin};

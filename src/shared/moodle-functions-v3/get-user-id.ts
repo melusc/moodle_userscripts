@@ -1,3 +1,4 @@
+import {memoise} from './memoise.js';
 import type {Moodle, RegisterFunction} from './moodle.js';
 
 type GetUserIdResponse =
@@ -11,13 +12,7 @@ type GetUserIdResponse =
 			// Omitted for brevity
 	  };
 
-const cacheKey = Symbol('getUserId');
 async function getUserId(this: Moodle): Promise<number> {
-	const cache = this._readCache<number>(cacheKey);
-	if (cache !== undefined) {
-		return cache;
-	}
-
 	const token = await this.login();
 
 	const bodyParameters = new URLSearchParams({
@@ -47,11 +42,11 @@ async function getUserId(this: Moodle): Promise<number> {
 		throw new Error('token was undefined');
 	}
 
-	return this._writeCache(cacheKey, responseJSON.userid);
+	return responseJSON.userid;
 }
 
 const register: RegisterFunction = Moodle => {
-	Moodle.prototype.getUserId = getUserId;
+	Moodle.prototype.getUserId = memoise(getUserId);
 };
 
 export {register as getUserId};
