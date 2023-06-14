@@ -34,7 +34,7 @@
 		"prettier": "^2.8.8",
 		"prettier-plugin-svelte": "^2.10.1",
 		"rimraf": "^5.0.1",
-		"sass": "^1.63.3",
+		"sass": "^1.63.4",
 		"sass-loader": "^13.3.2",
 		"serve": "^14.2.0",
 		"svelte": "^3.59.1",
